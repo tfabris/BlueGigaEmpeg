@@ -1164,6 +1164,15 @@ void setup()
   // pairing information, that is left untouched.
   SetGlobalChipDefaults();
 
+  // EXPERIMENT: If you encounter a repeat of the issue where there's a dropout followed
+  // by the track metadata failing to update all of a sudden, then see if this fixes the
+  // issue by fully resetting the bluetooth chip each time that the arduino inexplicably
+  // resets itself. See GitHub issue for details:
+  //      https://github.com/tfabris/BlueGigaEmpeg/issues/2
+  // I don't want to enable this unless I really really have to, because this causes
+  // bad user experience when initally connecting to the car stereo at car startup.
+  //      QuickResetBluetooth(0);      
+
   // Turn off the built in Arduino LED to indicate the setup activity is complete
   digitalWrite(LED_BUILTIN, LOW);
 }
