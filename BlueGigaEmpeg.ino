@@ -1375,6 +1375,19 @@ void SetGlobalChipDefaults()
   // car ignition is on, and will be getting the voltage (indirectly) from the car power.
   SendBlueGigaCommand(F("SET CONTROL BATTERY 0 0 0 0"));
 
+  // Change some configuration bits on the player. See section 6.75 of the iWrap command
+  // reference documentation for details on this topic. The format of the command is:
+  //    SET CONTROL CONFIG 0000 0000 0000 1100
+  // The default setting is the one shown above. Each group of digits is a hexadecimal number which
+  // represents a set of configuration bits. The default setting of "1100" in the "config block"
+  // sets bit positions 8 and 12 (aka 0b0001000100000000) which are flags for "Enables SCO links"
+  // and "Randomly replace one of the existing pairings".
+  // I am experimentally adding this bit:
+  //     Bit 14 aka 0b0100000000000000 - "UART will be optimized for low latency"
+  // This is an experimental attempt to improve an issue where there is a visible difference between
+  // the empeg visuals on the empeg VFD display and the audio coming out of the host stereo's speakers.
+  SendBlueGigaCommand(F("SET CONTROL CONFIG 0000 0000 0000 5100"));
+
   // Configure the WT32i development board to NOT use the additional external TI AIC32I external codec chip.
   // Unused if you're not using the BlueGiga Development board which contains the external codec.
   //  SendBlueGigaCommand(F("SET CONTROL EXTCODEC PRE"));
