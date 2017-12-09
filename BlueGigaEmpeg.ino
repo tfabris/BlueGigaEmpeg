@@ -2295,8 +2295,27 @@ void RespondToQueries(String queryString)
     //      AVRCP NFY INTERIM 4 3 0
     // Where 4 is the transaction label, 3 is the event ID code for "Track
     // reached end", and 0 is the parameter. Though that one works, there are
-    // others which do not work and get SYNTAX ERROR. TO DO: Await response from
-    // Silicon Labs tech suppor on this one and fix up this routine to respond.
+    // others which do not work and get SYNTAX ERROR. In particular, I am currently
+    // having trouble responding to the messages
+    //
+    // NOW_PLAYING_CHANGED    and    AVAILABLE_PLAYERS_CHANGED
+    //
+    // I have tried many different syntaxes and parameters and all result in
+    // SYNTAX ERROR. Examples:
+    //
+    //    AVRCP 0 PDU_REGISTER_NOTIFICATION e NOW_PLAYING_CHANGED 0
+    //    --> AVRCP NFY INTERIM e 9 0
+    //    SYNTAX ERROR
+    //
+    //    AVRCP 0 PDU_REGISTER_NOTIFICATION d AVAILABLE_PLAYERS_CHANGED 0
+    //    --> AVRCP NFY INTERIM d 10
+    //    SYNTAX ERROR
+    //
+    // TO DO: Await response from Silicon Labs tech suppor on this one and fix up
+    // this routine to respond correctly. My support ticket with Silicon Labs is:
+    //
+    // https://siliconlabs.force.com/5001M000017Jb5W
+    //
     for (int l=0; l<rejMatrixSize; l++)
     {  
       // Make the string comparison to find out if there is a match.
