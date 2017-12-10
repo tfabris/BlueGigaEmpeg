@@ -79,6 +79,8 @@
 // AVRCP command reference:    https://www.silabs.com/documents/login/application-notes/AN986.pdf
 // Dev Board User Guide:       https://www.silabs.com/documents/login/user-guides/UG215.pdf
 // Dev Board Data Sheet:       https://www.silabs.com/documents/login/data-sheets/WT32i-DataSheet.pdf
+// Dev Board Reference Design: https://www.silabs.com/documents/login/reference-designs/Reference-Design-DKWT32i.pdf
+// Dev Board Full Schematic:   https://www.silabs.com/documents/login/reference-designs/DKWT32i-v2.2.zip
 // BetzTechnik Schematic:      http://www.betztechnik.ca/uploads/2/5/6/7/25674051/wt32i.pdf
 // Pololu V.Reg #2851 Pinout:  https://a.pololu-files.com/picture/0J5850.1200.jpg
 // Arduino Mega Pin Map:       https://www.arduino.cc/en/uploads/Hacking/Atmega168PinMap2.png
