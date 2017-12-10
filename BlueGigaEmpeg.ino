@@ -1578,6 +1578,24 @@ void PairBluetooth()
   Log (F("--------------------------------------"));
   Log (F(" "));  
 
+  // Notify users watching the debug console about the pairing quirk.
+  Log (F(" "));
+  Log (F("--------------------------------------"));
+  Log (F("  Note: For some devices, attempting  "));
+  Log (F("  to pair right now will not work.    "));
+  Log (F("  Sometimes, for example, with some   "));
+  Log (F("  touchscreen devices, you must wait  "));
+  Log (F("  until the LED is off and the pair   "));
+  Log (F("  routine here is done, and then      "));
+  Log (F("  initiate the pairing process solely "));
+  Log (F("  from the touchscreen.               "));
+  Log (F("                                      "));
+  Log (F("  Other devices may need to be put in "));
+  Log (F("  pairing mode right now. Depends on  "));
+  Log (F("  the device.                         "));
+  Log (F("--------------------------------------"));
+  Log (F(" "));  
+
   // Clear out our input string before starting the pairing process
   // just in case we pressed the pair button in the middle of a string input
   btInputString = "";
