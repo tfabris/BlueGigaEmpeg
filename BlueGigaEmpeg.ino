@@ -545,6 +545,59 @@
 // different serial terminal program, set it to 115200 8n1 and turn on local
 // echo.
 
+// ----------------------------------------------------------------------------
+// Notes about pairing and bluetooth PIN codes
+// ----------------------------------------------------------------------------
+// This device implements a RESET/PAIR button which does the following:
+//
+//  - Erases all previous pairings
+//
+//  - Looks for devices to pair with for 30 seconds and pairs with
+//    the first one that it sees.
+//
+//  - The RESET/PAIR LED is lit during this pairing mode.
+// 
+// But, this is counterintuitive: Sometimes you don't press that RESET/PAIR
+// button at all, and instead you pair when the RESET/PAIR LED is *not* lit.
+//
+// There are some stereos which need you to initiate pairing solely on the
+// car stereo's touch screen. Mine is one of these types of stereos. In my
+// case, for initial pairing with my car stereo the first time, I don't
+// press the RESET/PAIR button at all. I just go to my car's touch screen,
+// tell it to pair with the bluetooth device named "empeg Car", and it works.
+// After that, it reconnects automatically each time I get in the car and
+// start it up (though it takes a moment to connect).
+//
+// Some stereos and headsets *do* need you to press that RESET/PAIR button,
+// which should light the LED for 30 seconds, and then you should put your
+// headset or stereo into pair mode while the LED is still lit.
+//
+// If one method doesn't work for you, try the other method. For example
+// this sequence will work for many stereos and headsets:
+//
+//  - Press the RESET/PAIR button, and while the LED is still lit,
+//    then initiate pairing at your stereo or headset via its
+//    pairing feature.
+//
+//  - If that doesn't work, then wait for the RESET/PAIR LED to go dark
+//    and then, without touching the RESET/PAIR button, try to initiate
+//    pairing with your stereo or headset via its pairing feature.
+//
+// Special note about bluetooth PIN codes:
+// 
+// The code defaults to Secure Simple Pairing in "Just Works" mode, which
+// does not require a PIN code to successfully pair. It will fall back to
+// using a PIN code if the Secure Simple Pairing doesn't work. This should
+// be good for most devices. However the PIN code defaults to "0000", and
+// though that should work with most devices, if your pin code happens to
+// be different from "0000", then you should change the code in this sketch.
+// Fine the line in the code below that defines the variable
+// "btPinCodeString" - that line contains the "0000" default PIN code.
+// Change it to your correct PIN code for your device. It can accept PIN
+// codes up to 16 digits long.
+//
+
+
 
 // ----------------------------------------------------------------------------
 // Program code starts here
@@ -554,11 +607,15 @@
 // Global variables and definitions
 // ------------------------------------
 
-// Arduino serial port 2 is connected to Bluetooth chip
-#define BlueGigaSerial Serial2 
+// String to control the type of bluetooth authentication that you want to use.
+// This is currently configured for "just works" pairing with no PIN code,
+// with a fallback to the PIN code if the "just works" mode fails.
+const String btAuthTypeString = "SET BT SSP 3 0";
 
-// Arduino serial port 1 is connected to empeg's RS-232 port via MAX232 circuit.
-#define EmpegSerial Serial1
+// If the device falls back to using a PIN code, here is where to set the PIN.
+// Change "0000" to your correct PIN code for your stereo. It can accept PIN
+// codes up to 16 digits long.
+const String btPinCodeString = "SET BT AUTH * 0000";
 
 // Variable to control whether or not this program performs a conversion of
 // High ASCII to UTF-8 in the code. For instance, on the empeg, you might have
@@ -635,18 +692,6 @@ boolean displayEmpegSerial=false;
 // data on the serial port when it is not needed.
 boolean displayTracksOnSerial=false;
 
-// Experimental: String to tell the unit to automatically try reconnecting every few seconds
-// if it ever becomes disconnected from its main pairing buddy. Trying to make it grab hold
-// of the car stereo as soon as the car turns on, instead of connecting to my cellphone every time.
-// NOTE: This includes a baked-in second additional command to store the configuration of the
-// connection. The docs say that this STORECONFIG command is merely to store the reconnect
-// functionality but it's not made clear if it stores all configuration information or just that one.
-// ALSO NOTE: The docs say that the reconnect timer should be longer than 500ms.
-const String autoReconnectString = "SET CONTROL RECONNECT 600 0 0 7 0 A2DP A2DP AVRCP\r\nSTORECONFIG";
-
-// Debug version of reconnect command for testing and comparison.
-//      const String autoReconnectString = " ";
-
 // Experimental - When we see the empeg player application start up, then send a
 // pause command to the player. If the bluetooth initial connection speed is faster
 // than the empeg bootup speed, then this will mean things start up in pause mode.
@@ -656,6 +701,25 @@ const String autoReconnectString = "SET CONTROL RECONNECT 600 0 0 7 0 A2DP A2DP 
 // up playing. This is an experiment to fix some initial connection behavioral problems.
 // Would prefer to not to have to use this at all, so try it with it turned off first.
 boolean empegStartPause = false;
+
+// Arduino serial port 2 is connected to Bluetooth chip
+#define BlueGigaSerial Serial2 
+
+// Arduino serial port 1 is connected to empeg's RS-232 port via MAX232 circuit.
+#define EmpegSerial Serial1
+
+// Experimental: String to tell the unit to automatically try reconnecting every few seconds
+// if it ever becomes disconnected from its main pairing buddy. Trying to make it grab hold
+// of the car stereo as soon as the car turns on, instead of connecting to my cellphone every time.
+// NOTE: This includes a baked-in second additional command to store the configuration of the
+// connection. The docs say that this STORECONFIG command is merely to store the reconnect
+// functionality but it's not made clear if it stores all configuration information or just that one.
+// ALSO NOTE: The docs say that the reconnect timer (the first numeric parameter) should be
+// *longer* than 500ms.
+const String autoReconnectString = "SET CONTROL RECONNECT 600 0 0 7 0 A2DP A2DP AVRCP\r\nSTORECONFIG";
+
+// Debug version of reconnect command for testing and comparison.
+//      const String autoReconnectString = " ";
 
 // Matrix of special case fix strings and their output timings.
 // When a bluetooth statement is received from the bluetooth module,
@@ -964,12 +1028,6 @@ static String trackGenreString06 = "Unknown genre on empeg Car";
 static String trackPlaybackPositionString07 = "00";
 static String trackPlaybackLengthString="999999";
 long trackPlaybackPositionMs = -1L; // Initialize to flag value meaning "unknown"
-
-// String to control the type of bluetooth authentication that you want to use.
-// These are currently configured for "just works" pairing with no PIN code,
-// with a fallback to the PIN code if the "just works" mode fails.
-const String btAuthTypeString = "SET BT SSP 3 0";
-const String btPinCodeString = "SET BT AUTH * 0000";
 
 // String to control the audio routing on the chip. 
 // Use this string if you are using the Line In jacks on the bluetooth device for audio (analog):
