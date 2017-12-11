@@ -918,12 +918,17 @@ static String queryResponseString = "";
 // the bluetooth device address into that location of the response string. The "{0}"
 // is also defined in another variable below.
 // NOTE: Update the matrix size and the array size both, if you are changing these.
-int pmMatrixSize=3;
-String pmMessageMatrix[3][2] =
+int pmMatrixSize=6;
+String pmMessageMatrix[6][2] =
 {
   // Respond to messages such as INQUIRY_PARTIAL 0c:e0:e4:6c:75:68 240404
   { "INQUIRY_PARTIAL ",          "PAIR {0}"},
-  
+
+  // EXPERIMENTAL - Respond to PIN code prompt as if we were a user saying
+  // OK to that PIN code. This was needed on Mark Lord's car stereo. Might
+  // not work correctly - See what's up with this.
+  { "SSP CONFIRM ",          "SSP CONFIRM {0} OK"},
+
   // Respond to messages such as "PAIR 0c:e0:e4:6c:75:68 OK"
   // Respond during the pair process with a connection attempt.
   // Response should be "CALL", the address to connect to, then
@@ -941,6 +946,8 @@ String pmMessageMatrix[3][2] =
   // a particular secret-code hard-to find value called an
   // "L2CAP psm" and the special secret L2CAP psm for AVRCP is "17".
   { "CONNECT 0 A2DP 19",        "CALL {0} 17 AVRCP"},
+  { "CONNECT 1 A2DP 19",        "CALL {0} 17 AVRCP"},
+  { "CONNECT 2 A2DP 19",        "CALL {0} 17 AVRCP"},
 };
 
 // String to be used in token substitutions above (change both the matrix above
@@ -1204,34 +1211,23 @@ void setup()
   // Log("Size of pmMessageMatrix is:           " + String(sizeof(pmMessageMatrix)));
   // Log("Size of empegCommandMessageMatrix is: " + String(sizeof(empegCommandMessageMatrix)));
 
-  // Debugging only - deliberately reboot the bluetooth module to simulate what
-  // happens on first power up, to test if our freewheel timer at startup is
-  // the correct amount of time.
-  // QuickResetBluetooth(1);
-
   // Turn on the built in Arduino LED to indicate the setup activity has begun.
   digitalWrite(LED_BUILTIN, HIGH);
-  
-  // Freewheel and wait for the bluetooth device to boot up and be ready for
-  // commands (bluetooth device receives power at the same time Arduino does).
-  // EXPERIMENT - Try zero freewheeling at startp of bluetooth chip. Testing
-  // seems to indicate that the chip accepts commands, even settings commands,
-  // just fine immediately, even before it displays its own bootup message text.
-  //        DisplayAndProcessCommands(1000, false);
-  
-  // Configre the Bluetooth device at startup, call my routine which sets all
-  // data to the desired overall system defaults. This does not erase any
-  // pairing information, that is left untouched.
-  SetGlobalChipDefaults();
 
-  // EXPERIMENT: If you encounter a repeat of the issue where there's a dropout followed
-  // by the track metadata failing to update all of a sudden, then see if this fixes the
+  // EXPERIMENT: Encountered repeats of the issue where there's a dropout followed by
+  // the track metadata failing to update all of a sudden. Also got the opposite problem:
+  // track metadata worked, but the steering wheel controal failed. See if this fixes the
   // issue by fully resetting the bluetooth chip each time that the arduino inexplicably
   // resets itself. See GitHub issue for details:
   //      https://github.com/tfabris/BlueGigaEmpeg/issues/2
   // I don't want to enable this unless I really really have to, because this causes
   // bad user experience when initally connecting to the car stereo at car startup.
-  //      QuickResetBluetooth(0);      
+  QuickResetBluetooth(0);      
+
+  // Configre the Bluetooth device at startup, call my routine which sets all
+  // data to the desired overall system defaults. This does not erase any
+  // pairing information, that is left untouched.
+  SetGlobalChipDefaults();
 
   // Turn off the built in Arduino LED to indicate the setup activity is complete
   digitalWrite(LED_BUILTIN, LOW);
@@ -1545,19 +1541,7 @@ void SetGlobalChipDefaults()
   // have it disconnect and reconnect again when this line gets hit.
   //     QuickResetBluetooth(0);      
 
-  // Freewheel for a moment after reset and swallow the lines of the reset messages.
-  // EXPERIMENT - Do not bother to swallow responses from the reset messages. This might
-  // not be needed any more after all my other code fixes and now might be getting in the way.
-  //      DisplayAndSwallowResponses(6, 300);
-  
   Log(F("Done Setting Defaults."));
-
-  // Debugging only, unit testing the element query code.
-  //  RespondToQueries("GET_ELEMENT_ATTRIBUTES 07 04 05 07 01 02 03 06"); // All elements
-  //  RespondToQueries("GET_ELEMENT_ATTRIBUTES 7 00004 005 07 1 02 3 06"); // All elements but with different numbers of digits
-  //  RespondToQueries("GET_ELEMENT_ATTRIBUTES 07 04 05 07 01abc 02 03 06?"); // Non-numeric characters after some of the elements
-  //  RespondToQueries("GET_ELEMENT_ATTRIBUTES 07 04 05 07 01 02 03"); // Negative case, missing one of the element codes
-  //  RespondToQueries("GET_ELEMENT_ATTRIBUTES 01 03"); // Single element
 }
 
 
@@ -1609,26 +1593,22 @@ void PairBluetooth()
   // Erase all previous auto-reconnect settings (not sure if included in the factory default reset).
   SendBlueGigaCommand(F("SET CONTROL RECONNECT *"));
 
-  // Reset device to factory defaults. Note that "SET RESET" (factory defaults) is different
-  // from "RESET" (which is just a reboot). Note that this does not erase pairings (that is
-  // accomplished by the commands above instead).
+  // Reset device to factory defaults using "SET RESET" command (parameter 2).
+  // Note that "SET RESET" (factory defaults) is different from "RESET" (which
+  // is just a reboot). This does not erase pairings (that is accomplished by
+  // the commands above instead).
   QuickResetBluetooth(2); 
-
-  // Freewheel for a moment after reset to factory defaults, and swallow the lines of the
-  // reset messages. This is needed because the global chip defaults below won't "take" if
-  // you don't give some time after the reset message is issued.
-  DisplayAndSwallowResponses(8, 600);
 
   // Set up the device for use with the empeg car.
   SetGlobalChipDefaults();
 
-  // EXPERIMENT - Move the "RESET" statement (which originally occured inside the
-  // SetGlobalChipDefaults statement) out here so that we only do it in cases where
-  // the user presses the RESET-PAIR button on my assembly, and not at bootup.
+  // The reset statement (which originally occured inside the SetGlobalChipDefaults
+  // statement) is no longer part of SetGlobalChipDefaults, so we must do it here
+  // as part of the pre-pairing procedure.
   QuickResetBluetooth(0);    
 
-  // Freewheel for a moment after setting global chip defaults. Need a time window before
-  // the chip will accept the INQUIRY command below.
+  // Freewheel for a moment after setting global chip defaults. Need a time
+  // window before the chip will accept the INQUIRY command below.
   DisplayAndSwallowResponses(9, 700);
 
   // Log Partial Completeness.
@@ -1948,6 +1928,16 @@ void HandleString(String theString)
     ClearGlobalVariables();
   }
 
+  // Same bugfix but with the boot message from the chip as well. I have seen
+  // situations where the bluetooth chip has reset itself and we see its
+  // initial boot message on the debug console again. If we see it we need
+  // to clear out our variables because that means the bluetooth chip
+  // just got reset and now our global variables aren't valid any more.
+  if (theString.indexOf(F("WRAP THOR AI")) > (-1))
+  {
+    ClearGlobalVariables();
+  }  
+
   // Handle query/response strings for things like the track metadata
   // and the playback status information. Make sure our program responds
   // to these queries in a timely fashion if it receives them.
@@ -2148,11 +2138,25 @@ void GrabPairAddressString(String stringToParse)
     // Trim the string of any possible whitespace
     pairAddressString.trim();
 
-    // Log what we got.
-    Log (F("------------------------------------"));
-    Log (F("    Pairing with device address:    "));
-    Log (pairAddressString);
-    Log (F("------------------------------------"));
+    // Find out if the thing we got was an address. It should contain some
+    // colon characters at the very least. For example we sometimes we see a 
+    // message that looks like this:
+    //     INQUIRY 1
+    // And well that's no good since it doesn't have the BT address that
+    // we want. So throw away that one since it doesn't have a colon.
+    if (pairAddressString.indexOf(F(":")) < 1) // First colon should be at least at char position 2, but never at 0
+    {
+      // Clear it out, it wasn't what we wanted, set it to nothing.
+      pairAddressString = "";
+    }
+    else
+    {
+      // Log what we got.
+      Log (F("------------------------------------"));
+      Log (F("    Pairing with device address:    "));
+      Log (pairAddressString);
+      Log (F("------------------------------------"));
+    }
   }
 }
 
@@ -2984,7 +2988,12 @@ void SetTrackMetaData(String stringToParse, char empegMessageCode)
   // empeg track metadata.
   if (empegMessageCode == 'N')
   {
-    trackNumberString04 = stringToParse;  // Set value
+    // Track number from the serial port is a zero-based index
+    // so the first track in a playlist is reported as "0" on
+    // the serial port. This disagrees with the empeg display
+    // screen which shows "1" for the first track in a playlist.
+    // so increase this number by 1 each time we parse it.
+    trackNumberString04 = String(stringToParse.toInt()+1);  // Set value increased by 1.
     if (displayTracksOnSerial)
     {
       Log(F("---------------------------------------------------"));
@@ -3810,7 +3819,7 @@ void HandleEmpegStateChange()
     // the stream active even when playback is stopped to prevent
     // cutoffs. In fact, to fix a bug, we actually want to send a
     // streaming start here instead.
-    SendBlueGigaCommand(F("A2DP STREAMING START"));
+    // SendBlueGigaCommand(F("A2DP STREAMING START"));
 
     
     // Send a notification to the head unit that the playback status
@@ -3918,14 +3927,17 @@ void QuickResetBluetooth(int resetType)
     case 0:
       SendBlueGigaCommand(F("RESET"));
       ClearGlobalVariables();
+      DisplayAndSwallowResponses(4, 500);
       break;
     case 1:
       SendBlueGigaCommand(F("BOOT 0"));
       ClearGlobalVariables();
+      DisplayAndSwallowResponses(4, 500);
       break;
     case 2:
       SendBlueGigaCommand(F("SET RESET"));
       ClearGlobalVariables();
+      DisplayAndSwallowResponses(6, 800);
       break;
     default:
       return;
@@ -3943,6 +3955,11 @@ void ClearGlobalVariables()
 {
   transactionLabelPlaybackStatusChanged = "";
   transactionLabelTrackChanged = "";
-  pairAddressString = "";
+
+  // Woops- bugfix. Don't clear this one out during the middle of the pairing process.
+  if (!pairingMode)
+  {
+    pairAddressString = "";
+  }
 }
 
