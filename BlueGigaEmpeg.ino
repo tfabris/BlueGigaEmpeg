@@ -1214,20 +1214,23 @@ void setup()
   // Turn on the built in Arduino LED to indicate the setup activity has begun.
   digitalWrite(LED_BUILTIN, HIGH);
 
+  // Configre the Bluetooth device at startup, call my routine which sets all
+  // data to the desired overall system defaults. This does not erase any
+  // pairing information, that is left untouched.
+  SetGlobalChipDefaults();
+
   // EXPERIMENT: Encountered repeats of the issue where there's a dropout followed by
   // the track metadata failing to update all of a sudden. Also got the opposite problem:
-  // track metadata worked, but the steering wheel controal failed. See if this fixes the
+  // track metadata worked, but the steering wheel controls failed. See if this fixes the
   // issue by fully resetting the bluetooth chip each time that the arduino inexplicably
   // resets itself. See GitHub issue for details:
   //      https://github.com/tfabris/BlueGigaEmpeg/issues/2
   // I don't want to enable this unless I really really have to, because this causes
   // bad user experience when initally connecting to the car stereo at car startup.
+  // NOTE: If doing this, it should occur AFTER the SetGlobalChipDefaults because I saw
+  // some weirdnesses at certain times where if I didn't do a reset after setting the
+  // settings, then some stuff didn't work correctly.
   QuickResetBluetooth(0);      
-
-  // Configre the Bluetooth device at startup, call my routine which sets all
-  // data to the desired overall system defaults. This does not erase any
-  // pairing information, that is left untouched.
-  SetGlobalChipDefaults();
 
   // Turn off the built in Arduino LED to indicate the setup activity is complete
   digitalWrite(LED_BUILTIN, LOW);
@@ -1528,19 +1531,6 @@ void SetGlobalChipDefaults()
   // program. This is for situations where the line level inputs might be used.
   SendBlueGigaCommand(empegGainSettingString);    
 
-  // Docs say that a "RESET" is needed in order for the profile changes above to take effect.
-  // The docs do not make it clear what the difference is between the commands "RESET" and
-  // "BOOT 0", which, to my eye, look like they do the same thing, but I can't be sure.
-  // Note that "RESET" is just a reboot, whereas "SET RESET" is a factory-reset of the chip.
-  // EXPERIMENT - Try doing tge RESET only in cases where the user has pressed the RESET-PAIR
-  // button on my assembly. That means don't do it here, but only do it outside this routine
-  // in places where it is correctly applicable. The purpose of this experiment is so that the
-  // head unit device doesn't repeatedly disconnect and reconnect from the bluetooth more times
-  // than is absolutely necessary when the unit powers up. I have a headset which is quick
-  // enough at reconnecting that it can reconnect immediately after a power cycle, only to 
-  // have it disconnect and reconnect again when this line gets hit.
-  //     QuickResetBluetooth(0);      
-
   Log(F("Done Setting Defaults."));
 }
 
@@ -1597,15 +1587,19 @@ void PairBluetooth()
   // Note that "SET RESET" (factory defaults) is different from "RESET" (which
   // is just a reboot). This does not erase pairings (that is accomplished by
   // the commands above instead).
-  QuickResetBluetooth(2); 
+  QuickResetBluetooth(2); // "2" means factory reset of all settings
 
   // Set up the device for use with the empeg car.
   SetGlobalChipDefaults();
 
   // The reset statement (which originally occured inside the SetGlobalChipDefaults
   // statement) is no longer part of SetGlobalChipDefaults, so we must do it here
-  // as part of the pre-pairing procedure.
-  QuickResetBluetooth(0);    
+  // as part of the pre-pairing procedure. IMPORTANT NOTE: I discovered that this
+  // is a super critical part of the process. It's not enough just to do a SET RESET
+  // and set the chip defaults right before pairing, it's actually necessary to
+  // fully reboot the unit right before pairing, or else the pairing process will
+  // not work correctly. So make sure this gets done before the pairing process.
+  QuickResetBluetooth(0); // "0" means just a reboot
 
   // Freewheel for a moment after setting global chip defaults. Need a time
   // window before the chip will accept the INQUIRY command below.
