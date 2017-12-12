@@ -867,6 +867,8 @@ String rspMatrix[5] =
 // Table of events that we will reject when we received a PDU_REGISTER_NOTIFICATION
 // request for these particular events. The event number for each one is specific and
 // can be found in section 6.3.3 of the BlueGiga iWrap AVRCP command reference documentation.
+// This is part of an attempt to work around a bug where we get queried for these
+// particular registrations when we were not supposed to be queried for them at all.
 int rejMatrixSize = 11;
 String rejMatrix[11][2] =
 {
@@ -2424,10 +2426,10 @@ void RespondToQueries(String queryString)
     //    --> AVRCP NFY INTERIM d 10
     //    SYNTAX ERROR
     //
-    // TO DO: Await response from Silicon Labs tech suppor on this one and fix up
-    // this routine to respond correctly. My support ticket with Silicon Labs is:
-    //
-    // https://siliconlabs.force.com/5001M000017Jb5W
+    // Update: This may be occurring in situations where my code is not getting the
+    // opportunity to correctly respond to the GET_CAPABILITIES 3 message. Silicon
+    // Labs tech support ticket is here:
+    //       https://siliconlabs.force.com/5001M000017Jb5W
     //
     for (int l=0; l<rejMatrixSize; l++)
     {  
@@ -2437,27 +2439,32 @@ void RespondToQueries(String queryString)
         // debugging
         // Log(F("Rejection found."));
         
-        // Experiment: Screw this and simply reset the chip when it hits one
+        // Experiment: Don't respond: Simply reset the chip when it hits one
         // of these things. This works around the problem on my Honda stereo
         // because it stops asking for these messages to be registered on
         // the SECOND connection after startup (it only asks on the first
-        // connection after the startup) and so this is the only thing
-        // I can think of until Silicon Labs answers my support request.
-        // This basically imitates what I have to do by hand at startup.
+        // connection after the startup). It shouldn't ever be asking for
+        // these messages at all because my response to "GET_CAPABILITIES 3"
+        // should have told it that I only want registrations for messages
+        // 1 and 2.
+        //
+        // TO DO: Begin working on the theory that my code isn't always
+        // correctly responding to the "GET_CAPABILITIES 3" query.
+        //
         // WARNING: This crazy messed up workaround has the potential
         // to put this whole thing into an infinite reboot loop, but
-        // it's the best I've got until Silicon labs answers me.
+        // it's the best I've got at the moment. Hopefully it will only
+        // reboot the one time and then work correctly the second time.
+        //
+        Log(F("Unexpected registration message received. Something went wrong. Restarting bluetooth."));
         ForceQuickReconnect();
         return;
 
-        // Below is the code which will respond to the queries that we
+        // Below is dead code which attempts to respond to the queries that we
         // want to reject. If there is a line above to "return" then the
         // code below will not be hit. The code below does not work fully
         // at this time, it responds correctly to some registrations but
         // not to all of them, thanks to incomplete BlueGiga docs.
-
-        // A match has been found, respond to the query
-        // via experimental undocumented syntax.
         queryResponseString = "";
 
         queryResponseString += F("AVRCP NFY INTERIM ");
