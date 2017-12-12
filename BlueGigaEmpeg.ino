@@ -718,7 +718,7 @@ boolean empegStartPause = false;
 // functionality but it's not made clear if it stores all configuration information or just that one.
 // ALSO NOTE: The docs say that the reconnect timer (the first numeric parameter) should be
 // *longer* than 500ms.
-const String autoReconnectString = "SET CONTROL RECONNECT 600 0 0 7 0 A2DP A2DP AVRCP\r\nSTORECONFIG";
+const String autoReconnectString = "SET CONTROL RECONNECT 1600 0 0 7 0 A2DP A2DP AVRCP\r\nSTORECONFIG";
 
 // Debug version of reconnect command for testing and comparison.
 //      const String autoReconnectString = " ";
