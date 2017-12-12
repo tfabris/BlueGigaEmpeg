@@ -619,6 +619,15 @@ const String btAuthTypeString = "SET BT SSP 3 0";
 // codes up to 16 digits long.
 const String btPinCodeString = "SET BT AUTH * 0000";
 
+// Variable to control all debug logging on the Arduino debug USB serial port.
+//   Setting true:
+//      - Mutes all logging to the Arduino debug USB serial port to speed
+//        everything up a little bit.
+//   Setting false:
+//      - Logging occurs to the debug port normally.
+// Set this to true for normal runtme, and set this to false for all debugging work.
+boolean KillAllLogging = true;
+
 // Variable to control whether or not this program performs a conversion of
 // High ASCII to UTF-8 in the code. For instance, on the empeg, you might have
 // a track by "Blue Öyster Cult", with the "Ö" being represented by a High
@@ -2161,6 +2170,9 @@ void GrabPairAddressString(String stringToParse)
 // ----------------------------------------------------------------------------
 void Log(String logMessage)
 {
+  // Don't log if we've turned off all logging.
+  if (KillAllLogging) { return; }
+
   // Make sure the main serial port is available before outputting.
   if (Serial)
   {
@@ -2181,6 +2193,9 @@ void Log(String logMessage)
 // ----------------------------------------------------------------------------
 void LogChar(char logChar)
 {
+  // Don't log if we've turned off all logging.
+  if (KillAllLogging) { return; }
+
   // Make sure the main serial port is available before outputting.
   if (Serial)
   {
