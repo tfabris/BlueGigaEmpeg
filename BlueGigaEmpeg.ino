@@ -2858,7 +2858,7 @@ void ForceQuickReconnect()
   // configuration to do its job and reconnect automatically.
   // This is not the greatest because the reconnect after the boot
   // is still longer than I'd like it to be.
-  QuickResetBluetooth(1);
+  QuickResetBluetooth(0);
 
   // TO DO: If a proper answer is not forthcoming from Silicon Labs tech support
   // then this needs to be made more robust and quicker. This would be done by
@@ -3740,7 +3740,11 @@ void HandleEmpegStateChange()
     // no "cutoff" of the start of the song if we press the play button
     // on the stereo's touch screen. Must do this before we send the
     // command to the empeg so that it happens first.
-    SendBlueGigaCommand(F("A2DP STREAMING START"));
+    // EXPERIMENT - I think that this part might not be needed any more.
+    // We shouldn't need to send streaming start commands more often 
+    // than necessary. Try not sending a streaming start command on
+    // every playback state change. Assume this was already handled elsewhere.
+    //     SendBlueGigaCommand(F("A2DP STREAMING START"));
     
     // Final fix for the "Kenwood Bug". Description of the Kenwood Bug:
     // The AVRCP NFY CHANGED commands work on factory car stereo in
@@ -3813,7 +3817,11 @@ void HandleEmpegStateChange()
     // the stream active even when playback is stopped to prevent
     // cutoffs. In fact, to fix a bug, we actually want to send a
     // streaming start here instead.
-    // SendBlueGigaCommand(F("A2DP STREAMING START"));
+    // EXPERIMENT - I think that this part might not be needed any more.
+    // We shouldn't need to send streaming start commands more often 
+    // than necessary. Try not sending a streaming start command on
+    // every playback state change. Assume this was already handled elsewhere.
+    //     SendBlueGigaCommand(F("A2DP STREAMING START"));
 
     
     // Send a notification to the head unit that the playback status
