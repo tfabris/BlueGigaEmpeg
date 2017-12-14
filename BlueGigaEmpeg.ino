@@ -883,19 +883,19 @@ String rspMatrix[5] =
 // This is part of an attempt to work around a bug where we get queried for these
 // particular registrations when we were not supposed to be queried for them at all.
 int rejMatrixSize = 11;
-String rejMatrix[11][2] =
+String rejMatrix[11] =
 {
-  {"TRACK_REACHED_END",                   "3"},
-  {"TRACK_REACHED_START",                 "4"},
-  {"PLAYBACK_POSITION_CHANGED",           "5"},
-  {"BATT_STATUS_CHANGED",                 "6"},
-  {"SYSTEM_STATUS_CHANGED",               "7"},
-  {"PLAYER_APPLICATION_SETTING_CHANGED",  "8"},
-  {"NOW_PLAYING_CHANGED",                 "9"},
-  {"AVAILABLE_PLAYERS_CHANGED",           "10"},
-  {"ADDRESSED_PLAYERS_CHANGED",           "11"},
-  {"UIDS_CHANGED",                        "12"},
-  {"VOLUME_CHANGED",                      "13"},
+ "TRACK_REACHED_END",                   
+ "TRACK_REACHED_START",                 
+ "PLAYBACK_POSITION_CHANGED",           
+ "BATT_STATUS_CHANGED",                 
+ "SYSTEM_STATUS_CHANGED",               
+ "PLAYER_APPLICATION_SETTING_CHANGED",  
+ "NOW_PLAYING_CHANGED",                 
+ "AVAILABLE_PLAYERS_CHANGED",           
+ "ADDRESSED_PLAYERS_CHANGED",           
+ "UIDS_CHANGED",                        
+ "VOLUME_CHANGED",                      
 };
 
 // Reserve variable space for the transaction status label used to hold a
@@ -2417,24 +2417,27 @@ void RespondToQueries(String queryString)
       transactionLabelTrackChanged = transactionLabel;
     }
 
-    // EXPERIMENTAL:
     // Special case to work around bug which hung the headunit stereo intermittently.
-    // Reject certain attempts to do PDU_REGISTER_NOTIFICATION for certain types of
-    // events which we are not going to be using. The table of these events and their
-    // ID codes is defined in global variables at the top of this program.
+    // Sometimes the stereo would attempt to do PDU_REGISTER_NOTIFICATION for certain
+    // types of events which we are not going to be using. The table of these events
+    // and their ID codes is defined in global variables at the top of this program.
     // Example request comes in from the host stereo like this:
     //   AVRCP 0 PDU_REGISTER_NOTIFICATION 4 TRACK_REACHED_END 0
-    // We need to respond to each of these but there is a problem where they are not
-    // all correctly documented in the BlueGiga documentation, and so many attempts
-    // to respond to some of these result in SYNTAX ERROR. An example of a response
-    // might look like:
+    // We should not have gotten a registration for that because I had already
+    // earlier responded to "GET_CAPABILITIES 3" with a response indicating I only
+    // wanted to register messages 1 and 2 (TRACK_CHANGED and PLAYBACK_STATUS_CHANGED)
+    // so why is it sending me registrations for these other types of codes? It must
+    // be a bug, the only question is whose bug.
+    // 
+    // Initially I tried to respond to each of these, but there is a problem where
+    // they are not all correctly documented in the BlueGiga documentation, and so
+    // many attempts to respond to some of these result in SYNTAX ERROR. An example
+    // of a response might look like:
     //      AVRCP NFY INTERIM 4 3 0
     // Where 4 is the transaction label, 3 is the event ID code for "Track
     // reached end", and 0 is the parameter. Though that one works, there are
-    // others which do not work and get SYNTAX ERROR. In particular, I am currently
-    // having trouble responding to the messages
-    //
-    // NOW_PLAYING_CHANGED    and    AVAILABLE_PLAYERS_CHANGED
+    // others which do not work and get SYNTAX ERROR. In particular, I am unable to
+    // respond to the messages NOW_PLAYING_CHANGED and AVAILABLE_PLAYERS_CHANGED.
     //
     // I have tried many different syntaxes and parameters and all result in
     // SYNTAX ERROR. Examples:
@@ -2447,20 +2450,20 @@ void RespondToQueries(String queryString)
     //    --> AVRCP NFY INTERIM d 10
     //    SYNTAX ERROR
     //
-    // Update: This may be occurring in situations where my code is not getting the
-    // opportunity to correctly respond to the GET_CAPABILITIES 3 message. Silicon
+    // Working on the theory that this may be occurring in situations where my code
+    // is not getting the opportunity to correctly respond to the
+    // GET_CAPABILITIES 3 message correctly, though I have seen this repro when
+    // I had in fact just responded to it. However there is a chance that the
+    // chip might have gotten reset after the response, thus the problem. Silicon
     // Labs tech support ticket is here:
     //       https://siliconlabs.force.com/5001M000017Jb5W
     //
     for (int l=0; l<rejMatrixSize; l++)
     {  
       // Make the string comparison to find out if there is a match.
-      if (queryString.indexOf(rejMatrix[l][0]) > (-1))
+      if (queryString.indexOf(rejMatrix[l]) > (-1))
       {
-        // debugging
-        // Log(F("Rejection found."));
-        
-        // Experiment: Don't respond: Simply reset the chip when it hits one
+        // For now: Don't respond: Simply reset the chip when it hits one
         // of these things. This works around the problem on my Honda stereo
         // because it stops asking for these messages to be registered on
         // the SECOND connection after startup (it only asks on the first
@@ -2470,7 +2473,8 @@ void RespondToQueries(String queryString)
         // 1 and 2.
         //
         // TO DO: Begin working on the theory that my code isn't always
-        // correctly responding to the "GET_CAPABILITIES 3" query.
+        // correctly responding to the "GET_CAPABILITIES 3" query and find
+        // out how to fix it.
         //
         // WARNING: This crazy messed up workaround has the potential
         // to put this whole thing into an infinite reboot loop, but
@@ -2479,91 +2483,6 @@ void RespondToQueries(String queryString)
         //
         Log(F("Unexpected registration message received. Something went wrong. Restarting bluetooth."));
         ForceQuickReconnect();
-        return;
-
-        // Below is dead code which attempts to respond to the queries that we
-        // want to reject. If there is a line above to "return" then the
-        // code below will not be hit. The code below does not work fully
-        // at this time, it responds correctly to some registrations but
-        // not to all of them, thanks to incomplete BlueGiga docs.
-        queryResponseString = "";
-
-        queryResponseString += F("AVRCP NFY INTERIM ");
-
-        // First parameter is the transaction label
-        queryResponseString += transactionLabel;
-
-        // Add a space after the transaction label to precede
-        // the next parameter which will come from a string table.
-        queryResponseString += F(" ");
-
-        // Second parameter is the event ID from the table of events,
-        // for example event ID 3 means the event named "TRACK_REACHED_END",
-        // full details in section 6.3.3 of the BlueGiga iWrap AVRCP 
-        // command reference documentation from Silicon Labs.
-        queryResponseString += rejMatrix[l][1];
-
-        // Final parameter(s) differ depending on the registration we're responding
-        // to. Attempt to respond correctly to each registration request.
-        // For some on the rejection list, there will be no additional parameters
-        // other than what was already built up above and just let it fall through.
-        // For the ones I'm unsure about, below are the work in progress responses,
-        // not all of which work at the current time.
-        if(rejMatrix[l][0] == F("BATT_STATUS_CHANGED"))
-        {
-          queryResponseString += F(" 0");   // 0 = Battery Status Normal
-        }  
-
-        if(rejMatrix[l][0] == F("SYSTEM_STATUS_CHANGED"))
-        {
-          queryResponseString += F(" 0");   // 0 = System Status Power On
-        }  
-
-        if(rejMatrix[l][0] == F("PLAYER_APPLICATION_SETTING_CHANGED"))
-        {
-          queryResponseString += F(" 1");   // 1 = There will be a single following key/value pair
-          queryResponseString += F(" 1");   // 1 = parameter key is 1=Equalizer
-          queryResponseString += F(" 1");   // 1 = Equalizer value is 1=Off - Hopefully should not affect our head unit.
-        }  
-
-        if(rejMatrix[l][0] == F("NOW_PLAYING_CHANGED"))
-        {
-          // try no parameters here. Spec says no parameters should be here. However that does not work.
-          // try 
-          queryResponseString += F(" 1 1 1");  // experiments
-        }  
-
-        if(rejMatrix[l][0] == F("AVAILABLE_PLAYERS_CHANGED"))  
-        {
-          // "The interim and final responses to the notify shall contain no parameters."
-          // However that does not work. Try...
-          queryResponseString += F(" 1 1 1");  // experiments
-        }  
-
-        if(rejMatrix[l][0] == F("ADDRESSED_PLAYERS_CHANGED"))  
-        {
-          queryResponseString += F(" 1");   // 1 = Unique media player id
-          queryResponseString += F(" 0");   // 0 = "Database unaware players shall always return UIDcounter=0"
-        } 
-
-        if(rejMatrix[l][0] == F("UIDS_CHANGED"))  
-        {
-          queryResponseString += F(" 0");   // 0 = "Database unaware players shall always return UIDcounter=0"
-        } 
-
-        if(rejMatrix[l][0] == F("VOLUME_CHANGED"))  
-        {
-          queryResponseString += F(" 0");   // 0 = Absolute volume was set to zero. Hopefully should not affect our head unit.
-        } 
-
-        // Debugging
-        // Log("-=: " + queryResponseString);
-
-        // Response string is assembled, send it:
-        SendBlueGigaCommand(queryResponseString);
-
-        // Return out of this routine because we don't want to accidentally
-        // respond to something below when we intended to reject it wholesale.
         return;
       }
     }
@@ -3545,9 +3464,7 @@ void HandleEmpegString(String theString)
       // time because of the deduplication that Mark Lord is doing in the new
       // Hijack. Genre might not come out any more. Currently experimenting with
       // simply doing this every time.
-      Log(F("CALLING HANDLE EMPEG STATE CHANGE HERE ==============================="));
       HandleEmpegStateChange();
-      
 
       // If it was one of these pieces of data (like a track title or such)
       // then we are done and can return from this routine to save time.
@@ -3573,7 +3490,7 @@ void HandleEmpegString(String theString)
 
   // Total tracks in current playlist is not output on the empeg serial by default but
   // with a new version of Mark Lord's Hijack then we can now parse this information
-  // sometimes. Handle that here because it will arrive at intermittent times due.
+  // sometimes. Handle that here because it will arrive at intermittent times due
   // to the fact that Hijack only gets this data after the disk drive spins down.
   if (empegMessageCode == 'R')
   {
