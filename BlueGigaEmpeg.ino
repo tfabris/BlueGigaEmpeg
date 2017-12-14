@@ -626,7 +626,30 @@ const String btPinCodeString = "SET BT AUTH * 0000";
 //   Setting false:
 //      - Logging occurs to the debug port normally.
 // Set this to true for normal runtme, and set this to false for all debugging work.
-boolean KillAllLogging = true;
+boolean KillAllLogging = false;
+
+// Experimental: String to tell the unit to automatically try reconnecting every few seconds
+// if it ever becomes disconnected from its main pairing buddy. Trying to make it grab hold
+// of the car stereo as soon as the car turns on, instead of connecting to my cellphone every time.
+// Currently experimenting with two possible versions of this.
+//
+// Version 1: "SET CONTROL RECONNECT". Getting the timing parameter just right on this
+// command seems to affect whether or not the host stereo asks me for incorrect PDU messages
+// and other possible bug-like issues I encountered. The string includes a baked-in second
+// additional STORECONFIG command to store the configuration of the connection. The docs
+// say that this STORECONFIG command is merely to store the reconnect functionality but it's
+// not made clear if it stores all configuration information or just that one. NOTE: The
+// docs say that the reconnect timer (the first numeric parameter) should be *longer* than
+// 500ms. However I have found it should even be longer than that, to prevent other timing
+// and bug issues, seemingly caused by trying to reconnect too quickly. 
+// const String autoReconnectString = "SET CONTROL RECONNECT 4800 0 0 7 0 A2DP A2DP AVRCP\r\nSTORECONFIG";
+//
+// Version 2: "SET CONTROL AUTOCALL". This one appears to work better and more reliably
+// than "SET CONTROL RECONNECT" and it seems to induce fewer bugs. It's not perfect but
+// it's better than nothing. This one does not seem to need a "STORECONFIG" or "RESET" or
+// anything like that. Issuing it once after a successful pairing seems to be enough for it.
+// Note: "19" is the secret code for "A2DP" (it is the "L2CAP PSM" code for A2DP).
+const String autoReconnectString = "SET CONTROL AUTOCALL 19 501 A2DP";
 
 // Variable to control whether or not this program performs a conversion of
 // High ASCII to UTF-8 in the code. For instance, on the empeg, you might have
@@ -718,16 +741,6 @@ boolean empegStartPause = false;
 
 // Arduino serial port 1 is connected to empeg's RS-232 port via MAX232 circuit.
 #define EmpegSerial Serial1
-
-// Experimental: String to tell the unit to automatically try reconnecting every few seconds
-// if it ever becomes disconnected from its main pairing buddy. Trying to make it grab hold
-// of the car stereo as soon as the car turns on, instead of connecting to my cellphone every time.
-// NOTE: This includes a baked-in second additional command to store the configuration of the
-// connection. The docs say that this STORECONFIG command is merely to store the reconnect
-// functionality but it's not made clear if it stores all configuration information or just that one.
-// ALSO NOTE: The docs say that the reconnect timer (the first numeric parameter) should be
-// *longer* than 500ms.
-const String autoReconnectString = "SET CONTROL RECONNECT 1600 0 0 7 0 A2DP A2DP AVRCP\r\nSTORECONFIG";
 
 // Debug version of reconnect command for testing and comparison.
 //      const String autoReconnectString = " ";
@@ -1334,6 +1347,8 @@ void verifySerialBuffer()
   // Verify serial buffer size
   if ((myRxBufferSizeInt < 128) || (myTxBufferSizeInt < 128))
   {
+    Log("Serial receive buffer size: " + (String)myRxBufferSizeInt);
+    Log("Serial xmit buffer size:    " + (String)myTxBufferSizeInt);
     Log(F("------------------------------------------------------------------------------"));
     Log(F("         Compilation problem has occurred with this Arduino sketch.           "));
     Log(F(" "));
