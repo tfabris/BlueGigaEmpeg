@@ -626,7 +626,7 @@ const String btPinCodeString = "SET BT AUTH * 0000";
 //   Setting false:
 //      - Logging occurs to the debug port normally.
 // Set this to true for normal runtme, and set this to false for all debugging work.
-boolean KillAllLogging = false;
+boolean KillAllLogging = true;
 
 // Experimental: String to tell the unit to automatically try reconnecting every few seconds
 // if it ever becomes disconnected from its main pairing buddy. Trying to make it grab hold
@@ -642,14 +642,14 @@ boolean KillAllLogging = false;
 // docs say that the reconnect timer (the first numeric parameter) should be *longer* than
 // 500ms. However I have found it should even be longer than that, to prevent other timing
 // and bug issues, seemingly caused by trying to reconnect too quickly. 
-// const String autoReconnectString = "SET CONTROL RECONNECT 4800 0 0 7 0 A2DP A2DP AVRCP\r\nSTORECONFIG";
+const String autoReconnectString = "SET CONTROL RECONNECT 4800 0 0 7 0 A2DP A2DP AVRCP\r\nSTORECONFIG";
 //
-// Version 2: "SET CONTROL AUTOCALL". This one appears to work better and more reliably
-// than "SET CONTROL RECONNECT" and it seems to induce fewer bugs. It's not perfect but
-// it's better than nothing. This one does not seem to need a "STORECONFIG" or "RESET" or
-// anything like that. Issuing it once after a successful pairing seems to be enough for it.
+// Version 2: "SET CONTROL AUTOCALL". This seems to work well, when it works. But some
+// of its other issues are not livable. For example sometimes it does a good job of
+// reconnecting after power on, but then other times it completely fails to even attempt
+// any kind of reconnection whatsoever after power on. Without rhyme or reason. 
 // Note: "19" is the secret code for "A2DP" (it is the "L2CAP PSM" code for A2DP).
-const String autoReconnectString = "SET CONTROL AUTOCALL 19 501 A2DP";
+// const String autoReconnectString = "SET CONTROL AUTOCALL 19 501 A2DP";
 
 // Variable to control whether or not this program performs a conversion of
 // High ASCII to UTF-8 in the code. For instance, on the empeg, you might have
@@ -1604,10 +1604,16 @@ void PairBluetooth()
   Log (F(" "));
 
   // Erase all previous bluetooth pairings (not included in the factory default reset below).
-  SendBlueGigaCommand(F("SET BT PAIR *"));
+  SendBlueGigaCommand(F("SET BT PAIR *"));  // Star is required to erase pairings
 
-  // Erase all previous auto-reconnect settings (not sure if included in the factory default reset).
-  SendBlueGigaCommand(F("SET CONTROL RECONNECT *"));
+  // Erase all previous auto-reconnect settings (not included in the factory default
+  // reset and must be disabled before attempting to pair).
+  SendBlueGigaCommand(F("SET CONTROL AUTOCALL"));     // Blank is required to disable 
+  SendBlueGigaCommand(F("SET CONTROL RECONNECT *"));  // Star is required to disable
+  SendBlueGigaCommand(F("STORECONFIG"));              // Make sure SET CONTROL RECONNECT is stored
+
+  // Make certain that the above changes are saved and "take" - RESET seems to be the sure way
+  QuickResetBluetooth(0);
 
   // Reset device to factory defaults using "SET RESET" command (parameter 2).
   // Note that "SET RESET" (factory defaults) is different from "RESET" (which
@@ -3310,6 +3316,13 @@ void HandleEmpegString(String theString)
   // look like this, and they always appear in a group with
   // the Genre at the end as the last one in the group.
   //
+  // UPDATE: With later Hijack versions and a "suppress_notify=2" in its config.ini,
+  // these have been significantly shortened to remove the "serial_notify_thread.cpp",
+  // the number and the colon, so the strings start at the @@ signs.
+  // Also they may not come in a big group any more, they may get deduplicated
+  // so that less serial data is sent. So if you play two tracks with the same genre
+  // then the genre might not get displayed.
+  //
   // serial_notify_thread.cpp: 116:@@ N<tracknumber, actually playlist position, starts at zero>
   // serial_notify_thread.cpp: 117:@@ F<fid> (we don't care about this one and will not process it)
   // serial_notify_thread.cpp: 191:@@ Z<album name, added by Mark Lord in recent hijack versions>
@@ -3526,22 +3539,15 @@ void HandleEmpegString(String theString)
       // with the (fairly large) set of queries that it makes when it gets this
       // message, so you should only do it when the track actually changes.
       // 
-      // Currently trying to set this only when we get a "Genre" change ("G")
+      // Originally this was set this only when we get a "Genre" change ("G")
       // since that is the last of the track information sets to appear on the
-      // serial port in a block of messages. So if we set it at the end then
-      // we only do this once, rather than for every line of data we recieve.
-      // You may be wondering: What happens if the Genre of a track isn't
-      // set at all, or if it's set to a null string. Does the emepg serial
-      // port still report the Genre? Does it still send a message to the
-      // serial port with code "G", even if the Genre is just a blank string?
-      // Well, I tested this and it does indeed send a line with the "G" trigger
-      // and just blank characters after the G. So we will send a null string
-      // and the car stereo will get a null string and just put blank or
-      // unknown in that spot on its screen. At least that's the way mine worked.
-      if (empegMessageCode == 'G')
-      {
-         HandleEmpegStateChange();
-      }
+      // serial port in a block of messages. However now we have to do it every
+      // time because of the deduplication that Mark Lord is doing in the new
+      // Hijack. Genre might not come out any more. Currently experimenting with
+      // simply doing this every time.
+      Log(F("CALLING HANDLE EMPEG STATE CHANGE HERE ==============================="));
+      HandleEmpegStateChange();
+      
 
       // If it was one of these pieces of data (like a track title or such)
       // then we are done and can return from this routine to save time.
