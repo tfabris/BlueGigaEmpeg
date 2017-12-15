@@ -282,6 +282,12 @@
 // GND, and connect the other leads of each resistor to each other. The RX-input of the WT32i then
 // gets connected to that same point (where the two resistors are tied together).
 //
+// MAYBE:
+// Bluetooth chip+board RST (reset) pin connected to Pin 51 of the Arduino board.
+// This is working for Mark Lord, but my chip fried immediately after trying this,
+// so I consider this to be a risk. Perhaps this needs to go through a diode in order to work.
+// Mark is still investigating.
+//
 // Self jumpers and switches on the Bluetooth chip+board, the BetzTechnik WT32i Breakout board V2:
 //
 //   IMPORTANT: Must cut the jumper at "J4 FTDI_+5v" but only do this AFTER successfully
@@ -626,7 +632,7 @@ const String btPinCodeString = "SET BT AUTH * 0000";
 //   Setting false:
 //      - Logging occurs to the debug port normally.
 // Set this to true for normal runtme, and set this to false for all debugging work.
-boolean KillAllLogging = true;
+boolean KillAllLogging = false;
 
 // Experimental: String to tell the unit to automatically try reconnecting every few seconds
 // if it ever becomes disconnected from its main pairing buddy. Trying to make it grab hold
@@ -1064,10 +1070,10 @@ long trackPlaybackPositionMs = -1L; // Initialize to flag value meaning "unknown
 
 // String to control the audio routing on the chip. 
 // Use this string if you are using the Line In jacks on the bluetooth device for audio (analog):
-// const String btAudioRoutingControlString = "SET CONTROL AUDIO INTERNAL INTERNAL EVENT KEEPALIVE";    
+const String btAudioRoutingControlString = "SET CONTROL AUDIO INTERNAL INTERNAL EVENT KEEPALIVE";    
 // Use this string if you are using the I2S aka IIS connection on the bluetooth device
 // (this is a special digital connection which requires modifying inside of empeg Car player):
-const String btAudioRoutingControlString = "SET CONTROL AUDIO INTERNAL I2S_SLAVE EVENT KEEPALIVE 16";
+// const String btAudioRoutingControlString = "SET CONTROL AUDIO INTERNAL I2S_SLAVE EVENT KEEPALIVE 16";
 
 // Strings to set the gain level of the Empeg. See bluetooth chip docs for gain level table.
 //
@@ -1135,6 +1141,10 @@ int lastPairButtonState = LOW;
 // Variable for pin number of the reset/pair indicator blue LED.
 const int pairLedPin = 50;
 
+// Variable for the pin number of the Arduino pin that is connected to the bluetooth chip's
+// reset pin.
+const int resetLinePin = 51;
+
 // Variable to globally keep track of whether we have recently initiated reset/pairing mode.
 bool pairingMode = false;
 
@@ -1171,6 +1181,11 @@ void setup()
   
   // Set up the pair button to be in the "read" state.
   pinMode(pairButtonPin, INPUT);
+
+  // Set up the reset line pin to be in a clean "read" state most of the time
+  // and only be set to write mode when we're using it.
+  // EDIT: Temporarily not doing this.
+  // pinMode(resetLinePin, INPUT_PULLUP);
 
   // Reserve bytes for the input strings, which are the strings we check to
   // see if there is a valid processable bluetooth AVRCP command incoming
@@ -1243,17 +1258,10 @@ void setup()
   // pairing information, that is left untouched.
   SetGlobalChipDefaults();
 
-  // EXPERIMENT: Encountered repeats of the issue where there's a dropout followed by
-  // the track metadata failing to update all of a sudden. Also got the opposite problem:
-  // track metadata worked, but the steering wheel controls failed. See if this fixes the
-  // issue by fully resetting the bluetooth chip each time that the arduino inexplicably
-  // resets itself. See GitHub issue for details:
-  //      https://github.com/tfabris/BlueGigaEmpeg/issues/2
-  // I don't want to enable this unless I really really have to, because this causes
-  // bad user experience when initally connecting to the car stereo at car startup.
-  // NOTE: If doing this, it should occur AFTER the SetGlobalChipDefaults because I saw
-  // some weirdnesses at certain times where if I didn't do a reset after setting the
-  // settings, then some stuff didn't work correctly.
+  // Reset the bluetooth chip every time the Arduino chip is started up and 
+  // after we have set all of its defaults (which will still be saved after
+  // the reset; this is a soft reset). Resetting it here prevents bugs where
+  // the bluetooth state is desynchronized from the Arduino state.
   QuickResetBluetooth(0);      
 
   // Turn off the built in Arduino LED to indicate the setup activity is complete
@@ -3466,6 +3474,13 @@ void HandleEmpegString(String theString)
       // simply doing this every time.
       HandleEmpegStateChange();
 
+      // If we are going back to non-deduplication and triggering off of Genre
+      // again, then switch the code to this instead:
+      // if (empegMessageCode == 'G')
+      // {
+      //   HandleEmpegStateChange();
+      // }
+
       // If it was one of these pieces of data (like a track title or such)
       // then we are done and can return from this routine to save time.
       return;
@@ -3873,7 +3888,7 @@ void ReportEmpegPlayingState()
 // itself. Should call this routine instead.
 // 
 // Parameter:
-// resetType       0 = Use the "RESET" command
+// resetType       0 = Use the "RESET" command and also physically reset BT module
 //                 1 = Use the "BOOT 0" command
 //                 2 = Use the "SET RESET" command (factory defaults)
 //
@@ -3889,21 +3904,53 @@ void QuickResetBluetooth(int resetType)
     case 0:
       SendBlueGigaCommand(F("RESET"));
       ClearGlobalVariables();
+
+      // Additional hardware reset of bluetooth after sofware reset.
+      // this allows the unit to power up fully on any voltage instead
+      // of being in sleep mode at board startup.
+      ResetBluetoothPin(); 
       DisplayAndSwallowResponses(4, 500);
       break;
+
     case 1:
       SendBlueGigaCommand(F("BOOT 0"));
       ClearGlobalVariables();
       DisplayAndSwallowResponses(4, 500);
       break;
+
     case 2:
       SendBlueGigaCommand(F("SET RESET"));
       ClearGlobalVariables();
       DisplayAndSwallowResponses(6, 800);
       break;
+
     default:
       return;
   }
+}
+
+// ----------------------------------------------------------------------------
+// ResetBluetoothPin
+//
+// Physically reset the bluetooth module via its RST pin. This uses a
+// connection between one of the Arduino's GPIO pins and the reset pin
+// on the bluetooth module itself.
+// ----------------------------------------------------------------------------
+void ResetBluetoothPin()
+{
+  // Temporarily not doing this, my board fried after trying it and I don't know why.
+  // Need to diagnose this and figure out what's wrong.
+  return;
+
+  Log(F("Physically resetting bluetooth module with RST line - Begin."));  
+  pinMode(resetLinePin, INPUT_PULLUP);
+  DisplayAndSwallowResponses(1, 300);
+  digitalWrite(resetLinePin, LOW);
+  pinMode(resetLinePin, OUTPUT);
+  digitalWrite(resetLinePin, LOW);
+  DisplayAndSwallowResponses(1, 50);
+  pinMode(resetLinePin, INPUT);
+  Log(F("Physically resetting bluetooth module with RST line - Complete."));  
 }
 
 // ----------------------------------------------------------------------------
