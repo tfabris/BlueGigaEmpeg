@@ -519,7 +519,7 @@
 //
 // Install the latest Hijack Kernel onto the empeg car player if it is not already
 // installed (link to Hijack in "Resources", above). Make sure it is Hijack version
-// 522 or later.
+// 524 or later.
 //
 // Open up the Hijack kernel settings on the player via a longpress on the knob.
 // Change "Serial port assignment" to "Player uses serial port" and follow the
@@ -3246,9 +3246,6 @@ void HandleEmpegString(String theString)
   // UPDATE: With later Hijack versions and a "suppress_notify=2" in its config.ini,
   // these have been significantly shortened to remove the "serial_notify_thread.cpp",
   // the number and the colon, so the strings start at the @@ signs.
-  // Also they may not come in a big group any more, they may get deduplicated
-  // so that less serial data is sent. So if you play two tracks with the same genre
-  // then the genre might not get displayed.
   //
   // serial_notify_thread.cpp: 116:@@ N<tracknumber, actually playlist position, starts at zero>
   // serial_notify_thread.cpp: 117:@@ F<fid> (we don't care about this one and will not process it)
@@ -3466,20 +3463,13 @@ void HandleEmpegString(String theString)
       // with the (fairly large) set of queries that it makes when it gets this
       // message, so you should only do it when the track actually changes.
       // 
-      // Originally this was set this only when we get a "Genre" change ("G")
+      // Trigger this only when we get the line containing a "Genre" change ("G")
       // since that is the last of the track information sets to appear on the
-      // serial port in a block of messages. However now we have to do it every
-      // time because of the deduplication that Mark Lord is doing in the new
-      // Hijack. Genre might not come out any more. Currently experimenting with
-      // simply doing this every time.
-      HandleEmpegStateChange();
-
-      // If we are going back to non-deduplication and triggering off of Genre
-      // again, then switch the code to this instead:
-      // if (empegMessageCode == 'G')
-      // {
-      //   HandleEmpegStateChange();
-      // }
+      // serial port in a block of messages.
+      if (empegMessageCode == 'G')
+      {
+        HandleEmpegStateChange();
+      }
 
       // If it was one of these pieces of data (like a track title or such)
       // then we are done and can return from this routine to save time.
