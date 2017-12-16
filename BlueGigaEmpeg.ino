@@ -625,15 +625,6 @@ const String btAuthTypeString = "SET BT SSP 3 0";
 // codes up to 16 digits long.
 const String btPinCodeString = "SET BT AUTH * 0000";
 
-// Variable to control all debug logging on the Arduino debug USB serial port.
-//   Setting true:
-//      - Mutes all logging to the Arduino debug USB serial port to speed
-//        everything up a little bit.
-//   Setting false:
-//      - Logging occurs to the debug port normally.
-// Set this to true for normal runtme, and set this to false for all debugging work.
-boolean KillAllLogging = false;
-
 // Experimental: String to tell the unit to automatically try reconnecting every few seconds
 // if it ever becomes disconnected from its main pairing buddy. Trying to make it grab hold
 // of the car stereo as soon as the car turns on, instead of connecting to my cellphone every time.
@@ -1219,7 +1210,7 @@ void setup()
   // to the USB interface that is used for Arduino monitoring and debugging.
   Serial.begin(115200);
   Log(F("Built in Arduino Serial has been started."));
-  
+
   // Set the data rate for the Arduino Mega hardware serial port connected
   // to the bluetooth module's serial port. This is the one that is directly
   // connected because it is UART-to-UART, pin-to-pin, it doesn't have to go
@@ -2201,9 +2192,6 @@ void GrabPairAddressString(String stringToParse)
 // ----------------------------------------------------------------------------
 void Log(String logMessage)
 {
-  // Don't log if we've turned off all logging.
-  if (KillAllLogging) { return; }
-
   // Make sure the main serial port is available before outputting.
   if (Serial)
   {
@@ -2224,9 +2212,6 @@ void Log(String logMessage)
 // ----------------------------------------------------------------------------
 void LogChar(char logChar)
 {
-  // Don't log if we've turned off all logging.
-  if (KillAllLogging) { return; }
-
   // Make sure the main serial port is available before outputting.
   if (Serial)
   {
@@ -3095,12 +3080,6 @@ String ReplaceHighAsciiWithUtf8(String stringToMakeUtf8Char)
   {
     // Get the character found at that position of the input string.
     oneStringChar = stringToMakeUtf8Char.charAt(loopVar);
-
-    // Debugging output, disable in final release version.
-    // Prints out the decimal values of each character in 
-    // the converted string so I can see them.
-    //     Serial.print(oneStringChar, DEC);
-    //     Serial.print(F("\r\n"));
 
     // Low ASCII values, i.e. 0-127, are the same in UTF-8 and ASCII.
     if ((oneStringChar >= 0) && (oneStringChar <= 127))
