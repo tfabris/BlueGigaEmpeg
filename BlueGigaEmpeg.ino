@@ -2195,14 +2195,15 @@ void RespondToQueries(String queryString)
 // ----------------------------------------------------------------------------
 void ForceQuickReconnect()
 {
-  // TO DO: Add a section here which only allows this to occur once per
-  // powerup session by checking a global flag variable and toggling it here.
-  // This would prevent an infinte reboot loop but would still not solve
-  // the larger problem.
-
-  // TO DO: If a proper answer is not forthcoming from Silicon Labs tech supprt
-  // then make this into an optional workaround driven by a variable at the
+  // TO DO: Make this into an optional workaround driven by a flag at the
   // top of the program.
+
+  // TO DO: Make this more robust and quicker. Record the paired device's
+  // address in a global variable (storing it based on the PAIR command
+  // for situations when this device inititated pairing, or the RING command,
+  // for situations when the host stereo initiated pairing) and then issue a 
+  // disconnect/reconnect directly (I think it would be CLOSE followed by RING
+  // maybe).  
 
   // Make sure bluetooth chip configured and ready to
   // immediately reconnect as soon as it disconnects.
@@ -2213,12 +2214,6 @@ void ForceQuickReconnect()
   // This is not the greatest because the reconnect after the boot
   // is still longer than I'd like it to be.
   QuickResetBluetooth(0);
-
-  // TO DO: If a proper answer is not forthcoming from Silicon Labs tech support
-  // then this needs to be made more robust and quicker. This would be done by
-  // recording the paired device's address (storing it based on the PAIR command
-  // for situations when this device inititated pairing, or the RING command,
-  // for situations when the host stereo initiated pairing). 
 }
 
 // ----------------------------------------------------------------------------
@@ -2298,20 +2293,18 @@ void SetTrackMetaData(String stringToParse, char empegMessageCode)
   // Pre-strip doublequote characters out of the track data because
   // our messages to the bluetooth chip need doublequote characters
   // as delimiters when we send metadata up to the host stereo.
-  // This fixes that particular problem, but not optimally.
-  // TO DO: Figure out how to PROPERLY escape single and double
-  // quotes in track metadata in the BlueGiga iWrap command language.
+  // Silicon Labs support says there is no more elegant way to do
+  // this: Repacing doublequote with two single quotes is the best
+  // way so far. It actually looks really good on my car stereo
+  // touchscreen display so I am sticking with this for now.
   stringToParse.replace(F("\""), F("''"));
 
   // Pre-strip single quote characters too, I believe I ran into a
   // problem with this track title by The Police:
   //     Hungry for You (J'aurais Toujours Faim de Toi)
-  // This fixes that particular problem, but not optimally.
-  // TO DO: Figure out how to PROPERLY escape single and double
-  // quotes in track metadata in the BlueGiga iWrap command language.
   // UPDATE: This turns out to not actually be required at all. The
   // issue I had with that particular song title was a serial buffer
-  // problem and unrelated to the single quote.
+  // problem and unrelated to the single quote. Do not do this.
   //         stringToParse.replace(F("'"), F("`"));
 
   // Make sure string is trimmed of white space and line breaks
@@ -2329,11 +2322,6 @@ void SetTrackMetaData(String stringToParse, char empegMessageCode)
   // Track Number. Actually this isn't really the track
   // number, it's the playlist position in the current
   // running order, but hey, we work with what we've got.
-  // TO DO: Find out how to get the actual tracknumber
-  // from the empeg's track as opposed to the playlist
-  // position and optionally display that instead. The
-  // actual track number is one of the fields in the
-  // empeg track metadata.
   if (empegMessageCode == 'N')
   {
     // Track number from the serial port is a zero-based index
@@ -2897,8 +2885,6 @@ void HandleEmpegString(String theString)
       trackTotalNumberString05 = empegDetailString;  
 
       // Tell the head unit that we have a new playlist length to report to it.
-      // TO DO: Test to see if this works and if it's "Too much" for the
-      // system to have this happening too often.
       HandleEmpegStateChange();
     }
   }
