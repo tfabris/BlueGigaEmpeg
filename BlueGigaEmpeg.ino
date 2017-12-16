@@ -1880,14 +1880,17 @@ void RespondToQueries(String queryString)
           // should have told it that I only want registrations for messages
           // 1 and 2.
           //
-          // TO DO: Begin working on the theory that my code isn't always
-          // correctly responding to the "GET_CAPABILITIES 3" query and find
-          // out how to fix it.
-          //
           // WARNING: This crazy messed up workaround has the potential
           // to put this whole thing into an infinite reboot loop, but
           // it's the best I've got at the moment. Hopefully it will only
           // reboot the one time and then work correctly the second time.
+          // If you get an infinite reboot loop, set the variable 
+          // reconnectIfBadRegistrationReceived at the top of the program
+          // to "false", though that means you have bigger problems because
+          // your host stereo is not paying attention to you when you told
+          // it only register for messages 1 and 2. Your host stereo will
+          // likely hang and not get track titles or be able to send
+          // steering wheel control commands to the player.
           //
           Log(F("Unexpected registration message received. Something went wrong. Restarting bluetooth."));
           ForceQuickReconnect();
