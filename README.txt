@@ -91,12 +91,13 @@ Upgrading firmware on the WT32i:
 Firmware Update Guide:      https://www.silabs.com/documents/login/user-guides/UG216.pdf
 Page containing firmware:   https://www.silabs.com/documents/login/data-sheets/WT32i-DataSheet.pdf
 Link to firmware zip file:  https://www.silabs.com/documents/login/software/iWRAP-Firmware-Releases.zip
+Prolific PL2303 USB driver: http://www.prolific.com.tw/US/ShowProduct.aspx?p_id=225&pcid=41
+FTDI USB driver:            http://www.ftdichip.com/FTDrivers.htm
 
 ClassOfDevice generators:    http://bluetooth-pentest.narod.ru/software/bluetooth_class_of_device-service_generator.html
                              http://www.ampedrftech.com/cod.htm
 
-Windows drivers for the UART chip when connecting USB cable on dev board directly to PC:
-Prolific PL2303 USB driver: http://www.prolific.com.tw/US/ShowProduct.aspx?p_id=225&pcid=41
+
 
 Hijack Kernel for empeg:    http://empeg-hijack.sourceforge.net/
 ----------------------------------------------------------------------------
@@ -119,7 +120,9 @@ At the time of this writing, here were the steps I took:
  - Plug in the USB cable to the bluetooth board in the "UART" port.
  - Look in Windows device manager to see if the USB cable has made a serial port.
  - If it has a little yellow boo boo icon instead of a serial port, then...
- - Install the Prolific PL2303 drivers for the USB-serial connection to the dev board.
+ - Install the necessary drivers for the USB-serial connection to the dev board.
+   These will be a Prolific brand driver if you are using the BlueGiga dev board,
+   or an FTDI brand driver if you are using the BetzTechnik dev board.
  - Now, plugging in the dev board into the PC with the USB cable makes a serial port
    appear in the Windows Device Manager.
  - Once that's sorted, run the "SerialDFU.exe" tool found in one of the unzipped folders.
@@ -131,7 +134,8 @@ At the time of this writing, here were the steps I took:
          DFU
           SerialDFU     (SerialDFU.exe is the upgrader tool in this folder)
            DFU_Images
-             WT32i      (ai-6.2.0-1122_aptxll.bc5.dfu is the firmware file in this folder)
+             WT32i
+               ai-6.2.0-1122_aptxll.bc5.dfu        (firmware file)
  - Note: When upgrading, there is a checkbox on the screen in the SerialDFU.exe
    utility which says "Factory Restore All". Make sure to CHECK that checkbox when doing
    the firmware upgrade.
@@ -283,10 +287,9 @@ GND, and connect the other leads of each resistor to each other. The RX-input of
 gets connected to that same point (where the two resistors are tied together).
 
 MAYBE:
-Bluetooth chip+board RST (reset) pin connected to Pin 51 of the Arduino board.
-This is working for Mark Lord, but my chip fried immediately after trying this,
-so I consider this to be a risk. Perhaps this needs to go through a diode in order to work.
-Mark is still investigating.
+Bluetooth chip+board RST (reset) pin connected to Pin 51 of the Arduino board. This is working for
+Mark Lord, but my chip fried immediately after trying this, so I consider this to be a risk. Perhaps
+this needs to go through a diode and/or a voltage divider in order to work. Mark is still investigating.
 
 Self jumpers and switches on the Bluetooth chip+board, the BetzTechnik WT32i Breakout board V2:
 
@@ -404,9 +407,10 @@ modification.
 Disassemble your empeg player by carefully removing the fascia, lid and
 drive tray. Refer to the empeg FAQ for disassembly instructions. You must
 do the disassembly carefully so as not to damage the empeg. You should
-theoretically be able to do this without disconnecting the IDE cables
+theoretically be able to do this without disconnecting the IDE cable
 but it might be easier if you do. You should not need to remove the
-display board.
+display board as long as you are careful not to break any of the
+components sticking off the back of the display board.
 
 Locate 5 blank IIS pads on the front right side of the empeg motherboard. 
 Pads are outlined in a white silkscreen rectangle with the letters "IIS"
@@ -549,7 +553,7 @@ the USB cable first and then turn on the ignition, that way the Serial
 Monitor program can find a port to connect to.
 
 When using the Arduino Serial Monitor program, set it to 115200 baud,
-with either Newline or "Both NL and CR" as line endings. If you are using a
+with either "Newline" or "Both NL and CR" as line endings. If you are using a
 different serial terminal program, set it to 115200 8n1 and turn on local
 echo.
 
