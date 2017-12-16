@@ -24,48 +24,6 @@ const String btAuthTypeString = "SET BT SSP 3 0";
 // codes up to 16 digits long.
 const String btPinCodeString = "SET BT AUTH * 0000";
 
-// Experimental: String to tell the unit to automatically try reconnecting every few seconds
-// if it ever becomes disconnected from its main pairing buddy. Trying to make it grab hold
-// of the car stereo as soon as the car turns on, instead of connecting to my cellphone every time.
-// Currently experimenting with two possible versions of this.
-//
-// Version 1: "SET CONTROL RECONNECT". Getting the timing parameter just right on this
-// command seems to affect whether or not the host stereo asks me for incorrect PDU messages
-// and other possible bug-like issues I encountered. The string includes a baked-in second
-// additional STORECONFIG command to store the configuration of the connection. The docs
-// say that this STORECONFIG command is merely to store the reconnect functionality but it's
-// not made clear if it stores all configuration information or just that one. NOTE: The
-// docs say that the reconnect timer (the first numeric parameter) should be *longer* than
-// 500ms. However I have found it should even be longer than that, to prevent other timing
-// and bug issues, seemingly caused by trying to reconnect too quickly. 
-const String autoReconnectString = "SET CONTROL RECONNECT 4800 0 0 7 0 A2DP A2DP AVRCP\r\nSTORECONFIG";
-//
-// Version 2: "SET CONTROL AUTOCALL". This seems to work well, when it works. But some
-// of its other issues are not livable. For example sometimes it does a good job of
-// reconnecting after power on, but then other times it completely fails to even attempt
-// any kind of reconnection whatsoever after power on. Without rhyme or reason. 
-// Note: "19" is the secret code for "A2DP" (it is the "L2CAP PSM" code for A2DP).
-// const String autoReconnectString = "SET CONTROL AUTOCALL 19 501 A2DP";
-
-// Variable to control whether or not this program performs a conversion of
-// High ASCII to UTF-8 in the code. For instance, on the empeg, you might have
-// a track by "Blue Öyster Cult", with the "Ö" being represented by a High
-// ASCII character (a single ASCII byte with a value greater than 127). In that
-// situation, you might see the the car stereo's LCD toucscreen display say
-// "Blue ?yster Cult". With this variable set to "true" it will instead convert
-// that to UTF-8, which should be readable by your car stereo touch screen.
-// If you encounter problems with some track titles which might already be
-// encoded as UTF-8 on your empeg, then try setting this value to "false"
-// and see if that fixes it.
-//   Setting true:
-//      - Character values between ASCII 128 and ASCII 255 in the track metadata
-//        on the empeg will be converted to their UTF-8 equivalents before being
-//        sent up the bluetooth chain to the car stereo.
-//   Setting false:
-//      - No UTF-8 conversion will be performed and the track metadata is sent
-//        from the empeg to the car stereo without any changes.
-boolean PerformUtf8Conversion = true;
-
 // Debugging tool for the part of the code that sends commands to the Empeg.
 // Normally, typing commands into the Arduino debug console will send those
 // same characters to the bluetooth chip, so that you can try out commands
@@ -131,6 +89,48 @@ boolean displayTracksOnSerial=false;
 // up playing. This is an experiment to fix some initial connection behavioral problems.
 // Would prefer to not to have to use this at all, so try it with it turned off first.
 boolean empegStartPause = false;
+
+// Experimental: String to tell the unit to automatically try reconnecting every few seconds
+// if it ever becomes disconnected from its main pairing buddy. Trying to make it grab hold
+// of the car stereo as soon as the car turns on, instead of connecting to my cellphone every time.
+// Currently experimenting with two possible versions of this.
+//
+// Version 1: "SET CONTROL RECONNECT". Getting the timing parameter just right on this
+// command seems to affect whether or not the host stereo asks me for incorrect PDU messages
+// and other possible bug-like issues I encountered. The string includes a baked-in second
+// additional STORECONFIG command to store the configuration of the connection. The docs
+// say that this STORECONFIG command is merely to store the reconnect functionality but it's
+// not made clear if it stores all configuration information or just that one. NOTE: The
+// docs say that the reconnect timer (the first numeric parameter) should be *longer* than
+// 500ms. However I have found it should even be longer than that, to prevent other timing
+// and bug issues, seemingly caused by trying to reconnect too quickly. 
+const String autoReconnectString = "SET CONTROL RECONNECT 4800 0 0 7 0 A2DP A2DP AVRCP\r\nSTORECONFIG";
+//
+// Version 2: "SET CONTROL AUTOCALL". This seems to work well, when it works. But some
+// of its other issues are not livable. For example sometimes it does a good job of
+// reconnecting after power on, but then other times it completely fails to even attempt
+// any kind of reconnection whatsoever after power on. Without rhyme or reason. 
+// Note: "19" is the secret code for "A2DP" (it is the "L2CAP PSM" code for A2DP).
+// const String autoReconnectString = "SET CONTROL AUTOCALL 19 501 A2DP";
+
+// Variable to control whether or not this program performs a conversion of
+// High ASCII to UTF-8 in the code. For instance, on the empeg, you might have
+// a track by "Blue Öyster Cult", with the "Ö" being represented by a High
+// ASCII character (a single ASCII byte with a value greater than 127). In that
+// situation, you might see the the car stereo's LCD toucscreen display say
+// "Blue ?yster Cult". With this variable set to "true" it will instead convert
+// that to UTF-8, which should be readable by your car stereo touch screen.
+// If you encounter problems with some track titles which might already be
+// encoded as UTF-8 on your empeg, then try setting this value to "false"
+// and see if that fixes it.
+//   Setting true:
+//      - Character values between ASCII 128 and ASCII 255 in the track metadata
+//        on the empeg will be converted to their UTF-8 equivalents before being
+//        sent up the bluetooth chain to the car stereo.
+//   Setting false:
+//      - No UTF-8 conversion will be performed and the track metadata is sent
+//        from the empeg to the car stereo without any changes.
+boolean PerformUtf8Conversion = true;
 
 // Arduino serial port 2 is connected to Bluetooth chip
 #define BlueGigaSerial Serial2 
@@ -273,7 +273,21 @@ String rspMatrix[5] =
   "PDU_REGISTER_NOTIFICATION",
 };  
 
-// Table of events that we will reject when we received a PDU_REGISTER_NOTIFICATION
+// Variabe to control whether or not we reconnect the bluetooth module whenever
+// we see a bad PDU_REGISTER_NOTIFICATION message. Ideally we want to reject any
+// attempts to register any notifications that we won't be able to respond to.
+// The host stereo should never ask us for anything other than messages 1 and 2
+// (TRACK_CHANGED and PLAYBACK_STATUS_CHANGED) but my Honda sometimes asks for
+// messages 3 and above (in the table below) when it shouldn't be. In those 
+// cases, a disco/reco of the bluetooth module fixes the problem. This flag
+// controls whether or not that disco/reco occurs. It's here to protect against
+// a possible infinite reboot loop which might occur on someone else's stereo.
+// Though if this trigger is hit at all, it means they've got bigger problems
+// where the host stereo will hang anyway because it isn't getting responses
+// to its registration requests. But that's a different issue than a reboot loop.
+boolean reconnectIfBadRegistrationReceived=true;
+
+// Table of events that we will cause us to reconnect when we received a PDU_REGISTER_NOTIFICATION
 // request for these particular events. The event number for each one is specific and
 // can be found in section 6.3.3 of the BlueGiga iWrap AVRCP command reference documentation.
 // This is part of an attempt to work around a bug where we get queried for these
@@ -1850,32 +1864,35 @@ void RespondToQueries(String queryString)
     // Labs tech support ticket is here:
     //       https://siliconlabs.force.com/5001M000017Jb5W
     //
-    for (int l=0; l<rejMatrixSize; l++)
-    {  
-      // Make the string comparison to find out if there is a match.
-      if (queryString.indexOf(rejMatrix[l]) > (-1))
-      {
-        // For now: Don't respond: Simply reset the chip when it hits one
-        // of these things. This works around the problem on my Honda stereo
-        // because it stops asking for these messages to be registered on
-        // the SECOND connection after startup (it only asks on the first
-        // connection after the startup). It shouldn't ever be asking for
-        // these messages at all because my response to "GET_CAPABILITIES 3"
-        // should have told it that I only want registrations for messages
-        // 1 and 2.
-        //
-        // TO DO: Begin working on the theory that my code isn't always
-        // correctly responding to the "GET_CAPABILITIES 3" query and find
-        // out how to fix it.
-        //
-        // WARNING: This crazy messed up workaround has the potential
-        // to put this whole thing into an infinite reboot loop, but
-        // it's the best I've got at the moment. Hopefully it will only
-        // reboot the one time and then work correctly the second time.
-        //
-        Log(F("Unexpected registration message received. Something went wrong. Restarting bluetooth."));
-        ForceQuickReconnect();
-        return;
+    if (reconnectIfBadRegistrationReceived)
+    {
+      for (int l=0; l<rejMatrixSize; l++)
+      {  
+        // Make the string comparison to find out if there is a match.
+        if (queryString.indexOf(rejMatrix[l]) > (-1))
+        {
+          // For now: Don't respond: Simply reset the chip when it hits one
+          // of these things. This works around the problem on my Honda stereo
+          // because it stops asking for these messages to be registered on
+          // the SECOND connection after startup (it only asks on the first
+          // connection after the startup). It shouldn't ever be asking for
+          // these messages at all because my response to "GET_CAPABILITIES 3"
+          // should have told it that I only want registrations for messages
+          // 1 and 2.
+          //
+          // TO DO: Begin working on the theory that my code isn't always
+          // correctly responding to the "GET_CAPABILITIES 3" query and find
+          // out how to fix it.
+          //
+          // WARNING: This crazy messed up workaround has the potential
+          // to put this whole thing into an infinite reboot loop, but
+          // it's the best I've got at the moment. Hopefully it will only
+          // reboot the one time and then work correctly the second time.
+          //
+          Log(F("Unexpected registration message received. Something went wrong. Restarting bluetooth."));
+          ForceQuickReconnect();
+          return;
+        }
       }
     }
   }
