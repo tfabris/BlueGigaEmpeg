@@ -88,6 +88,12 @@ boolean displayEmpegSerial=true;
 //      Setting false:
 //           - Output from the empeg and the bluetooth are logged a character
 //             at a time, which is less readable but slightly better timing.
+//
+// Special note: This isn't fully implemented for every single possible output
+// output line on the debug port. There are still a couple places in the code
+// where it still logs character by character. If this becomes a problem 
+// then I will address it at that time later. In the meantime, this handles
+// most of the situations where we'd want to see it log line by line.
 boolean logLineByLine=true;
 
 // Choose whether or not to display the interpreted track metadata on the
