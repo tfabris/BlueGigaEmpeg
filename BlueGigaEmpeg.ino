@@ -65,6 +65,31 @@ boolean EmpegSendCommandDebug=false;
 // data on the serial port when it is not needed.
 boolean displayEmpegSerial=true;
 
+// Variable to control whether output from the empeg and bluetooth serial
+// ports are logged to the debug console character-by-character or line-by-line.
+// Here's the tradeoff: If you log character-by-character you have a clearer
+// picture of exactly when various messages were received from each of those
+// devices in relation to each other, but the debug console gets hard to read.
+// For instance, if logging character-by-character, the output will look like:
+//     Bluetooth sends "GOODBYE" 
+//     Empeg sends "hello" a microsecond later
+//     Debug console output looks like this:
+//        GhOeOlDlBoYE
+// However if you log line-by-line, it's more readable but you might get the
+// wrong idea of who sent what first. It might look like this:
+//     hello
+//     GOODBYE
+// Even though GOODBYE was the first one to start sending characters, he ended
+// his transmission last so he gets logged last. This usually isn't a big deal.
+// Usage:
+//      Setting true:
+//           - Output from the empeg and the bluetooth are logged a line
+//             at a time, for additional readability, but order may be wrong.
+//      Setting false:
+//           - Output from the empeg and the bluetooth are logged a character
+//             at a time, which is less readable but slightly better timing.
+boolean logLineByLine=true;
+
 // Choose whether or not to display the interpreted track metadata on the
 // Arduino debugging serial/USB console port.
 //      Setting true:
@@ -364,7 +389,7 @@ static String queryResponseString = "";
 int pmMatrixSize=6;
 String pmMessageMatrix[6][2] =
 {
-  // Respond to messages such as INQUIRY_PARTIAL 0c:e0:e4:6c:75:68 240404
+  // Respond to messages such as INQUIRY_PARTIAL 0a:ea:ea:6a:7a:6a 240404
   { "INQUIRY_PARTIAL ",          "PAIR {0}"},
 
   // EXPERIMENTAL - Respond to PIN code prompt as if we were a user saying
@@ -372,7 +397,7 @@ String pmMessageMatrix[6][2] =
   // not work correctly - See what's up with this.
   { "SSP CONFIRM ",          "SSP CONFIRM {0} OK"},
 
-  // Respond to messages such as "PAIR 0c:e0:e4:6c:75:68 OK"
+  // Respond to messages such as "PAIR 0a:ea:ea:6a:7a:6a OK"
   // Respond during the pair process with a connection attempt.
   // Response should be "CALL", the address to connect to, then
   // a special code indicating the target type and profile type.
@@ -1022,6 +1047,11 @@ void SetGlobalChipDefaults()
 // ----------------------------------------------------------------------------
 void PairBluetooth()
 {
+  // Debug code only.
+  // Unit test code the force quick reconnect via a
+  // button press. Comment this out for normal runtime.
+  // ForceQuickReconnect(); return;
+
   // Don't execute this if we are currently already in pairing mode.
   // Protect against possible re-entrant code.
   if (pairingMode)
@@ -1208,8 +1238,12 @@ char MainInputOutput()
 
       if (displayEmpegSerial)
       {
-        // Log to the debugging console what we saw on the port.
-        LogChar(empegChar);
+        // Log to the debugging console what we saw on the port
+        // but only if we are in character-by-character mode
+        if (!logLineByLine)
+        {
+          LogChar(empegChar);
+        }
       }
 
       // Add the character that we read to our input line string for use later.
@@ -1222,6 +1256,15 @@ char MainInputOutput()
       {
         // String is ready to be processed if one of the above things was true.
         empegStringComplete = true;
+
+        // Trim extra CR LF and whitespace at the end of the string if any
+        empegInputString.trim();        
+
+        // Log the string if we are in line by line logging mode.
+        if (logLineByLine)
+        {
+          Log(empegInputString);
+        }
       }         
     }
   }
@@ -1231,7 +1274,7 @@ char MainInputOutput()
   if (empegStringComplete)
   {
     empegStringComplete = false;
-        
+
     // Call the function to process the string and do the needful.
     HandleEmpegString(empegInputString);
     
@@ -1249,8 +1292,12 @@ char MainInputOutput()
       // Read one character (byte) from the bluetooth serial port.
       inChar = BlueGigaSerial.read();
       
-      // Log to the Arduino debugging console what we saw on the bluetooth serial port.
-      LogChar(inChar); 
+      // Log to the Arduino debugging console what we saw on the bluetooth serial port
+      // but only if we are in character-by-character mode
+      if (!logLineByLine)
+      {
+        LogChar(inChar); 
+      }
       
       // Add the character that we read to our input line string for use later.
       btInputString += inChar;
@@ -1262,6 +1309,16 @@ char MainInputOutput()
       {
         // String is ready to be processed if one of the above things was true.
         btStringComplete = true;
+
+        // Trim extra CR LF and whitespace at the end of the string if any
+        btInputString.trim();
+
+        // Log the string if we are in line by line logging mode.
+        if (logLineByLine)
+        {
+          Log(btInputString);
+        }
+
       }
     }
   }
@@ -1516,12 +1573,10 @@ void HandleString(String theString)
       // Turn on the Arduino LED to indicate something has happened.
       digitalWrite(LED_BUILTIN, HIGH);
    
-      // Process the pullout of the string substitution bit if any.
-      // This is a super special case for one particular string.
-      // It retrieves the bluetooth device address of the host stereo
-      // that we are pairing to, and places it into a global variable
-      // for later use in the response string.
-      GrabPairAddressString(theString);
+      // Process the pullout of the address of our pairing buddy
+      // out of the string that is expected to contain our 
+      // pairing buddy's address in it.
+      GrabPairAddressString(theString, gbaMessageMatrix[i]);
            
       // Turn off the Arduino LED.
       digitalWrite(LED_BUILTIN, LOW);
@@ -1545,18 +1600,18 @@ void HandleString(String theString)
         // Turn on the Arduino LED to indicate something has happened.
         digitalWrite(LED_BUILTIN, HIGH);
 
-        // Process the pullout of the string substitution bit if any.
+        // Process the pullout of the address of our pairing buddy.
         // This is a super special case for one particular string.
         // It retrieves the bluetooth device address of the host stereo
         // that we are pairing to, and places it into a global variable
         // for later use in the response string.
-        GrabPairAddressString(theString);
+        GrabPairAddressString(theString, F("INQUIRY_PARTIAL "));
         
         // Prepare command we are going to send.
         commandToSend = "";
         commandToSend += pmMessageMatrix[i][1];
 
-        // Substitute the bluetooth host address string in the response command,
+        // Substitute the bluetooth pairing buddy string in the response command,
         // if we have it and if the command contains the token for the replacement.
         if (pairAddressString != "")
         {
@@ -1581,19 +1636,30 @@ void HandleString(String theString)
 // GrabPairAddressString
 //
 // Grabs the bluetooth address from a string that looks like this:
-// "INQUIRY_PARTIAL 0c:e0:e4:6c:75:68 240404" and puts it into the
-// global variable "pairAddressString". Only does the first one
-// it finds since the runstart of the program or since the user
-// has pressed the "reset/pair" button on the assembly. Only useful
-// during the inside of the pairing procedure since it doesn't save
-// the value in permanent storage for any reason. We leave it up
-// to the bluetooth chip to store the pair addresses, and the 
-// bluetooth chip automatically reconnects to paired devices when
-// it is powered back on, so our code only needs to know this
-// pairing address for the length of time that is needed to
-// complete the initial pairing process.
+// "INQUIRY_PARTIAL 0a:ea:ea:6a:7a:6a 240404" or perhaps a string
+// that looks like this:
+// SET BT PAIR 0a:ea:ea:6a:7a:6a ad11da9ed235df50e86eeef1e3ba8b
+// and puts it into the global variable "pairAddressString". Only
+// does the first one it finds since the runstart of the program
+// or since the user has pressed the "reset/pair" button on the
+// assembly. Does not save the variable in permanent storage so
+// if you need this variable after bootup you have to re-retrieve
+// it with special code. We leave it up to the bluetooth chip to
+// store the pair addresses, and the bluetooth chip automatically
+// reconnects to paired devices when it is powered back on, so
+// our code only needs to remember this pairing address during
+// runtime of the program.
+// 
+// Parameters:
+//     stringToParse: The string that will be parsed to extract
+//                    the pairing address such as 
+//                    INQUIRY_PARTIAL 0a:ea:ea:6a:7a:6a 240404
+//     triggerString: The portion of the string which is the
+//                    trigger string which falls just before the
+//                    bluetooth address. In the string above the
+//                    trigger string would be "INQUIRY_PARTIAL ".
 // ---------------------------------------------------------------
-void GrabPairAddressString(String stringToParse)
+void GrabPairAddressString(String stringToParse, String triggerString)
 {
   // Set variables we will be using the parsing code below.
   static int firstSpace = 0;
@@ -1602,7 +1668,7 @@ void GrabPairAddressString(String stringToParse)
   lastSpace = 0;
 
   // If we already have a pair address string, don't retrieve another one,
-  // we only want to do this for the first address in the list that we find.
+  // we only want to do this for the first one that we find in a run.
   if (pairAddressString != "")
   {
     return;
@@ -1610,13 +1676,16 @@ void GrabPairAddressString(String stringToParse)
   
   // Get our bluetooth address out of the string if it's the one exact
   // special case string that we expect to see at this particular moment 
-  if ( stringToParse.indexOf(F("INQUIRY_PARTIAL ")) > (-1)  )
+  if ( stringToParse.indexOf(triggerString) > (-1)  )
   {
-    // Obtain the location of the first space
-    firstSpace = stringToParse.indexOf(F(" ")); // since the trigger string had no spaces, we can find just the first space
+    // Obtain the location of the first space character which is at the end of the trigger string.
+    // Start searching shortly before the end of the trigger string since the trigger string I'm
+    // passing in here contains the space too. For example if our trigger string is
+    // "INQUIRY_PARTIAL " which is 16 characters including the space, start searching at 15.
+    firstSpace = stringToParse.indexOf(F(" "), triggerString.length() - 1);
 
-    // Obtain the location of the second space
-    lastSpace = stringToParse.indexOf(F(" "), firstSpace);
+    // Obtain the location of the second space, start looking for it a couple characters after the first space.
+    lastSpace = stringToParse.indexOf(F(" "), firstSpace + 2);
 
     // Obtain the substring between the two spaces
     pairAddressString = stringToParse.substring(firstSpace, lastSpace);
@@ -1625,11 +1694,8 @@ void GrabPairAddressString(String stringToParse)
     pairAddressString.trim();
 
     // Find out if the thing we got was an address. It should contain some
-    // colon characters at the very least. For example we sometimes we see a 
-    // message that looks like this:
-    //     INQUIRY 1
-    // And well that's no good since it doesn't have the BT address that
-    // we want. So throw away that one since it doesn't have a colon.
+    // colon characters at the very least. Throw it away if it's not a 
+    // proper bluetooth address (we will merely check for a colon).
     if (pairAddressString.indexOf(F(":")) < 1) // First colon should be at least at char position 2, but never at 0
     {
       // Clear it out, it wasn't what we wanted, set it to nothing.
@@ -1639,44 +1705,7 @@ void GrabPairAddressString(String stringToParse)
     {
       // Log what we got.
       Log (F("------------------------------------"));
-      Log (F("    Pairing with device address:    "));
-      Log (pairAddressString);
-      Log (F("------------------------------------"));
-    }
-  }
-
-  // Add a second case for SET BT PAIR.
-  // TO DO: Optimize this function better so I don't need this code block twice.
-  if ( stringToParse.indexOf(F("SET BT PAIR ")) > (-1)  )
-  {
-    // Obtain the location of the first space
-    firstSpace = stringToParse.indexOf(F(" "), 10); // start at 10 which is the last letter in "SET BT PAIR"
-
-    // Obtain the location of the second space
-    lastSpace = stringToParse.indexOf(F(" "), firstSpace + 2); // Make sure to start searching for the terminating space a few charactrers late
-
-    // Obtain the substring between the two spaces
-    pairAddressString = stringToParse.substring(firstSpace, lastSpace);
-
-    // Trim the string of any possible whitespace
-    pairAddressString.trim();
-
-    // Find out if the thing we got was an address. It should contain some
-    // colon characters at the very least. For example we sometimes we see a 
-    // message that looks like this:
-    //     INQUIRY 1
-    // And well that's no good since it doesn't have the BT address that
-    // we want. So throw away that one since it doesn't have a colon.
-    if (pairAddressString.indexOf(F(":")) < 1) // First colon should be at least at char position 2, but never at 0
-    {
-      // Clear it out, it wasn't what we wanted, set it to nothing.
-      pairAddressString = "";
-    }
-    else
-    {
-      // Log what we got.
-      Log (F("------------------------------------"));
-      Log (F("    Pairing with device address:    "));
+      Log (F("   Pairing buddy device address:    "));
       Log (pairAddressString);
       Log (F("------------------------------------"));
     }
@@ -2339,12 +2368,11 @@ void ForceQuickReconnect()
   // the bluetooth chip.
   SendBlueGigaCommand(F("CLOSE 0"));
 
-  // Experimental - Short paused between the close and call commands
-  // in an attempt to make it work faster. This is counterintuitive
-  // but it seemed like my reconnect was real fast when I typed it 
-  // by hand at the console. So maybe an instantaneous call command
-  // is actually worse. So try this.
-  DisplayAndProcessCommands(300, false);
+  // Must have a short freehweel between the close and call commands
+  // in order for it to work efficiently. This is counterintuitive
+  // but the reconnect can fail or work too slowly if you issue the
+  // call command instantaneously after you issue the close command.
+  DisplayAndProcessCommands(100, false);   // Note, this parameter must be false for this to work.
 
   // Now reconnect using the pair address of our pairing buddy
   // that we retrieved above.
@@ -2444,11 +2472,6 @@ void SetTrackMetaData(String stringToParse, char empegMessageCode)
 
   // Make sure string is trimmed of white space and line breaks
   stringToParse.trim();
-
-  // Debug Logging
-  // LogChar(' ');
-  // LogChar(' ');
-  // Log(stringToParse);
 
   // Now set the desired metadata based on the values we passed in.
   // This routine only gets one line at a time so we only need to
@@ -3455,10 +3478,12 @@ void ClearGlobalVariables()
   transactionLabelPlaybackStatusChanged = "";
   transactionLabelTrackChanged = "";
 
-  // Woops- bugfix. Don't clear this one out during the middle of the pairing process.
-  if (!pairingMode)
-  {
-    pairAddressString = "";
-  }
+  // Woops- bugfix. Don't clear this one out at all ever. Pairing mode,
+  // regular mode, any mode... Basically any time I clear this out I 
+  // get some kind of bug. This isn't the right place to clear this var.
+  // if (!pairingMode)
+  // {
+  //   pairAddressString = "";
+  // }
 }
 
