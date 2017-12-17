@@ -2329,15 +2329,8 @@ void RespondToQueries(String queryString)
 // ----------------------------------------------------------------------------
 void ForceQuickReconnect()
 {
-  // TO DO: Make this into an optional workaround driven by a flag at the
-  // top of the program.
-
-  // TO DO: Make this more robust and quicker. Record the paired device's
-  // address in a global variable (storing it based on the PAIR command
-  // for situations when this device inititated pairing, or the RING command,
-  // for situations when the host stereo initiated pairing) and then issue a 
-  // disconnect/reconnect directly (I think it would be CLOSE followed by RING
-  // maybe).  
+  // Debug logging.
+  Log(F("Begin: ForceQuickReconnect routine."));
 
   // Make sure bluetooth chip configured and ready to
   // immediately reconnect as soon as it disconnects.
@@ -2377,6 +2370,9 @@ void ForceQuickReconnect()
   // Now reconnect using the pair address of our pairing buddy
   // that we retrieved above.
   SendBlueGigaCommand("CALL " + pairAddressString + " 19 A2DP");
+
+  // Debug logging.
+  Log(F("End: ForceQuickReconnect routine."));
 }
 
 // ----------------------------------------------------------------------------
