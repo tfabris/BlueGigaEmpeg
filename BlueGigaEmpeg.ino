@@ -118,6 +118,10 @@ const String autoReconnectString = "SET CONTROL RECONNECT 4800 0 0 7 0 A2DP A2DP
 // the reset line in hardware (see README.txt for details of the implementation).
 boolean performResetLinePhysical = false;
 
+// Control whether or not the module uses digital I2S audio, or analog line-level
+// audio inputs (for example the line level inputs on the BlueGiga dev board).
+boolean digitalAudio = false;
+
 // Variable to control whether or not this program performs a conversion of
 // High ASCII to UTF-8 in the code. For instance, on the empeg, you might have
 // a track by "Blue Öyster Cult", with the "Ö" being represented by a High
@@ -490,18 +494,20 @@ static String trackPlaybackPositionString07 = "00";
 static String trackPlaybackLengthString="999999";
 long trackPlaybackPositionMs = -1L; // Initialize to flag value meaning "unknown"
 
-// String to control the audio routing on the chip. 
-// Use this string if you are using the Line In jacks on the bluetooth device for audio (analog):
-const String btAudioRoutingControlString = "SET CONTROL AUDIO INTERNAL INTERNAL EVENT KEEPALIVE";    
-// Use this string if you are using the I2S aka IIS connection on the bluetooth device
-// (this is a special digital connection which requires modifying inside of empeg Car player):
-// const String btAudioRoutingControlString = "SET CONTROL AUDIO INTERNAL I2S_SLAVE EVENT KEEPALIVE 16";
+// Strings to control the audio routing on the chip. Choose which string to
+// use by setting the boolean variable "digitalAudio" in the code above.
+// This string is used if you are using the Line In jacks on the bluetooth
+// device for audio (analog), aka "digitalAudio = false".
+const String analogAudioRoutingControlString = "SET CONTROL AUDIO INTERNAL INTERNAL EVENT KEEPALIVE";  
+
+// This string is used if you are using the I2S aka IIS connection on the
+// bluetooth device (this is a special digital connection which requires
+// modifying inside of empeg Car player) aka "digitalAudio = true".
+const String digitalAudioRoutingControlString = "SET CONTROL AUDIO INTERNAL I2S_SLAVE EVENT KEEPALIVE 16";
 
 // Strings to set the gain level of the Empeg. See bluetooth chip docs for gain level table.
-//
 // Uncomment this line if your player will be used in AC/Home mode, (1v outputs): 
 // const String empegGainSettingString = "SET CONTROL GAIN E 0";
-//
 // Uncomment this line if your player will be used in DC/Car mode, such as in a sled (4v outputs):
 const String empegGainSettingString = "SET CONTROL GAIN 9 0";
 
@@ -976,9 +982,14 @@ void SetGlobalChipDefaults()
   SendBlueGigaCommand(btPinCodeString);
 
   // Audio routing on the chip. Control string for audio routing is configured at top of program.
-  //     SendBlueGigaCommand(F("SET CONTROL AUDIO INTERNAL INTERNAL EVENT KEEPALIVE"));    
-  SendBlueGigaCommand(btAudioRoutingControlString);    
-  
+  if (digitalAudio)
+  {
+    SendBlueGigaCommand(digitalAudioRoutingControlString);    
+  }
+  else
+  {
+    SendBlueGigaCommand(analogAudioRoutingControlString);    
+  }
   // Turn off the mic preamp to prevent distortion on line level inputs if they are being used.
   SendBlueGigaCommand(F("SET CONTROL PREAMP 0 0"));    
   
