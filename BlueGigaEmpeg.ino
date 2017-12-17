@@ -113,6 +113,11 @@ const String autoReconnectString = "SET CONTROL RECONNECT 4800 0 0 7 0 A2DP A2DP
 // Note: "19" is the secret code for "A2DP" (it is the "L2CAP PSM" code for A2DP).
 // const String autoReconnectString = "SET CONTROL AUTOCALL 19 501 A2DP";
 
+// Variable to control whether or not to do the Reset Line startup code
+// to support Mark Lord's module which needs it. Enable this if you have implemented
+// the reset line in hardware (see README.txt for details of the implementation).
+boolean performResetLinePhysical = false;
+
 // Variable to control whether or not this program performs a conversion of
 // High ASCII to UTF-8 in the code. For instance, on the empeg, you might have
 // a track by "Blue Öyster Cult", with the "Ö" being represented by a High
@@ -599,10 +604,12 @@ void setup()
   // Set up the pair button to be in the "read" state.
   pinMode(pairButtonPin, INPUT);
 
-  // Set up the reset line pin to be in a clean "read" state most of the time
-  // and only be set to write mode when we're using it.
-  // EDIT: Temporarily not doing this.
-  // pinMode(resetLinePin, INPUT_PULLUP);
+  // Set up the reset line pin (if it is implemented) to be in a clean "read"
+  // state most of the time and only be set to write mode when we're using it.
+  if (performResetLinePhysical)
+  {
+    pinMode(resetLinePin, INPUT_PULLUP);
+  }
 
   // Reserve bytes for the input strings, which are the strings we check to
   // see if there is a valid processable bluetooth AVRCP command incoming
@@ -2301,6 +2308,8 @@ void ForceQuickReconnect()
   // This is not the greatest because the reconnect after the boot
   // is still longer than I'd like it to be.
   //    QuickResetBluetooth(0);
+  // Experiment: Try not doing a full reset (above) but rather just
+  // try a disco/reco (below) to try to make this less annoying.
 
   // Experimental faster version to make this workaround less annoying.
   // First, let us obtain the address of the current pairing buddy. This
@@ -2318,6 +2327,16 @@ void ForceQuickReconnect()
   // force a quick reconnect which is quicker than fully resetting
   // the bluetooth chip.
   SendBlueGigaCommand(F("CLOSE 0"));
+
+  // Experimental - Short paused between the close and call commands
+  // in an attempt to make it work faster. This is counterintuitive
+  // but it seemed like my reconnect was real fast when I typed it 
+  // by hand at the console. So maybe an instantaneous call command
+  // is actually worse. So try this.
+  DisplayAndProcessCommands(300, false);
+
+  // Now reconnect using the pair address of our pairing buddy
+  // that we retrieved above.
   SendBlueGigaCommand("CALL " + pairAddressString + " 19 A2DP");
 }
 
@@ -3397,19 +3416,20 @@ void QuickResetBluetooth(int resetType)
 // ----------------------------------------------------------------------------
 void ResetBluetoothPin()
 {
-  // Temporarily not doing this, my board fried after trying it and I don't know why.
-  // Need to diagnose this and figure out what's wrong.
-  return;
-
-  Log(F("Physically resetting bluetooth module with RST line - Begin."));  
-  pinMode(resetLinePin, INPUT_PULLUP);
-  DisplayAndSwallowResponses(1, 300);
-  digitalWrite(resetLinePin, LOW);
-  pinMode(resetLinePin, OUTPUT);
-  digitalWrite(resetLinePin, LOW);
-  DisplayAndSwallowResponses(1, 50);
-  pinMode(resetLinePin, INPUT);
-  Log(F("Physically resetting bluetooth module with RST line - Complete."));  
+  // Only perform this routine if we have implemented the physical reset line.
+  if (performResetLinePhysical)
+  {
+    // Perform the steps to physically fire the reset line
+    Log(F("Physically resetting bluetooth module with RST line - Begin."));  
+    pinMode(resetLinePin, INPUT_PULLUP);
+    DisplayAndSwallowResponses(1, 300);
+    digitalWrite(resetLinePin, LOW);
+    pinMode(resetLinePin, OUTPUT);
+    digitalWrite(resetLinePin, LOW);
+    DisplayAndSwallowResponses(1, 50);
+    pinMode(resetLinePin, INPUT);
+    Log(F("Physically resetting bluetooth module with RST line - Complete."));  
+  }
 }
 
 // ----------------------------------------------------------------------------
