@@ -63,7 +63,7 @@ boolean EmpegSendCommandDebug=false;
 // This should be set to false most of the time, and only set to true during
 // debugging sessions, since it slows down processing to put out too much
 // data on the serial port when it is not needed.
-boolean displayEmpegSerial=false;
+boolean displayEmpegSerial=true;
 
 // Choose whether or not to display the interpreted track metadata on the
 // Arduino debugging serial/USB console port.
@@ -78,7 +78,7 @@ boolean displayEmpegSerial=false;
 // This should be set to false most of the time, and only set to true during
 // debugging sessions, since it slows down processing to put out too much
 // data on the serial port when it is not needed.
-boolean displayTracksOnSerial=false;
+boolean displayTracksOnSerial=true;
 
 // Experimental - When we see the empeg player application start up, then send a
 // pause command to the player. If the bluetooth initial connection speed is faster
@@ -387,6 +387,19 @@ String pmMessageMatrix[6][2] =
 // String to be used in token substitutions above (change both the matrix above
 // and also the string below if you change the tokenization flag string).
 const String tokenSubstitutionString = "{0}";
+
+// Set of addresses which will be used for getting the bluetooth address
+// of our main pairing buddy at any generic time as opposed to just during
+// the pairing process. This allows us to figure out who our pairing buddy
+// is even when they are the ones initiating the connection as opposed to
+// us inititaiting it during the pairing process. This complexity is needed
+// because ForceQuickReconnect needs to know who our current pairing buddy
+// is all the time as opposed to just when we recently pressed the pair button.
+int gbaMatrixSize=1;
+String gbaMessageMatrix[1] =
+{
+  "SET BT PAIR ",
+};
 
 // Length of time to be in pairing mode before giving up.
 // Make sure to change both variables below. The first variable
@@ -1456,7 +1469,7 @@ void HandleString(String theString)
     // Look for the special command (column "[0]" in the table).
     if (theString.indexOf(scFixMessageMatrix[i][0]) > (-1))
     {
-      // A match has been found, process the speical case.
+      // A match has been found, process the special case.
       
       // Turn on the Arduino LED to indicate something has happened.
       digitalWrite(LED_BUILTIN, HIGH);
@@ -1472,6 +1485,30 @@ void HandleString(String theString)
       digitalWrite(LED_BUILTIN, LOW);
     }
   }
+
+  // Handle "get bluetooth address" strings - these are strings that are
+  // intended to tell me who my current pairing buddy is. This is implemented
+  // primarily for the ForceQuickReconnect command but might be used for
+  // others later.
+  for (int i=0; i<gbaMatrixSize; i++)
+  {
+    // Make the string comparison to find out if there is a match.
+    if (theString.indexOf(gbaMessageMatrix[i]) > (-1))
+    {
+      // Turn on the Arduino LED to indicate something has happened.
+      digitalWrite(LED_BUILTIN, HIGH);
+   
+      // Process the pullout of the string substitution bit if any.
+      // This is a super special case for one particular string.
+      // It retrieves the bluetooth device address of the host stereo
+      // that we are pairing to, and places it into a global variable
+      // for later use in the response string.
+      GrabPairAddressString(theString);
+           
+      // Turn off the Arduino LED.
+      digitalWrite(LED_BUILTIN, LOW);
+    }
+  }  
 
   // Handle pairing mode strings - these are the strings that are only
   // active when we are in Reset/Pairing mode and will not be processed
@@ -1553,22 +1590,52 @@ void GrabPairAddressString(String stringToParse)
     return;
   }
   
-  // If we're not in the middle of the pairing procedure, don't bother since
-  // we can't make use of it otherwise.
-  if (!pairingMode)
-  {
-    return;
-  }
-  
   // Get our bluetooth address out of the string if it's the one exact
   // special case string that we expect to see at this particular moment 
-  if (stringToParse.indexOf(F("INQUIRY_PARTIAL ")) > (-1))
+  if ( stringToParse.indexOf(F("INQUIRY_PARTIAL ")) > (-1)  )
   {
     // Obtain the location of the first space
-    firstSpace = stringToParse.indexOf(F(" "));
+    firstSpace = stringToParse.indexOf(F(" ")); // since the trigger string had no spaces, we can find just the first space
 
-    // Obtain the location of the last space
-    lastSpace = stringToParse.lastIndexOf(F(" "));
+    // Obtain the location of the second space
+    lastSpace = stringToParse.indexOf(F(" "), firstSpace);
+
+    // Obtain the substring between the two spaces
+    pairAddressString = stringToParse.substring(firstSpace, lastSpace);
+
+    // Trim the string of any possible whitespace
+    pairAddressString.trim();
+
+    // Find out if the thing we got was an address. It should contain some
+    // colon characters at the very least. For example we sometimes we see a 
+    // message that looks like this:
+    //     INQUIRY 1
+    // And well that's no good since it doesn't have the BT address that
+    // we want. So throw away that one since it doesn't have a colon.
+    if (pairAddressString.indexOf(F(":")) < 1) // First colon should be at least at char position 2, but never at 0
+    {
+      // Clear it out, it wasn't what we wanted, set it to nothing.
+      pairAddressString = "";
+    }
+    else
+    {
+      // Log what we got.
+      Log (F("------------------------------------"));
+      Log (F("    Pairing with device address:    "));
+      Log (pairAddressString);
+      Log (F("------------------------------------"));
+    }
+  }
+
+  // Add a second case for SET BT PAIR.
+  // TO DO: Optimize this function better so I don't need this code block twice.
+  if ( stringToParse.indexOf(F("SET BT PAIR ")) > (-1)  )
+  {
+    // Obtain the location of the first space
+    firstSpace = stringToParse.indexOf(F(" "), 10); // start at 10 which is the last letter in "SET BT PAIR"
+
+    // Obtain the location of the second space
+    lastSpace = stringToParse.indexOf(F(" "), firstSpace + 2); // Make sure to start searching for the terminating space a few charactrers late
 
     // Obtain the substring between the two spaces
     pairAddressString = stringToParse.substring(firstSpace, lastSpace);
@@ -2233,7 +2300,25 @@ void ForceQuickReconnect()
   // configuration to do its job and reconnect automatically.
   // This is not the greatest because the reconnect after the boot
   // is still longer than I'd like it to be.
-  QuickResetBluetooth(0);
+  //    QuickResetBluetooth(0);
+
+  // Experimental faster version to make this workaround less annoying.
+  // First, let us obtain the address of the current pairing buddy. This
+  // point in the code assumes we HAVE a current pairing buddy. Send
+  // the command to the bluetooth to have it report back our current
+  // pairing buddy's address.
+  SendBlueGigaCommand(F("SET BT PAIR"));
+
+  // Allow unit to freewheel a bit to give it a chance to retreive
+  // the pairing buddy response from the bluetooth chip.
+  DisplayAndProcessCommands(500, true);
+
+  // At this point we should have the pairing buddy's address in
+  // the global variable for sure... we hope. Issue the commands to
+  // force a quick reconnect which is quicker than fully resetting
+  // the bluetooth chip.
+  SendBlueGigaCommand(F("CLOSE 0"));
+  SendBlueGigaCommand("CALL " + pairAddressString + " 19 A2DP");
 }
 
 // ----------------------------------------------------------------------------
