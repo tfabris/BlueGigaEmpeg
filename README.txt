@@ -4,32 +4,32 @@ by Tony Fabris
 ----------------------------------------------------------------------------
 A project to use a Silicon Labs BlueGiga WT32i bluetooth chip, combined with
 an Arduino Mega board with an added RS232 port, to act as an intermediary
-between the Empeg Car stereo and a modern car. The purpose is twofold:
+between the empeg Car stereo and a modern car. The purpose is twofold:
 
 1. Bluetooth A2DP connection allows high quality stereo audio from the
    empeg car outputs to play on the modern car stereo speakers without
    needing an AUX input on the modern car stereo (many cars no longer
    have an AUX input available any more).
 
-2. Allow Empeg Car to recieve commands such as "next", "previous", "pause" etc.
+2. Allow empeg Car to recieve commands such as "next", "previous", "pause" etc.
    from the bluetooth connection, thus allowing the car's touchscreen and
    steering wheel controls to be able to change tracks on the empeg.
    This is accomplished by custom code running on the Arduino (this code).
 
 The audio connection works like this:
- Empeg-Car ->
- I2S digital outputs from Empeg Car ->
+ Empeg Car ->
+ I2S digital outputs from empeg Car ->
  I2S digital inputs on bluetooth chip ->
  Bluetooth chip paired with factory car stereo via Bluetooth A2DP ->
- Sound from Empeg comes out the car speakers.
+ Sound from empeg comes out the car speakers.
 
 The data connection works like this:
  Car stereo user presses touchscreen controls or steering wheel controls for |<<, >>|, pause, play, stop, etc. ->
  Controls are sent to bluetooth chip from car stereo via Bluetooth AVRCP ->
  Bluetooth chip, by default, echoes the AVRCP commands on its serial output ->
  Arduino board receives these serial commands on its serial port ->
- Arduino runs code which interprets these AVRCP commands and turns them into Empeg-Car-compatible commands ->
- Arduino outputs these Empeg-Car serial commands to its attached RS232, via another serial port ->
+ Arduino runs code which interprets these AVRCP commands and turns them into empeg-Car-compatible commands ->
+ Arduino outputs these empeg-Car serial commands to its attached RS232, via another serial port ->
  Empeg car receives the serial commands and performs the action.
  And also...
  Empeg car outputs track metadata messages on its serial port ->
@@ -54,11 +54,13 @@ chip), it was his suggestion that started me experimenting with bluetooth.
 Big thanks to Shonky who had many helpful suggestions and who pointed out
 the WT32i chip that is the one that finally got used in this particular
 design. Also particular thanks to Stuart Euans of Eutronix who created the
-Empeg Display Extender board which was also critical to me being able to
+empeg Display Extender board which was also critical to me being able to
 implement this at all. And massive thanks to Mark Lord who assisted me in
 countless ways with the design and implementation, taught me a ton of
 important things, found my bugs, fixed issues with the Arduino compiler,
-and pointed out all of my EE design flaws.
+and pointed out all of my EE design flaws. And last but not least, thanks
+to the entire empeg team who made such a fantastic car MP3 player that we
+are still doing interesting things with it, nearly 20 years later.
 
 
 ----------------------------------------------------------------------------
@@ -96,8 +98,6 @@ FTDI USB driver:            http://www.ftdichip.com/FTDrivers.htm
 
 ClassOfDevice generators:    http://bluetooth-pentest.narod.ru/software/bluetooth_class_of_device-service_generator.html
                              http://www.ampedrftech.com/cod.htm
-
-
 
 Hijack Kernel for empeg:    http://empeg-hijack.sourceforge.net/
 ----------------------------------------------------------------------------
@@ -338,7 +338,7 @@ tuner connector. More details about that below.
 ----------------------------------------------------------------------------
 Special note about empeg car power connection:
 ----------------------------------------------------------------------------
-I might recommend that, for this installation, you wire up the Empeg to your
+I might recommend that, for this installation, you wire up the empeg to your
 car differently than it would normally otherwise be wired up.
 
 This design is intended to be used in such a way so that the empeg is
