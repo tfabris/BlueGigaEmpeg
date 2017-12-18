@@ -2718,6 +2718,8 @@ void SetTrackMetaData(String stringToParse, char empegMessageCode)
     trackNumberString04 = String(stringToParse.toInt()+1);  // Set value increased by 1.
     if (displayTracksOnSerial)
     {
+      LogChar(' ');
+      LogChar(' ');
       Log(F("---------------------------------------------------"));
       LogChar(' ');
       LogChar(' ');
@@ -2790,6 +2792,8 @@ void SetTrackMetaData(String stringToParse, char empegMessageCode)
       LogChar(' ');
       LogChar(' ');
       Log(trackGenreString06);
+      LogChar(' ');
+      LogChar(' ');
       Log(F("---------------------------------------------------"));
     }
     return;
