@@ -110,10 +110,10 @@ Make sure the Bluetooth WT32i chip+board is updated to the latest firmware
 tool with a USB micro cable plugged into the "UART" port on the dev board.
 At the time of this writing, here were the steps I took:
 
- - Make sure that jumper JP4 on the BetzTechnik board is connected. You will need
-   to cut this trace after you're done upgrading, and/or temporarily reconnect it
-   for future firmware updates to the WT32i chip.
- - Make sure the Bluetooth breakout board is fully disconnected from the ardunio
+ - Make sure that jumper JP4 on the BetzTechnik WT32i bluetooth board is connected.
+   You will need to cut this trace after you're done upgrading. It will need to be
+   temporarily reconnected any time you do firmware updates to the WT32i chip.
+ - Make sure the Bluetooth breakout board is fully disconnected from the Arduino
    and all of its related electronics modules which are part of this assembly.
    Upgrade will not work if it is connected to Arduino serial port.
  - Download and unzip the firmware zip file linked in "Reference Materials" above.
@@ -139,6 +139,8 @@ At the time of this writing, here were the steps I took:
  - Note: When upgrading, there is a checkbox on the screen in the SerialDFU.exe
    utility which says "Factory Restore All". Make sure to CHECK that checkbox when doing
    the firmware upgrade.
+ - After the upgrade is successful, disconnect everything and cut the trace JP4
+   on the BetzTechnik WT32i bluetooth board.
 
  ----------------------------------------------------------------------
  IMPORTANT - Modifying the Arduino compiler for larger buffer size
@@ -234,7 +236,7 @@ different. So it must go through the MAX232 circuit.
 Arduino serial port 2 (RX2/TXT) goes to the bluetooth chip's serial port. This is at
 TTL level so the Arduino and the bluetooth chip can connect almost directly with wires
 or traces instead of needing to go through a MAX232 circuit. However, the TX wire from
-the Arudino is running at 5v TTL, and the BlueGiga chip runs at 3v (and our assembly
+the Arduino is running at 5v TTL, and the BlueGiga chip runs at 3v (and our assembly
 will actually have it nominally at 2.5v), you must run the Arduino TX2 output through
 a simple voltage divider to step 5v TTL from Arduino down to 2.5v for the BlueGiga chip.
 This is a simple circuit with just 2 resistors. More details below.
@@ -249,7 +251,7 @@ way they're supposed to go, I just get it working correctly on my board and then
 Give it 5 volts from the 5v rail, according to the MAX232 schematic in the resources linked above.
 (There will also be capacitors in that schematic that must be correctly placed too.)
 
-Empeg tuner connector is used to supply power to the arduino and the rest of the assembly.
+Empeg tuner connector is used to supply power to the Arduino and the rest of the assembly.
 Blue wire on tuner connecter connects to the voltage input pin on the 12v-to-5v step-down transformer
 power supply, and the black wire on the tuner connector connects to the ground input pin on the
 step-down power supply.
@@ -257,7 +259,7 @@ step-down power supply.
 Arduino "5v" pin is connected to the 5v output rail of the 12v-to-5v step-down transformer power
 supply circuit.
 
-Grounding - Multiple arduino GND pins connected to the output ground rail of the 5v power supply. 
+Grounding - Multiple Arduino GND pins connected to the output ground rail of the 5v power supply. 
 
 Arduino and Pair mode indicator LED - Arduino pin 50 digital I/O pin, connected to +LED through
 resistor (current of resistor determined by calculator and LED values), then -LED connect to GND.
@@ -284,12 +286,29 @@ divider circut by using two 10k resistors in the following configuration:
 
 Connect one of the 10K resistors to the TX2 pin from the Arduino, connect the other 10K resistor to
 GND, and connect the other leads of each resistor to each other. The RX-input of the WT32i then
-gets connected to that same point (where the two resistors are tied together).
+gets connected to that same point (where the two resistors are tied together). Example schematic:
 
-MAYBE:
+    ARDUINO -----VVVVV----+----VVVVV-----GND
+    TX2         10Kohm    |    10Kohm
+                          |
+                       WT32i Rx
+
+Bluetooth chip+Board three I2S pins PCM_CLK, PCM_SYNC, PCM_IN connected to empeg IISC, IISW, IISD1
+via special modification to the empeg the tuner connector, as described in the section below titled
+"Empeg Car Interior Modification for Digital I2S connection". These will each need to be coming in
+through some resistors arranged in a voltage divider configuration, with a 4.7k and a 10k resistor
+for each one of the three lines. Example of one line:
+
+    EMPEG -----VVVVV----+----VVVVV-----GND
+    IISC      4.7Kohm   |    10Kohm
+                        |
+                  WT32i PCM_CLK
+
+Experimental Reset Line:
 Bluetooth chip+board RST (reset) pin connected to Pin 51 of the Arduino board. This is working for
 Mark Lord, but my chip fried immediately after trying this, so I consider this to be a risk. Perhaps
-this needs to go through a diode and/or a voltage divider in order to work. Mark is still investigating.
+this needs to go through a diode and/or a voltage divider (similar to the other voltage dividers
+described above) in order to work. Mark Lord is still investigating.
 
 Self jumpers and switches on the Bluetooth chip+board, the BetzTechnik WT32i Breakout board V2:
 
@@ -480,6 +499,16 @@ Empeg IIS pads   My Jumper wires*  Int. Empeg wires**   Int. wht Conn pos***   S
 **(These were the colors inside my empeg, yours may differ. These are the interior wires connecting the docking sled connector to the motherbopard.)
 ***(Original positions of these wires on the white connector near the Ethernet plug, now disconnected from that plug.)
 
+On the bluetooth module side of this connection, all three I2S input lines from
+the empeg going into the bluetooth will need to be protected by a voltage divider
+circuit which uses two resistors. Example schematic, will need to be repeated for
+all three I2S input lines on the bluetooth module side of the circuit:
+
+    EMPEG -----VVVVV----+----VVVVV-----GND
+    IISC      4.7Kohm   |    10Kohm
+                        |
+                  WT32i PCM_CLK
+
 Finally, make sure that the variable "btAudioRoutingControlString", which is
 set elsewhere in this code, is configured to be the one which uses the I2S digital
 audio instead of the analog audio.
@@ -536,13 +565,13 @@ Notes about debugging via the Arduino USB connection - Startup sequence
 Your mileage may vary, but on my system there is an interesting trick with
 debugging via the Arduino USB cable and the Arduino Serial Monitor.
 
-When everything is connected together (empeg, arduino, bluetooth), the assembly
+When everything is connected together (empeg, Arduino, bluetooth), the assembly
 and all devices which are part of the assembly will get their power off of the
 12v power coming off the tuner connector on the empeg sled. This means that
 if you plug all this stuff in, it's already powered by the time you try to 
 attach your USB debug cable to Arduino. 
 
-On my computer system, if the arduino is already externally powered when I
+On my computer system, if the Arduino is already externally powered when I
 connect my debug cable, then my computer cannot find its USB UART and is
 unable to connect to the debug port. 
 
