@@ -96,6 +96,15 @@ boolean displayEmpegSerial=false;
 // most of the situations where we'd want to see it log line by line.
 boolean logLineByLine=true;
 
+// Choose whether or not to display millisecond deltas with each log line.
+//      Setting true:
+//           - Each logged line of output prints a delta, in milliseconds,
+//             which is the difference from the last logged line of output,
+//             for profiling.
+//           - Logged output is not accompanied by a milliseconds number.
+// Note: Recommend turning on this feature only when "logLineByLine" is true.
+boolean outputMillis=true;
+
 // Choose whether or not to display the interpreted track metadata on the
 // Arduino debugging serial/USB console port.
 //      Setting true:
@@ -495,16 +504,15 @@ int pairAddressStringMaxLength = 25;
 // This is the commands that we must send to the empeg serial port
 // if certain messages come in from the bluetooth module.
 // NOTE: Update the matrix size and the array size both, if you are changing these.
-int empegCommandMatrixSize = 13;
-String empegCommandMessageMatrix[13][2] =
+int empegCommandMatrixSize = 12;
+String empegCommandMessageMatrix[12][2] =
 {
   // Bluetooth Module reports     // Send command to empeg
   { "AVRCP PLAY PRESS",           "C"},
-  { "CALL 0",                     "C"},   // Experimental: In cases where the host calls us, can we force empeg to start playing? See issue #22.
   { "AVRCP PAUSE PRESS",          "W"},
   { "AVRCP STOP PRESS",           "W"},
   { "A2DP STREAMING START",       "C"},
-  { "NO CARRIER ",                "W"},
+  { "NO CARRIER 0",               "W"},  // Bugfix: Only trigger a pause on carrier loss of A2DP first channel (0). Attempt to fix issue #22.
   { "A2DP STREAMING STOP",        "W"},
   { "AVRCP FORWARD PRESS",        "N"},
   { "AVRCP BACKWARD PRESS",       "P"},  
@@ -563,6 +571,11 @@ static String btInputString = "";
 int btInputStringMaxLength = 150;
 static String empegInputString = "";
 int empegInputStringMaxLength = 160; // Reducing this length as an austerity measure.
+
+// String to hold incoming line of serial characters from bluetooth that are being
+// ignored/swallowed and will not be acted upon as part of the DisplayAndSwallowResponses function.
+static String btSwallowInputString = "";
+int btSwallowInputStringMaxLength = 150;
 
 // Strings to hold some outgoing commands, reserve early to save memory.
 static String commandToSend = "";
@@ -626,6 +639,11 @@ bool pairingMode = false;
 // therefore not be trying to reset yet again in the same breath. Protect against reentrant code.
 bool forceQuickReconnectMode = false;
 
+// Variable to keep track of the timestamp of the prior output line.
+// Used to calculate deltas between output lines for profiling.
+unsigned long priorOutputLineMillis = 0;
+
+
 
 // ------------------------------------
 // Program code functions
@@ -642,6 +660,12 @@ bool forceQuickReconnectMode = false;
 // ----------------------------------------------------------------------------
 void setup()
 {
+  // Initialize our variable which keeps track of the time deltas between
+  // output lines for profiling, so I can see how many milliseconds have
+  // elapsed between each piece of output. Start it at the timestamp when
+  // the program starts.
+  priorOutputLineMillis = millis();
+
   // Set up the built in blinker LED on the Arduino board to active so that
   // I can use it to indicate behaviors of things during development and
   // debugging so I can check to see that my program is working in cases
@@ -673,6 +697,7 @@ void setup()
   // empeg status or metadata string arriving from the empeg serial port.
   btInputString.reserve(btInputStringMaxLength);
   empegInputString.reserve(empegInputStringMaxLength);
+  btSwallowInputString.reserve(btSwallowInputStringMaxLength);
 
   // Reserve bytes for the some other strings to save memory.
   commandToSend.reserve(commandToSendMaxLength);
@@ -1800,11 +1825,36 @@ void GrabPairAddressString(String stringToParse, String triggerString)
 // ----------------------------------------------------------------------------
 void Log(String logMessage)
 {
+  // Variable used in time calculations.
+  static unsigned long currentOutputLineMillis = 0;
+
+  char timestring[10];
+  int x;
+
   // Make sure the main serial port is available before outputting.
   if (Serial)
   {
-    // Print the resulting string.
-    Serial.print(logMessage);
+    // Calculate the delta between the last time that we logged an output
+    // line and now so that we can profile our output.
+    if (outputMillis)
+    {
+      // Set the value of the current output timing before printing it so that
+      // the act of printing it doesn't cloud our profiling results.
+      currentOutputLineMillis = millis();
+
+      x = sprintf(timestring, "%06d",  currentOutputLineMillis - priorOutputLineMillis);
+
+      // Print things out including the time delta.
+      Serial.print(String(timestring) + " " + logMessage);
+
+      // Set the prior one to be the current one, ready for the next calcualtion.
+      priorOutputLineMillis = currentOutputLineMillis;
+    }
+    else
+    {
+      // Print the resulting string without time information.
+      Serial.print(logMessage);
+    }
 
     // Print a CRLF at the end of the log message to alleviate us from
     // the need of adding one by hand at the end of every logged message
@@ -2545,6 +2595,9 @@ void DisplayAndSwallowResponses(int numResponsesToSwallow, unsigned long waitTim
   // Variable to be used for measuring how long each loop was waited for in milliseconds
   unsigned long startingDnsMillis = 0;
 
+  // Clean out our line by line display string at the moment we enter this function.
+  btSwallowInputString = "";
+
   // Wait for response characters.
   for (int m=0; m < numResponsesToSwallow; m++) // swallow up to this many individually-lined messages.
   {
@@ -2563,9 +2616,31 @@ void DisplayAndSwallowResponses(int numResponsesToSwallow, unsigned long waitTim
         if (BlueGigaSerial.available())
         {
           swallowChar = BlueGigaSerial.read();
-          LogChar(swallowChar);            
-          if (swallowChar == '\n')
+
+          if(!logLineByLine)
           {
+            LogChar(swallowChar);
+          }
+
+          // Add our character to our longer line-by-line logging string.
+          btSwallowInputString += swallowChar;
+
+          // Check to see if it's a linefeed or if the length of the
+          // string is too large to hold, either way we consider the string
+          if (swallowChar == '\n' || (btSwallowInputString.length() >= (btSwallowInputStringMaxLength - 2)))
+          {
+            if (logLineByLine)
+            {
+              // Trim line endings off the logged string
+              btSwallowInputString.trim();
+
+              // Log with a label that this string is being ignored.
+              Log("  IGNORED: " + btSwallowInputString);
+            }
+
+            // Clean out our string for the next round of logging the next string.
+            btSwallowInputString = "";
+
             // If the character was a line ending, then break out of just the inner timed loop
             // and move on to the outer loop (the next individually- lined message to wait for).
             break;
