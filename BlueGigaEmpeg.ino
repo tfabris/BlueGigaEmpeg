@@ -4,10 +4,10 @@
 // ----------------------------------------------------------------------------
 // A project to use a Silicon Labs BlueGiga WT32i bluetooth chip, combined with
 // an Arduino Mega board with an added RS232 port, to act as an intermediary
-// between the Empeg Car stereo and a modern car. 
+// between the empeg Car stereo and a modern car. 
 //
 // Please refer to the accompanying README.txt file for details about the
-// electronics interface, and how to modify and configure your Empeg Car to
+// electronics interface, and how to modify and configure your empeg Car to
 // work with this code.
 
 // ------------------------------------
@@ -24,7 +24,7 @@ const String btAuthTypeString = "SET BT SSP 3 0";
 // codes up to 16 digits long.
 const String btPinCodeString = "SET BT AUTH * 0000";
 
-// Debugging tool for the part of the code that sends commands to the Empeg.
+// Debugging tool for the part of the code that sends commands to the empeg.
 // Normally, typing commands into the Arduino debug console will send those
 // same characters to the bluetooth chip, so that you can try out commands
 // on the bluetooth chip. The "EmpegSendCommandDebug" flag, below, expands
@@ -47,17 +47,17 @@ const String btPinCodeString = "SET BT AUTH * 0000";
 // debugging sessions
 boolean EmpegSendCommandDebug=false;
 
-// Choose whether or not to display the Empeg Serial Port outputs (for instance
+// Choose whether or not to display the empeg Serial Port outputs (for instance
 // the empeg boot up messages) on the serial debug console of the Arduino. Only
 // needed for debugging, not needed for final build runtime.
 //     Setting true:
-//           - Characters received from the Empeg Car serial cable are displayed
+//           - Characters received from the empeg Car serial cable are displayed
 //             on the Arduino main serial port debugging console terminal screen.
 //             It is mixed in with all the other serial output from the bluetooth
 //             chip all at the same time, so it might be messy if the bluetooth
 //             chip and the empeg are saying things at the same time.
 //     Setting false:
-//           - No echoing of the Empeg Car serial cable output occurs on the debug
+//           - No echoing of the empeg Car serial cable output occurs on the debug
 //             screen (though the empeg output is still interpreted and acted upon
 //             by the software, it's just not displayed on the debug screen).
 // This should be set to false most of the time, and only set to true during
@@ -500,7 +500,7 @@ const String pairDetectionString = "AUDIO ROUTE ";
 static String pairAddressString = "";
 int pairAddressStringMaxLength = 25;
 
-// The translation table of AVRCP messages to Empeg serial commands.
+// The translation table of AVRCP messages to empeg serial commands.
 // This is the commands that we must send to the empeg serial port
 // if certain messages come in from the bluetooth module.
 // NOTE: Update the matrix size and the array size both, if you are changing these.
@@ -559,7 +559,7 @@ const String analogAudioRoutingControlString = "SET CONTROL AUDIO INTERNAL INTER
 // modifying inside of empeg Car player) aka "digitalAudio = true".
 const String digitalAudioRoutingControlString = "SET CONTROL AUDIO INTERNAL I2S_SLAVE EVENT KEEPALIVE 16";
 
-// Strings to set the gain level of the Empeg. See bluetooth chip docs for gain level table.
+// Strings to set the gain level of the empeg. See bluetooth chip docs for gain level table.
 // Uncomment this line if your player will be used in AC/Home mode, (1v outputs): 
 // const String empegGainSettingString = "SET CONTROL GAIN E 0";
 // Uncomment this line if your player will be used in DC/Car mode, such as in a sled (4v outputs):
@@ -589,7 +589,7 @@ int sendOutputStringMaxLength = 85;
 boolean btStringComplete = false;
 boolean empegStringComplete = false;
 
-// Variable to keep track of what the current Empeg Playing state is reported to be.
+// Variable to keep track of what the current empeg Playing state is reported to be.
 // This is used when responding to the bluetooth module's queries for playback state.
 // The empeg is always either playing or paused, so this is either true or false.
 boolean empegIsPlaying = false; 
@@ -732,7 +732,7 @@ void setup()
   BlueGigaSerial.begin(115200);
   Log(F("BlueGiga Serial has been started."));
   
-  // Set the data rate for the serial port connected to the Empeg Car's
+  // Set the data rate for the serial port connected to the empeg Car's
   // serial port, via the RS-232 and MAX232 circuit connected to the Arduino.
   // The empeg Car defaults to 115200 BPS in home/AC mode, and has configurable
   // BPS when sled-docked in car/DC mode. Refer to the accompanying README.txt
@@ -2663,7 +2663,7 @@ void DisplayAndSwallowResponses(int numResponsesToSwallow, unsigned long waitTim
 // be responded to as soon as the host queries for this information.
 // 
 // Parameters:
-// stringToParse: The string to parse from the Empeg, such as "TRed Barchetta"
+// stringToParse: The string to parse from the empeg, such as "TRed Barchetta"
 // or "ARush" or "GProgressive Rock".
 // empegMessageCode: The single character of the message code from the
 // empeg which preceded the string to pars such as "G" or "T" or whatever.
@@ -2958,7 +2958,7 @@ void SendEmpegCommand(char empegCommandToSend)
     // Log what we are sending.
     // Log("Sending to empeg: " + (String)empegCommandToSend);
 
-    // Write out the corresponding Empeg command to the Empeg's
+    // Write out the corresponding empeg command to the empeg's
     // serial port followed by a linefeed character.
     if (EmpegSerial)
     {
@@ -3600,7 +3600,7 @@ void HandleEmpegStateChange()
     SendBlueGigaCommand("AVRCP NFY CHANGED " + transactionLabelTrackChanged + " 2 1"); 
   }
   
-  // Report to our arduino console debug log what the current state of playback on the Empeg is.
+  // Report to our arduino console debug log what the current state of playback on the empeg is.
   ReportEmpegPlayingState();
 }
 
