@@ -144,10 +144,10 @@ boolean empegStartPause = false;
 // docs say that the reconnect timer (the first numeric parameter) should be *longer* than
 // 500ms. However I have found it should even be longer than that, to prevent other timing
 // and bug issues, seemingly caused by trying to reconnect too quickly. 
-const String autoReconnectString = "SET CONTROL RECONNECT 4800 0 0 7 0 A2DP A2DP AVRCP\r\nSTORECONFIG";
+const String autoReconnectString = "SET CONTROL RECONNECT 4800 0 0 7 0 A2DP A2DP AVRCP\r\n            STORECONFIG";
 //
 // Note: To repro the "Bad PDU Registration bug", uncomment this line (a short reconnect repros the issue frequently):
-//    const String autoReconnectString = "SET CONTROL RECONNECT 800 0 0 7 0 A2DP A2DP AVRCP\r\nSTORECONFIG";
+//    const String autoReconnectString = "SET CONTROL RECONNECT 800 0 0 7 0 A2DP A2DP AVRCP\r\n            STORECONFIG";
 //
 // Version 2: "SET CONTROL AUTOCALL". This seems to work well, when it works. But some
 // of its other issues are not livable. For example sometimes it does a good job of
@@ -1842,7 +1842,7 @@ void Log(String logMessage)
       // the act of printing it doesn't cloud our profiling results.
       currentOutputLineMillis = millis();
 
-      x = sprintf(timestring, "%06d",  currentOutputLineMillis - priorOutputLineMillis);
+      x = sprintf(timestring, "%07d",  currentOutputLineMillis - priorOutputLineMillis);
 
       // Print things out including the time delta.
       Serial.print(String(timestring) + " " + logMessage);
