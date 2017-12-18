@@ -63,7 +63,7 @@ boolean EmpegSendCommandDebug=false;
 // This should be set to false most of the time, and only set to true during
 // debugging sessions, since it slows down processing to put out too much
 // data on the serial port when it is not needed.
-boolean displayEmpegSerial=true;
+boolean displayEmpegSerial=false;
 
 // Variable to control whether output from the empeg and bluetooth serial
 // ports are logged to the debug console character-by-character or line-by-line.
@@ -136,6 +136,9 @@ boolean empegStartPause = false;
 // 500ms. However I have found it should even be longer than that, to prevent other timing
 // and bug issues, seemingly caused by trying to reconnect too quickly. 
 const String autoReconnectString = "SET CONTROL RECONNECT 4800 0 0 7 0 A2DP A2DP AVRCP\r\nSTORECONFIG";
+//
+// Note: To repro the "Bad PDU Registration bug", uncomment this line (a short reconnect repros the issue frequently):
+//    const String autoReconnectString = "SET CONTROL RECONNECT 800 0 0 7 0 A2DP A2DP AVRCP\r\nSTORECONFIG";
 //
 // Version 2: "SET CONTROL AUTOCALL". This seems to work well, when it works. But some
 // of its other issues are not livable. For example sometimes it does a good job of
@@ -435,11 +438,20 @@ const String tokenSubstitutionString = "{0}";
 // us inititaiting it during the pairing process. This complexity is needed
 // because ForceQuickReconnect needs to know who our current pairing buddy
 // is all the time as opposed to just when we recently pressed the pair button.
-int gbaMatrixSize=1;
-String gbaMessageMatrix[1] =
-{
-  "SET BT PAIR ",
-};
+//
+// UPDATE: Not doing this at the moment. The ForceQuickReconnect, the quick version
+// which needed to know the bluetooth address and thus needed this GBA (get bluetooth
+// address) code, did not solve the problem it was intended to solve and so I am
+// disabling this code for now. Keeping it around for posterity in case I need to 
+// get the bluetooth address mid-run at a later date. 
+      // int gbaMatrixSize=1;
+      // String gbaMessageMatrix[1] =
+      // {
+      //   "SET BT PAIR ",
+      //   // "RING 0 ",   // These didn't always work and I need them off while I test behavior of the first one.
+      //   // "RING 1 ",
+      //   // "RING 2 ",
+      // };
 
 // Length of time to be in pairing mode before giving up.
 // Make sure to change both variables below. The first variable
@@ -483,11 +495,12 @@ int pairAddressStringMaxLength = 25;
 // This is the commands that we must send to the empeg serial port
 // if certain messages come in from the bluetooth module.
 // NOTE: Update the matrix size and the array size both, if you are changing these.
-int empegCommandMatrixSize = 12;
-String empegCommandMessageMatrix[12][2] =
+int empegCommandMatrixSize = 13;
+String empegCommandMessageMatrix[13][2] =
 {
   // Bluetooth Module reports     // Send command to empeg
   { "AVRCP PLAY PRESS",           "C"},
+  { "CALL 0",                     "C"},   // Experimental: In cases where the host calls us, can we force empeg to start playing? See issue #22.
   { "AVRCP PAUSE PRESS",          "W"},
   { "AVRCP STOP PRESS",           "W"},
   { "A2DP STREAMING START",       "C"},
@@ -513,7 +526,9 @@ String empegCommandMessageMatrix[12][2] =
 // Documentation says that the maximum length for each one is 255 bytes. I'll use
 // two string length limiters to save memory on the arduino: A long one for the track
 // metadata strings, and a short one for things like track number and playback position.
-int metadataMaxLength = 255;
+// Thing is... This is taking up too much memory and the input strings need to be shorter.
+// Experiment: Trying to shorten this as an austerity measure.
+int metadataMaxLength = 150;
 int metadataSmallLength = 10;
 static String trackTitleString01 = "Unknown track on empeg Car";
 static String trackArtistString02 = "Unknown artist on empeg Car";
@@ -545,9 +560,9 @@ const String empegGainSettingString = "SET CONTROL GAIN 9 0";
 // Strings to hold an incoming line of serial characters from bluetooth module or empeg.
 // Will be reset each time an entire message from the bluetooth module or empeg is processed.
 static String btInputString = "";
-int btInputStringMaxLength = 100;
+int btInputStringMaxLength = 150;
 static String empegInputString = "";
-int empegInputStringMaxLength = 300;
+int empegInputStringMaxLength = 160; // Reducing this length as an austerity measure.
 
 // Strings to hold some outgoing commands, reserve early to save memory.
 static String commandToSend = "";
@@ -606,6 +621,10 @@ const int resetLinePin = 51;
 
 // Variable to globally keep track of whether we have recently initiated reset/pairing mode.
 bool pairingMode = false;
+
+// Variable to globally keep track of whether we have recently initiated a reset and should
+// therefore not be trying to reset yet again in the same breath. Protect against reentrant code.
+bool forceQuickReconnectMode = false;
 
 
 // ------------------------------------
@@ -1258,7 +1277,7 @@ char MainInputOutput()
       // Check to see if it's a linefeed or if the length of the
       // string is too large to hold, either way we consider the string
       // to be done, baked, and ready to do something with.
-      if ((empegChar == '\n') || (empegInputString.length() >= (empegInputStringMaxLength - 1)))
+      if ((empegChar == '\n') || (empegInputString.length() >= (empegInputStringMaxLength - 2)))
       {
         // String is ready to be processed if one of the above things was true.
         empegStringComplete = true;
@@ -1267,9 +1286,12 @@ char MainInputOutput()
         empegInputString.trim();        
 
         // Log the string if we are in line by line logging mode.
-        if (logLineByLine)
+        if (displayEmpegSerial)
         {
-          Log(empegInputString);
+          if (logLineByLine)
+          {
+            Log(empegInputString);
+          }
         }
       }         
     }
@@ -1311,7 +1333,7 @@ char MainInputOutput()
       // Check to see if it's a carriage return or if the length of the
       // string is too large to hold, either way we consider the string
       // to be done, baked, and ready to do something with.
-      if ((inChar == '\n') || (btInputString.length() >= (btInputStringMaxLength - 1)))
+      if ((inChar == '\n') || (btInputString.length() >= (btInputStringMaxLength - 2)))
       {
         // String is ready to be processed if one of the above things was true.
         btStringComplete = true;
@@ -1324,7 +1346,6 @@ char MainInputOutput()
         {
           Log(btInputString);
         }
-
       }
     }
   }
@@ -1365,6 +1386,13 @@ char MainInputOutput()
       // Arduino serial console to trigger the effect.
       if (EmpegSendCommandDebug)
       {
+        // // Special Case Debug code only. Disable for final release version.
+        // // Unit test code for force quick reconnect via a typed console command
+        // if (String("z").equalsIgnoreCase((String)userChar))
+        // {
+        //   ForceQuickReconnect();
+        // }
+
         // Iterate through our matrix of incoming avrcp commands looking for a match.
         for (int i=0; i<empegCommandMatrixSize; i++)
         {
@@ -1403,25 +1431,40 @@ char MainInputOutput()
 // and to respond with a response of some kind.
 //
 // Parameters
-//    (int) idleTimeMs  The amount of time in approximate milliseconds to wait.
-//    (bool) waitForLineEnding   Stop waiting if a CR or LF was received.
+//    (ulong) idleTimeMs  The amount of time in approximate milliseconds to wait.
+//    (bool)  waitForLineEnding   Stop waiting if a CR or LF was received.
 // ----------------------------------------------------------------------------
-void DisplayAndProcessCommands(int idleTimeMs, bool waitForLineEnding)
+void DisplayAndProcessCommands(unsigned long idleTimeMs, bool waitForLineEnding)
 {
-  static char displayChar = 0;
-  
-  for (int i=0; i<idleTimeMs; i++)
+  // Character that will be returned from the main input/output function, which
+  // processes one character per loop through the function and returns that character.
+  static char receivedChar = 0;
+
+  // Record the timestamp of the moment in time that we started this function
+  // so that we can tell how long we have been waiting here in this function.
+  unsigned long startingDnpMillis = 0;
+  startingDnpMillis = millis();
+
+  // Loop the main input output function one character at a time. If string
+  // processing needs to occur during the wait, it will do that then return
+  // back to this loop normally.
+  do
   {
-    displayChar = MainInputOutput();
+    // Perform the main input output loop as long as we're still waiting.
+    receivedChar = MainInputOutput();
+
+    // Check to see if we are supposed to bail out as soon as we get a line ending.
     if (waitForLineEnding)
     {
-      if (displayChar == '\n')
+      if (receivedChar == '\n')
       {
         return;
       }
     }
-    delay(1);
   }
+  while ((millis() - startingDnpMillis) <= idleTimeMs);
+  // Continue looping: Current milliseconds on the clock minus the starting milliseconds
+  // gives us the total time we've been in this loop. Check to see if our time is up.
 }
 
 // ----------------------------------------------------------------------------
@@ -1455,10 +1498,16 @@ void HandleString(String theString)
   // without rebooting the BlueGiga and the Arduino, then it will not start
   // sending bogus transaction labels to the head device causing it to glitch
   // or disconnect.
-  if (theString.indexOf(F("NO CARRIER")) > (-1))
-  {
-    ClearGlobalVariables();
-  }
+  //
+  // UPDATE: Reverting this supposed bugfix. This caused problems with the bluetooth
+  // headset where it would sometimes say NO CARRIER 3 for the a2DP connection and
+  // then wouldn't get it play/pause notifications. By disabling this it could get
+  // its play/pause notifications despite the NO CARRIER signal. See Github issue #22
+  // for more details on this issue.
+  //    if (theString.indexOf(F("NO CARRIER")) > (-1))
+  //    {
+  //      ClearGlobalVariables();
+  //    }
 
   // Same bugfix but with the boot message from the chip as well. I have seen
   // situations where the bluetooth chip has reset itself and we see its
@@ -1469,6 +1518,42 @@ void HandleString(String theString)
   {
     ClearGlobalVariables();
   }  
+
+  // UPDATE: Not doing this at the moment. The ForceQuickReconnect, the quick version
+  // which needed to know the bluetooth address and thus needed this GBA (get bluetooth
+  // address) code, did not solve the problem it was intended to solve and so I am
+  // disabling this code for now. Keeping it around for posterity in case I need to 
+  // get the bluetooth address mid-run at a later date. 
+        // // Handle "get bluetooth address" strings - these are strings that are
+        // // intended to tell me who my current pairing buddy is. This is implemented
+        // // primarily for the ForceQuickReconnect command but might be used for
+        // // others later. This must come early in the process so that if the
+        // // GBA strings are found in the list, they fall prior to any other string
+        // // processing that we might do lower down. Some of the other string
+        // // processing might want to know the the pairing address. Also there were
+        // // cases where we were already trying to reset the bluetooth and another
+        // // reset string came through before we were done and so we got reentrant
+        // // code. So do this bit first.
+        // for (int i=0; i<gbaMatrixSize; i++)
+        // {
+        //   // Make the string comparison to find out if there is a match.
+        //   if (theString.indexOf(gbaMessageMatrix[i]) > (-1))
+        //   {
+        //     // Debug logging
+        //     // Log(F(" === Getting ready to grab pairing buddy address. === "));
+
+        //     // Turn on the Arduino LED to indicate something has happened.
+        //     digitalWrite(LED_BUILTIN, HIGH);
+         
+        //     // Process the pullout of the address of our pairing buddy
+        //     // out of the string that is expected to contain our 
+        //     // pairing buddy's address in it.
+        //     GrabPairAddressString(theString, gbaMessageMatrix[i]);
+                 
+        //     // Turn off the Arduino LED.
+        //     digitalWrite(LED_BUILTIN, LOW);
+        //   }
+        // }
 
   // Handle query/response strings for things like the track metadata
   // and the playback status information. Make sure our program responds
@@ -1485,29 +1570,29 @@ void HandleString(String theString)
   // queries to respond to...
   for (int i=0; i<rspMatrixSize; i++)
   {  
-     // Make the string comparison to find out if there is a match.
-      if (theString.indexOf(rspMatrix[i]) > (-1))
-      {
-        // A match has been found, process the query/repsonse command.
-        // The function will do all detailed handling of these strings.
-        RespondToQueries(theString);
+    // Make the string comparison to find out if there is a match.
+    if (theString.indexOf(rspMatrix[i]) > (-1))
+    {
+      // A match has been found, process the query/repsonse command.
+      // The function will do all detailed handling of these strings.
+      RespondToQueries(theString);
 
-        // Bugfix: Only respond to queries once based on the contents
-        // of the quick-and-dirty response matrix. There are some entries
-        // in the matrix which may generate a double response if we don't
-        // break here. For instance, the host stereo might query for the
-        // string like this:
-        //  AVRCP 1 PDU_REGISTER_NOTIFICATION 4 PLAYBACK_STATUS_CHANGED 0
-        // This might generate two hits in our matrix, once for
-        // PLAYBACK_STATUS_CHANGED and once for PDU_REGISTER_NOTIFICATION.
-        // So place a break statement here to stop going through the loop
-        // once we have found a hit in the table.
-        break;
-      }
+      // Bugfix: Only respond to queries once based on the contents
+      // of the quick-and-dirty response matrix. There are some entries
+      // in the matrix which may generate a double response if we don't
+      // break here. For instance, the host stereo might query for the
+      // string like this:
+      //  AVRCP 1 PDU_REGISTER_NOTIFICATION 4 PLAYBACK_STATUS_CHANGED 0
+      // This might generate two hits in our matrix, once for
+      // PLAYBACK_STATUS_CHANGED and once for PDU_REGISTER_NOTIFICATION.
+      // So place a break statement here to stop going through the loop
+      // once we have found a hit in the table.
+      break;
+    }
   }
 
   // If we are inside the pairing process and we have detected that
-  // the pairing process is complete, then set the flag tp indicate
+  // the pairing process is complete, then set the flag to indicate
   // that the pairing process is complete. The pairing process will
   // end once the flag has been set to false. The actual handling
   // of the inputs and responses to the pairing mode strings
@@ -1539,7 +1624,7 @@ void HandleString(String theString)
       SendEmpegCommand(empegCommandToSend);
     }
   }
-  
+
   // Handle special case fix strings which are responses to certain
   // strings we receive on the bluetooth chip that we must respond
   // back to on the bluetooth chip. First iterate through our matrix
@@ -1566,29 +1651,7 @@ void HandleString(String theString)
       digitalWrite(LED_BUILTIN, LOW);
     }
   }
-
-  // Handle "get bluetooth address" strings - these are strings that are
-  // intended to tell me who my current pairing buddy is. This is implemented
-  // primarily for the ForceQuickReconnect command but might be used for
-  // others later.
-  for (int i=0; i<gbaMatrixSize; i++)
-  {
-    // Make the string comparison to find out if there is a match.
-    if (theString.indexOf(gbaMessageMatrix[i]) > (-1))
-    {
-      // Turn on the Arduino LED to indicate something has happened.
-      digitalWrite(LED_BUILTIN, HIGH);
-   
-      // Process the pullout of the address of our pairing buddy
-      // out of the string that is expected to contain our 
-      // pairing buddy's address in it.
-      GrabPairAddressString(theString, gbaMessageMatrix[i]);
-           
-      // Turn off the Arduino LED.
-      digitalWrite(LED_BUILTIN, LOW);
-    }
-  }  
-
+    
   // Handle pairing mode strings - these are the strings that are only
   // active when we are in Reset/Pairing mode and will not be processed
   // at any other time.
@@ -1679,7 +1742,10 @@ void GrabPairAddressString(String stringToParse, String triggerString)
   {
     return;
   }
-  
+
+  // Debug logging
+  // Log(F("=== Trying to grab pair buddy's address. ==="));
+
   // Get our bluetooth address out of the string if it's the one exact
   // special case string that we expect to see at this particular moment 
   if ( stringToParse.indexOf(triggerString) > (-1)  )
@@ -1688,7 +1754,16 @@ void GrabPairAddressString(String stringToParse, String triggerString)
     // Start searching shortly before the end of the trigger string since the trigger string I'm
     // passing in here contains the space too. For example if our trigger string is
     // "INQUIRY_PARTIAL " which is 16 characters including the space, start searching at 15.
-    firstSpace = stringToParse.indexOf(F(" "), triggerString.length() - 1);
+    //
+    // BUGFIX - don't assume that our trigger string is at the start. When the thing we're
+    // trying to fix is the bad PDU registrations then the strings coming in can get mangled
+    // because I think my stereo head unit has a bug or perhaps it overflows the string buffer
+    // or something. In any case I got a bad string from the bluetooth that looked like this:
+    //    AVRCP 0 PDU_REGISTER_NOTIFICATION 0 TRACK_REACHED_END 0SET BT PAIR 4e:fe:7e:5e:1e:2e 10e0f6999e06f4
+    // The data I really wanted was the address out of that string but initially this code 
+    // had assumed that the SET BT PAIR would be at the start of the string. Fixing it to
+    // look for it in the proper place now.
+    firstSpace = stringToParse.indexOf(F(" "), stringToParse.indexOf(triggerString) + triggerString.length() - 2);
 
     // Obtain the location of the second space, start looking for it a couple characters after the first space.
     lastSpace = stringToParse.indexOf(F(" "), firstSpace + 2);
@@ -1842,7 +1917,7 @@ void SendBlueGigaCommand(String commandString)
   // must have the response much quicker.
   //
   // Here is the line of code:
-  //     DisplayAndProcessCommands(335, false);
+  //   DisplayAndProcessCommands(50, true);
   //
   // Re-enable the line above if you are debugging an immediate
   // send/response issue where you have issued a bunch of
@@ -2012,7 +2087,7 @@ void RespondToQueries(String queryString)
           // likely hang and not get track titles or be able to send
           // steering wheel control commands to the player.
           //
-          Log(F("Unexpected registration message received. Something went wrong. Restarting bluetooth."));
+          Log(F("Unexpected registration message received. Something went wrong. Forcing bluetooth reconnect."));
           ForceQuickReconnect();
           return;
         }
@@ -2323,8 +2398,7 @@ void RespondToQueries(String queryString)
 // Any response I attempt to give for these event registrations results in 
 // a SYNTAX ERROR from iWrap. I have found that these only occur on the first
 // connection after powerup, and that if I disconnect and reconnect then
-// after that I stop being asked for these registrations. This is a dirty
-// workaround until I can get an answer back from Silicon Labs Tech Support.
+// after that I stop being asked for these registrations. 
 //
 // Note 1: This routine assumes that the blueooth chip is connected to the
 // host stereo at the time that this function is called.
@@ -2332,50 +2406,114 @@ void RespondToQueries(String queryString)
 // Note 2: This workaround has the potential to put the unit into an infinite
 // reconnect loop if the host stereo doesn't stop asking the unanswerable
 // questions after the reconnect. My stereo doesn't do that, but others might.
+// There is a variable at the top of this code to turn the infinite reconnect
+// loop off, but if you run into this issue then you've got other problems.
+// The variable to disable it is called reconnectIfBadRegistrationReceived.
 // ----------------------------------------------------------------------------
 void ForceQuickReconnect()
 {
-  // Debug logging.
-  Log(F("Begin: ForceQuickReconnect routine."));
+  // Check to see if we're already trying to force a reconnect. If we are
+  // then don't try to do it twice (protect against reentrant code).
+  if (forceQuickReconnectMode)
+  {
+    Log(F("Already in the process of trying to force a quick reconnect. Not doing it again."));
+    return;
+  }
+
+  // Set the flag indicating we are about to try a forced reconnect.
+  forceQuickReconnectMode = true;
 
   // Make sure bluetooth chip configured and ready to
   // immediately reconnect as soon as it disconnects.
   SendBlueGigaCommand(autoReconnectString);
 
-  // Disconnect the bluetooth and count on the reconnect
-  // configuration to do its job and reconnect automatically.
-  // This is not the greatest because the reconnect after the boot
-  // is still longer than I'd like it to be.
-  //    QuickResetBluetooth(0);
-  // Experiment: Try not doing a full reset (above) but rather just
-  // try a disco/reco (below) to try to make this less annoying.
-
   // Experimental faster version to make this workaround less annoying.
-  // First, let us obtain the address of the current pairing buddy. This
-  // point in the code assumes we HAVE a current pairing buddy. Send
-  // the command to the bluetooth to have it report back our current
-  // pairing buddy's address.
-  SendBlueGigaCommand(F("SET BT PAIR"));
+  //
+  // UPDATE: After all this work for doing the quick reconnect version,
+  // and for all the bugs it exposed and that I subsequently had to fix,
+  // and finally when I got the thing working with expected behavior...
+  // ... ... ... It didn't fix the issue. The quick reconnect does not
+  // properly solve the problem. What happens is that when the stereo
+  // reconnects, though it is a successful quick reconnect, it comes up
+  // in a mode where all of the AVRCP commands have stopped working
+  // altogether and there are no more track title updates or steering
+  // wheel control commands. So we have to just go back to our original
+  // plan of forcing a full reset of the bluetooth module in this case.
+  //
+  Log(F("ForceQuickReconnect: Resetting/rebooting bluetooth module."));
+  QuickResetBluetooth(0);
 
-  // Allow unit to freewheel a bit to give it a chance to retreive
-  // the pairing buddy response from the bluetooth chip.
-  DisplayAndProcessCommands(500, true);
+  // Indented below is all of the code from the speedy version of the reconnect.
+  // Keeping it around for posterity and because it offers some insights.
 
-  // At this point we should have the pairing buddy's address in
-  // the global variable for sure... we hope. Issue the commands to
-  // force a quick reconnect which is quicker than fully resetting
-  // the bluetooth chip.
-  SendBlueGigaCommand(F("CLOSE 0"));
+                // // First, let us obtain the address of the current pairing buddy. This
+                // // point in the code assumes we HAVE a current pairing buddy. Send
+                // // the command to the bluetooth to have it report back our current
+                // // pairing buddy's address.
+                // SendBlueGigaCommand(F("SET BT PAIR"));
 
-  // Must have a short freehweel between the close and call commands
-  // in order for it to work efficiently. This is counterintuitive
-  // but the reconnect can fail or work too slowly if you issue the
-  // call command instantaneously after you issue the close command.
-  DisplayAndProcessCommands(100, false);   // Note, this parameter must be false for this to work.
+                // // Allow unit to freewheel a bit to give it a chance to retreive
+                // // the pairing buddy response from the bluetooth chip.
+                // // It must be a pretty long freewheel because, when the bad PDU
+                // // issue occurs, it's usually in the middle of a whole bunch of
+                // // other stuff happening and many messages are going back and
+                // // forth. So we must freewheel a lot here so that we have a 
+                // // fighting chance of getting the stuff we need to get out of
+                // // this. Also make sure to use the "false" parameter so that
+                // // if there are multiple messages coming through quickly at the
+                // // same time, it doesn't accidentally quit looking for the
+                // // address just because a different message came through an
+                // // instant before the pairing buddy's address came through.
+                // DisplayAndProcessCommands(1000, false); 
 
-  // Now reconnect using the pair address of our pairing buddy
-  // that we retrieved above.
-  SendBlueGigaCommand("CALL " + pairAddressString + " 19 A2DP");
+                // // At this point we should have the pairing buddy's address in
+                // // the global variable... we hope. Check to see if we do.
+                // if (pairAddressString != "")
+                // {
+                //   Log(F("ForceQuickReconnect: speedy reset."));
+                //   Log(F("--------------------"));
+                //   Log(F("Pair Address String:"));
+                //   Log(pairAddressString);
+                //   Log(F("--------------------"));
+
+                //   // If we have a pairing buddy known, then issue the commands to
+                //   // force a quick reconnect which is quicker than fully resetting
+                //   // the bluetooth chip.
+                //   SendBlueGigaCommand(F("CLOSE 0"));
+
+                //   // Must have a short freehweel between the close and call commands
+                //   // in order for it to work efficiently. This is counterintuitive
+                //   // but the reconnect can fail or work too slowly if you issue the
+                //   // call command instantaneously after you issue the close command.
+                //   // I have found that on some devices, something like 100ms is too
+                //   // short and the device ends up disconnecting completely. So I am
+                //   // trying different higher values to prevent that problem.
+                //   // 
+                //   // Note, second parameter must be false for this particular case to
+                //   // work so that there is an actual delay and that it doesn't quit
+                //   // the processing as soon as it gets a single message.
+                //   DisplayAndProcessCommands(500, false);   
+
+                //   // Now reconnect using the pair address of our pairing buddy
+                //   // that we retrieved above.
+                //   SendBlueGigaCommand("CALL " + pairAddressString + " 19 A2DP");
+                // }
+                // else
+                // {
+                //   // If we don't have a pairing buddy (or if the routine to obtain
+                //   // our pairing buddy's address failed) then we have no choice but
+                //   // an actual reset of our bluetooth chip. Disconnect the bluetooth
+                //   // and count on the reconnect configuration to do its job and
+                //   // reconnect automatically. This is not the greatest because the
+                //   // reconnect after the reset is longer than I'd like it to be.
+                //   // Too much of a hanging silence. So hope the above code works
+                //   // instead.
+                //   Log(F("ForceQuickReconnect: HARD RESET."));
+                //   QuickResetBluetooth(0);
+                // }
+
+  // Done with our routine, set flag to indicate we are done.
+  forceQuickReconnectMode = false;
 
   // Debug logging.
   Log(F("End: ForceQuickReconnect routine."));
@@ -2399,16 +2537,27 @@ void ForceQuickReconnect()
 // parameter, if no messsages are received. If any message is received,
 // then the wait shortens by that portion of the wait loop.
 // ----------------------------------------------------------------------------
-void DisplayAndSwallowResponses(int numResponsesToSwallow, int waitTimePerResponseMs)
-{  
+void DisplayAndSwallowResponses(int numResponsesToSwallow, unsigned long waitTimePerResponseMs)
+{ 
+  // Character to be read from the serial port and then discarded
   static char swallowChar = 0;
-  
+
+  // Variable to be used for measuring how long each loop was waited for in milliseconds
+  unsigned long startingDnsMillis = 0;
+
   // Wait for response characters.
-  for (int m=0; m < numResponsesToSwallow; m++) // swallow up to this many messages...
+  for (int m=0; m < numResponsesToSwallow; m++) // swallow up to this many individually-lined messages.
   {
-    for (int t=0; t < waitTimePerResponseMs; t++) // ...for up to this many milliseconds per possible message
+    // Obtain the current time on the clock where we are beginning a wait to swallow responses.  
+    startingDnsMillis = millis();
+
+    // Loop and retreive characters as long as the clock hasn't run out
+    do
     {
+      // Clear out the character that we will be retreiving.
       swallowChar = 0;
+
+      // Check to see if a character is available on the serial port and then swallow it.
       if (BlueGigaSerial)
       {
         if (BlueGigaSerial.available())
@@ -2417,15 +2566,17 @@ void DisplayAndSwallowResponses(int numResponsesToSwallow, int waitTimePerRespon
           LogChar(swallowChar);            
           if (swallowChar == '\n')
           {
+            // If the character was a line ending, then break out of just the inner timed loop
+            // and move on to the outer loop (the next individually- lined message to wait for).
             break;
           }
         }
-        else
-        {
-          delay(1);
-        }
       }
     }
+    while ((millis() - startingDnsMillis) <= waitTimePerResponseMs);
+    // Each loop waits for a certain amount of time. Current milliseconds on the clock, minus
+    // the timestamp that we started each loop, gives us how long we've been in the loop so far.
+    // Check to see if it's still less than our overall wait time, and if not, finish the loop.
   }
 }
 
@@ -3065,7 +3216,7 @@ void HandleEmpegString(String theString)
     // Split at the first space it finds. In my example above, the first space
     // is actually two spaces, but I think there is a chance that the hour field
     // might be space-padded, so plan on it being one space (or not) and then
-    // whatever it finds after that. Note: The +1 is so that it get the string
+    // whatever it finds after that. Note: The +1 is so that it gets the string
     // starting AFTER the first space, not INCLUDING the first space.
     empegTimecodeString = empegDetailString.substring(empegDetailString.indexOf(F(" ")) +1 );
     
@@ -3293,10 +3444,11 @@ void HandleEmpegStateChange()
       SendBlueGigaCommand("AVRCP NFY CHANGED " + transactionLabelPlaybackStatusChanged + " 1 1");
     }
 
-    // Also indicate to the host stereo that we have started playing by sending a play command.
-    // Indicate to the host stereo that we have stopped playing by sending a pause command.
-    // EXPERIMENT - Try not sending pause and play commands to the host stereo. It might not
-    // be even listening to them at all and in fact this might confuse it.
+    // Indicate to the host stereo that we have started playing by sending a play command.
+    // This attempts to fix issue #22 where the bluetooth headset would get the wrong idea
+    // and it would have a desynchronization with the play/pause state. Experimenting if
+    // it makes things worse or better. Trying not doing this because it makes additional
+    // SYNTAX ERROR messages appear at times. Verdict: this has no effect on issue #22.
     //     SendBlueGigaCommand(F("AVRCP PLAY"));
   }
   else
@@ -3333,9 +3485,12 @@ void HandleEmpegStateChange()
     }
 
     // Indicate to the host stereo that we have stopped playing by sending a pause command.
-    // EXPERIMENT - Try not sending pause and play commands to the host stereo. It might not
-    // be even listening to them at all and in fact this might confuse it.
-    //      SendBlueGigaCommand("AVRCP PAUSE");
+    // This attempts to fix issue #22 where the bluetooth headset would not start playing
+    // when it was supposed to and there was a desynchronization in play state between
+    // headset and bluetooth module. Experimenting if it makes things worse or better.
+    // Trying not doing this because it makes additional SYNTAX ERROR messages appear at
+    // times. Verdict: this has no effect on issue #22.
+    //    SendBlueGigaCommand("AVRCP PAUSE");
   }
 
   // In all cases, send a notification to the host stereo headunit that the track
@@ -3382,7 +3537,7 @@ void ReportEmpegPlayingState()
 {
   if (empegIsPlaying)
   {
-    Log(F("Empeg state...................................PLAYING  >"));
+    Log(F("Empeg state..................................PLAYING  >"));
   }
   else
   {
@@ -3416,6 +3571,7 @@ void QuickResetBluetooth(int resetType)
   switch (resetType)
   {
     case 0:
+      Log(F("Performing Reset of bluetooth module."));
       SendBlueGigaCommand(F("RESET"));
       ClearGlobalVariables();
 
@@ -3477,6 +3633,7 @@ void ResetBluetoothPin()
 // ----------------------------------------------------------------------------
 void ClearGlobalVariables()
 {
+  Log(F("Clearing global variables."));
   transactionLabelPlaybackStatusChanged = "";
   transactionLabelTrackChanged = "";
 
