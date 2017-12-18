@@ -7,7 +7,7 @@ an Arduino Mega board with an added RS232 port, to act as an intermediary
 between the empeg Car stereo and a modern car. The purpose is twofold:
 
 1. Bluetooth A2DP connection allows high quality stereo audio from the
-   empeg car outputs to play on the modern car stereo speakers without
+   empeg Car outputs to play on the modern car stereo speakers without
    needing an AUX input on the modern car stereo (many cars no longer
    have an AUX input available any more).
 
@@ -30,9 +30,9 @@ The data connection works like this:
  Arduino board receives these serial commands on its serial port ->
  Arduino runs code which interprets these AVRCP commands and turns them into empeg-Car-compatible commands ->
  Arduino outputs these empeg-Car serial commands to its attached RS232, via another serial port ->
- Empeg car receives the serial commands and performs the action.
+ Empeg Car receives the serial commands and performs the action.
  And also...
- Empeg car outputs track metadata messages on its serial port ->
+ Empeg Car outputs track metadata messages on its serial port ->
  Arduino board receives track information from the empeg serial port ->
  Arduino sends track information to the bluetooth chip via its serial port ->
  Bluetooth chip sends track information to the car stereo ->
@@ -336,7 +336,7 @@ tuner connector. More details about that below.
 
 
 ----------------------------------------------------------------------------
-Special note about empeg car power connection:
+Special note about empeg Car power connection:
 ----------------------------------------------------------------------------
 I might recommend that, for this installation, you wire up the empeg to your
 car differently than it would normally otherwise be wired up.
@@ -521,7 +521,7 @@ Change the settings as follows (adding sections if necessary):
 
 Make sure to synchronize with the player after changing the config.ini settings.
 
-Install the latest Hijack Kernel onto the empeg car player if it is not already
+Install the latest Hijack Kernel onto the empeg Car player if it is not already
 installed (link to Hijack in "Resources", above). Make sure it is Hijack version
 524 or later.
 
