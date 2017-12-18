@@ -509,9 +509,9 @@ all three I2S input lines on the bluetooth module side of the circuit:
                         |
                   WT32i PCM_CLK
 
-Finally, make sure that the variable "btAudioRoutingControlString", which is
-set elsewhere in this code, is configured to be the one which uses the I2S digital
-audio instead of the analog audio.
+Finally, make sure that the variable "digitalAudio", which is a boolean flag in
+the Arduino code sketch in this project, is set to "true" so that the digital
+audio input on the WT32i chip is used, instead of the default analog input.
 
 
 ----------------------------------------------------------------------------
