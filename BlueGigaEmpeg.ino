@@ -103,7 +103,7 @@ boolean logLineByLine=true;
 //             for profiling.
 //           - Logged output is not accompanied by a milliseconds number.
 // Note: Recommend turning on this feature only when "logLineByLine" is true.
-boolean outputMillis=true;
+boolean outputMillis=false;
 
 // Choose whether or not to display the interpreted track metadata on the
 // Arduino debugging serial/USB console port.
@@ -858,7 +858,7 @@ void verifySerialBuffer()
   myTxBufferSizeInt = myTxBufferSizeString.toInt();
   
   // Verify serial buffer size
-  if ((myRxBufferSizeInt < 128) || (myTxBufferSizeInt < 128))
+  if ((myRxBufferSizeInt < 256) || (myTxBufferSizeInt < 128))
   {
     Log("Serial receive buffer size: " + (String)myRxBufferSizeInt);
     Log("Serial xmit buffer size:    " + (String)myTxBufferSizeInt);
@@ -871,9 +871,9 @@ void verifySerialBuffer()
     Log(F(" "));
     Log(F("     (install location)/hardware/arduino/avr/cores/arduino/HardwareSerial.h   "));
     Log(F(" "));
-    Log(F("  Increase the SERIAL_RX_BUFFER_SIZE and SERIAL_TX_BUFFER_SIZE values to 128, "));
+    Log(F("  Increase SERIAL_RX_BUFFER_SIZE to 256 and SERIAL_TX_BUFFER_SIZE to 128,     "));
     Log(F("  recompile, and reupload your sketch to the Arduino module.                  "));
-    Log(F("  Please refer to the code comments at the top of this sketch for details.    "));
+    Log(F("  Please refer to the README.txt file accompanying this sketch for details.   "));
     Log(F(" "));
     Log(F("------------------------------------------------------------------------------"));
   }
@@ -2840,6 +2840,9 @@ String ReplaceHighAsciiWithUtf8(String stringToMakeUtf8Char)
     return stringToMakeUtf8Char;
   }
 
+  // Debug/profiling logging.
+  // Log(F("--UTF-8 Conversion Start."));
+
   // Set a static variable to keep track of the character we
   // are pulling out of the string to analyze. Do this as a
   // "byte" instead of a "char" to make our calculations look
@@ -2891,6 +2894,9 @@ String ReplaceHighAsciiWithUtf8(String stringToMakeUtf8Char)
       utf8ReturnString += char(oneStringChar - 64);
     }
   }
+
+  // Debug/profiling logging.
+  // Log(F("--UTF-8 Conversion End."));
 
   // Return our return string
   return utf8ReturnString;

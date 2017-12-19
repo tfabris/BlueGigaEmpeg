@@ -211,11 +211,11 @@ At the time of this writing, here were the steps I took:
  Now remove the error line from the header file so that it will build.
  
  Now, instead, edit the lines "#define SERIAL_TX_BUFFER_SIZE 64" and
- "#define SERIAL_RX_BUFFER_SIZE 64" and change them to 128 instead:
+ "#define SERIAL_RX_BUFFER_SIZE 64" and change them to this instead:
  
      #define SERIAL_TX_BUFFER_SIZE 128
          ...    ...    ...
-     #define SERIAL_RX_BUFFER_SIZE 128
+     #define SERIAL_RX_BUFFER_SIZE 256
  
  Save the file, compile and upload to your Arduino, and you're done.
  
