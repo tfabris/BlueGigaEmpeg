@@ -17,7 +17,12 @@
 // String to control the type of bluetooth authentication that you want to use.
 // This is currently configured for "just works" pairing with no PIN code,
 // with a fallback to the PIN code if the "just works" mode fails.
-const String btAuthTypeString = "SET BT SSP 3 0";
+// const String btAuthTypeString = "SET BT SSP 3 0";
+//
+// Experiment: Try setting this to be "display plus yes no button", required for
+// Mark Lord's car stereo. In theory this code has features in place which will
+// answer OK to the prompt automatically.
+const String btAuthTypeString = "SET BT SSP 1 0";
 
 // If the device falls back to using a PIN code, here is where to set the PIN.
 // Change "0000" to your correct PIN code for your stereo. It can accept PIN
