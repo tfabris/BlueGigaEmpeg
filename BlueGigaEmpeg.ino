@@ -17,12 +17,12 @@
 // String to control the type of bluetooth authentication that you want to use.
 // This is currently configured for "just works" pairing with no PIN code,
 // with a fallback to the PIN code if the "just works" mode fails.
-// const String btAuthTypeString = "SET BT SSP 3 0";
+const String btAuthTypeString = "SET BT SSP 3 0";
 //
 // Experiment: Try setting this to be "display plus yes no button", required for
 // Mark Lord's car stereo. In theory this code has features in place which will
 // answer OK to the prompt automatically.
-const String btAuthTypeString = "SET BT SSP 1 0";
+// const String btAuthTypeString = "SET BT SSP 1 0";
 
 // If the device falls back to using a PIN code, here is where to set the PIN.
 // Change "0000" to your correct PIN code for your stereo. It can accept PIN
@@ -415,9 +415,13 @@ String pmMessageMatrix[6][2] =
   // Respond to messages such as INQUIRY_PARTIAL 0a:ea:ea:6a:7a:6a 240404
   { "INQUIRY_PARTIAL ",          "PAIR {0}"},
 
-  // EXPERIMENTAL - Respond to PIN code prompt as if we were a user saying
-  // OK to that PIN code. This was needed on Mark Lord's car stereo. Might
-  // not work correctly - See what's up with this.
+  // Respond to PIN code prompt as if we were a user saying
+  // OK to that PIN code. This was needed on Mark Lord's car stereo. 
+  // TO DO: Bugfix this because there are times when you will not be
+  // in the middle of pairing mode when you get this message. The whole
+  // {0} address replacement thing will need to happen in a place other
+  // than pairing mode so that my code can respond to this outside
+  // pairing mode sometimes.
   { "SSP CONFIRM ",          "SSP CONFIRM {0} OK"},
 
   // Respond to messages such as "PAIR 0a:ea:ea:6a:7a:6a OK"
