@@ -128,12 +128,19 @@ boolean displayTracksOnSerial=true;
 // Experimental - When we see the empeg player application start up, then send a
 // pause command to the player. If the bluetooth initial connection speed is faster
 // than the empeg bootup speed, then this will mean things start up in pause mode.
-// However if the empeg finishes bootup and starts is player application before
+// However if the empeg finishes bootup and starts its player application before
 // the bluetooth connection process is complete, then the act of connecting the
 // the bluetooth will issue the commands to start playback, so things will start
-// up playing. This is an experiment to fix some initial connection behavioral problems.
-// Would prefer to not to have to use this at all, so try it with it turned off first.
-boolean empegStartPause = false;
+// up playing. The reason for this feature to exist is to reduce the amount of 
+// time that the empeg is playing "silently" with no bluetooth device listeneing
+// to what it is playing. For example, in a situation where you start the car
+// and it takes 25 seconds for the car stereo to boot up and connect to the
+// bluetooth, while the empeg only takes about 8 seconds to boot up, then you
+// will have skipped about 17 seconds of the song you were listening to when
+// you turned the car off. With this feature, theoretically, you will not lose
+// much if any of that time and the empeg will resume playing more or less where
+// you left off. (In theory, when it works.)
+boolean empegStartPause = true;
 
 // Experimental: String to tell the unit to automatically try reconnecting every few seconds
 // if it ever becomes disconnected from its main pairing buddy. Trying to make it grab hold
@@ -2688,8 +2695,13 @@ void DisplayAndSwallowResponses(int numResponsesToSwallow, unsigned long waitTim
 //  A  <artist>
 //  G  <genre>  
 // ----------------------------------------------------------------------------
-void SetTrackMetaData(String stringToParse, char empegMessageCode)
+void SetTrackMetaData(char empegMessageCode, String &stringToParse)     // TEMPORARY: Partial Bugfix for Issue #25: Pass this by reference to work around memory bug.
 {
+  // Debug logging for issue #25 - String became blank only after passing into this function:
+  // Log(F("stringToParse:"));
+  // Log(stringToParse); 
+  // Log(F(":stringToParse"));
+
   // Pre-strip doublequote characters out of the track data because
   // our messages to the bluetooth chip need doublequote characters
   // as delimiters when we send metadata up to the host stereo.
@@ -2708,7 +2720,9 @@ void SetTrackMetaData(String stringToParse, char empegMessageCode)
   //         stringToParse.replace(F("'"), F("`"));
 
   // Make sure string is trimmed of white space and line breaks
-  stringToParse.trim();
+  // UPDATE: Not trimming since there was an earlier step which
+  // does this already before even calling this routine.
+  // stringToParse.trim();
 
   // Now set the desired metadata based on the values we passed in.
   // This routine only gets one line at a time so we only need to
@@ -3089,8 +3103,8 @@ void HandleEmpegString(String theString)
 
     // Experimental - Quick special case - If we get a player startup message from the empeg,
     // indicating that its boot sequence is done and the player app has started, then send a
-    // pause command to the player as an attempt to help the start/stop/start behavior of the
-    // player at initial car+empeg+stereo+bluetooth bootup. 
+    // pause command to the player as an attempt to help prevent too much lost time in songs
+    // at the startup of your car. 
     // 
     // Notes on this experiment: 
     // - Might cause player to come up and be in "pause" mode if the bluetooth pairup speed
@@ -3215,7 +3229,7 @@ void HandleEmpegString(String theString)
       // Found one. Call the routine to parse and set the track
       // metadata that all comes in one group all at once, such
       // as track title and artist and such.
-      SetTrackMetaData(empegDetailString, empegMessageCode);
+      SetTrackMetaData(empegMessageCode, empegDetailString);
 
       // NOTE: The next line is super important. Every time the empeg gets
       // a state change, we need to send a command to the bluetooth to make it
