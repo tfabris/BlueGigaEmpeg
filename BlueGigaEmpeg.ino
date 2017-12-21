@@ -627,7 +627,8 @@ bool forceQuickReconnectMode = false;
 // Used to calculate deltas between output lines for profiling.
 unsigned long priorOutputLineMillis = 0;
 
-
+// Include the version number file.
+#include "Version.h"
 
 // ------------------------------------
 // Program code functions
@@ -719,6 +720,9 @@ void setup()
   // than 115200 in car mode, so make sure you have done that step.
   EmpegSerial.begin(115200);
   Log(F("Empeg Serial has been started."));
+
+  // Log the version number from the version number file.
+  Log("BlueGigaEmpeg Version " + String(majorVersion) + "." + String(minorVersion) + "." + String(buildNumber));
 
   // Report the chip type
   reportChipType();
