@@ -1,3 +1,3 @@
 int majorVersion=1;
 int minorVersion=0;
-int buildNumber=44;
+int buildNumber=45;
