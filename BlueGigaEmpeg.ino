@@ -938,9 +938,8 @@ void SetGlobalChipDefaults()
   // setting the empeg to a paused state. Then, if bluetooth reconnects after the reset, then the
   // unpause will happen automatically later, when it receives the stream start command from the
   // car stereo.
-  // EXPERIMENT - Not doing this any more because I think it might confuse the pairing process
-  // because we also send a "streaming start" command when we pause/play.
-  //    SendEmpegCommand('W');   
+  Log(F("Pausing empeg for convenience while setting global chip defaults."));
+  SendEmpegCommand('W');   
 
   // Log to the debug console that we are starting this procedure.
   Log(F("Setting Defaults."));
@@ -2961,7 +2960,9 @@ void SendEmpegCommand(char empegCommandToSend)
       empegIsPlaying = false;
     }
     // Send a certain group of messages when our play state changes.
-    HandleEmpegStateChange();
+    // EXPERIMENTAL: Try to make output clearer by doing the handle
+    // state change AFTER having send the command (or not), below.
+    //    HandleEmpegStateChange();
   }
   if (empegCommandToSend == 'C')
   {
@@ -2973,7 +2974,9 @@ void SendEmpegCommand(char empegCommandToSend)
     }
 
     // Send a certain group of messages when our play state changes.
-    HandleEmpegStateChange();
+    // EXPERIMENTAL: Try to make output clearer by doing the handle
+    // state change AFTER having send the command (or not), below.
+    //     HandleEmpegStateChange();
   }
 
   // Only bother to send commads if we believe the empeg has finished booting
@@ -2986,7 +2989,7 @@ void SendEmpegCommand(char empegCommandToSend)
   else
   {
     // Log what we are sending.
-    // Log("Sending to empeg: " + (String)empegCommandToSend);
+    Log("--> Sending to empeg: " + (String)empegCommandToSend);
 
     // Write out the corresponding empeg command to the empeg's
     // serial port followed by a linefeed character.
@@ -2995,6 +2998,10 @@ void SendEmpegCommand(char empegCommandToSend)
       EmpegSerial.print(empegCommandToSend);
       EmpegSerial.write('\n');
     }
+
+    // Handle and log whatever state changes we did AFTER we
+    // sent the command (or not) to the empeg player.
+    HandleEmpegStateChange();
     
     // Turn off the Arduino LED.
     digitalWrite(LED_BUILTIN, LOW);
@@ -3491,10 +3498,11 @@ void HandleEmpegStateChange()
     // no "cutoff" of the start of the song if we press the play button
     // on the stereo's touch screen. Must do this before we send the
     // command to the empeg so that it happens first.
-    // EXPERIMENT - I think that this part might not be needed any more.
-    // We shouldn't need to send streaming start commands more often 
-    // than necessary. Try not sending a streaming start command on
-    // every playback state change. Assume this was already handled elsewhere.
+    // UPDATE: Do not send either STREAMING STOP or STREAMING START
+    // in the HandleEmpegStateChange code at all. This workaround is
+    // no longer needed and also it causes problems during the reset
+    // and pairing processes if we do it at the wrong time due to the
+    // empeg state changing in the middle of other things.
     //     SendBlueGigaCommand(F("A2DP STREAMING START"));
     
     // Final fix for the "Kenwood Bug". Description of the Kenwood Bug:
@@ -3569,10 +3577,11 @@ void HandleEmpegStateChange()
     // the stream active even when playback is stopped to prevent
     // cutoffs. In fact, to fix a bug, we actually want to send a
     // streaming start here instead.
-    // EXPERIMENT - I think that this part might not be needed any more.
-    // We shouldn't need to send streaming start commands more often 
-    // than necessary. Try not sending a streaming start command on
-    // every playback state change. Assume this was already handled elsewhere.
+    // UPDATE: Do not send either STREAMING STOP or STREAMING START
+    // in the HandleEmpegStateChange code at all. This workaround is
+    // no longer needed and also it causes problems during the reset
+    // and pairing processes if we do it at the wrong time due to the
+    // empeg state changing in the middle of other things.
     //     SendBlueGigaCommand(F("A2DP STREAMING START"));
 
     
