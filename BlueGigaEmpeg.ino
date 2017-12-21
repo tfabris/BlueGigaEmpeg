@@ -500,7 +500,7 @@ String empegCommandMessageMatrix[12][2] =
   { "AVRCP PLAY PRESS",           "C"},
   { "AVRCP PAUSE PRESS",          "W"},
   { "AVRCP STOP PRESS",           "W"},
-  { "A2DP STREAMING START",       "C"},
+  { "A2DP STREAMING START",       "C"},  // Tried removing this to fix issue #26 but it made things worse instead of better. BT headset AVRCP stopped working.
   { "NO CARRIER 0",               "W"},  // Bugfix: Only trigger a pause on carrier loss of A2DP first channel (0). Attempt to fix issue #22.
   { "A2DP STREAMING STOP",        "W"},
   { "AVRCP FORWARD PRESS",        "N"},
