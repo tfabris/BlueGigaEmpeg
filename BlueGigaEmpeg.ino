@@ -29,6 +29,15 @@ const String btAuthTypeString = "SET BT SSP 3 0";
 // codes up to 16 digits long.
 const String btPinCodeString = "SET BT AUTH * 0000";
 
+// Variable to control whether or not to do the Reset Line startup code
+// to support Mark Lord's module which needs it. Enable this if you have implemented
+// the reset line in hardware (see README.txt for details of the implementation).
+boolean performResetLinePhysical = false;
+
+// Control whether or not the module uses digital I2S audio, or analog line-level
+// audio inputs (for example the line level inputs on the BlueGiga dev board).
+boolean digitalAudio = false;
+
 // Debugging tool for the part of the code that sends commands to the empeg.
 // Normally, typing commands into the Arduino debug console will send those
 // same characters to the bluetooth chip, so that you can try out commands
@@ -142,10 +151,10 @@ boolean displayTracksOnSerial=true;
 // you left off. (In theory, when it works.)
 boolean empegStartPause = true;
 
-// Experimental: String to tell the unit to automatically try reconnecting every few seconds
+// String to tell the unit to automatically try reconnecting every few seconds when and
 // if it ever becomes disconnected from its main pairing buddy. Trying to make it grab hold
-// of the car stereo as soon as the car turns on, instead of connecting to my cellphone every time.
-// Currently experimenting with two possible versions of this.
+// of the car stereo as soon as the car turns on, instead of connecting to my cellphone every
+// time. Currently experimenting with two possible versions of this.
 //
 // Version 1: "SET CONTROL RECONNECT". Getting the timing parameter just right on this
 // command seems to affect whether or not the host stereo asks me for incorrect PDU messages
@@ -167,15 +176,6 @@ const String autoReconnectString = "SET CONTROL RECONNECT 4800 0 0 7 0 A2DP A2DP
 // any kind of reconnection whatsoever after power on. Without rhyme or reason. 
 // Note: "19" is the secret code for "A2DP" (it is the "L2CAP PSM" code for A2DP).
 // const String autoReconnectString = "SET CONTROL AUTOCALL 19 501 A2DP";
-
-// Variable to control whether or not to do the Reset Line startup code
-// to support Mark Lord's module which needs it. Enable this if you have implemented
-// the reset line in hardware (see README.txt for details of the implementation).
-boolean performResetLinePhysical = false;
-
-// Control whether or not the module uses digital I2S audio, or analog line-level
-// audio inputs (for example the line level inputs on the BlueGiga dev board).
-boolean digitalAudio = false;
 
 // Variable to control whether or not this program performs a conversion of
 // High ASCII to UTF-8 in the code. For instance, on the empeg, you might have
@@ -201,9 +201,6 @@ boolean PerformUtf8Conversion = true;
 
 // Arduino serial port 1 is connected to empeg's RS-232 port via MAX232 circuit.
 #define EmpegSerial Serial1
-
-// Debug version of reconnect command for testing and comparison.
-//      const String autoReconnectString = " ";
 
 // Matrix of special case fix strings and their output timings.
 // When a bluetooth statement is received from the bluetooth module,
@@ -372,43 +369,21 @@ String rejMatrix[11] =
  "VOLUME_CHANGED",                      
 };
 
-// Reserve variable space for the transaction status label used to hold a
+// Reserve variable space for the transaction status labels used to hold a
 // particular string in memory in the query/response code. The host stereo
 // sends a query which contains a specific transaction label, which is a
 // number that is usually just a single hexadecimal digit, and it uses this
 // digit as an identification so that it can send several queries and await
 // several responses and can sort out which response is from which query.
 // So we must respond with that same transaction label digit in our response.
-// Though I've only seen it be one digit, we are reserving two bytes here
-// just in case it gets bigger.
-int transactionLabelSize = 2;
-static String transactionLabel = "";
-
-// Specific transaction labels to use for specific types of messages.
+// Must have specific transaction labels to use for specific types of messages.
 // These are part of the fix to what I called the "Kenwood Bug" where the
 // Kenwood stereo refused to query for any new track titles past the first
 // track. These will also be using the memory reservation size of "2"
 // defined above since they are copies of the same transaction label.
+int transactionLabelSize = 2;
 static String transactionLabelPlaybackStatusChanged = "";
 static String transactionLabelTrackChanged = "";
-
-// Reserve memory space for the AVRCP response string we will be sendin
-// a response in the query/response handler code. Size of string can get
-// big because it may contain long track titles as well as the preamble
-// string before the track title, so save some extra space for this string.
-// In fact, the string could potentially be this long if the stereo happens
-// to query the bluetooth chip for all track metadata elements all at once
-// and each element is the maxiumum length that each possible element can be:
-// "AVRCP RSP 7 "                       = 12 characters, the response preamble and the number of elements.
-// "4 "9999" 5 "9999" "                 = 18 characters, the track number and total number of tracks.
-// "7 "4294967295" "                    = 15 characters, the current playback position in MS in Decimal.
-// "1 "TrackTitle255" "                 = 260 characters, the track title up to 255 characters plus ID, quotes and spaces
-// "2 "TrackArtist255" "                = 260 characters, the track artist up to 255 characters plus ID, quotes and spaces
-// "3 "TrackAlbum255" "                 = 260 characters, the track album up to 255 characters plus ID, quotes and spaces
-// "6 "TrackGenre255" "                 = 260 characters, the track genre up to 255 characters plus ID, quotes and spaces
-// Grand total largest possible string  = 1080 characters. It will never get this big unless something is crazy. 
-int queryResponseStringSize = 1080;
-static String queryResponseString = "";
 
 // Matrix of messages and responses which are needed when in special pairing mode.
 // These also include some special casing for the bluetooth device address. The
@@ -584,20 +559,13 @@ const String empegGainSettingString = "SET CONTROL GAIN 9 0";
 // Strings to hold an incoming line of serial characters from bluetooth module or empeg.
 // Will be reset each time an entire message from the bluetooth module or empeg is processed.
 static String btInputString = "";
-int btInputStringMaxLength = 150;
-static String empegInputString = "";
-int empegInputStringMaxLength = 160; // Reducing this length as an austerity measure.
+int btInputStringMaxLength = 275;
+static String empegInputString;
+int empegInputStringMaxLength = 275;
 
-// String to hold incoming line of serial characters from bluetooth that are being
-// ignored/swallowed and will not be acted upon as part of the DisplayAndSwallowResponses function.
-static String btSwallowInputString = "";
+// Some other string limits, how many string input characters will we allow from the serial
+// port before it is too excessive and we should start a new string again?
 int btSwallowInputStringMaxLength = 150;
-
-// Strings to hold some outgoing commands, reserve early to save memory.
-static String commandToSend = "";
-int commandToSendMaxLength = 85;
-static String sendOutputString = "";
-int sendOutputStringMaxLength = 85;
 
 // Global variables used in main "Loop" function to detect when an entire complete
 // message string has been received from the bluetooth module or empeg. Will be set to
@@ -708,21 +676,15 @@ void setup()
   }
 
   // Reserve bytes for the input strings, which are the strings we check to
-  // see if there is a valid processable bluetooth AVRCP command incoming
-  // from the bluetooth chip arriving from its serial port, or a processable
-  // empeg status or metadata string arriving from the empeg serial port.
+  // see, for example, if there is a valid processable bluetooth AVRCP command
+  // incoming from the bluetooth chip arriving from its serial port.
   btInputString.reserve(btInputStringMaxLength);
   empegInputString.reserve(empegInputStringMaxLength);
-  btSwallowInputString.reserve(btSwallowInputStringMaxLength);
 
   // Reserve bytes for the some other strings to save memory.
-  commandToSend.reserve(commandToSendMaxLength);
-  sendOutputString.reserve(sendOutputStringMaxLength);
   pairAddressString.reserve(pairAddressStringMaxLength);
-  transactionLabel.reserve(transactionLabelSize);
   transactionLabelPlaybackStatusChanged.reserve(transactionLabelSize);
   transactionLabelTrackChanged.reserve(transactionLabelSize);
-  queryResponseString.reserve(queryResponseStringSize);
 
   // Reserve bytes for all the track metadata strings to save memeory.
   trackTitleString01.reserve(metadataMaxLength);
@@ -862,10 +824,10 @@ void reportChipType()
 void verifySerialBuffer()
 {
   // Create variable to use in this function.
-  static String myTxBufferSizeString;
-  static int myTxBufferSizeInt;
-  static String myRxBufferSizeString;
-  static int myRxBufferSizeInt;
+  String myTxBufferSizeString;
+  int myTxBufferSizeInt;
+  String myRxBufferSizeString;
+  int myRxBufferSizeInt;
 
   // Retrieve variable which was defind in compiler header file.
   myRxBufferSizeString = (String)SERIAL_RX_BUFFER_SIZE;
@@ -1290,7 +1252,6 @@ char MainInputOutput()
   // From the empeg car serial port
   char empegChar = 0;
 
-
   // Check to see if any characters are available on the empeg serial port
   // from the empeg car, display them on the debugging console, and process
   // them into individual lines for later parsing for track status and
@@ -1523,9 +1484,10 @@ void DisplayAndProcessCommands(unsigned long idleTimeMs, bool waitForLineEnding)
 // some command that was issued to the bluetooth chip from the host stereo,
 // and now we have to respond to that command directly on the bluetooth.
 // ----------------------------------------------------------------------------
-void HandleString(String theString)
+void HandleString(String &theString)
 {
   // Initialize the variables we will be using in this function.
+  String commandToSend;
   commandToSend = "";
   static char empegCommandToSend = 0;
 
@@ -1837,9 +1799,26 @@ void GrabPairAddressString(String stringToParse, String triggerString)
 // ----------------------------------------------------------------------------
 // Log
 //
-// Log a string of output to the Arduino USB debug serial port.
+// Log a string of output to the Arduino USB debug serial port. Had to make it
+// into two functions calling a base function so that one version of it could
+// accept a string by reference as its parameter and the other version could
+// accept the F() macro as its parameter. If it weren't for the fact that I
+// wanted to save a bit of string-handling memory by accepting it as a
+// reference then I wouldn't need the fancy two-functions version below.
+// Not sure if jumping through these hoops is helping me much, memory-wise.
 // ----------------------------------------------------------------------------
-void Log(String logMessage)
+void Log(String &logMessage)
+{
+  BaseLog(logMessage);
+}
+
+void Log(__FlashStringHelper* logMessage)
+{
+  String tempLogMessage = logMessage;
+  BaseLog(tempLogMessage);
+}
+
+void BaseLog(String &logMessage)
 {
   // Variable used in time calculations.
   static unsigned long currentOutputLineMillis = 0;
@@ -1917,6 +1896,7 @@ void SendBlueGigaCommand(String commandString)
   }
 
   // Add the line ending to the command string.
+  String sendOutputString;
   sendOutputString = "";
   sendOutputString = commandString + "\r\n";
 
@@ -2004,7 +1984,7 @@ void SendBlueGigaCommand(String commandString)
 // then make sure to update the "rspMatrix" at the top of the code, and
 // vice-versa.
 // ----------------------------------------------------------------------------
-void RespondToQueries(String queryString)
+void RespondToQueries(String &queryString)
 {
   // Obtain the transaction label from these queries. Some of the queries we're responding to here
   // have a transaction label, and our response must contain the same transaction label in the response.
@@ -2041,18 +2021,34 @@ void RespondToQueries(String queryString)
   // Debugging: 
   // Log(F("Entering RespondToQueries function."));
 
-
   // Set up variables.
-  transactionLabel = "";
+  String transactionLabel;
   static int transactionLabelStringPosition = 0;
   static int elementsStartSelectPosition = 0;
   static int elementsEndSelectPosition = 0;
   static int numberOfElements = 0;
   static int currentElementCode = 0;
 
+  // Variable for the AVRCP response string we will be sending up as 
+  // a response in the query/response handler code. Size of string can get
+  // big because it may contain long track titles as well as the preamble.
+  // In fact, the string could potentially be this long if the stereo happens
+  // to query the bluetooth chip for all track metadata elements all at once
+  // and each element is the maxiumum length that each possible element can be:
+  // "AVRCP RSP 7 "                       = 12 characters, the response preamble and the number of elements.
+  // "4 "9999" 5 "9999" "                 = 18 characters, the track number and total number of tracks.
+  // "7 "4294967295" "                    = 15 characters, the current playback position in MS in Decimal.
+  // "1 "TrackTitle255" "                 = 260 characters, the track title up to 255 characters plus ID, quotes and spaces
+  // "2 "TrackArtist255" "                = 260 characters, the track artist up to 255 characters plus ID, quotes and spaces
+  // "3 "TrackAlbum255" "                 = 260 characters, the track album up to 255 characters plus ID, quotes and spaces
+  // "6 "TrackGenre255" "                 = 260 characters, the track genre up to 255 characters plus ID, quotes and spaces
+  // Grand total largest possible string  = 1080 characters. It will never get this big unless something is crazy. 
+  String queryResponseString;
+
   // Obtain the transaction label if any.
   // Note the space at the end of "REGISTER_NOTIFICATION "
   // Total length of the string "REGISTER_NOTIFICATION " is 22
+  transactionLabel = "";
   transactionLabelStringPosition = queryString.indexOf(F("REGISTER_NOTIFICATION "));
   if ((transactionLabelStringPosition) > (-1)) 
   {
@@ -2611,6 +2607,9 @@ void DisplayAndSwallowResponses(int numResponsesToSwallow, unsigned long waitTim
   // Variable to be used for measuring how long each loop was waited for in milliseconds
   unsigned long startingDnsMillis = 0;
 
+  // Variable that will gather the string we'll be logging but ignoring.
+  String btSwallowInputString;
+
   // Clean out our line by line display string at the moment we enter this function.
   btSwallowInputString = "";
 
@@ -2853,7 +2852,7 @@ void SetTrackMetaData(char empegMessageCode, String &stringToParse)     // TEMPO
 // Parameter:  The string to convert (the input string).
 // Returns:    The converted string. May be longer than the input string.
 // ----------------------------------------------------------------------------
-String ReplaceHighAsciiWithUtf8(String stringToMakeUtf8Char)
+String ReplaceHighAsciiWithUtf8(String &stringToMakeUtf8Char)
 {
   // Check to see if we are even supposed to perform this conversion at all.
   // Look at the global variable, and if it's false, return the same string
@@ -3008,12 +3007,11 @@ void SendEmpegCommand(char empegCommandToSend)
 // Locate strings which look like notifications of track data and turn those
 // into variables for later sending up the bluetooth.
 // ----------------------------------------------------------------------------
-void HandleEmpegString(String theString)
+void HandleEmpegString(String &theString)
 {
-  // To save memory, preset static variables for a certain set of string
-  // data to be extracted from the string found on the empeg serial port.
-  static String empegDetailString = "";
-  static String empegTimecodeString = "";
+  // Set up variables for this function.
+  String empegDetailString = "";
+  String empegTimecodeString = "";
   static char empegMessageCode = ' ';
   static int empegMessageCodeStartPos = 0;
   static int empegDetailStringStartPos = 0;
@@ -3073,6 +3071,9 @@ void HandleEmpegString(String theString)
   // playing state too much. Trigger on a few different strings found in bootup.
   if (theString.startsWith(F("empeg-car bootstrap")))
   {
+    Log(F("--------------------------------------"));
+    Log(F("empeg player boot process has started."));
+    Log(F("--------------------------------------"));
     empegPlayerIsRunning = false;
     empegIsPlaying = false;
   }
