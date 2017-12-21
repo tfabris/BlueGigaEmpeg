@@ -15,14 +15,19 @@
 // ------------------------------------
 
 // String to control the type of bluetooth authentication that you want to use.
-// This is currently configured for "just works" pairing with no PIN code,
+// 
+// Uncomment this line for "just works" pairing with no PIN code,
 // with a fallback to the PIN code if the "just works" mode fails.
-const String btAuthTypeString = "SET BT SSP 3 0";
+// Use this one if you are having trouble with the default security
+// scheme below.
+//        const String btAuthTypeString = "SET BT SSP 3 0";
 //
-// Experiment: Try setting this to be "display plus yes no button", required for
-// Mark Lord's car stereo. In theory this code has features in place which will
-// answer OK to the prompt automatically.
-// const String btAuthTypeString = "SET BT SSP 1 0";
+// Default security scheme for "yes/no prompt" security type, required for
+// Mark Lord's car stereo. The BlueGigaEmpeg module (this code) will respond
+// with a "yes" automatically. You will see your stereo prompt with a
+// confirmation number on its touch screen and then it will magically get
+// answered automatically and the prompt will go away and you'll be paired.
+const String btAuthTypeString = "SET BT SSP 1 0";
 
 // If the device falls back to using a PIN code, here is where to set the PIN.
 // Change "0000" to your correct PIN code for your stereo. It can accept PIN
@@ -210,8 +215,8 @@ boolean PerformUtf8Conversion = true;
 // certain pieces of text on the bluetooth module's serial port.
 // There is other code elsewhere to handle input/output that requires
 // more detailed handling and parsing. 
-int scFixMatrixSize = 8;
-String scFixMessageMatrix[8][2] =
+int scFixMatrixSize = 9;
+String scFixMessageMatrix[9][2] =
 {
     // Bluetooth in                        // Bluetooth out                         
   { "AVRCP PLAY PRESS",                   "A2DP STREAMING START"},
@@ -232,6 +237,14 @@ String scFixMessageMatrix[8][2] =
   // song, then the beginning of the song is cut off. I am leaving this line
   // in here, commented out, to remind myself not to ever try to do this.
   //        { "AVRCP PAUSE PRESS",                  "A2DP STREAMING STOP"},
+
+  // Respond to PIN code prompt as if we were a user saying
+  // OK to that PIN code. This was needed on Mark Lord's car stereo.
+  // It is expected to be needed when the pairing security scheme is
+  // set for "SET BT SSP 1 0" at the top of this program. NOTE: This uses
+  // the pair address substitution string in the same way that the
+  // Pairing Mode strings use it. See the pmMessageMatrix for details.
+  { "SSP CONFIRM ",                                 "SSP CONFIRM {0} OK"},
 
   // Get Capbailities 2 is asking for manufacturer ID. According to the 
   // BlueGiga documentation the chip will fill in the response details
@@ -267,7 +280,7 @@ String scFixMessageMatrix[8][2] =
   // someday we might be able to do more detailed work with this response so that
   // we can interpret commands to change the Repeat mode and the Shuffle mode on
   // the empeg. 
-  { "LIST_APPLICATION_SETTING_ATTRIBUTES",  "AVRCP RSP"},
+  { "LIST_APPLICATION_SETTING_ATTRIBUTES",  "AVRCP RSP 0"},
 
   // "LIST_APPLICATION_SETTING_VALUES" is the way that the host stereo queries
   // your bluetooth module for specific indvidual setting values. Not generally
@@ -281,7 +294,7 @@ String scFixMessageMatrix[8][2] =
   // does not make it clear how to respond with "no!". So I am also trying doing
   // this with either blank or 0, like above. I'm not sure which one works and I'm
   // still not certin how to respond to queries like this with a "no".
-  { "LIST_APPLICATION_SETTING_VALUES",      "AVRCP RSP"},
+  { "LIST_APPLICATION_SETTING_VALUES",      "AVRCP RSP 0"},
  
   // Respond to "RING 1" with a streaming start command seems to help a lot of
   // initial device connection situations when host stereos first connect to
@@ -391,20 +404,11 @@ static String transactionLabelTrackChanged = "";
 // the bluetooth device address into that location of the response string. The "{0}"
 // is also defined in another variable below.
 // NOTE: Update the matrix size and the array size both, if you are changing these.
-int pmMatrixSize=6;
-String pmMessageMatrix[6][2] =
+int pmMatrixSize=5;
+String pmMessageMatrix[5][2] =
 {
   // Respond to messages such as INQUIRY_PARTIAL 0a:ea:ea:6a:7a:6a 240404
   { "INQUIRY_PARTIAL ",          "PAIR {0}"},
-
-  // Respond to PIN code prompt as if we were a user saying
-  // OK to that PIN code. This was needed on Mark Lord's car stereo. 
-  // TO DO: Bugfix this because there are times when you will not be
-  // in the middle of pairing mode when you get this message. The whole
-  // {0} address replacement thing will need to happen in a place other
-  // than pairing mode so that my code can respond to this outside
-  // pairing mode sometimes.
-  { "SSP CONFIRM ",          "SSP CONFIRM {0} OK"},
 
   // Respond to messages such as "PAIR 0a:ea:ea:6a:7a:6a OK"
   // Respond during the pair process with a connection attempt.
@@ -431,27 +435,21 @@ String pmMessageMatrix[6][2] =
 // and also the string below if you change the tokenization flag string).
 const String tokenSubstitutionString = "{0}";
 
-// Set of addresses which will be used for getting the bluetooth address
+// "Get Bluetooth Address" strings (GBA).
+// Set of strings which are the trigger phrases to be used for identifying
+// strings from the bluetooth module that can be used for getting the address
 // of our main pairing buddy at any generic time as opposed to just during
 // the pairing process. This allows us to figure out who our pairing buddy
 // is even when they are the ones initiating the connection as opposed to
 // us inititaiting it during the pairing process. This complexity is needed
 // because ForceQuickReconnect needs to know who our current pairing buddy
 // is all the time as opposed to just when we recently pressed the pair button.
-//
-// UPDATE: Not doing this at the moment. The ForceQuickReconnect, the quick version
-// which needed to know the bluetooth address and thus needed this GBA (get bluetooth
-// address) code, did not solve the problem it was intended to solve and so I am
-// disabling this code for now. Keeping it around for posterity in case I need to 
-// get the bluetooth address mid-run at a later date. 
-      // int gbaMatrixSize=1;
-      // String gbaMessageMatrix[1] =
-      // {
-      //   "SET BT PAIR ",
-      //   // "RING 0 ",   // These didn't always work and I need them off while I test behavior of the first one.
-      //   // "RING 1 ",
-      //   // "RING 2 ",
-      // };
+int gbaMatrixSize=2;
+String gbaMessageMatrix[2] =
+{
+  "SET BT PAIR ",
+  "SSP CONFIRM ",
+};
 
 // Length of time to be in pairing mode before giving up.
 // Make sure to change both variables below. The first variable
@@ -1526,41 +1524,31 @@ void HandleString(String &theString)
     ClearGlobalVariables();
   }  
 
-  // UPDATE: Not doing this at the moment. The ForceQuickReconnect, the quick version
-  // which needed to know the bluetooth address and thus needed this GBA (get bluetooth
-  // address) code, did not solve the problem it was intended to solve and so I am
-  // disabling this code for now. Keeping it around for posterity in case I need to 
-  // get the bluetooth address mid-run at a later date. 
-        // // Handle "get bluetooth address" strings - these are strings that are
-        // // intended to tell me who my current pairing buddy is. This is implemented
-        // // primarily for the ForceQuickReconnect command but might be used for
-        // // others later. This must come early in the process so that if the
-        // // GBA strings are found in the list, they fall prior to any other string
-        // // processing that we might do lower down. Some of the other string
-        // // processing might want to know the the pairing address. Also there were
-        // // cases where we were already trying to reset the bluetooth and another
-        // // reset string came through before we were done and so we got reentrant
-        // // code. So do this bit first.
-        // for (int i=0; i<gbaMatrixSize; i++)
-        // {
-        //   // Make the string comparison to find out if there is a match.
-        //   if (theString.indexOf(gbaMessageMatrix[i]) > (-1))
-        //   {
-        //     // Debug logging
-        //     // Log(F(" === Getting ready to grab pairing buddy address. === "));
+  // Handle "get bluetooth address" strings - these are strings that are
+  // intended to tell me who my current pairing buddy is. This must come early
+  // in the process so that if the GBA strings are found in the list, they 
+  // obtain the necessary address prior to any responses which might use that
+  // address lower down. 
+  for (int i=0; i<gbaMatrixSize; i++)
+  {
+    // Make the string comparison to find out if there is a match.
+    if (theString.indexOf(gbaMessageMatrix[i]) > (-1))
+    {
+      // Debug logging
+      // Log(F(" === Getting ready to grab pairing buddy address. === "));
 
-        //     // Turn on the Arduino LED to indicate something has happened.
-        //     digitalWrite(LED_BUILTIN, HIGH);
-         
-        //     // Process the pullout of the address of our pairing buddy
-        //     // out of the string that is expected to contain our 
-        //     // pairing buddy's address in it.
-        //     GrabPairAddressString(theString, gbaMessageMatrix[i]);
-                 
-        //     // Turn off the Arduino LED.
-        //     digitalWrite(LED_BUILTIN, LOW);
-        //   }
-        // }
+      // Turn on the Arduino LED to indicate something has happened.
+      digitalWrite(LED_BUILTIN, HIGH);
+   
+      // Process the pullout of the address of our pairing buddy
+      // out of the string that is expected to contain our 
+      // pairing buddy's address in it.
+      GrabPairAddressString(theString, gbaMessageMatrix[i]);
+           
+      // Turn off the Arduino LED.
+      digitalWrite(LED_BUILTIN, LOW);
+    }
+  }
 
   // Handle query/response strings for things like the track metadata
   // and the playback status information. Make sure our program responds
@@ -1650,6 +1638,16 @@ void HandleString(String &theString)
       // Prepare the command we are going to send.
       commandToSend = "";
       commandToSend += scFixMessageMatrix[i][1];
+
+      // Substitute the bluetooth pairing buddy string in the response command,
+      // if we have it and if the command contains the token for the replacement.
+      if (pairAddressString != "")
+      {
+        if (commandToSend.indexOf(tokenSubstitutionString) > (-1))
+        {
+          commandToSend.replace(tokenSubstitutionString, pairAddressString);
+        }
+      }      
 
       // Send the special case fix command.
       SendBlueGigaCommand(commandToSend);
