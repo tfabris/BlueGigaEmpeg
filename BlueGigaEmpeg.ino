@@ -250,7 +250,18 @@ String scFixMessageMatrix[9][2] =
   // BlueGiga documentation the chip will fill in the response details
   // for manufacturer ID automatically if you give it a blank response.
   // (By "blank response" I mean, responding with "AVRCP RSP" with no
-  // further parameters following after the "RSP")
+  // further parameters following after the "RSP"). This is in the docs
+  // in the file "AN986.PDF" titled "AN986: BLUETOOTH® A2DP AND AVRCP
+  // PROFILES". The details are found in section 6.4.1 which states:
+  //
+  //       GET_CAPABILITIES 2   The Controller is querying for supported
+  //                            Company IDs
+  //
+  //                AVRCP RSP  [id0 id1 …]
+  //                           List of IrDA Company IDs. Usually, the list
+  //                           can be left empty, as iWRAP will automatically
+  //                           fill in the Bluetooth SIG
+  //
   { "GET_CAPABILITIES 2",                 "AVRCP RSP"},
 
   // Get Capabilities 3 is asking for which status notifications my bluetooth
