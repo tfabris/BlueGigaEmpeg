@@ -111,12 +111,11 @@ Resources
 ------------------------------------------------------------------------------
 Purchase:
 Empeg Car player:           http://empegbbs.com/ubbthreads.php/forums/11/1/For_Sale
-BlueGigaEmpeg Interface:    TBA (I plan to make an interface board available)
 Arduino MEGA 2560 R3 Board: https://www.amazon.com/gp/product/B01H4ZLZLQ       
-MAX232 circuit for Arduino: https://www.avrprogrammers.com/articles/max232-arduino
 BetzTechnik WT32i Breakout: http://www.betztechnik.ca/store/p3/WT32i_breakout_board.html
+BlueGigaEmpeg Interface:    TBA (I plan to make my interface board available)
 
-Bluetooth information, schematics, and command references (may need to create an account at the Silicon Labs web site):
+Bluetooth information, schematics, and command references:
 Bluetooth AVRCP specs:      https://www.bluetooth.org/docman/handlers/DownloadDoc.ashx?doc_id=292286
 Command reference:          https://www.silabs.com/documents/login/reference-manuals/iWRAP6-API-RM.pdf
 AVRCP command reference:    https://www.silabs.com/documents/login/application-notes/AN986.pdf
@@ -130,9 +129,12 @@ Arduino Mega Pin Map:       https://www.arduino.cc/en/uploads/Hacking/Atmega168P
 Arduino Mega Standalone:    https://www.arduino.cc/en/Main/Standalone
 ClassOfDevice generators:   http://bluetooth-pentest.narod.ru/software/bluetooth_class_of_device-service_generator.html
                             http://www.ampedrftech.com/cod.htm
+MAX232 circuit for Arduino: https://www.avrprogrammers.com/articles/max232-arduino
+TI MAX232E datasheet:       http://www.ti.com/lit/ds/symlink/max232e.pdf
 BlueGiga Forum:             https://www.silabs.com/community/wireless/bluetooth
-Empeg BBS:                  http://empegbbs.com/                            
+Empeg BBS thread:           http://empegbbs.com/ubbthreads.php/topics/370217
 
+Software:
 Arduino software:           https://www.arduino.cc/
 Hijack Kernel for empeg:    http://empeg-hijack.sourceforge.net/
 Tony's Empeg Logo Editor:   http://empegbbs.com/ubbthreads.php/ubb/download/Number/7067/filename/logoedit17.zip
@@ -144,10 +146,22 @@ Link to firmware zip file:  https://www.silabs.com/documents/login/software/iWRA
 Prolific PL2303 USB driver: http://www.prolific.com.tw/US/ShowProduct.aspx?p_id=225&pcid=41
 FTDI USB driver:            http://www.ftdichip.com/FTDrivers.htm
 
-Parts used in BlueGigaEmpeg:
+Parts used in BlueGigaEmpeg interface board:
 Pololu 5v 5a V.Reg #2851:   https://www.pololu.com/product/2851
-Molex tuner connector:      https://www.digikey.com/product-detail/en/molex-llc/0039295083/WM3923-ND/356037
+TI MAX232E:                 https://www.digikey.com/product-detail/en/texas-instruments/MAX232EIN/296-27963-5-ND/1511027
 RS-232 connector:           https://www.digikey.com/product-detail/en/assmann-wsw-components/A-DS-09-A-KG-T2S/AE10968-ND/1241804
+Molex tuner connector:      https://www.digikey.com/product-detail/en/molex-llc/0039295083/WM3923-ND/356037
+Molex connector screws: 2x  https://www.digikey.com/product-detail/en/b-f-fastener-supply/MPMS-003-0008-PH/H743-ND/274954
+LED:                        https://www.digikey.com/product-detail/en/cree-inc/C503B-BCN-CV0Z0461/C503B-BCN-CV0Z0461-ND/1922945
+Reset button:               https://www.digikey.com/product-detail/en/e-switch/TL1105LF250Q/EG2506-ND/378972
+Male conn. headers:         https://www.digikey.com/product-detail/en/3m/961236-6404-AR/3M9466-36-ND/2071927
+                        3x  https://www.digikey.com/product-detail/en/3m/961110-6404-AR/3M9457-10-ND/2071896
+                        4x  https://www.digikey.com/product-detail/en/3m/961108-6404-AR/3M9457-08-ND/7104637
+Female conn. header asst:   https://www.amazon.com/gp/product/B074GQ9LKY/ref=oh_aui_detailpage_o01_s00
+Ceramic Capacitor asst:     https://www.amazon.com/gp/product/B071VVTC7Z/ref=oh_aui_detailpage_o04_s00
+10k ohm resistors:      8x  https://www.amazon.com/gp/product/B0185FIOTA/ref=oh_aui_detailpage_o02_s00
+4.7k ohm resistors:     3x  https://www.amazon.com/gp/product/B0185FC5OK/ref=oh_aui_detailpage_o02_s00
+100 ohm resistor:           https://www.digikey.com/product-detail/en/stackpole-electronics-inc/CF18JT100R/CF18JT100RCT-ND/2022718
 
 
 ------------------------------------------------------------------------------
@@ -214,7 +228,7 @@ Modify your Arduino compiler for larger buffer size
 For this code to work you must increase the size of the serial port buffers in
 the Arduino compiler, otherwise some of the track titles will not work. The
 symptom will be that you switch songs on the empeg, and the track title on the
-car stereo screen does not change to the new song title.
+car stereo screen does not change to the new song title every time.
 
 To fix the issue, you must edit one of the header files in the Arduino
 compiler libraries, and then you must compile and upload your sketch from your
@@ -766,6 +780,8 @@ MAX232 Pin 16 aka VCC - Connect directly to Pololu 5v
 
 The MAX232 schematic also shows a connection of the 5v rail to GND through
 another capacitor, I'm using another 2.2uf ceramic capacitor for that.
+
+I'm using a TI MAX232E chip in my implementation whose 
 
 Arduino serial port 2 (Rx2/Tx2) goes to the Bluetooth chip's serial port. This
 is at TTL level so the Arduino and the Bluetooth chip can connect almost
