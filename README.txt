@@ -114,7 +114,6 @@ Empeg Car player:           http://empegbbs.com/ubbthreads.php/forums/11/1/For_S
 BlueGigaEmpeg Interface:    TBA (I plan to make an interface board available)
 Arduino MEGA 2560 R3 Board: https://www.amazon.com/gp/product/B01H4ZLZLQ       
 MAX232 circuit for Arduino: https://www.avrprogrammers.com/articles/max232-arduino
-                            http://justanotherlanguage.org/content/building-max232-circuit-serial-port-communication
 BetzTechnik WT32i Breakout: http://www.betztechnik.ca/store/p3/WT32i_breakout_board.html
 
 Bluetooth information, schematics, and command references (may need to create an account at the Silicon Labs web site):
@@ -729,49 +728,62 @@ pairs are absolutely connected.
 Hardware interface information and notes (internal board connections)
 ------------------------------------------------------------------------------
 There will be a BlueGigaEmpeg interface circuit board made available. It will
-implement everything described below. The information below is just for
-reference and you should not need to do any of the connections below yourself,
-unless you are developing your own interface board.
+implement everything described below. The information below is just for my
+personal reference and you should not need to do any of the connections below
+yourself, unless you are developing your own interface board.
 
 Arduino must be the "Mega" model with three hardware serial ports built in. I
 tried it with an "Uno" model using software serial ports, and it had problems
 where characters sometimes got dropped, and it could not keep up with the data
 rates that I wanted.
 
-Arduino serial port 1 goes to the empeg's RS-232 port, attached via a MAX232
-chip circuit (see resources above for schematic). This is necessary because
-you can't connect an actual RS-232 cable directly to an Arduino, the voltage
-and signaling are different. So it must go through the MAX232 circuit.
+Arduino and RS-232 port, critical connections:
 
-Arduino serial port 2 (RX2/TXT) goes to the Bluetooth chip's serial port. This
+Arduino serial port 1 (Tx1/Rx1) connects to the empeg's RS-232 port, but it
+must go through an RS-232 converter circuit based on a MAX232 chip. This is
+necessary because you can't connect an actual RS-232 cable directly to an
+Arduino, the voltage and signaling are different. So it must go through the
+MAX232. The full schematic for this circuit is linked in "Resources" above,
+and the pinouts are also listed below.
+
+The RX/TX crossover configurations for the MAX232 and the RS-232 plug on the
+BlueGigaEmpeg can be confusing. Partly because the empeg Car sled serial port
+plug is already wired into a crossover configuration opposite of the way that
+the one built into the player body is wired. So this configuration will only
+work for the sled serial port connector, not the player body serial port
+connector. The connections for the MAX232 are as follows:
+
+MAX232 Pin 1 and 3 aka C1+/C1- - Bridge with a 2.2uf ceramic capacitor
+MAX232 Pin 4 and 5 aka C2+/C2- - Bridge with a 2.2uf ceramic capacitor
+MAX232 Pin 2 aka V+ - Connect to Pololu 5v via a 2.2uf ceramic capacitor
+MAX232 Pin 6 aka V- - Connect to GND via a 2.2uf ceramic capacitor
+MAX232 Pin 11 aka TTL-I1 - Connect to Arduino Mega Board 18 aka Tx1 
+MAX232 Pin 12 aka TTL-O1 - Connect to Arduino Mega Board 19 axa Rx1
+MAX232 Pin 13 aka 232-I1 - Connect to RS-232 plug pin 3 aka Tx
+MAX232 Pin 14 aka 232-O1 - Connect to RS-232 plug pin 2 axa Rx
+MAX232 Pin 15 aka GND - Connect directly to GND
+MAX232 Pin 16 aka VCC - Connect directly to Pololu 5v
+
+The MAX232 schematic also shows a connection of the 5v rail to GND through
+another capacitor, I'm using another 2.2uf ceramic capacitor for that.
+
+Arduino serial port 2 (Rx2/Tx2) goes to the Bluetooth chip's serial port. This
 is at TTL level so the Arduino and the Bluetooth chip can connect almost
 directly with wires or traces instead of needing to go through a MAX232
 circuit. However, the TX wire from the Arduino is running at 5v TTL, and the
 BlueGiga chip runs at 3v (and our assembly will actually have it nominally at
-2.5v), you must run the Arduino TX2 output through a simple voltage divider to
+2.5v), you must run the Arduino Tx2 output through a simple voltage divider to
 step 5v TTL from Arduino down to 2.5v for the BlueGiga chip. This is a simple
 circuit with just 2 resistors. More details below.
 
-
-Arduino and RS-232 port, critical connections:
-
-You must roll your own RS-232 circuit, connecting the Arduino hardware serial
-port 1 TX1/RX1 pins to a MAX232 as directed by the schematic linked above.
-Leave the option open to flip them into a crossover configuration just in case
-they don't work straight. I can never keep track of which way they're supposed
-to go, I just get it working correctly on my board and then don't touch it.
-Give it 5 volts from the 5v rail, according to the MAX232 schematic in the
-resources linked above. (There will also be capacitors in that schematic that
-must be correctly placed too.)
-
 Empeg tuner connector is used to supply power to the Arduino and the rest of
 the assembly. Blue wire on tuner connector connects to the voltage input pin
-on the 12v-to-5v step-down transformer power supply, and the black wire on the
-tuner connector connects to the ground input pin on the step-down power
+on the 12v-to-5v Pololu step-down transformer power supply, and the black wire
+on the tuner connector connects to the ground input pin on the step-down power
 supply.
 
-Arduino "5v" pin is connected to the 5v output rail of the 12v-to-5v step-down
-transformer power supply circuit.
+Arduino "5v" pin is connected to the 5v output rail from the Pololu 12v-to-5v
+step-down transformer power supply circuit.
 
 Grounding: Multiple Arduino GND pins connected to the output ground rail of
 the 5v power supply.
