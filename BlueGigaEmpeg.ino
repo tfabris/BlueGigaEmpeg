@@ -152,7 +152,7 @@ const String codecString="SET CONTROL CODEC AAC JOINT_STEREO 44100 0\r\n        
 // and the purchase of a special license for APT-X codec from Silicon Labs.
 //   const String codecString="SET CONTROL CODEC APT-X JOINT_STEREO 44100 0\r\n            SET CONTROL CODEC SBC JOINT_STEREO 44100 1";
 
-// Experimental - When we see the empeg player application start up, then send a
+// Optional - When we see the empeg player application start up, then send a
 // pause command to the player. If the bluetooth initial connection speed is faster
 // than the empeg bootup speed, then this will mean things start up in pause mode.
 // However if the empeg finishes bootup and starts its player application before
@@ -172,7 +172,7 @@ boolean empegStartPause = true;
 // String to tell the unit to automatically try reconnecting every few seconds when and
 // if it ever becomes disconnected from its main pairing buddy. Trying to make it grab hold
 // of the car stereo as soon as the car turns on, instead of connecting to my cellphone every
-// time. Currently experimenting with two possible versions of this.
+// time. Tried two possible versions of this, only one of which produced decent results.
 //
 // Version 1: "SET CONTROL RECONNECT". Getting the timing parameter just right on this
 // command seems to affect whether or not the host stereo asks me for incorrect PDU messages
@@ -328,7 +328,7 @@ String scFixMessageMatrix[9][2] =
   // established, no interruption occurs, it just keeps playing.
   { "RING 1",                              "A2DP STREAMING START"},
 
-  // Experiment - Respond to certain AVRCP connection success messages with a command
+  // Respond to certain AVRCP connection success messages with a command
   // that is supposed to force the bluetooth to repeatedly retry connections if it
   // ever becomes disconnected. Hopefully this will increase the chances that
   // the empeg connects to the car stereo when you start the car, instead of connecting
@@ -555,7 +555,7 @@ String empegCommandMessageMatrix[12][2] =
 // two string length limiters to save memory on the arduino: A long one for the track
 // metadata strings, and a short one for things like track number and playback position.
 // Thing is... This is taking up too much memory and the input strings need to be shorter.
-// Experiment: Trying to shorten this as an austerity measure.
+// Current status: Shortened metadata max length as an austerity measure.
 int metadataMaxLength = 150;
 int metadataSmallLength = 10;
 static String trackTitleString01 = "Unknown track on empeg Car";
@@ -999,9 +999,9 @@ void SetGlobalChipDefaults()
   // represents a set of configuration bits. The default setting of "1100" in the "config block"
   // sets bit positions 8 and 12 (aka 0b0001000100000000) which are flags for "Enables SCO links"
   // and "Randomly replace one of the existing pairings".
-  // I am experimentally adding this bit:
+  // I am also adding this bit:
   //     Bit 14 aka 0b0100000000000000 - "UART will be optimized for low latency"
-  // This is an experimental attempt to improve an issue where there is a visible difference between
+  // This is an attempt to improve an issue where there is a visible difference between
   // the empeg visuals on the empeg VFD display and the audio coming out of the host stereo's speakers.
   // This does not solve the problem but it doesn't seem to hurt. For true low latency we'd need to 
   // buy the APT-X codec (licensing fee) and use special firmware for the Bluetooth chipset.
@@ -2527,9 +2527,7 @@ void ForceQuickReconnect()
   // immediately reconnect as soon as it disconnects.
   SendBlueGigaCommand(autoReconnectString);
 
-  // Experimental faster version to make this workaround less annoying.
-  //
-  // UPDATE: After all this work for doing the quick reconnect version,
+  // UPDATE: After a lot of work for doing a truly quick reconnect version,
   // and for all the bugs it exposed and that I subsequently had to fix,
   // and finally when I got the thing working with expected behavior...
   // ... ... ... It didn't fix the issue. The quick reconnect does not
@@ -3036,7 +3034,7 @@ void SendEmpegCommand(char empegCommandToSend)
       EmpegSerial.write('\n');
     }
 
-    // Handle and log whatever state changes we did AFTER we
+    // EXPERIMENTAL: Handle and log whatever state changes we did AFTER we
     // sent the command (or not) to the empeg player.
     HandleEmpegStateChange();
     
@@ -3148,12 +3146,12 @@ void HandleEmpegString(String &theString)
       empegPlayerIsRunning = true;
     }
 
-    // Experimental - Quick special case - If we get a player startup message from the empeg,
+    // Behavior controlled by "empegStartPause" flag: If we get an empeg startup message,
     // indicating that its boot sequence is done and the player app has started, then send a
     // pause command to the player as an attempt to help prevent too much lost time in songs
     // at the startup of your car. 
     // 
-    // Notes on this experiment: 
+    // Notes on this procedure: 
     // - Might cause player to come up and be in "pause" mode if the bluetooth pairup speed
     //   beats the empeg bootup speed. In my car, the bluetooth pairup is always slower than
     //   the empeg bootup, but for some other devices like bluetooth headsets this might win.
@@ -3586,12 +3584,12 @@ void HandleEmpegStateChange()
     //      1           - The sole parameter value for the PLAYBACK_STATUS_CHANGED, with a "1" indicating "playing"
     if (transactionLabelPlaybackStatusChanged == "")
     {
-      // Experimental - If we haven't received a "REGISTER_NOTIFICATION" message to begin
+      // Bugfix: If we haven't received a "REGISTER_NOTIFICATION" message to begin
       // with at startup yet, then don't attempt to send an arbitrary notification with an
       // arbitrary transaction label. I suspect that this arbitrary-transaction-labeled
       // message migh be going into a queue on the BlueGiga module and then being sent up
       // to the device later and confusing some devices. In particular I am wondering if it
-      // is confusing a bluetooth headset I'm testing with. The experiment here is to comment
+      // is confusing a bluetooth headset I'm testing with. The solution here is to comment
       // out this line and send nothing at all in these cases.
       //    SendBlueGigaCommand(F("AVRCP NFY CHANGED 1 1 1"));
     }
@@ -3602,8 +3600,8 @@ void HandleEmpegStateChange()
 
     // Indicate to the host stereo that we have started playing by sending a play command.
     // This attempts to fix issue #22 where the bluetooth headset would get the wrong idea
-    // and it would have a desynchronization with the play/pause state. Experimenting if
-    // it makes things worse or better. Trying not doing this because it makes additional
+    // and it would have a desynchronization with the play/pause state. This does not make
+    // things either worse or better. Trying not doing this because it makes additional
     // SYNTAX ERROR messages appear at times. Verdict: this has no effect on issue #22.
     //     SendBlueGigaCommand(F("AVRCP PLAY"));
   }
@@ -3627,12 +3625,12 @@ void HandleEmpegStateChange()
     // with the last "2" in this command indicating "paused".
     if (transactionLabelPlaybackStatusChanged == "")
     {
-      // Experimental - If we haven't received a "REGISTER_NOTIFICATION" message to begin
+      // Bugfix: If we haven't received a "REGISTER_NOTIFICATION" message to begin
       // with at startup yet, then don't attempt to send an arbitrary notification with an
       // arbitrary transaction label. I suspect that this arbitrary-transaction-labeled
       // message migh be going into a queue on the BlueGiga module and then being sent up
       // to the device later and confusing some devices. In particular I am wondering if it
-      // is confusing a bluetooth headset I'm testing with. The experiment here is to comment
+      // is confusing a bluetooth headset I'm testing with. The solution here is to comment
       // out this line and send nothing at all in these cases.
       //     SendBlueGigaCommand(F("AVRCP NFY CHANGED 1 1 2"));
     }
@@ -3644,7 +3642,7 @@ void HandleEmpegStateChange()
     // Indicate to the host stereo that we have stopped playing by sending a pause command.
     // This attempts to fix issue #22 where the bluetooth headset would not start playing
     // when it was supposed to and there was a desynchronization in play state between
-    // headset and bluetooth module. Experimenting if it makes things worse or better.
+    // headset and bluetooth module. This does not make things either worse or better.
     // Trying not doing this because it makes additional SYNTAX ERROR messages appear at
     // times. Verdict: this has no effect on issue #22.
     //    SendBlueGigaCommand("AVRCP PAUSE");
@@ -3664,12 +3662,12 @@ void HandleEmpegStateChange()
   //      1           - The sole parameter value for the TRACK_CHANGED, with a "1" indicating that there is indeed a track selected.
   if (transactionLabelTrackChanged == "")
   {
-      // Experimental - If we haven't received a "REGISTER_NOTIFICATION" message to begin
+      // BUGFIX: If we haven't received a "REGISTER_NOTIFICATION" message to begin
       // with at startup yet, then don't attempt to send an arbitrary notification with an
       // arbitrary transaction label. I suspect that this arbitrary-transaction-labeled
       // message migh be going into a queue on the BlueGiga module and then being sent up
       // to the device later and confusing some devices. In particular I am wondering if it
-      // is confusing a bluetooth headset I'm testing with. The experiment here is to comment
+      // is confusing a bluetooth headset I'm testing with. The solution here is to comment
       // out this line and send nothing at all in these cases.
       //     SendBlueGigaCommand(F("AVRCP NFY CHANGED 2 2 1")); 
   }
