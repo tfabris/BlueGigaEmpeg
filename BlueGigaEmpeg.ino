@@ -1917,12 +1917,12 @@ void SendBlueGigaCommand(String commandString)
   if(BlueGigaSerial)
   {
     // Log the command we are sending.
-    Log("--> " + commandString);
+    Log("--^ " + commandString);
   }
   else
   {
     // Log the command we cannot be sending.
-    Log("--> CANNOT SEND COMMAND - NO SERIAL PORT: " + commandString);  
+    Log("--^ CANNOT SEND COMMAND - NO SERIAL PORT: " + commandString);  
     return;  
   }
 
@@ -2137,11 +2137,11 @@ void RespondToQueries(String &queryString)
     // SYNTAX ERROR. Examples:
     //
     //    AVRCP 0 PDU_REGISTER_NOTIFICATION e NOW_PLAYING_CHANGED 0
-    //    --> AVRCP NFY INTERIM e 9 0
+    //    --^ AVRCP NFY INTERIM e 9 0
     //    SYNTAX ERROR
     //
     //    AVRCP 0 PDU_REGISTER_NOTIFICATION d AVAILABLE_PLAYERS_CHANGED 0
-    //    --> AVRCP NFY INTERIM d 10
+    //    --^ AVRCP NFY INTERIM d 10
     //    SYNTAX ERROR
     //
     // Working on the theory that this may be occurring in situations where my code
@@ -3019,7 +3019,7 @@ void SendEmpegCommand(char empegCommandToSend)
   else
   {
     // Log what we are sending.
-    Log("--> Sending to empeg: " + (String)empegCommandToSend);
+    Log("--^ Sending to empeg: " + (String)empegCommandToSend);
 
     // Write out the corresponding empeg command to the empeg's
     // serial port followed by a linefeed character.
