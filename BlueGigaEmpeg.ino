@@ -122,7 +122,7 @@ boolean logLineByLine=true;
 //             for profiling.
 //           - Logged output is not accompanied by a milliseconds number.
 // Note: Recommend turning on this feature only when "logLineByLine" is true.
-boolean outputMillis=false;
+boolean outputMillis=true;
 
 // Choose whether or not to display the interpreted track metadata on the
 // Arduino debugging serial/USB console port.
@@ -137,7 +137,20 @@ boolean outputMillis=false;
 // This should be set to false most of the time, and only set to true during
 // debugging sessions, since it slows down processing to put out too much
 // data on the serial port when it is not needed.
-boolean displayTracksOnSerial=true;
+boolean displayTracksOnSerial=false;
+
+// Strings to define which codecs to use for A2DP audio transmission.
+// 
+// Uncomment this string to use default SBC codec.
+//   const String codecString="SET CONTROL CODEC SBC JOINT_STEREO 44100 0";
+//
+// Uncomment this string to use Apple AAC codec and fall back to
+// the default SBC codec if the AAC codec is not available.
+const String codecString="SET CONTROL CODEC AAC JOINT_STEREO 44100 0\r\n            SET CONTROL CODEC SBC JOINT_STEREO 44100 1";
+//
+// Uncomment this string to use APT-X codec. Requires special firmware download
+// and the purchase of a special license for APT-X codec from Silicon Labs.
+//   const String codecString="SET CONTROL CODEC APT-X JOINT_STEREO 44100 0\r\n            SET CONTROL CODEC SBC JOINT_STEREO 44100 1";
 
 // Experimental - When we see the empeg player application start up, then send a
 // pause command to the player. If the bluetooth initial connection speed is faster
@@ -983,7 +996,13 @@ void SetGlobalChipDefaults()
   //     Bit 14 aka 0b0100000000000000 - "UART will be optimized for low latency"
   // This is an experimental attempt to improve an issue where there is a visible difference between
   // the empeg visuals on the empeg VFD display and the audio coming out of the host stereo's speakers.
+  // This does not solve the problem but it doesn't seem to hurt. For true low latency we'd need to 
+  // buy the APT-X codec (licensing fee) and use special firmware for the Bluetooth chipset.
   SendBlueGigaCommand(F("SET CONTROL CONFIG 0000 0000 0000 5100"));
+
+  // Configure the A2DP codec that will be used for the audio connection. This string is defined
+  // at the top of this program and there are multiple options for which codec can be used.
+  SendBlueGigaCommand(codecString);
 
   // Configure the WT32i development board to NOT use the additional external TI AIC32I external codec chip.
   // Unused if you're not using the BlueGiga Development board which contains the external codec.
