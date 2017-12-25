@@ -428,8 +428,8 @@ static String transactionLabelTrackChanged = "";
 // the bluetooth device address into that location of the response string. The "{0}"
 // is also defined in another variable below.
 // NOTE: Update the matrix size and the array size both, if you are changing these.
-int pmMatrixSize=5;
-String pmMessageMatrix[5][2] =
+int pmMatrixSize=4;
+String pmMessageMatrix[4][2] =
 {
   // Respond to messages such as INQUIRY_PARTIAL 0a:ea:ea:6a:7a:6a 240404
   { "INQUIRY_PARTIAL ",          "PAIR {0}"},
@@ -450,7 +450,14 @@ String pmMessageMatrix[5][2] =
   // "17" is a special code for a certain kind of target which is
   // a particular secret-code hard-to find value called an
   // "L2CAP psm" and the special secret L2CAP psm for AVRCP is "17".
-  { "CONNECT 0 A2DP 19",        "CALL {0} 17 AVRCP"},
+  //
+  // NOTE BUGFIX: Don't do an AVRCP call while the host is in the middle
+  // of pairing its second A2DP channel. In other words, don't do an
+  // AVRCP call on the first ("0") connect from the host stereo, only 
+  // do it on the second ("1") one. So comment out this line:
+  //       { "CONNECT 0 A2DP 19",        "CALL {0} 17 AVRCP"},
+  // But subsequent ones are OK to do, and in fact are required for 
+  // AVRCP to work on the paired system.
   { "CONNECT 1 A2DP 19",        "CALL {0} 17 AVRCP"},
   { "CONNECT 2 A2DP 19",        "CALL {0} 17 AVRCP"},
 };
