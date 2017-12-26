@@ -162,6 +162,7 @@ Ceramic Capacitor asst:     https://www.amazon.com/gp/product/B071VVTC7Z/ref=oh_
 10k ohm resistors:      8x  https://www.amazon.com/gp/product/B0185FIOTA/ref=oh_aui_detailpage_o02_s00
 4.7k ohm resistors:     3x  https://www.amazon.com/gp/product/B0185FC5OK/ref=oh_aui_detailpage_o02_s00
 100 ohm resistor:           https://www.digikey.com/product-detail/en/stackpole-electronics-inc/CF18JT100R/CF18JT100RCT-ND/2022718
+1N914 diode:                https://www.digikey.com/product-detail/en/on-semiconductor/1N914/1N914FS-ND/978749
 
 
 ------------------------------------------------------------------------------
@@ -862,9 +863,8 @@ goes into the RST pin on the Bluetooth. Example:
     ARDUINO -----VVVVV----+----VVVVV-----GND
     PIN 51      10Kohm    |    10Kohm
                           |
-                        Diode
                           |
-                      WT32i RST
-
+                          +-------->|--------WT32i RST
+                               Diode 1N914
 
 
