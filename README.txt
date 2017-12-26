@@ -776,7 +776,7 @@ for the MAX232 are as follows:
     MAX232 Pin 11 aka TTL-I1 - Connect to Arduino Mega Board 18 aka Tx1 
     MAX232 Pin 12 aka TTL-O1 - Connect to Arduino Mega Board 19 axa Rx1
     MAX232 Pin 13 aka 232-I1 - Connect to RS-232 plug pin 3 aka Tx
-    MAX232 Pin 14 aka 232-O1 - Connect to RS-232 plug pin 2 axa Rx
+    MAX232 Pin 14 aka 232-O1 - Connect to RS-232 plug pin 2 aka Rx
     MAX232 Pin 15 aka GND - Connect directly to GND
     MAX232 Pin 16 aka VCC - Connect directly to Pololu 5v
     MAX232 Pin 16 aka VCC - Connect to 0.1uf ceramic capacitor to GND
