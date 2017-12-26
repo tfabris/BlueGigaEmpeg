@@ -142,11 +142,16 @@ boolean displayTracksOnSerial=false;
 // Strings to define which codecs to use for A2DP audio transmission.
 // 
 // Uncomment this string to use default SBC codec.
-//   const String codecString="SET CONTROL CODEC SBC JOINT_STEREO 44100 0";
+const String codecString="SET CONTROL CODEC SBC JOINT_STEREO 44100 0";
 //
 // Uncomment this string to use Apple AAC codec and fall back to
-// the default SBC codec if the AAC codec is not available.
-const String codecString="SET CONTROL CODEC AAC JOINT_STEREO 44100 0\r\n            SET CONTROL CODEC SBC JOINT_STEREO 44100 1";
+// the default SBC codec if the AAC codec is not available. This 
+// didn't work correctly on my Honda stereo despite the AAC codec
+// being supported. It put my stereo into a mode where no sound
+// came out and the track titles kept getting re-queried once per
+// second, causing odd behavior on the host stereo. You might be
+// able to use this successfully, but I wasn't able to use it.
+//   const String codecString="SET CONTROL CODEC AAC JOINT_STEREO 44100 0\r\n            SET CONTROL CODEC SBC JOINT_STEREO 44100 1";
 //
 // Uncomment this string to use APT-X codec. Requires special firmware download
 // and the purchase of a special license for APT-X codec from Silicon Labs.
