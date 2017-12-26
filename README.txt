@@ -766,23 +766,20 @@ BlueGigaEmpeg can be confusing. Partly because the empeg Car sled serial port
 plug is already wired into a crossover configuration opposite of the way that
 the one built into the player body is wired. So this configuration will only
 work for the sled serial port connector, not the player body serial port
-connector. The connections for the MAX232 are as follows:
+connector. I am using a TI MAX232E for this implementation. The connections
+for the MAX232 are as follows:
 
-MAX232 Pin 1 and 3 aka C1+/C1- - Bridge with a 2.2uf ceramic capacitor
-MAX232 Pin 4 and 5 aka C2+/C2- - Bridge with a 2.2uf ceramic capacitor
-MAX232 Pin 2 aka V+ - Connect to Pololu 5v via a 2.2uf ceramic capacitor
-MAX232 Pin 6 aka V- - Connect to GND via a 2.2uf ceramic capacitor
-MAX232 Pin 11 aka TTL-I1 - Connect to Arduino Mega Board 18 aka Tx1 
-MAX232 Pin 12 aka TTL-O1 - Connect to Arduino Mega Board 19 axa Rx1
-MAX232 Pin 13 aka 232-I1 - Connect to RS-232 plug pin 3 aka Tx
-MAX232 Pin 14 aka 232-O1 - Connect to RS-232 plug pin 2 axa Rx
-MAX232 Pin 15 aka GND - Connect directly to GND
-MAX232 Pin 16 aka VCC - Connect directly to Pololu 5v
-
-The MAX232 schematic also shows a connection of the 5v rail to GND through
-another capacitor, I'm using another 2.2uf ceramic capacitor for that.
-
-I'm using a TI MAX232E chip in my implementation whose 
+    MAX232 Pin 1 and 3 aka C1+/C1- - Bridge with a 2.2uf ceramic capacitor
+    MAX232 Pin 4 and 5 aka C2+/C2- - Bridge with a 2.2uf ceramic capacitor
+    MAX232 Pin 2 aka V+ - Connect to Pololu 5v via a 2.2uf ceramic capacitor
+    MAX232 Pin 6 aka V- - Connect to GND via a 2.2uf ceramic capacitor
+    MAX232 Pin 11 aka TTL-I1 - Connect to Arduino Mega Board 18 aka Tx1 
+    MAX232 Pin 12 aka TTL-O1 - Connect to Arduino Mega Board 19 axa Rx1
+    MAX232 Pin 13 aka 232-I1 - Connect to RS-232 plug pin 3 aka Tx
+    MAX232 Pin 14 aka 232-O1 - Connect to RS-232 plug pin 2 axa Rx
+    MAX232 Pin 15 aka GND - Connect directly to GND
+    MAX232 Pin 16 aka VCC - Connect directly to Pololu 5v
+    MAX232 Pin 16 aka VCC - Connect to 0.1uf ceramic capacitor to GND
 
 Arduino serial port 2 (Rx2/Tx2) goes to the Bluetooth chip's serial port. This
 is at TTL level so the Arduino and the Bluetooth chip can connect almost
@@ -828,43 +825,45 @@ Bluetooth chip+Board "Gnd" pin connected to the ground rail. Additional GND
 pins are good too, to make sure solid ground is achieved.
 
 Bluetooth chip+board "RX/TX" pins connected to the "TX2/RX2" pins (serial port
-2) of Arduino Note: This is a crossover connection, i.e., RX from the Arduino
-is connected to TX on the dev board. On the line that runs from the Arduino
-TX2 pin to the RX pin on the Bluetooth chip, add a voltage divider circuit by
-using two 10k resistors in the following configuration. Connect one of the 10K
-resistors to the TX2 pin from the Arduino, connect the other 10K resistor to
-GND, and connect the other leads of each resistor to each other. The RX-input
-of the WT32i then gets connected to that same point (where the two resistors
-are tied together). Example schematic:
+2) of Arduino. Note: This is a crossover connection, i.e., RX from the Arduino
+is connected to TX on the dev board and vice-versa.
 
-    ARDUINO -----VVVVV----+----VVVVV-----GND
-    TX2         10Kohm    |    10Kohm
-                          |
-                       WT32i Rx
+On the line that runs from the Arduino TX2 pin to the RX pin on the Bluetooth
+chip, add a 50% voltage divider circuit by using two 10k resistors in the
+following configuration:
+
+    ARDUINO TX2-----VVVVV----+----VVVVV-----GND
+                   10Kohm    |    10Kohm
+                             |
+                             |
+                             +-----WT32i Rx
 
 Bluetooth chip+Board three I2S pins PCM_CLK, PCM_SYNC, PCM_IN connected to
 empeg IISC, IISW, IISD1 via special modification to the empeg the tuner
-connector, as described in the section below titled "Empeg Car Interior
-Modification for Digital I2S connection". These will each need to be coming in
-through some resistors arranged in a voltage divider configuration, with a
-4.7k and a 10k resistor for each one of the three lines. Example of one line:
+connector, as described in the section of this document titled "Modify Empeg
+Car interior for I2S digital audio connection".
 
-    EMPEG -----VVVVV----+----VVVVV-----GND
-    IISC      4.7Kohm   |    10Kohm
-                        |
-                  WT32i PCM_CLK
+Each one of the three I2S pins will need to be coming in through a set of
+resistors arranged in a voltage divider configuration, with a 4.7k and a 10k
+resistor for each one of the three lines. Example of one line:
+
+    EMPEG IISC-----VVVVV----+----VVVVV-----GND
+                  4.7Kohm   |    10Kohm
+                            |                     (3x) 
+                            |
+                            +-----WT32i PCM_CLK
 
 Experimental Reset Line: Bluetooth chip+board RST (reset) pin connected to Pin
 51 of the Arduino board. This is working for Mark Lord, but my chip fried
 immediately after trying this, so I consider this to be a risk if connecting
-directly. So instead, run it through a voltage divider and a diode before it
-goes into the RST pin on the Bluetooth. Example:
+directly. So instead, run it through a 50% voltage divider and a diode before
+it goes into the RST pin on the Bluetooth. Example:
 
-    ARDUINO -----VVVVV----+----VVVVV-----GND
-    PIN 51      10Kohm    |    10Kohm
-                          |
-                          |
-                          +-------->|--------WT32i RST
-                               Diode 1N914
+    ARDUINO PIN 51-----VVVVV----+----VVVVV-----GND
+                      10Kohm    |    10Kohm
+                                |
+                                |
+                                +-------->|--------WT32i RST
+                                     Diode 1N914
 
 
