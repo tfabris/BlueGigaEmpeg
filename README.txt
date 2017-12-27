@@ -525,39 +525,47 @@ to start up the module.
 ------------------------------------------------------------------------------
 Connect external hardware connections
 ------------------------------------------------------------------------------
-BetzTechnik WT32i Breakout board V2, plugged into BlueGigaEmpeg circuit board.
+BetzTechnik WT32i Breakout board V2, plug into BlueGigaEmpeg circuit board.
 
-Arduino Mega board, plugged into BlueGigaEmpeg circuit board.
+Arduino Mega board, plug into BlueGigaEmpeg circuit board.
 
 RS-232 serial port from the empeg Car player docking sled, connect to the
 serial port on the BlueGigaEmpeg module.
 
 Tuner module connector from the empeg Car player docking sled, connect to the
-tuner connector on the BlueGigaEmpeg module.
+tuner connector on the BlueGigaEmpeg module. This plug carries 12v power to
+the BlueGigaEmpeg module and also carries I2S audio data.
+
+Power the empeg using 12 volts DC through its car docking sled. During bench
+testing in the house, you can use the 12v AC adapter power supply that comes
+with the empeg. The BlueGigaEmpeg module will get its power from the empeg's
+tuner module connector, and it should work equally well with either sled
+power or AC adapter power.
 
 Debugging console to Arduino - Only used for uploading the latest Arduino code
 to the BlueGigaEmpeg module, or for monitoring the serial output and/or
 debugging the connection. Use a standard USB cable connected from a computer
-to the Arduino USB port.
+to the Arduino USB port if you need to do this.
 
-The above should be the only external connections you need.
 
 Notes:
 
 Power to Arduino: For debugging mode, the USB cable from the computer can
 power the Arduino and the Bluetooth board. When connected to the empeg, power
 comes from the tuner connector. Both can be connected at the same time, though
-I do not recommend leaving them connected that way for long periods.
+I do not recommend leaving them connected that way for long periods of time.
 
-Important: Do not try to use direct 12v from the car to power the Arduino into
-the Arduino board's power 5.5mm barrel plug connector. The Arduino can't
-actually handle direct 12v power from the car despite what its specs say.
-Instead, use the 12v-to-5v step-down DC-DC transformer included as part of the
-BlueGigaEmpeg interface board, with 12v +/- connections supplied from the
-empeg's tuner connector.
+Startup order: If using the USB cable for debugging mode, the order of
+connecting the cables and applying power are important. See the section titled
+"Debug Bluetooth Connection if needed" for more details.
 
-Audio: I2S audio data comes from the empeg over modified wires on the tuner
-connector.
+Arduino power connector: The Arduino has a 5.5mm barrel plug connector for
+power. Do not try to use direct 12v from the car to power this plug. The
+Arduino can't actually handle direct 12v power from the car, despite what its
+specs might say. Car 12v power can briefly fluctuate much higher than 12v.
+Instead, apply 12v power to the empeg and let the empeg supply 12 volts to the
+BlueGigaEmpeg module through the tuner connector, which will go into a Pololu
+12v-to-5v step-down power regulator located on the BlueGigaEmpeg module.
 
 
 ------------------------------------------------------------------------------
