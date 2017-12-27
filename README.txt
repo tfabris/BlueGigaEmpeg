@@ -330,8 +330,8 @@ Modify Empeg Car interior for I2S digital audio connection
 ------------------------------------------------------------------------------
 You will be modifying the interior of your empeg Car so that there can be
 three wires coming out the docking connector which carry digital audio data
-("I2S" aka "IIS") and can connect to this external module. This is done by
-hijacking three of the wires originally used for the FM Tuner Module and its
+("I2S" aka "IIS") and can connect to the BlueGigaEmpeg unit. This is done by
+hijacking three of the wires originally used for the FM Tuner Module on its
 Molex connector. This tuner module connector will instead plug into the
 BlueGigaEmpeg electronic assembly, which contains the Bluetooth chip and the
 Arduino.
