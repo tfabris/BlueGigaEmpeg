@@ -826,8 +826,12 @@ for the MAX232 are as follows:
     MAX232 Pin 13 aka 232-I1 - Connect to RS-232 plug pin 3 aka Tx
     MAX232 Pin 14 aka 232-O1 - Connect to RS-232 plug pin 2 aka Rx
     MAX232 Pin 15 aka GND - Connect directly to GND
-    MAX232 Pin 16 aka VCC - Connect directly to Pololu 5v
-    MAX232 Pin 16 aka VCC - Connect to 0.1uf ceramic capacitor to GND
+    MAX232 Pin 16 aka VCC - Connect directly to Pololu 5v output.
+    MAX232 Pin 16 aka VCC - Also connect to 0.1uf ceramic capacitor which
+                            then connects to GND. (Pin 16 is two connections,
+                            one to 5V and then also to the smoothing capacitor
+                            which bridges across 5v and GND. Place this cap as
+                            physically close to pin 16 as possible.)
 
 Empeg tuner connector is used to supply power to the Arduino and the rest of
 the assembly. Blue wire on tuner connector connects to the voltage input pin
