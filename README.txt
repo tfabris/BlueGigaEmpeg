@@ -4,13 +4,13 @@ by Tony Fabris
 https://github.com/tfabris/BlueGigaEmpeg
 ------------------------------------------------------------------------------
 A project to use a Silicon Labs BlueGiga WT32i Bluetooth chip, combined with
-an Arduino Mega board, to act as an interface between an empeg Car player and
-a modern car.
+an Arduino Mega board, to act as an interface between an empeg Car Mk2 (or
+Rio Car) MP3 player and a modern car.
 
-The empeg Car (small "e") is an amazing in-dash MP3 player made from 1999-2001
-whose features are still, to this day, better than any other in-car MP3
-solution available. However, the empeg Car didn't have Bluetooth since it
-wasn't in common use yet at the time.
+The empeg Car (small "e") player, also sold as the Rio Car, is an amazing
+in-dash MP3 player made from 1999-2001 whose features are still, to this day,
+better than any other in-car MP3 solution available. However, the empeg Car
+didn't have Bluetooth since it wasn't in common use yet at the time.
 
 The purpose of this BlueGigaEmpeg interface is twofold:
 
