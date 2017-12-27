@@ -233,8 +233,10 @@ car stereo screen does not change to the new song title every time.
 
 To fix the issue, you must edit one of the header files in the Arduino
 compiler libraries, and then you must compile and upload your sketch from your
-local PC using the local Arduino compiler and uploader (the online web editor
-will not work for this).
+local PC using the local Arduino compiler and uploader. Arduino offers an
+online web editor for uploading code sketches, but the web editor won't work
+for this project because it doesn't have the capability of changing the header
+code to increase the size of the serial port buffer.
 
 The file that you need to edit will be the same on all operating systems, but
 the location of the file will be different depending on which OS you're using.
@@ -257,9 +259,11 @@ Contents". Then navigate to:
 
   Contents/Java/hardware/arduino/avr/cores/arduino/HardwareSerial.h
 
-Ctrl-click on the file "HardwareSerial.h" and select "Open With" and choose
-your favorite quick text editor program to edit the file with it. Locate the
-following code section:
+Ctrl-click on the file "HardwareSerial.h" and select "Open With", and choose
+your favorite quick text editor program to edit the file with it.
+
+Regardless of which operating system you are doing this with, once you have
+HardwareSerial.h open, locate the following code section:
 
          #if !defined(SERIAL_TX_BUFFER_SIZE)
          #if ((RAMEND - RAMSTART) < 1023)
