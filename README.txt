@@ -500,6 +500,20 @@ the onboard UART and prevents the UART and the Arduino pin-to-pin serial
 connection from arguing with each other. This prevents errors on the serial
 port which cause the chip to reboot randomly.
 
+The BlueGigaEmpeg has an option to have a software reset line built into the
+assembly. The next instruction depends on whether this reset line is being
+used or not. This behavior is controlled by the flag performResetLinePhysical,
+located in BlueGigaEmpeg.ino. Set this flag to true to use the reset line, and
+remember to re-upload the sketch to the Arduino if you have changed the value.
+
+If reset line is used:
+"Smd_2_pole_switch" set to the right or down position, to put it into battery
+power mode. The red LED on the breakout board will blink slowly and steadily
+when power is applied, until the Arduino sketch boots up and uses the reset
+line to turn on the Bluetooth chip. After the Bluetooth chip is started, then
+the red LED on the breakout board will blink randomly.
+
+If reset line is not used:
 "Smd_2_pole_switch" set to the left or up position, to put it into always-on
 mode. The red LED on the breakout board will blink randomly when power is
 applied. Symptoms of this switch being set wrong will be: LED on the breakout
