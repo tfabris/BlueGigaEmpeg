@@ -665,18 +665,20 @@ empeg would come back up out of sleep mode and play tracks silently to an
 unconnected Bluetooth module. I was worried that this might drain my car's
 battery.
 
-If this happens to you, then I recommend connecting it like this instead:
+If this happens to you, then I recommend connecting power to the empeg like
+this instead:
 
 - Yellow "memory" wire on Empeg: Connect to car power 12v accessory power.
-- Orange "ignition" wire on Empeg Connect that same 12v accessory power.
+- Orange "ignition" wire on Empeg: Connect that same 12v accessory power.
 - Do not connect your car's constant 12v power to any part of the empeg.
 - Connect your car's illumination wire to the empeg's "lights on" wire.
 - Connect ground to ground of course.
+- Tuner module and serial plug connectors go to the BlueGigaEmpeg module.
 
 That should be all you need. No audio or amplifier connections because the
 Bluetooth takes care of that now. No cellphone mute wire because the Bluetooth
-takes care of that now. No amp remote wire because there is no amp. No FM
-tuner or aux connection, etc, etc...
+takes care of that now. No amp remote wire because there is no amp connected
+directly to the empeg. No aux connection to the empeg, etc.
 
 In this situation, the empeg does not have a 12v constant power concept at all
 and will not go into sleep mode when you turn off the ignition. However it,
