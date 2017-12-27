@@ -5,7 +5,7 @@ https://github.com/tfabris/BlueGigaEmpeg
 ------------------------------------------------------------------------------
 A project to use a Silicon Labs BlueGiga WT32i Bluetooth chip, combined with
 an Arduino Mega board, to act as an interface between an empeg Car Mk2 (or
-Rio Car) MP3 player and a modern car.
+Rio Car) MP3 player and a modern Bluetooth-equipped car.
 
 The empeg Car (small "e") player, also sold as the Rio Car, is an amazing
 in-dash MP3 player made from 1999-2001 whose features are still, to this day,
@@ -591,14 +591,26 @@ Arduino. It can accept PIN codes up to 16 digits long.
 ------------------------------------------------------------------------------
 Apply power and pair Bluetooth
 ------------------------------------------------------------------------------
-The BlueGigaEmpeg has a RESET/PAIR button which does the following:
+Apply power to the empeg, and the BlueGigaEmpeg module will receive power. 
+
+The first time you use the BlueGigaEmpeg, you will need to pair it with your
+Bluetooth car stereo. The BlueGigaEmpeg has a RESET/PAIR button for this
+purpose. After you have successfully paired with your car stereo, you should
+not need to pair it again, it should automatically reconnect each time you
+start your car.
+
+When you press the RESET/PAIR button on the BlueGigaEmpeg, it does the
+following:
 
  - Erases all previous Bluetooth pairings from the BlueGigaEmpeg.
+ 
+ - Resets the module to default settings as defined in the Arduino code.
 
- - Looks for devices to pair with for 30 seconds and pairs with
-   the first one that it sees.
+ - Looks for Bluetooth devices to pair with for about 30 seconds and pairs
+   with the first one that it sees.
 
- - The RESET/PAIR LED is lit during this pairing mode.
+ - The blue RESET/PAIR LED is lit during this pairing mode, and will turn
+   off once pairing is complete or once the 30 seconds has run out.
 
 NOTE: Though this is counterintuitive: Sometimes you don't press that
 RESET/PAIR button at all. Sometimes, instead, you do the pairing when the
@@ -612,35 +624,37 @@ with the Bluetooth device named "empeg Car", and it works. After that, it
 reconnects automatically each time I get in the car and start it up (though it
 takes a moment to connect).
 
-Some Bluetooth stereos and headsets *do* need you to press that RESET/PAIR
-button, which should light the LED for ~30 seconds, during which time you
-should also put your headset or stereo into pair mode.
+Some Bluetooth stereos *do* need you to press that RESET/PAIR button on the
+BlueGigaEmpeg, which should light the LED for ~30 seconds, during which time
+you should also put your stereo into pair mode.
 
 If one method doesn't work for you, try the other method. For example this
 sequence will work for many stereos and headsets:
 
  - Press the RESET/PAIR button, and while the LED is still lit, then
-   initiate pairing at your stereo or headset via its pairing feature.
+   initiate pairing on your Bluetooth stereo via its pairing feature.
 
- - If that doesn't work, then wait for the RESET/PAIR LED to go dark
-   and then, without touching the RESET/PAIR button, try to initiate
-   pairing with your stereo or headset via its pairing feature.
+ - If that doesn't work, then wait for the RESET/PAIR LED on the
+   BlueGigaEmpeg to go dark, and then, without touching the RESET/PAIR
+   button, initiate pairing from your stereo via its pairing feature.
 
 Car and empeg should be playing nicely together now, assuming everything else
-is working correctly.
+is working correctly. Audio from the empeg comes out of your car stereo's
+speakers, the stereo's track change controls will change tracks on the empeg,
+and the track titles will appear on the car stereo's screen.
 
 
 ------------------------------------------------------------------------------
 Modify empeg's power connection to car if needed
 ------------------------------------------------------------------------------
 I might recommend that, for this installation, you wire up the empeg to your
-car differently than it would normally otherwise be wired up.
+car differently than it would otherwise would be.
 
 This design is intended to be used in such a way so that the empeg is not the
 primary stereo in the system. The empeg becomes one of the Bluetooth inputs
 into a modern car stereo. So the empeg's sleep mode, the empeg's "memory"
 power connection, and the way this Bluetooth module gets its power from the
-empeg tuner connector, all combine to cause some interesting problem with
+empeg tuner connector, all combine to cause some interesting problems with
 power state transitions. At least they did in my car, your mileage may vary.
 
 I found that if I connected the empeg to my car via the regular method (i.e.
@@ -656,7 +670,7 @@ If this happens to you, then I recommend connecting it like this instead:
 - Yellow "memory" wire on Empeg: Connect to car power 12v accessory power.
 - Orange "ignition" wire on Empeg Connect that same 12v accessory power.
 - Do not connect your car's constant 12v power to any part of the empeg.
-- Connect your car's illumination wire to the empeg's "illum. sense" wire.
+- Connect your car's illumination wire to the empeg's "lights on" wire.
 - Connect ground to ground of course.
 
 That should be all you need. No audio or amplifier connections because the
@@ -673,11 +687,11 @@ functional clock of its own.
 
 Finally, you'll notice that the empeg sled connector only supplies power if
 the empeg is awake. If you put the empeg into Sleep mode via a long press on
-the top button, it will go to sleep but that also means the  Arduino+Bluetooth
+the top button, it will go to sleep but that also means the Arduino+Bluetooth
 assembly stops receiving power. This is actually good: you want to be able to
 turn the Bluetooth on and off and reboot it sometimes, and it's easy to do
-that just by sleeping or waking the player by hand. In my case I leave the
-player awake most of the time, so that when I shut off the car ignition, the
+that just by sleeping and waking the player by hand. In my case I leave the
+player awake all of the time, so that when I shut off the car ignition, the
 player fully shuts down, and then when I start my car again, the empeg starts
 up in Awake mode and immediately supplies power to the Bluetooth assembly
 which then autoconnects to the car stereo head unit.
@@ -700,7 +714,7 @@ When everything is connected together (empeg, Arduino, Bluetooth), the
 assembly and all devices which are part of the assembly will get their power
 off of the 12v power coming off the tuner connector on the empeg sled. This
 means that if you plug all this stuff in, it's already powered by the time you
-try to  attach your USB debug cable to Arduino.
+try to attach your USB debug cable to the Arduino.
 
 On my computer system, if the Arduino is already externally powered when I
 connect my debug cable, then my computer cannot find its USB UART and is
@@ -710,7 +724,9 @@ So to successfully debug via the Arduino USB debug cable and use the Arduino
 Serial Monitor program, I must connect the USB cable FIRST, before applying
 power to the empeg. Meaning if I am debugging in the car, I should connect the
 USB cable first and then turn on the ignition, that way the Serial Monitor
-program can find a port to connect to.
+program can find a port to connect to. If I am debugging on the test bench,
+I should connect the USB cable first, then connect the AC adapter to the
+empeg.
 
 When using the Arduino Serial Monitor program, set it to 115200 baud, with
 either "Newline" or "Both NL and CR" as line endings. If you are using a
@@ -726,6 +742,7 @@ to change them back to their default values when you are done debugging, as
 some of them can slow down the responses on the BlueGigaEmpeg and cause the
 Bluetooth communication to miss things.
 
+Refer to the code comments accompanying these flags to understand them:
   EmpegSendCommandDebug
   displayEmpegSerial
   logLineByLine
@@ -745,23 +762,27 @@ SYNTAX ERROR if there is a problem with any command.
   Displays Bluetooth module's current list of paired devices.
 
   SET BT PAIR *
-  Deletes all Bluetooth pairings on the Bluetooth module.
+  Deletes all saved Bluetooth pairings on the Bluetooth module.
 
   RESET
-  Reboots the Bluetooth module, saving current settings.
+  Reboots the Bluetooth module, saving current settings. Does not erase any
+  existing saved bluetooth pairings nor change any settings.
 
   SET RESET
-  Resets the Bluetooth module to factory defaults. Does not remove
-  existing pairings, those are still kept.
+  Resets the Bluetooth chip itself to its factory defaults. Does not remove
+  existing pairings, those are still kept. Note: you should restart the
+  Arduino after using "SET RESET" in order to have it apply its customized
+  default settings to the Bluetooth chip again.
 
-A note about response ordering:
+A note about response ordering in the debug console:
 
 Sometimes the responses from the Bluetooth module do not show up on the screen
 immediately, because the main input loop for the Arduino code might not have
 caught up and read all the responses from the serial port yet. So, for
-example, a bad command might be issued several lines back and the "SYNTAX
-ERROR" appears later. So don't always assume that any two command/response
-pairs are absolutely connected.
+example, a bad command might be issued several lines back, but the "SYNTAX
+ERROR" response doesn't appear until later. So don't always assume that any
+two command/response pairs are absolutely connected just because they appear
+next to each other on the debug console screen.
 
 
 ------------------------------------------------------------------------------
