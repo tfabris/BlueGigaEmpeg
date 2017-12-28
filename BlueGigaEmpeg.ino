@@ -41,7 +41,7 @@ boolean performResetLinePhysical = false;
 
 // Control whether or not the module uses digital I2S audio, or analog line-level
 // audio inputs (for example the line level inputs on the BlueGiga dev board).
-boolean digitalAudio = false;
+boolean digitalAudio = true;
 
 // Debugging tool for the part of the code that sends commands to the empeg.
 // Normally, typing commands into the Arduino debug console will send those

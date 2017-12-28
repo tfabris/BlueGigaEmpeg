@@ -174,9 +174,8 @@ a USB micro cable plugged into the "UART" port on the dev board. At the time
 of this writing, here were the steps I took:
 
  - Make sure that jumper JP4 on the BetzTechnik WT32i Bluetooth board is
-   connected. You will need to cut this trace after you're done upgrading. It
-   will need to be temporarily reconnected any time you do firmware updates to
-   the WT32i chip.
+   connected. It needs to be connected any time you do firmware updates to the
+   WT32i chip.
 
  - Make sure the Bluetooth breakout board is fully disconnected from the
    Arduino and all of its related electronics modules which are part of this
@@ -229,7 +228,10 @@ of this writing, here were the steps I took:
    that checkbox when doing the firmware upgrade.
 
  - After the upgrade is successful, disconnect everything and cut the trace
-   JP4 on the BetzTechnik WT32i Bluetooth board.
+   JP4 on the BetzTechnik WT32i Bluetooth board. IMPORTANT: Use extreme care
+   when cutting JP4. Make sure not to peel up the pads. There are two traces
+   running to the USB side of the JP4 pad and if you peel up that trace, your
+   board will no longer be able to power up.
 
 
 ------------------------------------------------------------------------------
@@ -506,11 +508,15 @@ Set jumpers, switches, and traces
 ------------------------------------------------------------------------------
 These instructions are for the the BetzTechnik WT32i Breakout board V2.
 
-Cut the jumper at "J4 FTDI_+5v" but only do this AFTER successfully updating
+Cut the jumper at "JP4 FTDI_+5v" but only do this AFTER successfully updating
 the chip's firmware to the latest version. Cutting the jumper shuts off the
 the onboard UART and prevents the UART and the Arduino pin-to-pin serial
 connection from arguing with each other. This prevents errors on the serial
 port which cause the chip to reboot randomly.
+
+IMPORTANT: Use extreme care when cutting JP4. Make sure not to peel up the
+pads. There are two traces running to the USB side of the JP4 pad and if you
+peel up that trace, your board will no longer be able to power up.
 
 The BlueGigaEmpeg has an option to have a software reset line built into the
 assembly. The next instruction depends on whether this reset line is being
