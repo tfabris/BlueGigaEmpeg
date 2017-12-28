@@ -41,7 +41,7 @@ boolean performResetLinePhysical = false;
 
 // Control whether or not the module uses digital I2S audio, or analog line-level
 // audio inputs (for example the line level inputs on the BlueGiga dev board).
-boolean digitalAudio = true;
+boolean digitalAudio = false;
 
 // Debugging tool for the part of the code that sends commands to the empeg.
 // Normally, typing commands into the Arduino debug console will send those
@@ -707,7 +707,7 @@ void setup()
   // state most of the time and only be set to write mode when we're using it.
   if (performResetLinePhysical)
   {
-    pinMode(resetLinePin, INPUT_PULLUP);
+    pinMode(resetLinePin, INPUT);
   }
 
   // Reserve bytes for the input strings, which are the strings we check to
@@ -3778,7 +3778,7 @@ void ResetBluetoothPin()
     digitalWrite(resetLinePin, LOW);
     pinMode(resetLinePin, OUTPUT);
     digitalWrite(resetLinePin, LOW);
-    DisplayAndSwallowResponses(1, 50);
+    DisplayAndSwallowResponses(1, 150);
     pinMode(resetLinePin, INPUT);
     Log(F("Physically resetting bluetooth module with RST line - Complete."));  
   }
