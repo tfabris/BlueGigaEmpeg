@@ -199,11 +199,20 @@ of this writing, here were the steps I took:
  - Now, plugging in the dev board into the PC with the USB cable makes a
    serial port appear in the Windows Device Manager.
 
+ - In Windows Device Manager, set the speed of the serial port to 115200 bps
+   with 8 data bits, no parity, 1 stop bit, no flow control (aka "8N1").
+
  - Once that's sorted, run the "SerialDFU.exe" tool found in one of the
    unzipped folders.
 
+ - Note: The serial port settings in the SerialDFU tool will have "8E1" for
+   its BCSP settings instead of "8N1". There will be two sets of serial port
+   settings on the screen. The first one will say "8E1" and the second one
+   will say "8N1". This is OK and must remain that way for the upgrade
+   process to work. 
+
  - Make sure the "Get Device Type" button works and shows your device
-   information.
+   information. 
 
  - Have it upgrade your chip with the most recent WT32i file among the
    unzipped files. The full path is:
