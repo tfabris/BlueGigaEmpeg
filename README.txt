@@ -349,6 +349,9 @@ if you do. You should not need to remove the display board as long as you are
 careful not to break any of the components sticking off the back of the
 display board.
 
+Refer to the annotated phototgraph in this repository named "I2S Wiring
+Modification Photo.jpg" to help understand the wiring instructions below.
+
 Locate 5 blank IIS pads on the front left side of the empeg motherboard.
 Pads are outlined in a white silkscreen rectangle with the letters "IIS" next
 to the outline. White silkscreen rectangle will have one corner of it with a
@@ -386,23 +389,26 @@ assembly. Locate the rightmost of the two connectors nearest the Ethernet port
 on the back of the empeg. Unplug this connector, and using a tiny flat tool
 such as the tip of a jeweler's screwdriver, lift up the small white tabs and
 gently disengage and pull out the rightmost three pins nearest the Ethernet
-connector to free up those wires. On my unit, these wires were colored, going
-left to right, yellow+green, red, and brown, though your unit may differ. The
-brown wire is the one on the end closest to the Ethernet connector, the red
-wire is the second from the end closest to the Ethernet connector, and the
-yellow+green wire is the third closest to the Ethernet connector.
+connector to free up those wires. These wires are colored, going from left to
+right, yellow+green, red, and brown. The brown wire is the one on the right
+end closest to the Ethernet connector, the red wire is the second from the
+end, and the yellow+green wire is the third from the end.
 
-You should now have three loose wires inside the empeg, coming out of the
-docking connector assembly, with small pin connectors on the ends of them.
-Carefully solder and shrink-tube your three jumper wires directly to these pin
-connectors. After you have done this, your empeg's IIS pads will, when docked,
-now be carried out the back of the empeg, via the docking sled, into the tuner
-module molex connector. Solder your jumper wires to the empeg interior wires
-in this order:
+With the three wires disconnected from the white connector, plug the white
+connector back into place with the remainder of its wires still connected.
 
-   IIS Pad 1 (IISC)  jumpered to Yellow+Green wire, originally third from end.
-   IIS Pad 2 (IISW)  jumpered to Brown wire, originally the end wire.
-   IIS Pad 4 (IISD1) jumpered to Red wire, originally second from end.
+You should now have three wires inside the empeg, each with one end still
+connected to the docking connector assembly, and their other ends loose with
+small pin connectors on the ends of them. Carefully solder and shrink-tube
+your three jumper wires directly to these pin connectors in the exact order
+described below. After you have done this, your empeg's IIS pads will, when
+docked, now be carried out the back of the empeg, via the docking sled, into
+the tuner module molex connector. Solder your jumper wires to the empeg
+interior wires in this order:
+
+ IIS Pad 1 (IISC)  jumpered to Yellow+Green wire, originally third from end.
+ IIS Pad 2 (IISW)  jumpered to Brown wire, originally the end wire.
+ IIS Pad 4 (IISD1) jumpered to Red wire, originally second from end.
 
 Make sure that your jumper wires are carefully tucked down around the left
 side of the empeg and out of the way of the disk drive tray assembly when you
@@ -417,8 +423,8 @@ Empeg IIS pads   Int. Empeg wires*    Int. wht Conn pos**    Sled Tuner Plug   B
                                                               4 Black           4  GND                          GND          Universal Ground
                                                               8 Blue            8  12vPower                                  Power to voltage regulator
 
-*(These were the colors inside my empeg, yours may differ. These are the interior wires connecting the docking sled connector to the motherboard.)
-**(Original positions of these wires on the white connector near the Ethernet plug, now disconnected from that plug.)
+*(These are the interior wires connecting the docking sled connector to the motherboard.)
+**(Original positions of these wires on the white connector near the Ethernet plug, now disconnected from that connector.)
 
 Finally, make sure that the variable "digitalAudio", which is a boolean flag
 in the Arduino code sketch in this project, is set to "true" so that the
