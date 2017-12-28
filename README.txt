@@ -828,12 +828,13 @@ MAX232. The full schematic for this circuit is linked in "Resources" above,
 and the pinouts are also listed below.
 
 The RX/TX crossover configurations for the MAX232 and the RS-232 plug on the
-BlueGigaEmpeg can be confusing. Partly because the empeg Car sled serial port
-plug is already wired into a crossover configuration opposite of the way that
-the one built into the player body is wired. So this configuration will only
-work for the sled serial port connector, not the player body serial port
-connector. I am using a TI MAX232E for this implementation. The connections
-for the MAX232 are as follows:
+BlueGigaEmpeg can be confusing. The empeg Car sled serial port may or may not
+be already wired into a crossover configuration. I have seen both cases. I 
+will be implementing jumpers on the PCB to swap the RX/TX configuration to
+the serial port as needed.
+
+I am using a TI MAX232E for this implementation. The connections for the
+MAX232 are as follows:
 
     MAX232 Pin 1 and 3 aka C1+/C1- - Bridge with a 2.2uf ceramic capacitor
     MAX232 Pin 4 and 5 aka C2+/C2- - Bridge with a 2.2uf ceramic capacitor
