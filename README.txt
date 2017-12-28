@@ -350,7 +350,10 @@ careful not to break any of the components sticking off the back of the
 display board.
 
 Refer to the annotated phototgraph in this repository named "I2S Wiring
-Modification Photo.jpg" to help understand the wiring instructions below.
+Modification Photo.jpg" to help understand the wiring instructions below. Here
+is a direct link to the photo:
+
+  https://github.com/tfabris/BlueGigaEmpeg/blob/master/I2S%20Wiring%20Modification%20Photo.jpg
 
 Locate 5 blank IIS pads on the front left side of the empeg motherboard.
 Pads are outlined in a white silkscreen rectangle with the letters "IIS" next
@@ -371,17 +374,11 @@ empeg. The pinouts of these five pads are:
 Carefully solder some small jumper wires to pads 1,2, and 4, and you must keep
 track of which wires are soldered to which pads.
 
-When soldering, make sure the jumper wires and the solder are flat to the
-board instead of sticking upwards. The disk drive tray gets close to that
+When soldering, make sure the jumper wires and the solder joints are flat to
+the board instead of sticking upwards. The disk drive tray gets close to that
 location when mounted, so make sure they don't have a chance to contact the
-tray. Take a look at Stu's instructions for his digital sound board for the
-empeg, which utilizes these same three connections on the IIS pads for an
-example of how to solder these three wires correctly:
-
-       http://www.eutronix.com/media/dig-cxxxx_manual.pdf
-
-After soldering, cover the solder points with tape or some other insulator to
-prevent them from shorting out on the drive tray.
+tray. After soldering, cover the solder points with tape or some other
+insulator to prevent them from shorting out on the drive tray.
 
 Locate the two white connectors on the back part of the empeg motherboard
 which connect two groups of small colored wires to the docking connector
