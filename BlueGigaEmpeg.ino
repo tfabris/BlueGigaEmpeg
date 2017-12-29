@@ -37,11 +37,11 @@ const String btPinCodeString = "SET BT AUTH * 0000";
 // Variable to control whether or not to do the Reset Line startup code
 // to support Mark Lord's module which needs it. Enable this if you have implemented
 // the reset line in hardware (see README.txt for details of the implementation).
-boolean performResetLinePhysical = true;
+boolean performResetLinePhysical = false;
 
 // Control whether or not the module uses digital I2S audio, or analog line-level
 // audio inputs (for example the line level inputs on the BlueGiga dev board).
-boolean digitalAudio = true;
+boolean digitalAudio = false;
 
 // Debugging tool for the part of the code that sends commands to the empeg.
 // Normally, typing commands into the Arduino debug console will send those
@@ -64,7 +64,7 @@ boolean digitalAudio = true;
 //             solely to the bluetooth chip and will not be echoed to the empeg.
 // This should be set to false most of the time, and only set to true during
 // debugging sessions
-boolean EmpegSendCommandDebug=true;
+boolean EmpegSendCommandDebug=false;
 
 // Choose whether or not to display the empeg Serial Port outputs (for instance
 // the empeg boot up messages) on the serial debug console of the Arduino. Only
@@ -137,7 +137,7 @@ boolean outputMillis=true;
 // This should be set to false most of the time, and only set to true during
 // debugging sessions, since it slows down processing to put out too much
 // data on the serial port when it is not needed.
-boolean displayTracksOnSerial=true;
+boolean displayTracksOnSerial=false;
 
 // Strings to define which codecs to use for A2DP audio transmission.
 // 
@@ -3774,12 +3774,12 @@ void ResetBluetoothPin()
     // Perform the steps to physically fire the reset line
     Log(F("Physically resetting bluetooth module with RST line - Begin."));  
     pinMode(resetLinePin, OUTPUT);
-    digitalWrite(resetLinePin, HIGH);
+    digitalWrite(resetLinePin, LOW);
     DisplayAndProcessCommands(100, false);
+    digitalWrite(resetLinePin, HIGH);
+    DisplayAndProcessCommands(200, false);
     digitalWrite(resetLinePin, LOW);
-    pinMode(resetLinePin, OUTPUT);
-    digitalWrite(resetLinePin, LOW);
-    DisplayAndProcessCommands(50, false);
+    DisplayAndProcessCommands(100, false);
     pinMode(resetLinePin, INPUT);
     Log(F("Physically resetting bluetooth module with RST line - Complete."));  
   }
