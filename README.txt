@@ -518,20 +518,6 @@ IMPORTANT: Use extreme care when cutting JP4. Make sure not to peel up the
 pads. There are two traces running to the USB side of the JP4 pad and if you
 peel up that trace, your board will no longer be able to power up.
 
-The BlueGigaEmpeg has an option to have a software reset line built into the
-assembly. The next instruction depends on whether this reset line is being
-used or not. This behavior is controlled by the flag performResetLinePhysical,
-located in BlueGigaEmpeg.ino. Set this flag to true to use the reset line, and
-remember to re-upload the sketch to the Arduino if you have changed the value.
-
-If reset line is used:
-"Smd_2_pole_switch" set to the right or down position, to put it into battery
-power mode. The red LED on the breakout board will blink slowly and steadily
-when power is applied, until the Arduino sketch boots up and uses the reset
-line to turn on the Bluetooth chip. After the Bluetooth chip is started, then
-the red LED on the breakout board will blink randomly.
-
-If reset line is not used:
 "Smd_2_pole_switch" set to the left or up position, to put it into always-on
 mode. The red LED on the breakout board will blink randomly when power is
 applied. Symptoms of this switch being set wrong will be: LED on the breakout
@@ -921,11 +907,8 @@ times for each of the I2S connections):
                             |
                             +--------------WT32i PCM_CLK
 
-Reset Line: Bluetooth chip+board RST (reset) pin connected to Pin 51 of the
-Arduino board. This is working for Mark Lord, but my chip fried immediately
-after trying this without voltage protection, so I consider this to be a risk
-if connecting directly. So instead, run it through a 50% voltage divider and a
-diode before it goes into the RST pin on the Bluetooth. Example:
+Reset Line: Pin 51 of the Arduino connected to Bluetooth chip+board RST
+(reset) pin via a 50% voltage divider and a diode. Example:
 
     ARDUINO PIN 51-----VVVVV----+----VVVVV-----GND
                       10Kohm    |    10Kohm
