@@ -64,7 +64,7 @@ boolean digitalAudio = true;
 //             solely to the bluetooth chip and will not be echoed to the empeg.
 // This should be set to false most of the time, and only set to true during
 // debugging sessions
-boolean EmpegSendCommandDebug=false;
+boolean EmpegSendCommandDebug=true;
 
 // Choose whether or not to display the empeg Serial Port outputs (for instance
 // the empeg boot up messages) on the serial debug console of the Arduino. Only
@@ -137,7 +137,7 @@ boolean outputMillis=true;
 // This should be set to false most of the time, and only set to true during
 // debugging sessions, since it slows down processing to put out too much
 // data on the serial port when it is not needed.
-boolean displayTracksOnSerial=false;
+boolean displayTracksOnSerial=true;
 
 // Strings to define which codecs to use for A2DP audio transmission.
 // 
@@ -3775,7 +3775,7 @@ void ResetBluetoothPin()
     Log(F("Physically resetting bluetooth module with RST line - Begin."));  
     pinMode(resetLinePin, OUTPUT);
     digitalWrite(resetLinePin, HIGH);
-    DisplayAndProcessCommands(300, false);
+    DisplayAndProcessCommands(100, false);
     digitalWrite(resetLinePin, LOW);
     pinMode(resetLinePin, OUTPUT);
     digitalWrite(resetLinePin, LOW);
