@@ -3773,13 +3773,13 @@ void ResetBluetoothPin()
   {
     // Perform the steps to physically fire the reset line
     Log(F("Physically resetting bluetooth module with RST line - Begin."));  
-    pinMode(resetLinePin, INPUT_PULLUP);
+    pinMode(resetLinePin, OUTPUT);
+    digitalWrite(resetLinePin, HIGH);
     DisplayAndProcessCommands(300, false);
     digitalWrite(resetLinePin, LOW);
     pinMode(resetLinePin, OUTPUT);
-    digitalWrite(resetLinePin, HIGH);
-    DisplayAndProcessCommands(50, false);
     digitalWrite(resetLinePin, LOW);
+    DisplayAndProcessCommands(50, false);
     pinMode(resetLinePin, INPUT);
     Log(F("Physically resetting bluetooth module with RST line - Complete."));  
   }
