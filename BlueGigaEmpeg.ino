@@ -1850,7 +1850,7 @@ void GrabPairAddressString(String stringToParse, String triggerString)
 // reference then I wouldn't need the fancy two-functions version below.
 // Not sure if jumping through these hoops is helping me much, memory-wise.
 // ----------------------------------------------------------------------------
-void Log(String &logMessage)
+void Log(const String &logMessage)
 {
   BaseLog(logMessage);
 }
@@ -1861,7 +1861,7 @@ void Log(__FlashStringHelper* logMessage)
   BaseLog(tempLogMessage);
 }
 
-void BaseLog(String &logMessage)
+void BaseLog(const String &logMessage)
 {
   // Variable used in time calculations.
   static unsigned long currentOutputLineMillis = 0;
