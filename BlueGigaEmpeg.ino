@@ -37,11 +37,11 @@ const String btPinCodeString = "SET BT AUTH * 0000";
 // Variable to control whether or not to do the Reset Line startup code
 // to support Mark Lord's module which needs it. Enable this if you have implemented
 // the reset line in hardware (see README.txt for details of the implementation).
-boolean performResetLinePhysical = false;
+boolean performResetLinePhysical = true;
 
 // Control whether or not the module uses digital I2S audio, or analog line-level
 // audio inputs (for example the line level inputs on the BlueGiga dev board).
-boolean digitalAudio = false;
+boolean digitalAudio = true;
 
 // Debugging tool for the part of the code that sends commands to the empeg.
 // Normally, typing commands into the Arduino debug console will send those
@@ -3774,11 +3774,12 @@ void ResetBluetoothPin()
     // Perform the steps to physically fire the reset line
     Log(F("Physically resetting bluetooth module with RST line - Begin."));  
     pinMode(resetLinePin, INPUT_PULLUP);
-    DisplayAndSwallowResponses(1, 300);
+    DisplayAndProcessCommands(300, false);
     digitalWrite(resetLinePin, LOW);
     pinMode(resetLinePin, OUTPUT);
+    digitalWrite(resetLinePin, HIGH);
+    DisplayAndProcessCommands(50, false);
     digitalWrite(resetLinePin, LOW);
-    DisplayAndSwallowResponses(1, 150);
     pinMode(resetLinePin, INPUT);
     Log(F("Physically resetting bluetooth module with RST line - Complete."));  
   }
