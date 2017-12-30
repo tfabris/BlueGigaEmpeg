@@ -37,7 +37,7 @@ const String btPinCodeString = "SET BT AUTH * 0000";
 // Variable to control whether or not to do the Reset Line startup code
 // to support Mark Lord's module which needs it. Enable this if you have implemented
 // the reset line in hardware (see README.txt for details of the implementation).
-boolean performResetLinePhysical = false;
+boolean performResetLinePhysical = true;
 
 // Control whether or not the module uses digital I2S audio, or analog line-level
 // audio inputs (for example the line level inputs on the BlueGiga dev board).
@@ -705,6 +705,9 @@ void setup()
 
   // Set up the reset line pin (if it is implemented) to be in a clean "read"
   // state most of the time and only be set to write mode when we're using it.
+  // Do this globally once at startup regardless of whether or not we are
+  // calling ResetBluetoothPin() immediately afterward, because the position
+  // of that call might move or change in the future. So do this on its own.
   if (performResetLinePhysical)
   {
     pinMode(resetLinePin, INPUT);
@@ -773,6 +776,10 @@ void setup()
 
   // Turn on the built in Arduino LED to indicate the setup activity has begun.
   digitalWrite(LED_BUILTIN, HIGH);
+
+  // Perform the hardware reset with the RESET line on the bluetooth chip
+  // to bring the chip out of "Sleep" mode on power up (if implemented).
+  ResetBluetoothPin();
 
   // Configre the Bluetooth device at startup, call my routine which sets all
   // data to the desired overall system defaults. This does not erase any
@@ -3731,15 +3738,19 @@ void QuickResetBluetooth(int resetType)
   switch (resetType)
   {
     case 0:
-      Log(F("Performing Reset of bluetooth module."));
+      Log(F("Performing soft reset of bluetooth module."));
       SendBlueGigaCommand(F("RESET"));
       ClearGlobalVariables();
+      DisplayAndSwallowResponses(4, 500);
 
       // Additional hardware reset of bluetooth after sofware reset.
       // this allows the unit to power up fully on any voltage instead
-      // of being in sleep mode at board startup.
-      ResetBluetoothPin(); 
-      DisplayAndSwallowResponses(4, 500);
+      // of being in sleep mode at board startup. 
+      // EXPERIMENT: Trying to not do this for every reset, instead
+      // only do it once at bootup. This is Mark Lord's suggestion to
+      // not to this every time. Hopefully this will work reliably.
+      //   ResetBluetoothPin(); 
+
       break;
 
     case 1:
@@ -3774,14 +3785,15 @@ void ResetBluetoothPin()
     // Perform the steps to physically fire the reset line
     Log(F("Physically resetting bluetooth module with RST line - Begin."));  
     pinMode(resetLinePin, OUTPUT);
-    digitalWrite(resetLinePin, LOW);
-    DisplayAndProcessCommands(100, false);
     digitalWrite(resetLinePin, HIGH);
-    DisplayAndProcessCommands(200, false);
+    DisplayAndProcessCommands(100, false);
     digitalWrite(resetLinePin, LOW);
     DisplayAndProcessCommands(100, false);
     pinMode(resetLinePin, INPUT);
     Log(F("Physically resetting bluetooth module with RST line - Complete."));  
+
+    // Pause for the bootup messages to appear after the reset.
+    DisplayAndSwallowResponses(3, 300);
   }
 }
 
