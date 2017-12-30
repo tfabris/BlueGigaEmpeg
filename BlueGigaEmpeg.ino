@@ -108,8 +108,8 @@ boolean displayEmpegSerial=false;
 //           - Output from the empeg and the bluetooth are logged a character
 //             at a time, which is less readable but slightly better timing.
 //
-// Special note: This isn't fully implemented for every single possible output
-// output line on the debug port. There are still a couple places in the code
+// Special note: This isn't fully implemented for every single possible line
+// of output on the debug port. There are still a couple places in the code
 // where it still logs character by character. If this becomes a problem 
 // then I will address it at that time later. In the meantime, this handles
 // most of the situations where we'd want to see it log line by line.
@@ -171,7 +171,15 @@ const String codecString="SET CONTROL CODEC SBC JOINT_STEREO 44100 0";
 // will have skipped about 17 seconds of the song you were listening to when
 // you turned the car off. With this feature, theoretically, you will not lose
 // much if any of that time and the empeg will resume playing more or less where
-// you left off. (In theory, when it works.)
+// you left off. (In theory, when it works.) The drawback is, if you are pairing
+// with a stereo which pairs up quickly, connecting faster than the empeg completing
+// its bootup procedure, then the empeg might start in pause mode and you have to
+// unpause it by hand.
+// TO DO: Implement Issue #42: Create a flag that detects when bluetooth is
+// successfully paired and streaming, and then skip sending the pause command
+// if the bluetooth is streaming at the moment the empeg finishes booting up. If we 
+// can do that successfully then this won't need to be a flag, we can just implement
+// it 100 percent of the time.
 boolean empegStartPause = true;
 
 // String to tell the unit to automatically try reconnecting every few seconds when and
@@ -529,13 +537,14 @@ int pairAddressStringMaxLength = 25;
 // This is the commands that we must send to the empeg serial port
 // if certain messages come in from the bluetooth module.
 // NOTE: Update the matrix size and the array size both, if you are changing these.
-int empegCommandMatrixSize = 12;
-String empegCommandMessageMatrix[12][2] =
+int empegCommandMatrixSize = 13;
+String empegCommandMessageMatrix[13][2] =
 {
   // Bluetooth Module reports     // Send command to empeg
   { "AVRCP PLAY PRESS",           "C"},
   { "AVRCP PAUSE PRESS",          "W"},
   { "AVRCP STOP PRESS",           "W"},
+  { "WRAP THOR AI",               "W"},  // Part of bugfix for issue #26 - Pause automatically any time the chip resets itself unexpectedly.
   { "A2DP STREAMING START",       "C"},  // Tried removing this to fix issue #26 but it made things worse instead of better. BT headset AVRCP stopped working.
   { "NO CARRIER 0",               "W"},  // Bugfix: Only trigger a pause on carrier loss of A2DP first channel (0). Fixes issue #22.
   { "A2DP STREAMING STOP",        "W"},
@@ -763,6 +772,11 @@ void setup()
   // than 115200 in car mode, so make sure you have done that step.
   EmpegSerial.begin(115200);
   Log(F("Empeg Serial has been started."));
+
+  // Additional fix for issue #26 - Always send a pause to the empeg immediately
+  // at powerup of the module so that all reset conditions including power bounce
+  // have the empeg paused no matter what.
+  SendEmpegCommand('W');
 
   // Log the version number from the version number file.
   Log("BlueGigaEmpeg Version " + String(majorVersion) + "." + String(minorVersion) + "." + String(buildNumber));
@@ -3500,7 +3514,6 @@ void HandleEmpegString(String &theString)
     // calculate as longs in the final calcuation instead of ints.
     empegMs = (empegHours * 1000L * 60L * 60L) + (empegMinutes * 1000L * 60L) + (empegSeconds * 1000L);
 
-
     // The next section of code must only be done if it was NOT the first timestamp
     // message we ever received from the empeg since boot up. Because the first 
     // timestamp we receive will almost always be different from the timestamp in
@@ -3511,9 +3524,28 @@ void HandleEmpegString(String &theString)
     // the program run.
     if (empegFirstTimestamp)
     {
+      // Log that we have entered this "first time" code.
+      Log(F("First timestamp received from empeg Car - Not performing play-pause state change code just yet."));
+
+      // Special case experiment to attempt to fix Github issue #26 "empegStartPause
+      // feature does not work as expected." The problem is that the player starts
+      // playing the song after bootup no matter what. It does this even though I
+      // already sent a "W" to the player after the player application started. Even
+      // though that first "W" worked, there is a second unpausing which occurs a
+      // little bit later. The player pauses when the first "W" is sent, and then it
+      // starts playing the track just a few moments later. This seems to happen at
+      // about the same time as the first timestamp appears on the serial port.
+      // Attempt to fix the issue by sending yet another pause statement to the 
+      // empeg immediately after it sees that first timestamp after bootup. This is
+      // experimental.
+      if (empegStartPause)
+      {
+        Log(F("empegStartPause feature activated. Pausing player on first timestamp after boot up."));
+        SendEmpegCommand('W');
+      }
+
       // This was the first timestamp we've seen since program bootup, so flip the
       // flag so that we take action on the second timestamp and all subsequent ones.
-      Log(F("First timestamp received from empeg Car - Not performing play-pause state change code just yet."));
       empegFirstTimestamp = false;
     }
     else
@@ -3798,6 +3830,14 @@ void ReportEmpegPlayingState()
 // ----------------------------------------------------------------------------
 void QuickResetBluetooth(int resetType)
 {
+  // Convenience feature to help with issue #26. Pause the player if we do
+  // any kind of reset on the bluetooth module because all of the reset types
+  // below will disconnect the bluetooth module. Music should always be paused
+  // any time that the bluetooth module is disconnected to prevent the tracks
+  // from spooling out silently to no audience.
+  SendEmpegCommand('W');
+
+  // Perform different types of resets depending on the parameter passed in.
   switch (resetType)
   {
     case 0:
