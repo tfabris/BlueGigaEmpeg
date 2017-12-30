@@ -41,7 +41,7 @@ boolean performResetLinePhysical = true;
 
 // Control whether or not the module uses digital I2S audio, or analog line-level
 // audio inputs (for example the line level inputs on the BlueGiga dev board).
-boolean digitalAudio = false;
+boolean digitalAudio = true;
 
 // Debugging tool for the part of the code that sends commands to the empeg.
 // Normally, typing commands into the Arduino debug console will send those
@@ -137,7 +137,7 @@ boolean outputMillis=true;
 // This should be set to false most of the time, and only set to true during
 // debugging sessions, since it slows down processing to put out too much
 // data on the serial port when it is not needed.
-boolean displayTracksOnSerial=false;
+boolean displayTracksOnSerial=true;
 
 // Strings to define which codecs to use for A2DP audio transmission.
 // 
@@ -537,7 +537,7 @@ String empegCommandMessageMatrix[12][2] =
   { "AVRCP PAUSE PRESS",          "W"},
   { "AVRCP STOP PRESS",           "W"},
   { "A2DP STREAMING START",       "C"},  // Tried removing this to fix issue #26 but it made things worse instead of better. BT headset AVRCP stopped working.
-  { "NO CARRIER 0",               "W"},  // Bugfix: Only trigger a pause on carrier loss of A2DP first channel (0). Attempt to fix issue #22.
+  { "NO CARRIER 0",               "W"},  // Bugfix: Only trigger a pause on carrier loss of A2DP first channel (0). Fixes issue #22.
   { "A2DP STREAMING STOP",        "W"},
   { "AVRCP FORWARD PRESS",        "N"},
   { "AVRCP BACKWARD PRESS",       "P"},  
@@ -656,6 +656,12 @@ bool pairingMode = false;
 // Variable to globally keep track of whether we have recently initiated a reset and should
 // therefore not be trying to reset yet again in the same breath. Protect against reentrant code.
 bool forceQuickReconnectMode = false;
+
+// Variable to globally keep track of whether we are in the middle of a
+// fast forward or rewind operation that was initiated from the bluetooth.
+// This is part of the fix to issue #32, "Fast forward can run away from
+// you and get stuck."
+bool blueToothFastForward = false;
 
 // Variable to keep track of the timestamp of the prior output line.
 // Used to calculate deltas between output lines for profiling.
@@ -1665,6 +1671,30 @@ void HandleString(String &theString)
 
       // Send the command.
       SendEmpegCommand(empegCommandToSend);
+
+      // Special case code, part of fixing issue #32 "Fast forward can run away from you and get stuck."
+      // Find out if the message we just got from the bluetooth was the beginning start inititation
+      // of a fast forward or a rewind command, and if it was, set a flag to indicate that we are
+      // now in the middle of doing a bluetooth-initiated FF/REW where we want protection from
+      // runaway situations. The flag being set here will prevent us from canceling FF/REW when the
+      // user is doing the FF/REW from the front panel in situations where it can't run away. The only
+      // time that runaway protection is needed is if the bluetooth initiated it, not if the empeg
+      // front panel inititated it.
+      if ( (theString.indexOf(F("AVRCP FAST_FORWARD PRESS")) > (-1)) || (theString.indexOf(F("AVRCP REWIND PRESS")) > (-1)) )
+      {
+        // If we have detected that bluetooth initiated a FF or a REW, then set the flag
+        // saying so, so that our protection code can trigger if needed.
+        blueToothFastForward = true;
+      }
+
+      // Also we must be able to cancel out of the FF/REW runaway protection
+      // when user has released the FF or REW button
+      if ( (theString.indexOf(F("AVRCP FAST_FORWARD RELEASE")) > (-1)) || (theString.indexOf(F("AVRCP REWIND RELEASE")) > (-1)) )
+      {
+        // If we have detected the bluetooth successfully sent a message which cancels
+        // the FF or REW operation, then also cancel our runaway protection code trigger.
+        blueToothFastForward = false;
+      }
     }
   }
 
@@ -3048,7 +3078,13 @@ void SendEmpegCommand(char empegCommandToSend)
 
     // EXPERIMENTAL: Handle and log whatever state changes we did AFTER we
     // sent the command (or not) to the empeg player.
-    HandleEmpegStateChange();
+    // EXPERIMENT STEP TWO: Try not doing this at all just because we told
+    // the player to change tracks. Instead let's see what happens if we only
+    // trigger this when the player responds with new/changed information
+    // about its state (ie do this elswhere). This fixes GitHub issue #38,
+    // "Track number changes before the other metadata.". Time will tell if
+    // this has other repercussions that are unwanted. Initial testing looks good.
+    //     HandleEmpegStateChange();
     
     // Turn off the Arduino LED.
     digitalWrite(LED_BUILTIN, LOW);
@@ -3311,6 +3347,33 @@ void HandleEmpegString(String &theString)
       if (empegMessageCode == 'G')
       {
         HandleEmpegStateChange();
+      }
+
+      // Bugfix for issue #32 "Fast forward can run away from you and get stuck".
+      // If we are in the middle of a fast forward or rewind operation that was
+      // inititated from the bluetooth, prevent a "runaway fast forward" situation
+      // by canceling the operation and resetting it here and now. Only do this if
+      // the fast forward or rewind operation was initiated by the bluetooth, not
+      // if it was initiated from the player's front panel. This is important, so
+      // that we prevent runaway bluetooth situations by stopping at track boundaries
+      // but still allow the user to ff/rew across track boundaries from the player
+      // front panel. First, check to see if we were in the middle of a bluetooth-
+      // initiated FF or REW operation and thus need to be doing protection at all.
+      if (blueToothFastForward)
+      {
+        // We are now in a situation where a new track boundary has been crossed
+        // (because we got new track data just now) and now we know we were also
+        // in the middle of a FF/REW operation initiate by the bluetooth, so begin
+        // implementing the protection code now. Start by turning off the flag
+        // variable since we're handling the situation now.
+        blueToothFastForward = false;
+
+        // Send a command to the empeg Car player to stop/cancel the fast forward
+        // or rewind operation that we're in the middle of, since we have just hit
+        // a track boundary and we need to stop it before we cross too many track
+        // boundaries and the operation runs away from us and never stops due to 
+        // dropped serial port data.
+        SendEmpegCommand('A');
       }
 
       // If it was one of these pieces of data (like a track title or such)
