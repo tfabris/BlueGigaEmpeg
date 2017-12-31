@@ -317,7 +317,7 @@ String scFixMessageMatrix[9][2] =
   // someday we might be able to do more detailed work with this response so that
   // we can interpret commands to change the Repeat mode and the Shuffle mode on
   // the empeg. 
-  { "LIST_APPLICATION_SETTING_ATTRIBUTES",  "AVRCP RSP 0"},
+  { "LIST_APPLICATION_SETTING_ATTRIBUTES",  "AVRCP RSP"},
 
   // "LIST_APPLICATION_SETTING_VALUES" is the way that the host stereo queries
   // your bluetooth module for specific indvidual setting values. Not generally
@@ -331,7 +331,7 @@ String scFixMessageMatrix[9][2] =
   // does not make it clear how to respond with "no!". So I am also trying doing
   // this with either blank or 0, like above. I'm not sure which one works and I'm
   // still not certin how to respond to queries like this with a "no".
-  { "LIST_APPLICATION_SETTING_VALUES",      "AVRCP RSP 0"},
+  { "LIST_APPLICATION_SETTING_VALUES",      "AVRCP RSP"},
  
   // Respond to "RING 1" with a streaming start command seems to help a lot of
   // initial device connection situations when host stereos first connect to
