@@ -875,22 +875,26 @@ pins are good too, to make sure solid ground is achieved.
 Bluetooth chip+board serial port "RX/TX" pins connected to the "TX2/RX2" pins
 (serial port 2) of Arduino. Note: This is a crossover connection, i.e., RX
 from the Arduino is connected to TX on the dev board and vice-versa. Since
-this is at TTL level, the Arduino and the Bluetooth chip can connect almost
-directly with wires or traces instead of needing to go through a MAX232
-circuit. However, the TX wire from the Arduino is running at 5v TTL, and the
-BlueGiga chip runs at 3v (and our assembly will actually have it nominally at
-2.5v), you must run the Arduino Tx2 output through a simple 50% voltage
-divider to step 5v TTL from Arduino down to 2.5v for the BlueGiga chip. This
-is a simple circuit with just two 10k resistors. The voltage divider is only
-needed on the line that connects Arduino TX2 to the Bluetooth chip's Rx line,
-the other line can be a direct connection. Schematic:
-
-    ARDUINO RX2-----------------------------WT32i Tx
+this is at TTL level, you don't need to go through a MAX232 circuit. However,
+the Arduino is running at 5v TTL, and the BlueGiga chip runs at 3v (and our
+assembly will actually have it nominally at 2.5v), you must voltage match
+them. Decrease the  voltage for the Arduino transmit, and increase it for the
+BlueGiga transmit. Run the Arduino Tx2 output through a simple 50% voltage
+divider to step 5v TTL from Arduino down to 2.5v for the BlueGiga chip. Then
+use a 2k pullup resistor (or a pair of 1k's in series) on the WT32i Tx line
+into the Arduino RX2 line. Schematic:
 
     ARDUINO TX2-----VVVVV----+----VVVVV-----GND
                    10Kohm    |    10Kohm
                              |
                              +--------------WT32i Rx
+
+    ARDUINO RX2--------------+----VVVVV-----5v
+                             |    2Kohm
+                             |
+                             +--------------WT32i Tx
+
+
 
 Bluetooth chip+Board three I2S pins PCM_CLK, PCM_SYNC, PCM_IN connected to
 empeg IISC, IISW, IISD1 via a special modification to the empeg the tuner
