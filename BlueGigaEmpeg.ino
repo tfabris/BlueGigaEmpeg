@@ -241,20 +241,29 @@ boolean PerformUtf8Conversion = true;
 // certain pieces of text on the bluetooth module's serial port.
 // There is other code elsewhere to handle input/output that requires
 // more detailed handling and parsing. 
-int scFixMatrixSize = 9;
-String scFixMessageMatrix[9][2] =
+int scFixMatrixSize = 8;
+String scFixMessageMatrix[8][2] =
 {
-    // Bluetooth in                        // Bluetooth out                         
-  { "AVRCP PLAY PRESS",                   "A2DP STREAMING START"},
+    // Bluetooth in                        // Bluetooth out        
+
+  // Experiment: Attempt to fix issue #45 "Initial boot and connect problem on Honda".
+  // See if it's possible to make things work correctly without needing to issue a
+  // "Streaming Start" command when someone presses "play". There should already have
+  // been such a command issued when the "connect" happened so theoretically we shouldn't
+  // have needed this at all. So try not doing this and see if it fixes other problems
+  // where the head unit got confused by things.                 
+  // { "AVRCP PLAY PRESS",                   "A2DP STREAMING START"},
 
   // Attempting to fix some issues where there is silence on the line after
   // first connection with some devices. Attempt to make sure the streaming
   // is started when there are messages that indicate we have a connection
-  // of some kind.
+  // of some kind. 
   { "CONNECT 2",                          "A2DP STREAMING START"},
-  // { "PDU_REGISTER_NOTIFICATION",          "A2DP STREAMING START"}, // This one didn't work or help
 
-  // We issue a "Streaming start" command (above) when we get "play press",
+  // This one didn't work or help or fix anything. Don't use this one.
+  // { "PDU_REGISTER_NOTIFICATION",          "A2DP STREAMING START"}, 
+
+  // We issue a "Streaming start" command (above) in certain situations,
   // because that fixes a whole bunch of issues with various cases where the
   // audio stream isn't connected when music is playing. It works. However,
   // don't do the corresponding thing for "streaming stop", because it causes
@@ -341,7 +350,7 @@ String scFixMessageMatrix[9][2] =
   // established, no interruption occurs, it just keeps playing.
   { "RING 1",                              "A2DP STREAMING START"},
 
-  // Respond to certain AVRCP connection success messages with a command
+  // Respond to this particular AVRCP connection success message with a command
   // that is supposed to force the bluetooth to repeatedly retry connections if it
   // ever becomes disconnected. Hopefully this will increase the chances that
   // the empeg connects to the car stereo when you start the car, instead of connecting
@@ -349,17 +358,6 @@ String scFixMessageMatrix[9][2] =
   // in the perfect combination of the phone pairing to the car as a phone only
   // (no music, just phone), and the empeg pairing as the music source, simultaneously.
   { "AUDIO ROUTE 0 A2DP LEFT RIGHT",          autoReconnectString},
-
-  // Additional ones that may or may not be needed, not certain - I had a memory
-  // problem and was trying to reduce the size of this matrix so these are
-  // commented out as part of an austerity measure. TO DO: Check to see if they
-  // are needed on other systems. The "AUDIO ROUTE" message above might be enough
-  // and these would be just extra repeats. However I'm not certain that the 
-  // "AUDIO ROUTE" command appears every time after a successful connect or not.
-  // { "CONNECT 0 A2DP 19",                      autoReconnectString},
-  // { "CONNECT 1 A2DP 19",                      autoReconnectString},
-  // { "CONNECT 2 A2DP 19",                      autoReconnectString},
-  // { "A2DP STREAMING START 0",                 autoReconnectString},
 };
 
 // Strings that will be handled by our more detailed call-and-response
