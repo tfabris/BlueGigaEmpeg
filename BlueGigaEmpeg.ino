@@ -1,8 +1,8 @@
 
-// ---------------------------------------------------------------------------
+// --------------------------------------------------------------------------
 // BlueGigaEmpeg
 // by Tony Fabris
-// ---------------------------------------------------------------------------
+// --------------------------------------------------------------------------
 
 // A project to use a Silicon Labs BlueGiga WT32i bluetooth chip, combined
 // with an Arduino Mega board with an added RS232 port, to act as an
@@ -16,12 +16,13 @@
 // Global variables and definitions
 // ------------------------------------
 
-// String to control the type of bluetooth authentication that you want to use.
-// 
-// Uncomment this line for "just works" pairing with no PIN code,
-// with a fallback to the PIN code if the "just works" mode fails.
-// Use this one if you are having trouble with the default security
-// scheme below.
+// String to control the type of bluetooth authentication that you want to
+// use.
+//
+// Uncomment this line for "just works" pairing with no PIN code, with a
+// fallback to the PIN code if the "just works" mode fails. Use this one if
+// you are having trouble with the default security scheme below.
+//
 //        const String btAuthTypeString = "SET BT SSP 3 0";
 //
 // Default security scheme for "yes/no prompt" security type, required for
@@ -36,62 +37,66 @@ const String btAuthTypeString = "SET BT SSP 1 0";
 // codes up to 16 digits long.
 const String btPinCodeString = "SET BT AUTH * 0000";
 
-// Variable to control whether or not to do the Reset Line startup code
-// to support Mark Lord's module which needs it. Enable this if you have implemented
-// the reset line in hardware (see README.txt for details of the implementation).
+// Variable to control whether or not to do the Reset Line startup code to
+// support Mark Lord's module which needs it. Enable this if you have
+// implemented the reset line in hardware (see README.txt for details of the
+// implementation).
 boolean performResetLinePhysical = true;
 
-// Control whether or not the module uses digital I2S audio, or analog line-level
-// audio inputs (for example the line level inputs on the BlueGiga dev board).
+// Control whether or not the module uses digital I2S audio, or analog line-
+// level audio inputs (for example the line level inputs on the BlueGiga dev
+// board).
 boolean digitalAudio = true;
 
 // Debugging tool for the part of the code that sends commands to the empeg.
 // Normally, typing commands into the Arduino debug console will send those
-// same characters to the bluetooth chip, so that you can try out commands
-// on the bluetooth chip. The "EmpegSendCommandDebug" flag, below, expands
-// on this when the flag is enabled (set to "true") in the following way:
-// When in this mode, typing any of the empeg command characters (N P C W) into
-// the Arduino debug console will trigger the code to send that command to the empeg.
-// Since all of your typing gets sent to the bluetooth chip, as well, it's possible
-// that typing one of these empeg commands by itself will cause "SYNTAX ERROR" to be
-// echoed back by the bluetooth chip. That's OK, no worries, you probably didn't hurt
-// it. This is only needed for software development, not needed for final build runtime.
+// same characters to the bluetooth chip, so that you can try out commands on
+// the bluetooth chip. The "EmpegSendCommandDebug" flag, below, expands on
+// this when the flag is enabled (set to "true") in the following way: When in
+// this mode, typing any of the empeg command characters (N P C W) into the
+// Arduino debug console will trigger the code to send that command to the
+// empeg. Since all of your typing gets sent to the bluetooth chip, as well,
+// it's possible that typing one of these empeg commands by itself will cause
+// "SYNTAX ERROR" to be echoed back by the bluetooth chip. That's OK, no
+// worries, you probably didn't hurt it. This is only needed for software
+// development, not needed for final build runtime.
 //   Setting true:
-//           - Typing N, P, C, or W into the Arduino main serial port debug console,
-//             even if they are included as part of another command such as a command
-//             sent to the bluetooth, will result in the N, P, C, or W command being
-//             sent to the empeg (as well as being sent to the bluetooth chip).
+//    - Typing N, P, C, or W into the Arduino main serial port debug console,
+//      even if they are included as part of another command such as a command
+//      sent to the bluetooth, will result in the N, P, C, or W command being
+//      sent to the empeg (as well as being sent to the bluetooth chip).
 //   Setting false:
-//           - Commands typed in the Arduino main serial port debug console will go
-//             solely to the bluetooth chip and will not be echoed to the empeg.
+//   - Commands typed in the Arduino main serial port debug console will go
+//     solely to the bluetooth chip and will not be echoed to the empeg.
 // This should be set to false most of the time, and only set to true during
 // debugging sessions
 boolean EmpegSendCommandDebug=false;
 
-// Choose whether or not to display the empeg Serial Port outputs (for instance
-// the empeg boot up messages) on the serial debug console of the Arduino. Only
-// needed for debugging, not needed for final build runtime.
-//     Setting true:
-//           - Characters received from the empeg Car serial cable are displayed
-//             on the Arduino main serial port debugging console terminal screen.
-//             It is mixed in with all the other serial output from the bluetooth
-//             chip all at the same time, so it might be messy if the bluetooth
-//             chip and the empeg are saying things at the same time.
-//     Setting false:
-//           - No echoing of the empeg Car serial cable output occurs on the debug
-//             screen (though the empeg output is still interpreted and acted upon
-//             by the software, it's just not displayed on the debug screen).
+// Choose whether or not to display the empeg Serial Port outputs (for
+// instance the empeg boot up messages) on the serial debug console of the
+// Arduino. Only needed for debugging, not needed for final build runtime.
+//   Setting true:
+//   - Characters received from the empeg Car serial cable are displayed
+//     on the Arduino main serial port debugging console terminal screen.
+//     It is mixed in with all the other serial output from the bluetooth
+//     chip all at the same time, so it might be messy if the bluetooth
+//     chip and the empeg are saying things at the same time.
+//   Setting false:
+//   - No echoing of the empeg Car serial cable output occurs on the debug
+//     screen (though the empeg output is still interpreted and acted upon
+//     by the software, it's just not displayed on the debug screen).
 // This should be set to false most of the time, and only set to true during
-// debugging sessions, since it slows down processing to put out too much
-// data on the serial port when it is not needed.
+// debugging sessions, since it slows down processing to put out too much data
+// on the serial port when it is not needed.
 boolean displayEmpegSerial=false;
 
 // Variable to control whether output from the empeg and bluetooth serial
-// ports are logged to the debug console character-by-character or line-by-line.
-// Here's the tradeoff: If you log character-by-character you have a clearer
-// picture of exactly when various messages were received from each of those
-// devices in relation to each other, but the debug console gets hard to read.
-// For instance, if logging character-by-character, the output will look like:
+// ports are logged to the debug console character-by-character or line-by-
+// line. Here's the tradeoff: If you log character-by-character you have a
+// clearer picture of exactly when various messages were received from each of
+// those devices in relation to each other, but the debug console gets hard to
+// read. For instance, if logging character-by-character, the output will look
+// like:
 //     Bluetooth sends "GOODBYE" 
 //     Empeg sends "hello" a microsecond later
 //     Debug console output looks like this:
@@ -101,20 +106,19 @@ boolean displayEmpegSerial=false;
 //     hello
 //     GOODBYE
 // Even though GOODBYE was the first one to start sending characters, he ended
-// his transmission last so he gets logged last. This usually isn't a big deal.
-// Usage:
-//      Setting true:
-//           - Output from the empeg and the bluetooth are logged a line
-//             at a time, for additional readability, but order may be wrong.
-//      Setting false:
-//           - Output from the empeg and the bluetooth are logged a character
-//             at a time, which is less readable but slightly better timing.
-//
+// his transmission last so he gets logged last. This usually isn't a big
+// deal. Usage:
+//    Setting true:
+//      - Output from the empeg and the bluetooth are logged a line
+//        at a time, for additional readability, but order may be wrong.
+//    Setting false:
+//      - Output from the empeg and the bluetooth are logged a character
+//        at a time, which is less readable but slightly better timing.
 // Special note: This isn't fully implemented for every single possible line
 // of output on the debug port. There are still a couple places in the code
-// where it still logs character by character. If this becomes a problem 
-// then I will address it at that time later. In the meantime, this handles
-// most of the situations where we'd want to see it log line by line.
+// where it still logs character by character. If this becomes a problem then
+// I will address it at that time later. In the meantime, this handles most of
+// the situations where we'd want to see it log line by line.
 boolean logLineByLine=true;
 
 // Choose whether or not to display millisecond deltas with each log line.
@@ -146,18 +150,18 @@ boolean displayTracksOnSerial=true;
 // Uncomment this string to use default SBC codec.
 const String codecString="SET CONTROL CODEC SBC JOINT_STEREO 44100 0";
 //
-// Uncomment this string to use Apple AAC codec and fall back to
-// the default SBC codec if the AAC codec is not available. This 
-// didn't work correctly on my Honda stereo despite the AAC codec
-// being supported. It put my stereo into a mode where no sound
-// came out and the track titles kept getting re-queried once per
-// second, causing odd behavior on the host stereo. You might be
-// able to use this successfully, but I wasn't able to use it.
+// Uncomment this string to use Apple AAC codec and fall back to the default
+// SBC codec if the AAC codec is not available. This  didn't work correctly on
+// my Honda stereo despite the AAC codec being supported. It put my stereo
+// into a mode where no sound came out and the track titles kept getting re-
+// queried once per second, causing odd behavior on the host stereo. You might
+// be able to use this successfully, but I wasn't able to use it.
 //   const String codecString="SET CONTROL CODEC AAC JOINT_STEREO 44100 0\r\n            SET CONTROL CODEC SBC JOINT_STEREO 44100 1";
 //
-// Uncomment this string to use APT-X codec. Requires special firmware download
-// and the purchase of a special license for APT-X codec from Silicon Labs.
-//   const String codecString="SET CONTROL CODEC APT-X JOINT_STEREO 44100 0\r\n            SET CONTROL CODEC SBC JOINT_STEREO 44100 1";
+// Uncomment this string to use APT-X Low Latency codec. Requires special firmware
+// download and the purchase of a special license for APT-X codec from Silicon
+// Labs.
+//   const String codecString="SET CONTROL CODEC APT-X_LL JOINT_STEREO 44100 0\r\n            SET CONTROL CODEC APT-X JOINT_STEREO 44100 1\r\n            SET CONTROL CODEC SBC JOINT_STEREO 44100 2";
 
 // Optional - When we see the empeg player application start up, then send a
 // pause command to the player. If the bluetooth initial connection speed is faster
