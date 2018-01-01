@@ -1,10 +1,12 @@
-// ----------------------------------------------------------------------------
+
+// ---------------------------------------------------------------------------
 // BlueGigaEmpeg
 // by Tony Fabris
-// ----------------------------------------------------------------------------
-// A project to use a Silicon Labs BlueGiga WT32i bluetooth chip, combined with
-// an Arduino Mega board with an added RS232 port, to act as an intermediary
-// between the empeg Car stereo and a modern car. 
+// ---------------------------------------------------------------------------
+
+// A project to use a Silicon Labs BlueGiga WT32i bluetooth chip, combined
+// with an Arduino Mega board with an added RS232 port, to act as an
+// intermediary between the empeg Car stereo and a modern car.
 //
 // Please refer to the accompanying README.txt file for details about the
 // electronics interface, and how to modify and configure your empeg Car to
@@ -681,7 +683,7 @@ unsigned long priorOutputLineMillis = 0;
 // Program code functions
 // ------------------------------------
 
-// ----------------------------------------------------------------------------
+// ---------------------------------------------------------------------------
 // Setup
 //
 // "Setup" is a default Arduino built-in function, which always runs
@@ -689,7 +691,7 @@ unsigned long priorOutputLineMillis = 0;
 // - When power is initially applied to the Arduino.
 // - Right after uploading the program to the Arduino.
 // - Connecting to the Arduino's USB debug console.
-// ----------------------------------------------------------------------------
+// ---------------------------------------------------------------------------
 void setup()
 {
   // Initialize our variable which keeps track of the time deltas between
@@ -697,15 +699,6 @@ void setup()
   // elapsed between each piece of output. Start it at the timestamp when
   // the program starts.
   priorOutputLineMillis = millis();
-
-  // Set up the built in blinker LED on the Arduino board to active so that
-  // I can use it to indicate behaviors of things during development and
-  // debugging so I can check to see that my program is working in cases
-  // without a connected computer. 
-  pinMode(LED_BUILTIN, OUTPUT);
-
-  // Make sure the built in LED is turned off at startup.
-  digitalWrite(LED_BUILTIN, LOW);
 
   // Set up the Reset/pair blue LED indicator to "output" state.
   pinMode(pairLedPin, OUTPUT);
@@ -792,9 +785,6 @@ void setup()
   // Log("Size of pmMessageMatrix is:           " + String(sizeof(pmMessageMatrix)));
   // Log("Size of empegCommandMessageMatrix is: " + String(sizeof(empegCommandMessageMatrix)));
 
-  // Turn on the built in Arduino LED to indicate the setup activity has begun.
-  digitalWrite(LED_BUILTIN, HIGH);
-
   // Perform the hardware reset with the RESET line on the bluetooth chip
   // to bring the chip out of "Sleep" mode on power up (if implemented).
   ResetBluetoothPin();
@@ -809,12 +799,9 @@ void setup()
   // the reset; this is a soft reset). Resetting it here prevents bugs where
   // the bluetooth state is desynchronized from the Arduino state.
   QuickResetBluetooth(0);      
-
-  // Turn off the built in Arduino LED to indicate the setup activity is complete
-  digitalWrite(LED_BUILTIN, LOW);
 }
 
-// ----------------------------------------------------------------------------
+// ---------------------------------------------------------------------------
 // Loop
 //
 // "Loop" function is a built in Ardunio function, it is the main runtime
@@ -826,7 +813,7 @@ void setup()
 // subroutines I have written are all very short and quick to execute. We want
 // this loop running fast so that it can get and process all characters from
 // all serial ports.
-// ----------------------------------------------------------------------------
+// ---------------------------------------------------------------------------
 void loop()
 {
   // The MainInputOutput returns a CHAR variable. I'm not using it here
@@ -842,13 +829,13 @@ void loop()
   MainPushbuttonHandler();
 }
 
-// ----------------------------------------------------------------------------
+// ---------------------------------------------------------------------------
 // Report Chip Type
 //
 // This is a function to log the type of Arduino Mega chip that
 // this program is running on. This is oversimplified and does not
 // show all chip types, just a subset of them.
-// ----------------------------------------------------------------------------
+// ---------------------------------------------------------------------------
 void reportChipType()
 {
   // Check to see if this is an AT Mega type of chip
@@ -876,14 +863,14 @@ void reportChipType()
 }
 
 
-// ----------------------------------------------------------------------------
+// ---------------------------------------------------------------------------
 // Verify Serial Buffer
 //
 // Report a problem if the serial buffer is not large enough. The Arduino
 // header libraries must be edited in order for this program to work, and this
 // code prechecks to make sure that this program was compiled with correctly
 // modified header libraries to make sure there is enough buffer space.
-// ----------------------------------------------------------------------------
+// ---------------------------------------------------------------------------
 void verifySerialBuffer()
 {
   // Create variable to use in this function.
@@ -927,14 +914,14 @@ void verifySerialBuffer()
 
 
 
-// ----------------------------------------------------------------------------
+// ---------------------------------------------------------------------------
 // MainPushbuttonHandler
 //
 // Workhorse for handling digital pushbuttons implemented in this assembly,
 // for example this routine implements the reset/pair button I made.
 // Includes debouncing logic so that you don't try to run the same command
 // multiple times from a single button press.
-// ----------------------------------------------------------------------------
+// ---------------------------------------------------------------------------
 void MainPushbuttonHandler()
 {
   // Record the timestamp of the moment in time that we started this function.
@@ -988,11 +975,11 @@ void MainPushbuttonHandler()
   lastPairButtonState = pairButtonCurrentReading;
 }
 
-// ----------------------------------------------------------------------------
+// ---------------------------------------------------------------------------
 // SetGlobalChipDefaults
 //
 // Initializes the settings we want for this particular bluetooth chipset.
-// ----------------------------------------------------------------------------
+// ---------------------------------------------------------------------------
 void SetGlobalChipDefaults()
 {
   // For convenience, every time we reset or start up our chip, we also send empeg a pause command,
@@ -1125,7 +1112,7 @@ void SetGlobalChipDefaults()
 }
 
 
-// ----------------------------------------------------------------------------
+// ---------------------------------------------------------------------------
 // PairBluetooth
 //
 // This is the function that gets executed when you press the Reset/Pair button.
@@ -1140,7 +1127,7 @@ void SetGlobalChipDefaults()
 // 
 // This function doubles as a way to reset the device to factory defaults
 // and restart it, in cases where that is needed.
-// ----------------------------------------------------------------------------
+// ---------------------------------------------------------------------------
 void PairBluetooth()
 {
   // Debug code only.
@@ -1155,10 +1142,10 @@ void PairBluetooth()
     return;
   }
 
-  // Set flag indicating we recently started pairing mode.
+  // Set flag indicating we recently started pairing mode, and turn on the
+  // Reset/pair indicator blue LED so that it stays on  bright for a long time
+  // during the pairing process.
   pairingMode = true;
-
-  // Turn on the Reset/pair indicator blue LED
   digitalWrite(pairLedPin, HIGH);
 
   // Set the Pair Address string to a blank to indicate that we
@@ -1274,11 +1261,12 @@ void PairBluetooth()
     }
   }
   
-  // We are done with pairing mode if either we have run out of loop time
-  // or if the code above detects that pairing mode got completed.
+  // We are done with pairing mode if either we have run out of loop time or
+  // if the code above detects that pairing mode got completed. Set the global
+  // flag indicating that pairing mode has stopped, and also turn off the
+  // pairing indicator blue LED, so that it is mostly off after the pairing
+  // process is done.
   pairingMode = false;
-
-  // Turn off the pairing indicator blue LED
   digitalWrite(pairLedPin, LOW);
 
   // Log that we are done.
@@ -1289,7 +1277,7 @@ void PairBluetooth()
   Log (F(" "));      
 }
 
-// ----------------------------------------------------------------------------
+// ---------------------------------------------------------------------------
 // MainInputOutput
 // 
 // Main workhorse to handle the main loop character input output and logging
@@ -1306,7 +1294,7 @@ void PairBluetooth()
 //    value character. Note that if a zero value character was received it will
 //    also return that. So don't use zero as the test to see whether or not it
 //    processed a character.
-// ----------------------------------------------------------------------------
+// ---------------------------------------------------------------------------
 char MainInputOutput()
 {
   // Initialize the characters that will be retrieved in this loop.
@@ -1387,6 +1375,9 @@ char MainInputOutput()
   {
     if (BlueGigaSerial.available())
     {
+      // Begin blinking the LED to indicate activity.
+      BlinkBlue(true);
+
       // Read one character (byte) from the bluetooth serial port.
       inChar = BlueGigaSerial.read();
       
@@ -1417,6 +1408,9 @@ char MainInputOutput()
           Log(btInputString);
         }
       }
+
+      // Finish blinking the LED.
+      BlinkBlue(false);
     }
   }
 
@@ -1425,7 +1419,7 @@ char MainInputOutput()
   if (btStringComplete)
   {
     btStringComplete = false;
-        
+
     // Call the function to process the string and do the needful.
     HandleString(btInputString);
     
@@ -1492,7 +1486,7 @@ char MainInputOutput()
 }
 
 
-// ----------------------------------------------------------------------------
+// ---------------------------------------------------------------------------
 // DisplayAndProcessCommands
 //
 // Runs the main input loop for a specified amount of time (including the fact
@@ -1503,7 +1497,7 @@ char MainInputOutput()
 // Parameters
 //    (ulong) idleTimeMs  The amount of time in approximate milliseconds to wait.
 //    (bool)  waitForLineEnding   Stop waiting if a CR or LF was received.
-// ----------------------------------------------------------------------------
+// ---------------------------------------------------------------------------
 void DisplayAndProcessCommands(unsigned long idleTimeMs, bool waitForLineEnding)
 {
   // Character that will be returned from the main input/output function, which
@@ -1537,7 +1531,7 @@ void DisplayAndProcessCommands(unsigned long idleTimeMs, bool waitForLineEnding)
   // gives us the total time we've been in this loop. Check to see if our time is up.
 }
 
-// ----------------------------------------------------------------------------
+// ---------------------------------------------------------------------------
 // HandleString
 // 
 // Function to process the string data received from the bluetooth chip.
@@ -1551,7 +1545,7 @@ void DisplayAndProcessCommands(unsigned long idleTimeMs, bool waitForLineEnding)
 // This also handles other cases where perhaps we need to respond to
 // some command that was issued to the bluetooth chip from the host stereo,
 // and now we have to respond to that command directly on the bluetooth.
-// ----------------------------------------------------------------------------
+// ---------------------------------------------------------------------------
 void HandleString(String &theString)
 {
   // Initialize the variables we will be using in this function.
@@ -1600,19 +1594,10 @@ void HandleString(String &theString)
     // Make the string comparison to find out if there is a match.
     if (theString.indexOf(gbaMessageMatrix[i]) > (-1))
     {
-      // Debug logging
-      // Log(F(" === Getting ready to grab pairing buddy address. === "));
-
-      // Turn on the Arduino LED to indicate something has happened.
-      digitalWrite(LED_BUILTIN, HIGH);
-   
       // Process the pullout of the address of our pairing buddy
       // out of the string that is expected to contain our 
       // pairing buddy's address in it.
       GrabPairAddressString(theString, gbaMessageMatrix[i]);
-           
-      // Turn off the Arduino LED.
-      digitalWrite(LED_BUILTIN, LOW);
     }
   }
 
@@ -1721,10 +1706,6 @@ void HandleString(String &theString)
     if (theString.indexOf(scFixMessageMatrix[i][0]) > (-1))
     {
       // A match has been found, process the special case.
-      
-      // Turn on the Arduino LED to indicate something has happened.
-      digitalWrite(LED_BUILTIN, HIGH);
-   
       // Prepare the command we are going to send.
       commandToSend = "";
       commandToSend += scFixMessageMatrix[i][1];
@@ -1741,9 +1722,6 @@ void HandleString(String &theString)
 
       // Send the special case fix command.
       SendBlueGigaCommand(commandToSend);
-           
-      // Turn off the Arduino LED.
-      digitalWrite(LED_BUILTIN, LOW);
     }
   }
     
@@ -1760,10 +1738,6 @@ void HandleString(String &theString)
       if (theString.indexOf(pmMessageMatrix[i][0]) > (-1))
       {
         // A match has been found, process the pairing command.
-        
-        // Turn on the Arduino LED to indicate something has happened.
-        digitalWrite(LED_BUILTIN, HIGH);
-
         // Process the pullout of the address of our pairing buddy.
         // This is a super special case for one particular string.
         // It retrieves the bluetooth device address of the host stereo
@@ -1787,9 +1761,6 @@ void HandleString(String &theString)
 
         // Send the final assembled pairing response string to the bluetooth chip.
         SendBlueGigaCommand(commandToSend);
-        
-        // Turn off the Arduino LED.
-        digitalWrite(LED_BUILTIN, LOW);
       }
     }
   }  
@@ -1888,7 +1859,7 @@ void GrabPairAddressString(String stringToParse, String triggerString)
   }
 }
 
-// ----------------------------------------------------------------------------
+// ---------------------------------------------------------------------------
 // Log
 //
 // Log a string of output to the Arduino USB debug serial port. Had to make it
@@ -1898,7 +1869,7 @@ void GrabPairAddressString(String stringToParse, String triggerString)
 // wanted to save a bit of string-handling memory by accepting it as a
 // reference then I wouldn't need the fancy two-functions version below.
 // Not sure if jumping through these hoops is helping me much, memory-wise.
-// ----------------------------------------------------------------------------
+// ---------------------------------------------------------------------------
 void Log(const String &logMessage)
 {
   BaseLog(logMessage);
@@ -1950,11 +1921,11 @@ void BaseLog(const String &logMessage)
   }       
 }
 
-// ----------------------------------------------------------------------------
+// ---------------------------------------------------------------------------
 // LogChar
 //
 // Output a single character to the Arduino USB debug serial port.
-// ----------------------------------------------------------------------------
+// ---------------------------------------------------------------------------
 void LogChar(char logChar)
 {
   // Make sure the main serial port is available before outputting.
@@ -1965,13 +1936,13 @@ void LogChar(char logChar)
   }       
 }
 
-// ----------------------------------------------------------------------------
+// ---------------------------------------------------------------------------
 // SendBlueGigaCommand
 //
 // Send a command to the bluetooth chip. 
 // Automatically append the required line ending character.
 // Some chips require a carriage return, some chips require a linefeed or CRLF.
-// ----------------------------------------------------------------------------
+// ---------------------------------------------------------------------------
 void SendBlueGigaCommand(String commandString)
 {
   // Make sure serial port is available to send to
@@ -2066,7 +2037,7 @@ void SendBlueGigaCommand(String commandString)
 }
 
 
-// ----------------------------------------------------------------------------
+// ---------------------------------------------------------------------------
 // RespondToQueries
 //
 // Command the bluetooth chipset to respond to certain queries made by the
@@ -2075,7 +2046,7 @@ void SendBlueGigaCommand(String commandString)
 // NOTE: If you add new code below to handle a new query/response string,
 // then make sure to update the "rspMatrix" at the top of the code, and
 // vice-versa.
-// ----------------------------------------------------------------------------
+// ---------------------------------------------------------------------------
 void RespondToQueries(String &queryString)
 {
   // Obtain the transaction label from these queries. Some of the queries we're responding to here
@@ -2540,7 +2511,7 @@ void RespondToQueries(String &queryString)
     Log(F("Dropping out of the bottom of the RespondToQueries function without responding."));
 }
 
-// ----------------------------------------------------------------------------
+// ---------------------------------------------------------------------------
 // ForceQuickReconnect
 //
 // Quickly disconnect and reconnect to the currently-connected host stereo
@@ -2563,7 +2534,7 @@ void RespondToQueries(String &queryString)
 // There is a variable at the top of this code to turn the infinite reconnect
 // loop off, but if you run into this issue then you've got other problems.
 // The variable to disable it is called reconnectIfBadRegistrationReceived.
-// ----------------------------------------------------------------------------
+// ---------------------------------------------------------------------------
 void ForceQuickReconnect()
 {
   // Check to see if we're already trying to force a reconnect. If we are
@@ -2671,7 +2642,7 @@ void ForceQuickReconnect()
   Log(F("End: ForceQuickReconnect routine."));
 }
 
-// ----------------------------------------------------------------------------
+// ---------------------------------------------------------------------------
 // DisplayAndSwallowResponses
 //
 // For either a set amount of time, and/or a set amount of response messages,
@@ -2688,7 +2659,7 @@ void ForceQuickReconnect()
 // The max total wait time will be the first parameter times the second
 // parameter, if no messsages are received. If any message is received,
 // then the wait shortens by that portion of the wait loop.
-// ----------------------------------------------------------------------------
+// ---------------------------------------------------------------------------
 void DisplayAndSwallowResponses(int numResponsesToSwallow, unsigned long waitTimePerResponseMs)
 { 
   // Character to be read from the serial port and then discarded
@@ -2720,8 +2691,13 @@ void DisplayAndSwallowResponses(int numResponsesToSwallow, unsigned long waitTim
       {
         if (BlueGigaSerial.available())
         {
+          // Blink the LED to indicate Bluetooth serial port activity.
+          BlinkBlue(true);
+
+          // Read the data from the Bluetooth serial port.
           swallowChar = BlueGigaSerial.read();
 
+          // Log the data to the serial port if not in line-by-line mode.
           if(!logLineByLine)
           {
             LogChar(swallowChar);
@@ -2729,6 +2705,13 @@ void DisplayAndSwallowResponses(int numResponsesToSwallow, unsigned long waitTim
 
           // Add our character to our longer line-by-line logging string.
           btSwallowInputString += swallowChar;
+
+          // Finish blinking the LED when we are done reading the character.
+          // NOTE: Doing this early here, to make sure to unblink the LED
+          // before we have a chance to break out of the timed loop. This is
+          // to prevent cases where this routine might leave the LED "stuck
+          // on" for longer that anticipated.
+          BlinkBlue(false);
 
           // Check to see if it's a linefeed or if the length of the
           // string is too large to hold, either way we consider the string
@@ -2761,7 +2744,7 @@ void DisplayAndSwallowResponses(int numResponsesToSwallow, unsigned long waitTim
 }
 
 
-// ----------------------------------------------------------------------------
+// ---------------------------------------------------------------------------
 // SetTrackMetaData
 //
 // Set the metadata for the currently playing track in memory so that it can
@@ -2783,7 +2766,7 @@ void DisplayAndSwallowResponses(int numResponsesToSwallow, unsigned long waitTim
 //  T  <track title>
 //  A  <artist>
 //  G  <genre>  
-// ----------------------------------------------------------------------------
+// ---------------------------------------------------------------------------
 void SetTrackMetaData(char empegMessageCode, String &stringToParse)     // TEMPORARY: Partial Bugfix for Issue #25: Pass this by reference to work around memory bug.
 {
   // Debug logging for issue #25 - String became blank only after passing into this function:
@@ -2915,7 +2898,7 @@ void SetTrackMetaData(char empegMessageCode, String &stringToParse)     // TEMPO
   //  Log(F("WARNING: DROPPED OUT OF BOTTOM OF SetTrackMetaData ROUTINE UNEXPECTEDLY."));
 }
 
-// ----------------------------------------------------------------------------
+// ---------------------------------------------------------------------------
 // ReplaceHighAsciiWithUtf8
 // 
 // Fix track metadata strings which contain High ASCII characters and replace
@@ -2941,7 +2924,7 @@ void SetTrackMetaData(char empegMessageCode, String &stringToParse)     // TEMPO
 //
 // Parameter:  The string to convert (the input string).
 // Returns:    The converted string. May be longer than the input string.
-// ----------------------------------------------------------------------------
+// ---------------------------------------------------------------------------
 String ReplaceHighAsciiWithUtf8(String &stringToMakeUtf8Char)
 {
   // Check to see if we are even supposed to perform this conversion at all.
@@ -3014,7 +2997,7 @@ String ReplaceHighAsciiWithUtf8(String &stringToMakeUtf8Char)
   return utf8ReturnString;
 }
 
-// ----------------------------------------------------------------------------
+// ---------------------------------------------------------------------------
 // SendEmpegCommand
 //
 // Send a command to the empeg serial port to make the empeg do a desired behavior
@@ -3022,12 +3005,9 @@ String ReplaceHighAsciiWithUtf8(String &stringToMakeUtf8Char)
 //
 // Parameters:
 // - The command string to send, without the linefeed. Linefeed will be added.
-// ----------------------------------------------------------------------------
+// ---------------------------------------------------------------------------
 void SendEmpegCommand(char empegCommandToSend)
 {
-  // Turn on the Arduino LED to indicate something has happened.
-  digitalWrite(LED_BUILTIN, HIGH);
-
   // Set the empeg's state variable based on the command we will send.
   // Ideally we would always let the empeg tell us what state it's in
   // and never change this state ourselves. However there is a special
@@ -3097,20 +3077,17 @@ void SendEmpegCommand(char empegCommandToSend)
     // "Track number changes before the other metadata.". Time will tell if
     // this has other repercussions that are unwanted. Initial testing looks good.
     //     HandleEmpegStateChange();
-    
-    // Turn off the Arduino LED.
-    digitalWrite(LED_BUILTIN, LOW);
   }
 }
 
 
-// ----------------------------------------------------------------------------
+// ---------------------------------------------------------------------------
 // HandleEmpegString
 // 
 // Function to process the string data received from the empeg car serial port.
 // Locate strings which look like notifications of track data and turn those
 // into variables for later sending up the bluetooth.
-// ----------------------------------------------------------------------------
+// ---------------------------------------------------------------------------
 void HandleEmpegString(String &theString)
 {
   // Set up variables for this function.
@@ -3621,7 +3598,7 @@ void HandleEmpegString(String &theString)
   }
 }
 
-// ----------------------------------------------------------------------------
+// ---------------------------------------------------------------------------
 // HandleEmpegStateChange
 //
 // When the empeg's playing state changes (playing or paused), there are
@@ -3629,7 +3606,7 @@ void HandleEmpegString(String &theString)
 // to the bluetooth chip to let it know about some things. Also there are
 // some things I'd like to do when the track information changes from one
 // track to the next. I think that I can do all of them here all at once.
-// ----------------------------------------------------------------------------
+// ---------------------------------------------------------------------------
 void HandleEmpegStateChange()
 {
   if (empegIsPlaying)
@@ -3785,14 +3762,14 @@ void HandleEmpegStateChange()
   ReportEmpegPlayingState();
 }
 
-// ----------------------------------------------------------------------------
+// ---------------------------------------------------------------------------
 // ReportEmpegPlayingState
 //
 // Log to the console session the current believed state of the empeg
 // whether it is playing or paused. Used only for logging, there is 
 // a different place in the code that responds to bluetooth queries
 // asking for the playback state.
-// ----------------------------------------------------------------------------
+// ---------------------------------------------------------------------------
 void ReportEmpegPlayingState()
 {
   if (empegIsPlaying)
@@ -3805,7 +3782,66 @@ void ReportEmpegPlayingState()
   }
 }
 
-// ----------------------------------------------------------------------------
+// ---------------------------------------------------------------------------
+// BlinkBlue
+//
+// Blink the reset/pair LED to indicate some kind of activity on the BT module.
+// If we are in normal runtime mode, blink the LED on briefly. If we are in
+// Reset/Pair mode, where the LED is expected to already be on, then blink
+// it off briefly instead. 
+//
+// Note: You must call this routine once to start the blink and once to stop
+// the blink, with the parameter changed each time. Call this routine at the
+// start of your indicated activity with "true" and at the end of your 
+// indicated activity with "false". Use this only for very brief indicators
+// of activity so that the end user doesn't confuse these blinks for the
+// main reset/pair mode indication.
+// 
+// Parameter: true to start the blink, false to stop the blink.
+//
+// In actual usage, the "blink off" state is pretty much undetectable. In
+// other words, when we are in reset/pair mode, the activity that occurs
+// during that mode does in fact make the LED blink off briefly, the problem
+// is that you don't really see it because it's so brief.
+// ---------------------------------------------------------------------------
+void BlinkBlue(boolean startBlink)
+{
+  // Decide if we are starting the blink or stopping the blink.
+  if (startBlink)
+  {
+    // Blink on the reset/pair LED briefly during times that we are processing
+    // bluetooth data from the bluetooth chip. However if we are in pairing
+    // mode, it's opposite; blink it off briefly instead, because the LED is
+    // already "on" and yet we also want to indicate activity during pairing
+    // mode.
+    if(pairingMode)
+    {
+      digitalWrite(pairLedPin, LOW);
+    }
+    else
+    {
+      digitalWrite(pairLedPin, HIGH);
+    }
+  }
+  else
+  {
+    // Blink off the reset/pair LED at the end of the period where we were
+    // processing bluetooth data from the bluetooth chip. However if we are in
+    // pairing mode, it's opposite; blink it back on instead, because the LED
+    // was originally already "on" and yet we also want to indicate activity
+    // during pairing mode.
+    if(pairingMode)
+    {
+      digitalWrite(pairLedPin, HIGH);
+    }
+    else
+    {
+      digitalWrite(pairLedPin, LOW);
+    }
+  }
+}
+
+// ---------------------------------------------------------------------------
 // QuickResetBluetooth
 //
 // Quickly reset the bluetooth module and also clean out any global variables
@@ -3825,7 +3861,7 @@ void ReportEmpegPlayingState()
 // is just a reboot). Note that this does not erase bluetooth pairings.
 // Also, I don't know if "RESET" is any different from "BOOT 0" for my
 // purposes, but it's being included here just in case.
-// ----------------------------------------------------------------------------
+// ---------------------------------------------------------------------------
 void QuickResetBluetooth(int resetType)
 {
   // Convenience feature to help with issue #26. Pause the player if we do
@@ -3871,13 +3907,13 @@ void QuickResetBluetooth(int resetType)
   }
 }
 
-// ----------------------------------------------------------------------------
+// ---------------------------------------------------------------------------
 // ResetBluetoothPin
 //
 // Physically reset the bluetooth module via its RST pin. This uses a
 // connection between one of the Arduino's GPIO pins and the reset pin
 // on the bluetooth module itself.
-// ----------------------------------------------------------------------------
+// ---------------------------------------------------------------------------
 void ResetBluetoothPin()
 {
   // Only perform this routine if we have implemented the physical reset line.
@@ -3898,13 +3934,13 @@ void ResetBluetoothPin()
   }
 }
 
-// ----------------------------------------------------------------------------
+// ---------------------------------------------------------------------------
 // ClearGlobalVariables
 //
 // Clear out any global variables which we should not be remembering or 
 // re-using if the bluetooth chip happened to have gotten reset, either
 // accidentally or deliberately.
-// ----------------------------------------------------------------------------
+// ---------------------------------------------------------------------------
 void ClearGlobalVariables()
 {
   Log(F("Clearing global variables."));
