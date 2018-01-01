@@ -1835,33 +1835,30 @@ void HandleString(String &theString)
 }
 
 
-// ---------------------------------------------------------------
+// ---------------------------------------------------------------------------
 // GrabPairAddressString
 //
 // Grabs the bluetooth address from a string that looks like this:
-// "INQUIRY_PARTIAL 0a:ea:ea:6a:7a:6a 240404" or perhaps a string
-// that looks like this:
-// SET BT PAIR 0a:ea:ea:6a:7a:6a ad11da9ed235df50e86eeef1e3ba8b
-// and puts it into the global variable "pairAddressString". Only
-// does the first one it finds since the runstart of the program
-// or since the user has pressed the "reset/pair" button on the
-// assembly. Does not save the variable in permanent storage so
-// if you need this variable after bootup you have to re-retrieve
-// it with special code. We leave it up to the bluetooth chip to
-// store the pair addresses, and the bluetooth chip automatically
-// reconnects to paired devices when it is powered back on, so
-// our code only needs to remember this pairing address during
-// runtime of the program.
+// "INQUIRY_PARTIAL 0a:ea:ea:6a:7a:6a 240404" or perhaps a string that looks
+// like this: SET BT PAIR 0a:ea:ea:6a:7a:6a ad11da9ed235df50e86eeef1e3ba8b and
+// puts it into the global variable "pairAddressString". Only does the first
+// one it finds since the runstart of the program or since the user has
+// pressed the "reset/pair" button on the assembly. Does not save the variable
+// in permanent storage so if you need this variable after bootup you have to
+// re-retrieve it with special code. We leave it up to the bluetooth chip to
+// store the pair addresses, and the bluetooth chip automatically reconnects
+// to paired devices when it is powered back on, so our code only needs to
+// remember this pairing address during runtime of the program.
 // 
 // Parameters:
-//     stringToParse: The string that will be parsed to extract
-//                    the pairing address such as 
-//                    INQUIRY_PARTIAL 0a:ea:ea:6a:7a:6a 240404
-//     triggerString: The portion of the string which is the
-//                    trigger string which falls just before the
-//                    bluetooth address. In the string above the
-//                    trigger string would be "INQUIRY_PARTIAL ".
-// ---------------------------------------------------------------
+//     stringToParse: The string that will be parsed to extract the pairing
+//                    address such as: 
+//                           INQUIRY_PARTIAL 0a:ea:ea:6a:7a:6a 240404
+//     triggerString: The portion of the string which is the trigger string
+//                    which falls just before the bluetooth address. In the
+//                    string above the trigger string would be
+//                    "INQUIRY_PARTIAL " including the trailing space.
+// ---------------------------------------------------------------------------
 void GrabPairAddressString(String stringToParse, String triggerString)
 {
   // Set variables we will be using the parsing code below.
@@ -1870,8 +1867,8 @@ void GrabPairAddressString(String stringToParse, String triggerString)
   firstSpace = 0;
   lastSpace = 0;
 
-  // If we already have a pair address string, don't retrieve another one,
-  // we only want to do this for the first one that we find in a run.
+  // If we already have a pair address string, don't retrieve another one, we
+  // only want to do this for the first one that we find in a run.
   if (pairAddressString != "")
   {
     return;
@@ -1880,26 +1877,29 @@ void GrabPairAddressString(String stringToParse, String triggerString)
   // Debug logging
   // Log(F("=== Trying to grab pair buddy's address. ==="));
 
-  // Get our bluetooth address out of the string if it's the one exact
-  // special case string that we expect to see at this particular moment 
+  // Get our bluetooth address out of the string if it's the one exact special
+  // case string that we expect to see at this particular moment
   if ( stringToParse.indexOf(triggerString) > (-1)  )
   {
-    // Obtain the location of the first space character which is at the end of the trigger string.
-    // Start searching shortly before the end of the trigger string since the trigger string I'm
-    // passing in here contains the space too. For example if our trigger string is
-    // "INQUIRY_PARTIAL " which is 16 characters including the space, start searching at 15.
+    // Obtain the location of the first space character which is at the end of
+    // the trigger string. Start searching shortly before the end of the
+    // trigger string since the trigger string I'm passing in here contains
+    // the space too. For example if our trigger string is "INQUIRY_PARTIAL "
+    // which is 16 characters including the space, start searching at 15.
     //
-    // BUGFIX - don't assume that our trigger string is at the start. When the thing we're
-    // trying to fix is the bad PDU registrations then the strings coming in can get mangled
-    // because I think my stereo head unit has a bug or perhaps it overflows the string buffer
-    // or something. In any case I got a bad string from the bluetooth that looked like this:
+    // BUGFIX - don't assume that our trigger string is at the start. When the
+    // thing we're trying to fix is the bad PDU registrations then the strings
+    // coming in can get mangled because I think my stereo head unit has a bug
+    // or perhaps it overflows the string buffer or something. In any case I
+    // got a bad string from the bluetooth that looked like this:
     //    AVRCP 0 PDU_REGISTER_NOTIFICATION 0 TRACK_REACHED_END 0SET BT PAIR 4e:fe:7e:5e:1e:2e 10e0f6999e06f4
-    // The data I really wanted was the address out of that string but initially this code 
-    // had assumed that the SET BT PAIR would be at the start of the string. Fixing it to
-    // look for it in the proper place now.
+    // The data I really wanted was the address out of that string but
+    // initially this code  had assumed that the SET BT PAIR would be at the
+    // start of the string. Fixing it to look for it in the proper place now.
     firstSpace = stringToParse.indexOf(F(" "), stringToParse.indexOf(triggerString) + triggerString.length() - 2);
 
-    // Obtain the location of the second space, start looking for it a couple characters after the first space.
+    // Obtain the location of the second space, start looking for it a couple
+    // characters after the first space.
     lastSpace = stringToParse.indexOf(F(" "), firstSpace + 2);
 
     // Obtain the substring between the two spaces
@@ -1909,8 +1909,8 @@ void GrabPairAddressString(String stringToParse, String triggerString)
     pairAddressString.trim();
 
     // Find out if the thing we got was an address. It should contain some
-    // colon characters at the very least. Throw it away if it's not a 
-    // proper bluetooth address (we will merely check for a colon).
+    // colon characters at the very least. Throw it away if it's not a  proper
+    // bluetooth address (we will merely check for a colon).
     if (pairAddressString.indexOf(F(":")) < 1) // First colon should be at least at char position 2, but never at 0
     {
       // Clear it out, it wasn't what we wanted, set it to nothing.
@@ -1960,8 +1960,8 @@ void BaseLog(const String &logMessage)
   // Make sure the main serial port is available before outputting.
   if (Serial)
   {
-    // Calculate the delta between the last time that we logged an output
-    // line and now so that we can profile our output.
+    // Calculate the delta between the last time that we logged an output line
+    // and now so that we can profile our output.
     if (outputMillis)
     {
       // Set the value of the current output timing before printing it so that
@@ -1973,7 +1973,8 @@ void BaseLog(const String &logMessage)
       // Print things out including the time delta.
       Serial.print(String(timestring) + " " + logMessage);
 
-      // Set the prior one to be the current one, ready for the next calcualtion.
+      // Set the prior one to be the current one, ready for the next
+      // calcualtion.
       priorOutputLineMillis = currentOutputLineMillis;
     }
     else
@@ -1982,8 +1983,8 @@ void BaseLog(const String &logMessage)
       Serial.print(logMessage);
     }
 
-    // Print a CRLF at the end of the log message to alleviate us from
-    // the need of adding one by hand at the end of every logged message
+    // Print a CRLF at the end of the log message to alleviate us from the
+    // need of adding one by hand at the end of every logged message
     // throughout the code.
     Serial.print(F("\r\n"));
   }       
@@ -2007,9 +2008,9 @@ void LogChar(char logChar)
 // ---------------------------------------------------------------------------
 // SendBlueGigaCommand
 //
-// Send a command to the bluetooth chip. 
-// Automatically append the required line ending character.
-// Some chips require a carriage return, some chips require a linefeed or CRLF.
+// Send a command to the bluetooth chip. Automatically append the required
+// line ending character. Some chips require a carriage return, some chips
+// require a linefeed or CRLF.
 // ---------------------------------------------------------------------------
 void SendBlueGigaCommand(String commandString)
 {
@@ -2037,23 +2038,19 @@ void SendBlueGigaCommand(String commandString)
   // Debugging Only:
   // "Immediate Response Display" feature.
   //
-  // A single line of code below does a special thing:
-  // Show repsonses from the chip on the debug console
-  // immediately after sending a command instead of waiting
-  // for the next normal run of the main interpreter loop.
+  // A single line of code below does a special thing: Show repsonses from the
+  // chip on the debug console immediately after sending a command instead of
+  // waiting for the next normal run of the main interpreter loop.
   //
-  // This works and it is helpful to see things like the 
-  // chip immediately responding with "SYNTAX ERROR" for
-  // the exact command line that we sent, as opposed to
-  // seeing it appear in the console much later. For example,
-  // in normal operation, at the first startup of this Arduino
-  // code, there are several chip-setup commands which get sent
-  // to the bluetooth chip at startup. They are all sent quickly
-  // in sequence one after the other, and normally, the code
-  // doesn't get around to displaying the chip's responses to
-  // the commands until after the entire group of commands is
-  // sent. So, for example, you might see this in the console:
-  // 
+  // This works and it is helpful to see things like the  chip immediately
+  // responding with "SYNTAX ERROR" for the exact command line that we sent,
+  // as opposed to seeing it appear in the console much later. For example, in
+  // normal operation, at the first startup of this Arduino code, there are
+  // several chip-setup commands which get sent to the bluetooth chip at
+  // startup. They are all sent quickly in sequence one after the other, and
+  // normally, the code doesn't get around to displaying the chip's responses
+  // to the commands until after the entire group of commands is sent. So, for
+  // example, you might see this in the console:
       //Setting Defaults.
       //SET CONTROL ECHO 5
       //SET PROFILE A2DP SOURCE
@@ -2074,34 +2071,26 @@ void SendBlueGigaCommand(String commandString)
       //Done Setting Defaults.
       //SYNTAX ERROR
   //
-  // That "SYNTAX ERROR" at the end there is the problem.
-  // It was in response to one of those SET commands above,
-  // but the problem is that now you don't know which one
-  // it was in response to.
-  // 
-  // By enabling the line of code below, it gives the code
-  // a chance to immediately display the response from the
-  // bluetooth chip so you can tell which command got the
-  // syntax error.
+  // That "SYNTAX ERROR" at the end there is the problem. It was in response
+  // to one of those SET commands above, but the problem is that now you don't
+  // know which one it was in response to. By enabling the line of code below,
+  // it gives the code a chance to immediately display the response from the
+  // bluetooth chip so you can tell which command got the syntax error.
   //
-  // The risk here is a possibility for reentrant code that
-  // might get out of control. So don't leave the line
-  // enabled in final production, just enable it to check
-  // something and then disable it again when you're done.
-  // 
-  // The other issue with enabling this command is that
-  // it slows down our output response in cases where we
-  // must have the response much quicker.
+  // The risk here is a possibility for reentrant code that might get out of
+  // control. So don't leave the line enabled in final production, just enable
+  // it to check something and then disable it again when you're done. The
+  // other issue with enabling this command is that it slows down our output
+  // response in cases where we must have the response much quicker.
   //
   // Here is the line of code:
   //   DisplayAndProcessCommands(50, true);
   //
-  // Re-enable the line above if you are debugging an immediate
-  // send/response issue where you have issued a bunch of
-  // commands to the bluetooth chip in sequence and you're
-  // having trouble figuring out which of the commands
-  // is the one that produced the "SYNTAX ERROR" message.
-  // Make sure to disable it again when you're done debugging.
+  // Re-enable the line above if you are debugging an immediate send/response
+  // issue where you have issued a bunch of commands to the bluetooth chip in
+  // sequence and you're having trouble figuring out which of the commands is
+  // the one that produced the "SYNTAX ERROR" message. Make sure to disable it
+  // again when you're done debugging.
 }
 
 
@@ -2111,42 +2100,53 @@ void SendBlueGigaCommand(String commandString)
 // Command the bluetooth chipset to respond to certain queries made by the
 // host stereo, such as queries for playback status and track titles.
 //
-// NOTE: If you add new code below to handle a new query/response string,
-// then make sure to update the "rspMatrix" at the top of the code, and
-// vice-versa.
+// NOTE: If you add new code below to handle a new query/response string, then
+// make sure to update the "rspMatrix" at the top of the code, and vice-versa.
 // ---------------------------------------------------------------------------
 void RespondToQueries(String &queryString)
 {
-  // Obtain the transaction label from these queries. Some of the queries we're responding to here
-  // have a transaction label, and our response must contain the same transaction label in the response.
-  // Query comes in from the host stereo like this:
+  // Obtain the transaction label from these queries. Some of the queries
+  // we're responding to here have a transaction label, and our response must
+  // contain the same transaction label in the response. Query comes in from
+  // the host stereo like this:  
   //     AVRCP 0 PDU_REGISTER_NOTIFICATION 4 PLAYBACK_STATUS_CHANGED 0
   // It means:
   // - On the AVRCP channel which is currently paired in slot/channel 0
   // - The host stereo is registering a notification with us.
-  // - This message carries with it a transaction label of "4" (it might be a different character than 4)
-  // - Register for a notification message for playback status changing (it would like us to please send it playback status notifications)
-  // - That last 0 is an unused parameter in the register_notification request according to the BlueGiga iWrap documentation.
+  // - This message carries with it a transaction label of "4" (it might be a
+  //   different character than 4)
+  // - Register for a notification message for playback status changing (it
+  //   would like us to please send it playback status notifications)
+  // - That last 0 is an unused parameter in the register_notification request
+  //   according to the BlueGiga iWrap documentation.
   //
-  // For these queries, you should then respond with a response that contains the transaction label.
-  // Example:
+  // For these queries, you should then respond with a response that contains
+  // the transaction label. Example:
   //     AVRCP NFY INTERIM 4 1 0
-  // Where 4 is the transaction label, 1 is the event ID code for "Playback status changed", and 0 is the code
-  // for the state of playback (in this example 0 means stopped).
-  // 
-  // Note that the transaction label might be a hex value, I have seen it be in the range of 0-9 a-f,
-  // but I haven't seen it go above f in my tests. 
+  // Where 4 is the transaction label, 1 is the event ID code for "Playback
+  // status changed", and 0 is the code for the state of playback (in this
+  // example 0 means stopped).
+  // Note that the transaction label might be a hex value, I have seen it be
+  // in the range of 0-9 a-f, but I haven't seen it go above f in my tests.
   //
-  // Later, then if you want to send the notification to the host stereo that something has changed,
-  // for example if you want to tell the host stereo that the playback status changed, then you would
-  // send a command that was something like this (this is handled elsewhere in the code):
+  // Later, then if you want to send the notification to the host stereo that
+  // something has changed, for example if you want to tell the host stereo
+  // that the playback status changed, then you would send a command that was
+  // something like this (this is handled elsewhere in the code):
   //      AVRCP NFY CHANGED 4 1 1
   // Where:
   //      AVRCP NFY   - The notification command to send to the head unit.
-  //      CHANGED     - Indicate to the head unit that there was a change of some kind.
-  //      4           - The transaction label from the headunit's original notification registration request
-  //      1           - The notification message we will send contains event ID 1, which is "PLAYBACK_STATUS_CHANGED", from a specific table in section 6.3.3 of the AVRCP command reference for the BlueGiga iWrap command language.
-  //      1           - The sole parameter value for the PLAYBACK_STATUS_CHANGED, with "1" indicating "playing" and other values indicating other things.
+  //      CHANGED     - Indicate to the head unit that there was a change of
+  //                    some kind.
+  //      4           - The transaction label from the headunit's original
+  //                    notification registration request
+  //      1           - The notification message we will send contains event
+  //                    ID 1, which is "PLAYBACK_STATUS_CHANGED", from a
+  //                    specific table in section 6.3.3 of the AVRCP command
+  //                    reference for the BlueGiga iWrap command language.
+  //      1           - The sole parameter value for the
+  //                    PLAYBACK_STATUS_CHANGED, with "1" indicating
+  //                    "playing" and other values indicating other things.
   //
 
   // Debugging: 
@@ -2160,12 +2160,12 @@ void RespondToQueries(String &queryString)
   static int numberOfElements = 0;
   static int currentElementCode = 0;
 
-  // Variable for the AVRCP response string we will be sending up as 
-  // a response in the query/response handler code. Size of string can get
-  // big because it may contain long track titles as well as the preamble.
-  // In fact, the string could potentially be this long if the stereo happens
-  // to query the bluetooth chip for all track metadata elements all at once
-  // and each element is the maxiumum length that each possible element can be:
+  // Variable for the AVRCP response string we will be sending up as  a
+  // response in the query/response handler code. Size of string can get big
+  // because it may contain long track titles as well as the preamble. In
+  // fact, the string could potentially be this long if the stereo happens to
+  // query the bluetooth chip for all track metadata elements all at once and
+  // each element is the maxiumum length that each possible element can be:
   // "AVRCP RSP 7 "                       = 12 characters, the response preamble and the number of elements.
   // "4 "9999" 5 "9999" "                 = 18 characters, the track number and total number of tracks.
   // "7 "4294967295" "                    = 15 characters, the current playback position in MS in Decimal.
@@ -2177,13 +2177,14 @@ void RespondToQueries(String &queryString)
   String queryResponseString;
 
   // Obtain the transaction label if any.
-  // Note the space at the end of "REGISTER_NOTIFICATION "
+  // Note the space at the end of "REGISTER_NOTIFICATION ".
   // Total length of the string "REGISTER_NOTIFICATION " is 22
   transactionLabel = "";
   transactionLabelStringPosition = queryString.indexOf(F("REGISTER_NOTIFICATION "));
   if ((transactionLabelStringPosition) > (-1)) 
   {
-    // Get the next few characters in the section where I expect to see the transaction label
+    // Get the next few characters in the section where I expect to see the
+    // transaction label.
     transactionLabel = queryString.substring(transactionLabelStringPosition + 21, transactionLabelStringPosition + 24);
     transactionLabel.trim();
 
@@ -2199,39 +2200,42 @@ void RespondToQueries(String &queryString)
     if (queryString.indexOf(F("PLAYBACK_STATUS_CHANGED")) > (-1))
     {
       // If we got a "REGISTER_NOTIFICATION" for "PLAYBACK_STATUS_CHANGED"
-      // then save off the global variable for the transaction label 
-      // from that particular notification registration for that transaction.
+      // then save off the global variable for the transaction label  from
+      // that particular notification registration for that transaction.
       transactionLabelPlaybackStatusChanged = transactionLabel;
     }
     if (queryString.indexOf(F("TRACK_CHANGED")) > (-1))
     {
-      // If we got a "REGISTER_NOTIFICATION" for "TRACK_CHANGED"
-      // then save off the global variable for the transaction label 
-      // from that particular notification registration for that transaction.
+      // If we got a "REGISTER_NOTIFICATION" for "TRACK_CHANGED" then save off
+      // the global variable for the transaction label from that particular
+      // notification registration for that transaction.
       transactionLabelTrackChanged = transactionLabel;
     }
 
-    // Special case to work around bug which hung the headunit stereo intermittently.
-    // Sometimes the stereo would attempt to do PDU_REGISTER_NOTIFICATION for certain
-    // types of events which we are not going to be using. The table of these events
-    // and their ID codes is defined in global variables at the top of this program.
-    // Example request comes in from the host stereo like this:
+    // Special case to work around bug which hung the headunit stereo
+    // intermittently. Sometimes the stereo would attempt to do
+    // PDU_REGISTER_NOTIFICATION for certain types of events which we are not
+    // going to be using. The table of these events and their ID codes is
+    // defined in global variables at the top of this program. Example request
+    // comes in from the host stereo like this:    
     //   AVRCP 0 PDU_REGISTER_NOTIFICATION 4 TRACK_REACHED_END 0
     // We should not have gotten a registration for that because I had already
-    // earlier responded to "GET_CAPABILITIES 3" with a response indicating I only
-    // wanted to register messages 1 and 2 (TRACK_CHANGED and PLAYBACK_STATUS_CHANGED)
-    // so why is it sending me registrations for these other types of codes? It must
-    // be a bug, the only question is whose bug.
-    // 
-    // Initially I tried to respond to each of these, but there is a problem where
-    // they are not all correctly documented in the BlueGiga documentation, and so
-    // many attempts to respond to some of these result in SYNTAX ERROR. An example
-    // of a response might look like:
+    // earlier responded to "GET_CAPABILITIES 3" with a response indicating I
+    // only wanted to register messages 1 and 2 (TRACK_CHANGED and
+    // PLAYBACK_STATUS_CHANGED) so why is it sending me registrations for
+    // these other types of codes? It must be a bug, the only question is
+    // whose bug.
+    //
+    // Initially I tried to respond to each of these, but there is a problem
+    // where they are not all correctly documented in the BlueGiga
+    // documentation, and so many attempts to respond to some of these result
+    // in SYNTAX ERROR. An example of a response might look like:
     //      AVRCP NFY INTERIM 4 3 0
     // Where 4 is the transaction label, 3 is the event ID code for "Track
     // reached end", and 0 is the parameter. Though that one works, there are
-    // others which do not work and get SYNTAX ERROR. In particular, I am unable to
-    // respond to the messages NOW_PLAYING_CHANGED and AVAILABLE_PLAYERS_CHANGED.
+    // others which do not work and get SYNTAX ERROR. In particular, I am
+    // unable to respond to the messages NOW_PLAYING_CHANGED and
+    // AVAILABLE_PLAYERS_CHANGED.
     //
     // I have tried many different syntaxes and parameters and all result in
     // SYNTAX ERROR. Examples:
@@ -2244,12 +2248,12 @@ void RespondToQueries(String &queryString)
     //    --^ AVRCP NFY INTERIM d 10
     //    SYNTAX ERROR
     //
-    // Working on the theory that this may be occurring in situations where my code
-    // is not getting the opportunity to correctly respond to the
-    // GET_CAPABILITIES 3 message correctly, though I have seen this repro when
-    // I had in fact just responded to it. However there is a chance that the
-    // chip might have gotten reset after the response, thus the problem. Silicon
-    // Labs tech support ticket is here:
+    // Working on the theory that this may be occurring in situations where my
+    // code is not getting the opportunity to correctly respond to the
+    // GET_CAPABILITIES 3 message correctly, though I have seen this repro
+    // when I had in fact just responded to it. However there is a chance that
+    // the chip might have gotten reset after the response, thus the problem.
+    // Silicon Labs tech support ticket is here:
     //       https://siliconlabs.force.com/5001M000017Jb5W
     //
     if (reconnectIfBadRegistrationReceived)
@@ -2259,26 +2263,26 @@ void RespondToQueries(String &queryString)
         // Make the string comparison to find out if there is a match.
         if (queryString.indexOf(rejMatrix[l]) > (-1))
         {
-          // For now: Don't respond: Simply reset the chip when it hits one
-          // of these things. This works around the problem on my Honda stereo
+          // For now: Don't respond: Simply reset the chip when it hits one of
+          // these things. This works around the problem on my Honda stereo
           // because it stops asking for these messages to be registered on
           // the SECOND connection after startup (it only asks on the first
           // connection after the startup). It shouldn't ever be asking for
           // these messages at all because my response to "GET_CAPABILITIES 3"
-          // should have told it that I only want registrations for messages
-          // 1 and 2.
+          // should have told it that I only want registrations for messages 1
+          // and 2.
           //
-          // WARNING: This crazy messed up workaround has the potential
-          // to put this whole thing into an infinite reboot loop, but
-          // it's the best I've got at the moment. Hopefully it will only
-          // reboot the one time and then work correctly the second time.
-          // If you get an infinite reboot loop, set the variable 
-          // reconnectIfBadRegistrationReceived at the top of the program
-          // to "false", though that means you have bigger problems because
-          // your host stereo is not paying attention to you when you told
-          // it only register for messages 1 and 2. Your host stereo will
-          // likely hang and not get track titles or be able to send
-          // steering wheel control commands to the player.
+          // WARNING: This crazy messed up workaround has the potential to put
+          // this whole thing into an infinite reboot loop, but it's the best
+          // I've got at the moment. Hopefully it will only reboot the one
+          // time and then work correctly the second time. If you get an
+          // infinite reboot loop, set the variable
+          // reconnectIfBadRegistrationReceived at the top of the program to
+          // "false", though that means you have bigger problems because your
+          // host stereo is not paying attention to you when you told it only
+          // register for messages 1 and 2. Your host stereo will likely hang
+          // and not get track titles or be able to send steering wheel
+          // control commands to the player.
           //
           Log(F("Unexpected registration message received. Something went wrong. Forcing bluetooth reconnect."));
           ForceQuickReconnect();
@@ -2288,8 +2292,8 @@ void RespondToQueries(String &queryString)
     }
   }
 
-  // Process PLAYBACK_STATUS_CHANGED if that is the query we received.
-  // Example response might look like: "AVRCP NFY INTERIM 4 1 1"
+  // Process PLAYBACK_STATUS_CHANGED if that is the query we received. Example
+  // response might look like: "AVRCP NFY INTERIM 4 1 1"
   if (queryString.indexOf(F("PLAYBACK_STATUS_CHANGED")) > (-1))
   {
     // Debugging
@@ -2312,12 +2316,13 @@ void RespondToQueries(String &queryString)
     //        2 - Paused
     //        3 - Fast forwarding
     //        4 - Rewinding
-    // At the moment we only have playing or paused available as states on the empeg,
-    // I don't know about "stopped", the empeg might not have a state for that at all.
-    // Not yet implementing the "fast forwarding" and "rewinding" response states, as
-    // the FF/REW functions seem to work fine without it in the one instance I tested
-    // it (on a Kenwood car stereo). If we find a need to implement those other states
-    // we can work on it later.
+    // At the moment we only have playing or paused available as states on the
+    // empeg, I don't know about "stopped", the empeg might not have a state
+    // for that at all. Not yet implementing the "fast forwarding" and
+    // "rewinding" response states, as the FF/REW functions seem to work fine
+    // without it in the one instance I tested it (on a Kenwood car stereo).
+    // If we find a need to implement those other states we can work on it
+    // later.
     if (empegIsPlaying)
     {
       queryResponseString += F(" 1");
@@ -2335,8 +2340,8 @@ void RespondToQueries(String &queryString)
     return;
   }
 
-  // Process TRACK_CHANGED if that is the query we received.
-  // Example response might look like: "AVRCP NFY INTERIM 4 2 1"
+  // Process TRACK_CHANGED if that is the query we received. Example response
+  // might look like: "AVRCP NFY INTERIM 4 2 1"
   if (queryString.indexOf(F("TRACK_CHANGED")) > (-1))
   {
     // Debugging
@@ -2379,12 +2384,13 @@ void RespondToQueries(String &queryString)
     // Answer with an "AVRCP RSP" command.
     queryResponseString += F("AVRCP RSP ");
     
-    // First two parameters are the length and position (in that order) of the track
-    // in milliseconds. You can respond with 0xffffffff (which I think is 4294967295)
-    // in those spots to indicate song length reporting is not supported.
-    // IMPORTANT: When responding to GET_PLAY_STATUS you do not put your timestamp
-    // surrounded by quote characters, whereas when responding to GET_ELEMENT_ATTRIBUTES
-    // (done elsewhere), you do need to surround your timestamps with quotes. 
+    // First two parameters are the length and position (in that order) of the
+    // track in milliseconds. You can respond with 0xffffffff (which I think
+    // is 4294967295) in those spots to indicate song length reporting is not
+    // supported. IMPORTANT: When responding to GET_PLAY_STATUS you do not put
+    // your timestamp surrounded by quote characters, whereas when responding
+    // to GET_ELEMENT_ATTRIBUTES (done elsewhere), you do need to surround
+    // your timestamps with quotes.    
     queryResponseString += trackPlaybackLengthString;
     queryResponseString += " ";
     queryResponseString += trackPlaybackPositionString07;
@@ -2395,12 +2401,13 @@ void RespondToQueries(String &queryString)
     //        2 - Paused
     //        3 - Fast forwarding
     //        4 - Rewinding
-    // At the moment we only have playing or paused available as states on the empeg,
-    // I don't know about "stopped", the empeg might not have a state for that at all.
-    // Not yet implementing the "fast forwarding" and "rewinding" response states, as
-    // the FF/REW functions seem to work fine without it in the one instance I tested
-    // it (on a Kenwood car stereo). If we find a need to implement those other states
-    // we can work on it later.
+    // At the moment we only have playing or paused available as states on the
+    // empeg, I don't know about "stopped", the empeg might not have a state
+    // for that at all. Not yet implementing the "fast forwarding" and
+    // "rewinding" response states, as the FF/REW functions seem to work fine
+    // without it in the one instance I tested it (on a Kenwood car stereo).
+    // If we find a need to implement those other states we can work on it
+    // later.
     if (empegIsPlaying)
     {
       queryResponseString += F(" 1");
@@ -2434,25 +2441,28 @@ void RespondToQueries(String &queryString)
     // "GET_ELEMENT_ATTRIBUTES 01 03"
     // means, get one element, of element id "3" which is album title.
     //
-    // Special processing: When the host stereo queries for track titles and other metadata,
-    // it can do it in one of two ways:
-    //    1. Separate queries for each individual piece of metadata, i.e., one query for
-    //       Title, another query for Artist, another query for Genre, etc.
-    //    2. A single query for multiple combinations of the metadata, such as querying
-    //       for all of them, or a subset of them, all at once with a single query statement.
-    // There is support in the bluetooth command set for both of those methods, the code below will
-    // respond successfully to both of them.
+    // Special processing: When the host stereo queries for track titles and
+    // other metadata, it can do it in one of two ways:
+    //    1. Separate queries for each individual piece of metadata, i.e., one
+    //       query for Title, another query for Artist, another query for
+    //       Genre, etc.
+    //    2. A single query for multiple combinations of the metadata, such as
+    //       querying for all of them, or a subset of them, all at once with a
+    //       single query statement.
+    // There is support in the bluetooth command set for both of those
+    // methods, the code below will respond successfully to both of them.
     //
-    // Note: The attribute parameters need to be surrounded by quote characters.
-    // The code below is where I bake them in. Theoretically, by the time the metadata
-    // strings reach this point, I have already stripped quote characters (if any) in the
-    // track metadata, so that when I bake the quotes into the responses below, then
-    // there is not a parsing problem on the host end. 
+    // Note: The attribute parameters need to be surrounded by quote
+    // characters. The code below is where I bake them in. Theoretically, by
+    // the time the metadata strings reach this point, I have already stripped
+    // quote characters (if any) in the track metadata, so that when I bake
+    // the quotes into the responses below, then there is not a parsing
+    // problem on the host end.
 
-    // Obtain the first numeric group from the string to determine how
-    // many elements we have to return in our response. For example in 
-    // "GET_ELEMENT_ATTRIBUTES 02 04 05" we are looking for the "02"
-    // which would indicate that we need to return two elements.
+    // Obtain the first numeric group from the string to determine how many
+    // elements we have to return in our response. For example in
+    // "GET_ELEMENT_ATTRIBUTES 02 04 05" we are looking for the "02" which
+    // would indicate that we need to return two elements.
     //
     // First find the start position, which is the end of the
     // "GET_ELEMENT_ATTRIBUTES " including the space, which is 23 characters:
@@ -2470,8 +2480,9 @@ void RespondToQueries(String &queryString)
     // Turn it into an integer variable:
     numberOfElements = queryString.substring(elementsStartSelectPosition, elementsEndSelectPosition).toInt();
 
-    // If the number is an unexpected size, we have a parsing error so bail out.
-    // We only know how to parse elements numbered 1 through 7 so 7 is the max.
+    // If the number is an unexpected size, we have a parsing error so bail
+    // out. We only know how to parse elements numbered 1 through 7 so 7 is
+    // the max.
     if (numberOfElements < 1) {return;}
     if (numberOfElements > 7) {return;}
 
@@ -2481,23 +2492,22 @@ void RespondToQueries(String &queryString)
     // Add the number of elements to the response string
     queryResponseString += String(numberOfElements);
 
-    // Loop through all elements and query for each element ID
-    // and build a completed response string out of them.
+    // Loop through all elements and query for each element ID and build a
+    // completed response string out of them.
     for (int i=1; i<=numberOfElements; i++)
     {
-      // Zero out the element code so that each time through the loop
-      // we know that we will be getting a proper element code since
-      // the value must be in the range of 1 through 7 if we parsed
-      // it correctly.
+      // Zero out the element code so that each time through the loop we know
+      // that we will be getting a proper element code since the value must be
+      // in the range of 1 through 7 if we parsed it correctly.
       currentElementCode = 0;
 
-      // Start by finding the prior spot in the string where we had
-      // finished our selection and interpretation of the number. If this
-      // is the first time through the loop, this will be the string
-      // position immediately folloing the space after the number of
-      // elements. If this is a subsequent time through the loop,
-      // then this will be the string position immediately following
-      // the space after the prior element code number.
+      // Start by finding the prior spot in the string where we had finished
+      // our selection and interpretation of the number. If this is the first
+      // time through the loop, this will be the string position immediately
+      // folloing the space after the number of elements. If this is a
+      // subsequent time through the loop, then this will be the string
+      // position immediately following the space after the prior element code
+      // number.
       elementsStartSelectPosition = elementsEndSelectPosition + 1;
 
       // Now find the next trailing space if there is one. 
@@ -2509,7 +2519,8 @@ void RespondToQueries(String &queryString)
         // Debugging output.
         // Log("Element code string was not followed by a space: *" + queryString.substring(elementsStartSelectPosition) + "*");
 
-        // Parse the current element code out to the end of the string because we didn't find a space
+        // Parse the current element code out to the end of the string because
+        // we didn't find a space
         currentElementCode = queryString.substring(elementsStartSelectPosition).toInt();
       }
       else
@@ -2517,16 +2528,16 @@ void RespondToQueries(String &queryString)
         // Debugging output.
         // Log("Element code string was followed by a space: *" + queryString.substring(elementsStartSelectPosition, elementsEndSelectPosition) + "*");
 
-        // Parse the current element code out to the position of the space we found because we found a space
+        // Parse the current element code out to the position of the space we
+        // found because we found a space
         currentElementCode = queryString.substring(elementsStartSelectPosition, elementsEndSelectPosition).toInt();
       }
 
       // Add the element code to the response string with spaces around it.
       queryResponseString += " " + String(currentElementCode) + " ";
 
-      // Add the text of the element itself to the response string,
-      // based on the current codenumber for which elements were
-      // queried for.
+      // Add the text of the element itself to the response string, based on
+      // the current codenumber for which elements were queried for.
       switch (currentElementCode)
       {
         case 1:
@@ -2582,16 +2593,16 @@ void RespondToQueries(String &queryString)
 // ---------------------------------------------------------------------------
 // ForceQuickReconnect
 //
-// Quickly disconnect and reconnect to the currently-connected host stereo
-// to work around an issue. The issue is that my car stereo starts asking
+// Quickly disconnect and reconnect to the currently-connected host stereo to
+// work around an issue. The issue is that my car stereo starts asking
 // questions that I don't know how to answer, and when this happens, I can
 // always solve the problem by disconnecting and reconnecting. The questions
 // that it is asking is that it's doing PDU_REGISTER_NOTIFICATION for events
 // which are not well documented in the BlueGiga iWrap command language docs.
-// Any response I attempt to give for these event registrations results in 
-// a SYNTAX ERROR from iWrap. I have found that these only occur on the first
-// connection after powerup, and that if I disconnect and reconnect then
-// after that I stop being asked for these registrations. 
+// Any response I attempt to give for these event registrations results in a
+// SYNTAX ERROR from iWrap. I have found that these only occur on the first
+// connection after powerup, and that if I disconnect and reconnect then after
+// that I stop being asked for these registrations.
 //
 // Note 1: This routine assumes that the blueooth chip is connected to the
 // host stereo at the time that this function is called.
@@ -2605,8 +2616,8 @@ void RespondToQueries(String &queryString)
 // ---------------------------------------------------------------------------
 void ForceQuickReconnect()
 {
-  // Check to see if we're already trying to force a reconnect. If we are
-  // then don't try to do it twice (protect against reentrant code).
+  // Check to see if we're already trying to force a reconnect. If we are then
+  // don't try to do it twice (protect against reentrant code).
   if (forceQuickReconnectMode)
   {
     Log(F("Already in the process of trying to force a quick reconnect. Not doing it again."));
@@ -2621,21 +2632,22 @@ void ForceQuickReconnect()
   SendBlueGigaCommand(autoReconnectString);
 
   // UPDATE: After a lot of work for doing a truly quick reconnect version,
-  // and for all the bugs it exposed and that I subsequently had to fix,
-  // and finally when I got the thing working with expected behavior...
-  // ... ... ... It didn't fix the issue. The quick reconnect does not
-  // properly solve the problem. What happens is that when the stereo
-  // reconnects, though it is a successful quick reconnect, it comes up
-  // in a mode where all of the AVRCP commands have stopped working
-  // altogether and there are no more track title updates or steering
-  // wheel control commands. So we have to just go back to our original
-  // plan of forcing a full reset of the bluetooth module in this case.
+  // and for all the bugs it exposed and that I subsequently had to fix, and
+  // finally when I got the thing working with expected behavior... ... ... It
+  // didn't fix the issue. The quick reconnect does not properly solve the
+  // problem. What happens is that when the stereo reconnects, though it is a
+  // successful quick reconnect, it comes up in a mode where all of the AVRCP
+  // commands have stopped working altogether and there are no more track
+  // title updates or steering wheel control commands. So we have to just go
+  // back to our original plan of forcing a full reset of the bluetooth module
+  // in this case.
   //
   Log(F("ForceQuickReconnect: Resetting/rebooting bluetooth module."));
   QuickResetBluetooth(0);
 
-  // Indented below is all of the code from the speedy version of the reconnect.
-  // Keeping it around for posterity and because it offers some insights.
+  // Indented below is all of the code from the speedy version of the
+  // reconnect. Keeping it around for posterity and because it offers some
+  // insights.
 
                 // // First, let us obtain the address of the current pairing buddy. This
                 // // point in the code assumes we HAVE a current pairing buddy. Send
@@ -2714,10 +2726,9 @@ void ForceQuickReconnect()
 // DisplayAndSwallowResponses
 //
 // For either a set amount of time, and/or a set amount of response messages,
-// whichever occurs first, display all responses received from the bluetooth 
-// chip onto the Arduino debug port and then do nothing about them: do not
-// try to process the strings or execute any commands for that period of
-// time.
+// whichever occurs first, display all responses received from the bluetooth
+// chip onto the Arduino debug port and then do nothing about them: do not try
+// to process the strings or execute any commands for that period of time.
 //
 // Parameters:
 // - The number of possible response messages to swallow.
@@ -2725,27 +2736,30 @@ void ForceQuickReconnect()
 // 
 // Note:
 // The max total wait time will be the first parameter times the second
-// parameter, if no messsages are received. If any message is received,
-// then the wait shortens by that portion of the wait loop.
+// parameter, if no messsages are received. If any message is received, then
+// the wait shortens by that portion of the wait loop.
 // ---------------------------------------------------------------------------
 void DisplayAndSwallowResponses(int numResponsesToSwallow, unsigned long waitTimePerResponseMs)
 { 
   // Character to be read from the serial port and then discarded
   static char swallowChar = 0;
 
-  // Variable to be used for measuring how long each loop was waited for in milliseconds
+  // Variable to be used for measuring how long each loop was waited for in
+  // milliseconds
   unsigned long startingDnsMillis = 0;
 
   // Variable that will gather the string we'll be logging but ignoring.
   String btSwallowInputString;
 
-  // Clean out our line by line display string at the moment we enter this function.
+  // Clean out our line by line display string at the moment we enter this
+  // function.
   btSwallowInputString = "";
 
   // Wait for response characters.
   for (int m=0; m < numResponsesToSwallow; m++) // swallow up to this many individually-lined messages.
   {
-    // Obtain the current time on the clock where we are beginning a wait to swallow responses.  
+    // Obtain the current time on the clock where we are beginning a wait to
+    // swallow responses.
     startingDnsMillis = millis();
 
     // Loop and retreive characters as long as the clock hasn't run out
@@ -2754,7 +2768,8 @@ void DisplayAndSwallowResponses(int numResponsesToSwallow, unsigned long waitTim
       // Clear out the character that we will be retreiving.
       swallowChar = 0;
 
-      // Check to see if a character is available on the serial port and then swallow it.
+      // Check to see if a character is available on the serial port and then
+      // swallow it.
       if (BlueGigaSerial)
       {
         if (BlueGigaSerial.available())
@@ -2781,8 +2796,8 @@ void DisplayAndSwallowResponses(int numResponsesToSwallow, unsigned long waitTim
           // on" for longer that anticipated.
           BlinkBlue(false);
 
-          // Check to see if it's a linefeed or if the length of the
-          // string is too large to hold, either way we consider the string
+          // Check to see if it's a linefeed or if the length of the string is
+          // too large to hold, either way we consider the string
           if (swallowChar == '\n' || (btSwallowInputString.length() >= (btSwallowInputStringMaxLength - 2)))
           {
             if (logLineByLine)
@@ -2797,17 +2812,19 @@ void DisplayAndSwallowResponses(int numResponsesToSwallow, unsigned long waitTim
             // Clean out our string for the next round of logging the next string.
             btSwallowInputString = "";
 
-            // If the character was a line ending, then break out of just the inner timed loop
-            // and move on to the outer loop (the next individually- lined message to wait for).
+            // If the character was a line ending, then break out of just the
+            // inner timed loop and move on to the outer loop (the next
+            // individually-lined message to wait for).
             break;
           }
         }
       }
     }
     while ((millis() - startingDnsMillis) <= waitTimePerResponseMs);
-    // Each loop waits for a certain amount of time. Current milliseconds on the clock, minus
-    // the timestamp that we started each loop, gives us how long we've been in the loop so far.
-    // Check to see if it's still less than our overall wait time, and if not, finish the loop.
+    // Each loop waits for a certain amount of time. Current milliseconds on
+    // the clock, minus the timestamp that we started each loop, gives us how
+    // long we've been in the loop so far. Check to see if it's still less
+    // than our overall wait time, and if not, finish the loop.
   }
 }
 
@@ -2817,67 +2834,69 @@ void DisplayAndSwallowResponses(int numResponsesToSwallow, unsigned long waitTim
 //
 // Set the metadata for the currently playing track in memory so that it can
 // be responded to as soon as the host queries for this information.
-// 
-// Parameters:
-// stringToParse: The string to parse from the empeg, such as "TRed Barchetta"
-// or "ARush" or "GProgressive Rock".
-// empegMessageCode: The single character of the message code from the
-// empeg which preceded the string to pars such as "G" or "T" or whatever.
 //
-// Track data coming from the empeg will look something like this by the
-// time it reaches this routine (the single letter is the empegMessageCode and
-// the string following the letter is the stringToParse):
+// Parameters:
+//
+// stringToParse: The string to parse from the empeg, such as "TRed Barchetta"
+//                or "ARush" or "GProgressive Rock".
+//
+// empegMessageCode: The single character of the message code from the
+//                   empeg which preceded the string to pars such as "G" or
+//                   "T" or whatever.
+//
+// Track data coming from the empeg will look something like this by the time
+// it reaches this routine (the single letter is the empegMessageCode and the
+// string following the letter is the stringToParse):
 //
 //  N  <tracknumber, actually playlist position, starts at zero>
 //  Z  <album name, added by Mark Lord in recent hijack versions>
-//  D  <track duration in milliseconds, added by Mark Lord in recent hijack versions>
+//  D  <track duration in milliseconds, added in recent hijack versions>
 //  T  <track title>
 //  A  <artist>
 //  G  <genre>  
 // ---------------------------------------------------------------------------
-void SetTrackMetaData(char empegMessageCode, String &stringToParse)     // TEMPORARY: Partial Bugfix for Issue #25: Pass this by reference to work around memory bug.
+void SetTrackMetaData(char empegMessageCode, String &stringToParse)  // Pass by reference to work around memory bug #25.
 {
-  // Debug logging for issue #25 - String became blank only after passing into this function:
+  // Debug logging for issue #25
   // Log(F("stringToParse:"));
   // Log(stringToParse); 
   // Log(F(":stringToParse"));
 
-  // Pre-strip doublequote characters out of the track data because
-  // our messages to the bluetooth chip need doublequote characters
-  // as delimiters when we send metadata up to the host stereo.
-  // Silicon Labs support says there is no more elegant way to do
-  // this: Repacing doublequote with two single quotes is the best
-  // way so far. It actually looks really good on my car stereo
-  // touchscreen display so I am sticking with this for now.
+  // Pre-strip doublequote characters out of the track data because our
+  // messages to the bluetooth chip need doublequote characters as delimiters
+  // when we send metadata up to the host stereo. Silicon Labs support says
+  // there is no more elegant way to do this: Repacing doublequote with two
+  // single quotes is the best way so far. It actually looks really good on my
+  // car stereo touchscreen display so I am sticking with this for now.
   stringToParse.replace(F("\""), F("''"));
 
-  // Pre-strip single quote characters too, I believe I ran into a
-  // problem with this track title by The Police:
+  // Pre-strip single quote characters too, I believe I ran into a problem
+  // with this track title by The Police:
   //     Hungry for You (J'aurais Toujours Faim de Toi)
-  // UPDATE: This turns out to not actually be required at all. The
-  // issue I had with that particular song title was a serial buffer
-  // problem and unrelated to the single quote. Do not do this.
+  // UPDATE: This turns out to not actually be required at all. The issue I
+  // had with that particular song title was a serial buffer problem and
+  // unrelated to the single quote. Do not do this.
   //         stringToParse.replace(F("'"), F("`"));
 
-  // Make sure string is trimmed of white space and line breaks
-  // UPDATE: Not trimming since there was an earlier step which
-  // does this already before even calling this routine.
+  // Make sure string is trimmed of white space and line breaks UPDATE: Not
+  // trimming since there was an earlier step which does this already before
+  // even calling this routine.
   // stringToParse.trim();
 
-  // Now set the desired metadata based on the values we passed in.
-  // This routine only gets one line at a time so we only need to
-  // process one of them each time and then return.
+  // Now set the desired metadata based on the values we passed in. This
+  // routine only gets one line at a time so we only need to process one of
+  // them each time and then return.
 
-  // Track Number. Actually this isn't really the track
-  // number, it's the playlist position in the current
-  // running order, but hey, we work with what we've got.
+  // Track Number. Actually this isn't really the track number, it's the
+  // playlist position in the current running order, but hey, we work with
+  // what we've got.
   if (empegMessageCode == 'N')
   {
-    // Track number from the serial port is a zero-based index
-    // so the first track in a playlist is reported as "0" on
-    // the serial port. This disagrees with the empeg display
-    // screen which shows "1" for the first track in a playlist.
-    // so increase this number by 1 each time we parse it.
+    // Track number from the serial port is a zero-based index so the first
+    // track in a playlist is reported as "0" on the serial port. This
+    // disagrees with the empeg display screen which shows "1" for the first
+    // track in a playlist. so increase this number by 1 each time we parse
+    // it.
     trackNumberString04 = String(stringToParse.toInt()+1);  // Set value increased by 1.
     if (displayTracksOnSerial)
     {
@@ -2904,10 +2923,10 @@ void SetTrackMetaData(char empegMessageCode, String &stringToParse)     // TEMPO
     return;
   }
 
-  // Track Duration in milliseconds, but presented to us as a string.
-  // Added by Mark Lord in a recent version of Hijack.
-  // We don't need to do math on this, we just need to turn it around
-  // and send it right back up the bluetooth as a string as-is.
+  // Track Duration in milliseconds, but presented to us as a string. Added by
+  // Mark Lord in a recent version of Hijack. We don't need to do math on
+  // this, we just need to turn it around and send it right back up the
+  // bluetooth as a string as-is.
   if (empegMessageCode == 'D')
   {
     trackPlaybackLengthString = stringToParse;
@@ -2972,14 +2991,14 @@ void SetTrackMetaData(char empegMessageCode, String &stringToParse)     // TEMPO
 // Fix track metadata strings which contain High ASCII characters and replace
 // them with UTF-8 characters.
 // 
-// My empeg's track/artist/album fields contained High Ascii characters such as
-// the "Ö" in "Blue Öyster Cult". These appear as a "unrecognized symbol" on my
-// car stereo's LCD touchscreen UI. This function translates those symbols into
-// UTF-8 characters, which are then accepted and displayed correctly on the car
-// stereo's LCD touchscreen interface.
+// My empeg's track/artist/album fields contained High Ascii characters such
+// as the "Ö" in "Blue Öyster Cult". These appear as a "unrecognized symbol"
+// on my car stereo's LCD touchscreen UI. This function translates those
+// symbols into UTF-8 characters, which are then accepted and displayed
+// correctly on the car stereo's LCD touchscreen interface.
 //
-// NOTE: If your empeg's track/artist/album fields are already in UTF-8,
-// then disable this function by changing this global variable at the top of this
+// NOTE: If your empeg's track/artist/album fields are already in UTF-8, then
+// disable this function by changing this global variable at the top of this
 // program to "false":
 //
 //    boolean PerformUtf8Conversion = false;
@@ -2996,8 +3015,8 @@ void SetTrackMetaData(char empegMessageCode, String &stringToParse)     // TEMPO
 String ReplaceHighAsciiWithUtf8(String &stringToMakeUtf8Char)
 {
   // Check to see if we are even supposed to perform this conversion at all.
-  // Look at the global variable, and if it's false, return the same string
-  // as input, with no conversion.
+  // Look at the global variable, and if it's false, return the same string as
+  // input, with no conversion.
   if (PerformUtf8Conversion == false)
   {
     return stringToMakeUtf8Char;
@@ -3006,19 +3025,18 @@ String ReplaceHighAsciiWithUtf8(String &stringToMakeUtf8Char)
   // Debug/profiling logging.
   // Log(F("--UTF-8 Conversion Start."));
 
-  // Set a static variable to keep track of the character we
-  // are pulling out of the string to analyze. Do this as a
-  // "byte" instead of a "char" to make our calculations look
-  // more straightforward, because a "byte" is unsigned 0-255
-  // while a "char" is signed -127 to +127.
+  // Set a static variable to keep track of the character we are pulling out
+  // of the string to analyze. Do this as a "byte" instead of a "char" to make
+  // our calculations look more straightforward, because a "byte" is unsigned
+  // 0-255 while a "char" is signed -127 to +127.
   static byte oneStringChar = 0;
 
-  // Create string that we will be using to return from this function.
-  // Make sure it starts out empty.
+  // Create string that we will be using to return from this function. Make
+  // sure it starts out empty.
   String utf8ReturnString = "";
 
-  // Loop through each character in the string and convert it
-  // to UTF-8, adding it back into the return string as we go.
+  // Loop through each character in the string and convert it to UTF-8, adding
+  // it back into the return string as we go.
   for (int loopVar=0; loopVar < stringToMakeUtf8Char.length(); loopVar++)
   {
     // Get the character found at that position of the input string.
@@ -3027,24 +3045,26 @@ String ReplaceHighAsciiWithUtf8(String &stringToMakeUtf8Char)
     // Low ASCII values, i.e. 0-127, are the same in UTF-8 and ASCII.
     if ((oneStringChar >= 0) && (oneStringChar <= 127))
     {
-      // If the character is not high ASCII, then
-      // just add the character straight back into the
-      // return string with no changes.
+      // If the character is not high ASCII, then just add the character
+      // straight back into the return string with no changes.
       utf8ReturnString += char(oneStringChar);
     }
     
-    // High ASCII values 128 through 191 are the same as ASCII but preceded by a hex C2 byte.
+    // High ASCII values 128 through 191 are the same as ASCII but preceded by
+    // a hex C2 byte.
     if ((oneStringChar >= 128) && (oneStringChar <= 191))
     {
       // Debugging output, disable in final release version
       //   Log(F("--------------------- UTF-8 0xC2 conversion. -----------------------"));
 
-      // Insert a hex C2 byte before inserting the same character as the original input string in this position.
+      // Insert a hex C2 byte before inserting the same character as the
+      // original input string in this position.
       utf8ReturnString += char(0xC2);
       utf8ReturnString += char(oneStringChar);
     }
     
-    // High ASCII values 192 through 255 are preceded by a hex C3 byte and the character value is different by a fixed amount.
+    // High ASCII values 192 through 255 are preceded by a hex C3 byte and the
+    // character value is different by a fixed amount.
     if ((oneStringChar >= 192) && (oneStringChar <= 255))
     {
       // Debugging output, disable in final release version
@@ -3053,7 +3073,8 @@ String ReplaceHighAsciiWithUtf8(String &stringToMakeUtf8Char)
       // Insert a hex C3 byte first.
       utf8ReturnString += char(0xC3);
       
-      // Modify the original character to be 64 (0x40) less than it was before (0xC0 becomes 0x80 for example). 
+      // Modify the original character to be 64 (0x40) less than it was before
+      // (0xC0 becomes 0x80 for example).
       utf8ReturnString += char(oneStringChar - 64);
     }
   }
@@ -3068,26 +3089,25 @@ String ReplaceHighAsciiWithUtf8(String &stringToMakeUtf8Char)
 // ---------------------------------------------------------------------------
 // SendEmpegCommand
 //
-// Send a command to the empeg serial port to make the empeg do a desired behavior
-// such as N\n for next track, P\n for previous track, W\n for pause, etc.
+// Send a command to the empeg serial port to make the empeg do a desired
+// behavior such as N\n for next track, P\n for previous track, W\n for pause,
+// etc.
 //
 // Parameters:
 // - The command string to send, without the linefeed. Linefeed will be added.
 // ---------------------------------------------------------------------------
 void SendEmpegCommand(char empegCommandToSend)
 {
-  // Set the empeg's state variable based on the command we will send.
-  // Ideally we would always let the empeg tell us what state it's in
-  // and never change this state ourselves. However there is a special
-  // case which needs this. It is the case when the player state quickly
-  // switches from play to pause or vice versa and the host stereo
-  // queries for the play status. Sometimes the host stereo queries
-  // for the status only once and it does it too quickly before the
-  // empeg has a chance to tell us what its state is. So the response
-  // to the host stereo's playback status query can be the wrong value.
-  // so when we send a pause or a play to the empeg we quickly set
-  // is state here so that we can respond correctly to the query
-  // when it comes.
+  // Set the empeg's state variable based on the command we will send. Ideally
+  // we would always let the empeg tell us what state it's in and never change
+  // this state ourselves. However there is a special case which needs this.
+  // It is the case when the player state quickly switches from play to pause
+  // or vice versa and the host stereo queries for the play status. Sometimes
+  // the host stereo queries for the status only once and it does it too
+  // quickly before the empeg has a chance to tell us what its state is. So
+  // the response to the host stereo's playback status query can be the wrong
+  // value. so when we send a pause or a play to the empeg we quickly set is
+  // state here so that we can respond correctly to the query when it comes.
   if (empegCommandToSend == 'W')
   {
     // Only change the empeg player state if the empeg player is listening.
@@ -3096,10 +3116,6 @@ void SendEmpegCommand(char empegCommandToSend)
       // Set the empeg state variable to "paused"
       empegIsPlaying = false;
     }
-    // Send a certain group of messages when our play state changes.
-    // EXPERIMENTAL: Try to make output clearer by doing the handle
-    // state change AFTER having send the command (or not), below.
-    //    HandleEmpegStateChange();
   }
   if (empegCommandToSend == 'C')
   {
@@ -3109,16 +3125,11 @@ void SendEmpegCommand(char empegCommandToSend)
       // Set the empeg state variable to "playing"
       empegIsPlaying = true;
     }
-
-    // Send a certain group of messages when our play state changes.
-    // EXPERIMENTAL: Try to make output clearer by doing the handle
-    // state change AFTER having send the command (or not), below.
-    //     HandleEmpegStateChange();
   }
 
   // Only bother to send commads if we believe the empeg has finished booting
-  // up and we think we will be successful at sending the command. If not,
-  // log the failure.
+  // up and we think we will be successful at sending the command. If not, log
+  // the failure.
   if (!empegPlayerIsRunning)
   {
     Log("Unable to send command to empeg, the empeg player application is not yet running: " + (String)empegCommandToSend);
@@ -3136,15 +3147,14 @@ void SendEmpegCommand(char empegCommandToSend)
       EmpegSerial.write('\n');
     }
 
-    // EXPERIMENTAL: Handle and log whatever state changes we did AFTER we
-    // sent the command (or not) to the empeg player.
-    // EXPERIMENT STEP TWO: Try not doing this at all just because we told
-    // the player to change tracks. Instead let's see what happens if we only
-    // trigger this when the player responds with new/changed information
-    // about its state (ie do this elswhere). This fixes GitHub issue #38,
-    // "Track number changes before the other metadata.". Time will tell if
-    // this has other repercussions that are unwanted. Initial testing looks good.
+    // Handle and log whatever state changes we did AFTER we sent the command
+    // (or not) to the empeg player.
     //     HandleEmpegStateChange();
+    // Bugfix: Actually don't this at all just because we told the player to
+    // change tracks. Instead only trigger this when the player responds with
+    // new/changed information about its state (ie do this elswhere). This
+    // fixes GitHub issue #38, "Track number changes before the other
+    // metadata.".
   }
 }
 
@@ -3152,9 +3162,9 @@ void SendEmpegCommand(char empegCommandToSend)
 // ---------------------------------------------------------------------------
 // HandleEmpegString
 // 
-// Function to process the string data received from the empeg car serial port.
-// Locate strings which look like notifications of track data and turn those
-// into variables for later sending up the bluetooth.
+// Function to process the string data received from the empeg car serial
+// port. Locate strings which look like notifications of track data and turn
+// those into variables for later sending up the bluetooth.
 // ---------------------------------------------------------------------------
 void HandleEmpegString(String &theString)
 {
@@ -3170,14 +3180,14 @@ void HandleEmpegString(String &theString)
   static long empegMs = 0;
   static bool foundEmpegMessageCode = false;
 
-  // Lists of characters we will be searching for as our
-  // empeg message code strings. The track metadata codes
-  // look like this, and they always appear in a group with
-  // the Genre at the end as the last one in the group.
+  // Lists of characters we will be searching for as our empeg message code
+  // strings. The track metadata codes look like this, and they always appear
+  // in a group with the Genre at the end as the last one in the group.
   //
-  // UPDATE: With later Hijack versions and a "suppress_notify=2" in its config.ini,
-  // these have been significantly shortened to remove the "serial_notify_thread.cpp",
-  // the number and the colon, so the strings start at the @@ signs.
+  // UPDATE: With later Hijack versions and a "suppress_notify=2" in its
+  // config.ini, these have been significantly shortened to remove the
+  // "serial_notify_thread.cpp", the number and the colon, so the strings
+  // start at the @@ signs.
   //
   // serial_notify_thread.cpp: 116:@@ N<tracknumber, actually playlist position, starts at zero>
   // serial_notify_thread.cpp: 117:@@ F<fid> (we don't care about this one and will not process it)
@@ -3190,10 +3200,9 @@ void HandleEmpegString(String &theString)
   static char empegMessageCodeTrackDataList[6]  = { 'N', 'Z', 'D', 'T', 'A', 'G',};
   static int empegMessageCodeTrackDataListLen = 6;
 
-  // In addition there will also be a few other messages
-  // from the serial port we care about. We will keep these
-  // as part of a larger list for general pre-check processing
-  // to make sure we found any codes at all in the list.
+  // In addition there will also be a few other messages from the serial port
+  // we care about. We will keep these as part of a larger list for general
+  // pre-check processing to make sure we found any codes at all in the list.
   //
   // serial_notify_thread.cpp: 170:@@ S1    <single digit code for track playback status - 0=paused 1=playing>
   // serial_notify_thread.cpp: 180:@@ #4830  0:00:00   <timestamp of current playback position preceded by FID number>
@@ -3203,7 +3212,8 @@ void HandleEmpegString(String &theString)
   static char empegMessageCodeList[9]  = { 'N', 'Z', 'D', 'T', 'A', 'G', 'S', '#', 'R', };
   static int empegMessageCodeListLen = 9;
 
-  // Start this routine by setting our static variables to blank state for later retrieval.
+  // Start this routine by setting our static variables to blank state for
+  // later retrieval.
   foundEmpegMessageCode = false;
   empegDetailString = "";
   empegTimecodeString = "";
@@ -3215,9 +3225,10 @@ void HandleEmpegString(String &theString)
   empegSeconds = -1;
   empegMs = 0;
 
-  // If the string indicates that the empeg player application is just booting up,
-  // then turn off our ability to send things to it so that we don't confuse our
-  // playing state too much. Trigger on a few different strings found in bootup.
+  // If the string indicates that the empeg player application is just booting
+  // up, then turn off our ability to send things to it so that we don't
+  // confuse our playing state too much. Trigger on a few different strings
+  // found in bootup.
   if (theString.startsWith(F("empeg-car bootstrap")))
   {
     Log(F("--------------------------------------"));
@@ -3237,12 +3248,13 @@ void HandleEmpegString(String &theString)
     empegIsPlaying = false;
   }
 
-
-  // If the string is our string which indicates the empeg player has started...
+  // If the string is our string which indicates the empeg player has
+  // started...
   if (theString.startsWith(F("Prolux 4 empeg car ")))
   {
-    // If the empeg player application is running, set our global variable to indicate that
-    // it is running so that we do the correct behavior and detect the correct states 
+    // If the empeg player application is running, set our global variable to
+    // indicate that it is running so that we do the correct behavior and
+    // detect the correct states
     if (!empegPlayerIsRunning)
     {
       Log(F("-------------------------------------"));
@@ -3251,18 +3263,23 @@ void HandleEmpegString(String &theString)
       empegPlayerIsRunning = true;
     }
 
-    // Behavior controlled by "empegStartPause" flag: If we get an empeg startup message,
-    // indicating that its boot sequence is done and the player app has started, then send a
-    // pause command to the player as an attempt to help prevent too much lost time in songs
-    // at the startup of your car. 
+    // Behavior controlled by "empegStartPause" flag: If we get an empeg
+    // startup message, indicating that its boot sequence is done and the
+    // player app has started, then send a pause command to the player as an
+    // attempt to help prevent too much lost time in songs at the startup of
+    // your car.
     // 
     // Notes on this procedure: 
-    // - Might cause player to come up and be in "pause" mode if the bluetooth pairup speed
-    //   beats the empeg bootup speed. In my car, the bluetooth pairup is always slower than
-    //   the empeg bootup, but for some other devices like bluetooth headsets this might win.
-    // - Currently using the Prolux Visuals message as the way of finding the startup of the
-    //   player because the "Starting player" message is a little iffy and not always detected
-    //   by this routine. Not sure why but it didn't always work when I tried it.
+    //
+    //  Might cause player to come up and be in "pause" mode if the bluetooth
+    //  pairup speed  beats the empeg bootup speed. In my car, the bluetooth
+    //  pairup is always slower than  the empeg bootup, but for some other
+    //  devices like bluetooth headsets this might win.
+    //
+    //  Currently using the Prolux Visuals message as the way of finding the
+    //  startup of the  player because the "Starting player" message is a
+    //  little iffy and not always detected  by this routine. Not sure why but
+    //  it didn't always work when I tried it.
     //
     if (empegStartPause)
     {
@@ -3271,25 +3288,26 @@ void HandleEmpegString(String &theString)
     }
   }
   
-  // Look for the string position of our trigger phrase in
-  // the text of the string we received from the empeg.
-  // Example of string we might see would be
+  // Look for the string position of our trigger phrase in the text of the
+  // string we received from the empeg. Example of string we might see would
+  // be:
   //     "  serial_notify_thread.cpp: 170:@@ S0"
   empegMessageCodeStartPos = theString.indexOf(F("@@ "));
 
   // Check to see if the trigger phrase was found.
   if (!(empegMessageCodeStartPos > -1))
   {
-    // If the string from the empeg doesn't contain our trigger
-    // phrase, then ignore it and return from our subroutine.    
+    // If the string from the empeg doesn't contain our trigger phrase, then
+    // ignore it and return from our subroutine.
     return;
   }
   else
   {
-    // Any receipt of the trigger phrase message means that the player application
-    // has started (maybe we missed the first player startup message or something) so in this
-    // case we also want to set our global variable to indicate that the player application
-    // is running so that we do the correct behavior and detect the correct states.
+    // Any receipt of the trigger phrase message means that the player
+    // application has started (maybe we missed the first player startup
+    // message or something) so in this case we also want to set our global
+    // variable to indicate that the player application is running so that we
+    // do the correct behavior and detect the correct states.
     if (!empegPlayerIsRunning)
     {
       Log(F("-------------------------------------"));
@@ -3305,12 +3323,14 @@ void HandleEmpegString(String &theString)
     // empegDetailString now contains everything after the trigger phrase.
     // Example: if theString started as:    "  serial_notify_thread.cpp: 170:@@ S0"
     // then empegDetailString is now:       "S0"
-    // This will also work if we are using a recent version of Mark Lord's Hijack
-    // which deliberately shortens these strings down before we get them, so that the
-    // string above might have started as "@@ S0" too. This should work for both formats.
+    // This will also work if we are using a recent version of Mark Lord's
+    // Hijack which deliberately shortens these strings down before we get
+    // them, so that the string above might have started as "@@ S0" too. This
+    // should work for both formats.
 
-    // At this point it possibly still contains a carriage return or line feed at the end,
-    // so perform a trim on it (in-place trim of string) to clean whitespace and CR/LFs.
+    // At this point it possibly still contains a carriage return or line feed
+    // at the end, so perform a trim on it (in-place trim of string) to clean
+    // whitespace and CR/LFs.
     empegDetailString.trim();
 
     // Now obtain the message code as a single character following the space
@@ -3320,116 +3340,119 @@ void HandleEmpegString(String &theString)
     empegMessageCode = empegDetailString.charAt(0);
     if (empegMessageCode == ' ')
     {
-      // If no string was retrieved then there is something
-      // wrong and we do not have a coded string. Perhaps it
-      // was a mangled piece of data with our trigger phrase
-      // at the end of the string. Bail out of the routine.
-      //   Log("Message code flag NOT found, empty string.");
+      // If no string was retrieved then there is something wrong and we do
+      // not have a coded string. Perhaps it was a mangled piece of data with
+      // our trigger phrase at the end of the string. Bail out of the routine.
+      //    Log("Message code flag NOT found, empty string.");
       return;
     }
 
-    // If we found a character, then log it and check it
-    // to see if it's what we want, if it's in the list.
+    // If we found a character, then log it and check it to see if it's what
+    // we want, if it's in the list.
     //  Log("Message code flag being tested for acceptance: " + empegMessageCode);
 
-    // Precheck to make sure that we really got one of the
-    // message codes that we were hoping for. It should
-    // match one of the strings in this list if it is.
+    // Precheck to make sure that we really got one of the message codes that
+    // we were hoping for. It should match one of the strings in this list if
+    // it is.
     for (int m=0; m < empegMessageCodeListLen; m++)
     {
       // Check to see if the code is in our list of acceptable codes
       if (empegMessageCode == empegMessageCodeList[m])
       {
-        // Code was found, flag it, log it, and break out of the
-        // FOR loop completely because we don't need to check any more.
+        // Code was found, flag it, log it, and break out of the FOR loop
+        // completely because we don't need to check any more.
         //   Log("Valid empeg message code flag found: " + empegMessageCode);
         foundEmpegMessageCode = true;
         break;
       }
     }
 
-    // If we didn't find a code we were looking for, then
-    // we can bail out of this routine right now.
+    // If we didn't find a code we were looking for, then we can bail out of
+    // this routine right now.
     if (!foundEmpegMessageCode)
     {
       //  Log(F("Valid empeg message code flag was not found. Exiting routine."));
       return;
     }
 
-    // And then now that we're done getting a good message code, let's shorten the detail
-    // string even more by stripping out the message code and leaving just the paramter
-    // data after the message code. The "substring" function has a zero-based index, so
-    // setting the start parameter of 1 means starting at the second character. And leaving
-    // the ending parameter blank means go to the end of the string. So in this case, if
-    // the detail string got here as, say, "ZCelery Stalks at Midnight" then the resulting
-    // string would now be "Celery Stalks at Midnight".
+    // And then now that we're done getting a good message code, let's shorten
+    // the detail string even more by stripping out the message code and
+    // leaving just the paramter data after the message code. The "substring"
+    // function has a zero-based index, so setting the start parameter of 1
+    // means starting at the second character. And leaving the ending
+    // parameter blank means go to the end of the string. So in this case, if
+    // the detail string got here as, say, "ZCelery Stalks at Midnight" then
+    // the resulting string would now be "Celery Stalks at Midnight".
     empegDetailString = empegDetailString.substring(1); 
 
     // Debugging only: Log what we parsed
     //   Log("empegDetailString: " + empegDetailString); 
   }
 
-  // If we received any track metadata from the empeg, specifically,
-  // if it's one of the ones that comes all in a group at once, such
-  // as the track title and artist and such, set that data.
+  // If we received any track metadata from the empeg, specifically, if it's
+  // one of the ones that comes all in a group at once, such as the track
+  // title and artist and such, set that data.
   for (int m=0; m < empegMessageCodeTrackDataListLen; m++)
   {
     if (empegMessageCode == empegMessageCodeTrackDataList[m])
     {
-      // Found one. Call the routine to parse and set the track
-      // metadata that all comes in one group all at once, such
-      // as track title and artist and such.
+      // Found one. Call the routine to parse and set the track metadata that
+      // all comes in one group all at once, such as track title and artist
+      // and such.
       SetTrackMetaData(empegMessageCode, empegDetailString);
 
-      // NOTE: The next line is super important. Every time the empeg gets
-      // a state change, we need to send a command to the bluetooth to make it
-      // re-query us for the track information. In this way, if the track changes
-      // on the empeg due to a state change then it will ask us for the new
-      // track data. This will need to happen each time the empeg changes track
-      // number, metadata, playback length, etc (though not playback position).
-      // This will need to happen both when the bluetooth initiates the change
-      // (ie the user presses NEXT on his steering wheel) and also when the empeg
-      // moves on to the next track naturally itself (i.e. you're just letting
-      // the empeg run and it goes to the next track and now new track data has
-      // appered on its serial port output). This should happen only when the
-      // empeg itself has said that the data has changed, in other words, only
-      // when the track metadata is different from whatever it was prior. There
-      // is a serial data transmit/receive cost and a processing cost associated
-      // with the (fairly large) set of queries that it makes when it gets this
-      // message, so you should only do it when the track actually changes.
+      // NOTE: The next line is super important. Every time the empeg gets a
+      // state change, we need to send a command to the bluetooth to make it
+      // re-query us for the track information. In this way, if the track
+      // changes on the empeg due to a state change then it will ask us for
+      // the new track data. This will need to happen each time the empeg
+      // changes track number, metadata, playback length, etc (though not
+      // playback position). This will need to happen both when the bluetooth
+      // initiates the change (ie the user presses NEXT on his steering wheel)
+      // and also when the empeg moves on to the next track naturally itself
+      // (i.e. you're just letting the empeg run and it goes to the next track
+      // and now new track data has appered on its serial port output). This
+      // should happen only when the empeg itself has said that the data has
+      // changed, in other words, only when the track metadata is different
+      // from whatever it was prior. There is a serial data transmit/receive
+      // cost and a processing cost associated with the (fairly large) set of
+      // queries that it makes when it gets this message, so you should only
+      // do it when the track actually changes.
       // 
-      // Trigger this only when we get the line containing a "Genre" change ("G")
-      // since that is the last of the track information sets to appear on the
-      // serial port in a block of messages.
+      // Trigger this only when we get the line containing a "Genre" change
+      // ("G") since that is the last of the track information sets to appear
+      // on the serial port in a block of messages.
       if (empegMessageCode == 'G')
       {
         HandleEmpegStateChange();
       }
 
-      // Bugfix for issue #32 "Fast forward can run away from you and get stuck".
-      // If we are in the middle of a fast forward or rewind operation that was
-      // inititated from the bluetooth, prevent a "runaway fast forward" situation
-      // by canceling the operation and resetting it here and now. Only do this if
-      // the fast forward or rewind operation was initiated by the bluetooth, not
-      // if it was initiated from the player's front panel. This is important, so
-      // that we prevent runaway bluetooth situations by stopping at track boundaries
-      // but still allow the user to ff/rew across track boundaries from the player
-      // front panel. First, check to see if we were in the middle of a bluetooth-
-      // initiated FF or REW operation and thus need to be doing protection at all.
+      // Bugfix for issue #32 "Fast forward can run away from you and get
+      // stuck". If we are in the middle of a fast forward or rewind operation
+      // that was inititated from the bluetooth, prevent a "runaway fast
+      // forward" situation by canceling the operation and resetting it here
+      // and now. Only do this if the fast forward or rewind operation was
+      // initiated by the bluetooth, not if it was initiated from the player's
+      // front panel. This is important, so that we prevent runaway bluetooth
+      // situations by stopping at track boundaries but still allow the user
+      // to ff/rew across track boundaries from the player front panel. First,
+      // check to see if we were in the middle of a bluetooth- initiated FF or
+      // REW operation and thus need to be doing protection at all.
       if (blueToothFastForward)
       {
-        // We are now in a situation where a new track boundary has been crossed
-        // (because we got new track data just now) and now we know we were also
-        // in the middle of a FF/REW operation initiate by the bluetooth, so begin
-        // implementing the protection code now. Start by turning off the flag
-        // variable since we're handling the situation now.
+        // We are now in a situation where a new track boundary has been
+        // crossed (because we got new track data just now) and now we know we
+        // were also in the middle of a FF/REW operation initiate by the
+        // bluetooth, so begin implementing the protection code now. Start by
+        // turning off the flag variable since we're handling the situation
+        // now.
         blueToothFastForward = false;
 
-        // Send a command to the empeg Car player to stop/cancel the fast forward
-        // or rewind operation that we're in the middle of, since we have just hit
-        // a track boundary and we need to stop it before we cross too many track
-        // boundaries and the operation runs away from us and never stops due to 
-        // dropped serial port data.
+        // Send a command to the empeg Car player to stop/cancel the fast
+        // forward or rewind operation that we're in the middle of, since we
+        // have just hit a track boundary and we need to stop it before we
+        // cross too many track boundaries and the operation runs away from us
+        // and never stops due to  dropped serial port data.
         SendEmpegCommand('A');
       }
 
@@ -3439,7 +3462,8 @@ void HandleEmpegString(String &theString)
     }
   }
 
-  // If we received the information from the emepg serial port indicating that it is now playing, then do the needful
+  // If we received the information from the emepg serial port indicating that
+  // it is now playing, then do the needful
   if ((empegMessageCode == 'S') && (empegDetailString == "1"))
   {
     empegIsPlaying = true;
@@ -3447,7 +3471,8 @@ void HandleEmpegString(String &theString)
     return;
   }
   
-  // If we received the information from the emepg serial port indicating that it is now paused, then do the needful
+  // If we received the information from the emepg serial port indicating that
+  // it is now paused, then do the needful
   if ((empegMessageCode == 'S') && (empegDetailString == "0"))
   {
     empegIsPlaying = false;
@@ -3455,20 +3480,21 @@ void HandleEmpegString(String &theString)
     return;
   }
 
-  // Total tracks in current playlist is not output on the empeg serial by default but
-  // with a new version of Mark Lord's Hijack then we can now parse this information
-  // sometimes. Handle that here because it will arrive at intermittent times due
-  // to the fact that Hijack only gets this data after the disk drive spins down.
+  // Total tracks in current playlist is not output on the empeg serial by
+  // default but with a new version of Mark Lord's Hijack then we can now
+  // parse this information sometimes. Handle that here because it will arrive
+  // at intermittent times due to the fact that Hijack only gets this data
+  // after the disk drive spins down.
   if (empegMessageCode == 'R')
   {
     // Debug logging
     //  Log(F("Playlist length code R has been received from empeg serial port."));
 
-    // Check to see if this string differs from what we already had in
-    // the global variable, and perform different steps depending on 
-    // whether this is new information (thus requiring a whole trip
-    // into the state change routine) or if it's just a repeat of
-    // what we already know, thus not needing the extra processing.
+    // Check to see if this string differs from what we already had in the
+    // global variable, and perform different steps depending on  whether this
+    // is new information (thus requiring a whole trip into the state change
+    // routine) or if it's just a repeat of what we already know, thus not
+    // needing the extra processing.
     if (trackTotalNumberString05 == empegDetailString  )
     {
       // Log (F("Playlist length was not new, not updating."));
@@ -3477,36 +3503,42 @@ void HandleEmpegString(String &theString)
     {
       // Log("New Playlist length: " + empegDetailString);
 
-      // Assign the global playlist length variable to the value Mark so kindly gave us.
+      // Assign the global playlist length variable to the value Mark so
+      // kindly gave us.
       trackTotalNumberString05 = empegDetailString;  
 
-      // Tell the head unit that we have a new playlist length to report to it.
+      // Tell the head unit that we have a new playlist length to report to
+      // it.
       HandleEmpegStateChange();
     }
   }
 
-  // If we received information from the empeg serial port that our playback position has changed, then do the needful.
-  // The playback position is tricky because the line includes the FID number that we have to strip out and also it's
-  // in ascii HH:MM:SS format whereas the bluetooth chip wants it in milliseconds, so we'll have to do some work here.
+  // If we received information from the empeg serial port that our playback
+  // position has changed, then do the needful. The playback position is
+  // tricky because the line includes the FID number that we have to strip out
+  // and also it's in ascii HH:MM:SS format whereas the bluetooth chip wants
+  // it in milliseconds, so we'll have to do some work here.  
   // Example of full string: "  serial_notify_thread.cpp: 180:@@ #f4f0  0:00:12"
   // By the time it reaches this code it will be:               "#f4f0  0:00:12"
   if (empegMessageCode == '#')
   {
-    // Preset the hours minutes and seconds to invalid values as a sanity check
-    // (will check that these are at least zero or higher at the end of the parsing routine).
+    // Preset the hours minutes and seconds to invalid values as a sanity
+    // check (will check that these are at least zero or higher at the end of
+    // the parsing routine).
     empegHours = -1;
     empegMinutes = -1;
     empegSeconds = -1;
 
     // Split at the first space it finds. In my example above, the first space
-    // is actually two spaces, but I think there is a chance that the hour field
-    // might be space-padded, so plan on it being one space (or not) and then
-    // whatever it finds after that. Note: The +1 is so that it gets the string
-    // starting AFTER the first space, not INCLUDING the first space.
+    // is actually two spaces, but I think there is a chance that the hour
+    // field might be space-padded, so plan on it being one space (or not) and
+    // then whatever it finds after that. Note: The +1 is so that it gets the
+    // string starting AFTER the first space, not INCLUDING the first space.
     empegTimecodeString = empegDetailString.substring(empegDetailString.indexOf(F(" ")) +1 );
     
-    // Debug: Log what we are parsing, our string should look like " 0:00:12" at this point,
-    // including the possibility of one leading space if the hour is space-padded (not sure).
+    // Debug: Log what we are parsing, our string should look like " 0:00:12"
+    // at this point, including the possibility of one leading space if the
+    // hour is space-padded (not sure).
     // Log ("Parsing timecode: " + empegTimecodeString);   
 
     // Sanity check: Make sure there is at least one colon, otherwise bail out.
@@ -3517,17 +3549,20 @@ void HandleEmpegString(String &theString)
     }    
 
     // Split into hour, minute, and second.
-    // First get the integer of the value of the digits before the first colon (the hours)
+    // First get the integer of the value of the digits before the first colon
+    // (the hours).
     empegHours = empegTimecodeString.substring(0, empegTimecodeString.indexOf(F(":"))).toInt();
 
     // Now shorten the string and get everything after the first colon.
     // String should now look like "00:12" - reduced down to minutes and seconds
     empegTimecodeString = empegTimecodeString.substring(empegTimecodeString.indexOf(F(":")) +1);
 
-    // Now get the minutes (integer of the value of the digits before the remaining colon)
+    // Now get the minutes (integer of the value of the digits before the
+    // remaining colon).
     empegMinutes = empegTimecodeString.substring(0, empegTimecodeString.indexOf(F(":"))).toInt();
 
-    // Sanity check: Make sure that last remaining colon is left there, otherwise bail out.
+    // Sanity check: Make sure that last remaining colon is left there,
+    // otherwise bail out.
     if (!(empegTimecodeString.indexOf(F(":")) > -1))
     {
       Log(F("Error decoding timestamp string. Second colon not found."));
@@ -3538,13 +3573,13 @@ void HandleEmpegString(String &theString)
     // String should now look like "12" - it's now just the seconds left.
     empegTimecodeString = empegTimecodeString.substring(empegTimecodeString.indexOf(F(":")) +1);
 
-    // Get the decmial value of the remaining section, the seconds
+    // Get the decmial value of the remaining section, the seconds.
     empegSeconds = empegTimecodeString.toInt();
 
-    // Sanity check that there are good values inside all of these.
-    // These values were PRE SET TO NEGATIVE so that we could do
-    // this check right here. If they reach this point negative, then
-    // something went wrong. So check for negative values.
+    // Sanity check that there are good values inside all of these. These
+    // values were PRE SET TO NEGATIVE so that we could do this check right
+    // here. If they reach this point negative, then something went wrong. So
+    // check for negative values.
     if ((empegHours < 0) || (empegMinutes < 0) || (empegSeconds < 0))
     {
       Log(F("Parsing error when trying to parse timestamp from empeg serial output."));
@@ -3553,109 +3588,115 @@ void HandleEmpegString(String &theString)
     }
 
     // Calculate the timestamp in milliseconds.
-    // Note: must append an "L" to the constant values so that they
-    // calculate as longs in the final calcuation instead of ints.
+    // Note: must append an "L" to the constant values so that they calculate
+    // as longs in the final calcuation instead of ints.
     empegMs = (empegHours * 1000L * 60L * 60L) + (empegMinutes * 1000L * 60L) + (empegSeconds * 1000L);
 
-    // The next section of code must only be done if it was NOT the first timestamp
-    // message we ever received from the empeg since boot up. Because the first 
-    // timestamp we receive will almost always be different from the timestamp in
-    // global memory, the very first one will frequently be flagged as having made
-    // a pause/play-state change even if there really wasn't one. So instead only
-    // do this in cases where it wasn't the first timestamp. If we hit this routine
-    // and it WAS the first timestamp, then flip the flag to false for the rest of
-    // the program run.
+    // The next section of code must only be done if it was NOT the first
+    // timestamp message we ever received from the empeg since boot up.
+    // Because the first  timestamp we receive will almost always be different
+    // from the timestamp in global memory, the very first one will frequently
+    // be flagged as having made a pause/play-state change even if there
+    // really wasn't one. So instead only do this in cases where it wasn't the
+    // first timestamp. If we hit this routine and it WAS the first timestamp,
+    // then flip the flag to false for the rest of the program run.
     if (empegFirstTimestamp)
     {
       // Log that we have entered this "first time" code.
       Log(F("First timestamp received from empeg Car - Not performing play-pause state change code just yet."));
 
-      // Special case experiment to attempt to fix Github issue #26 "empegStartPause
-      // feature does not work as expected." The problem is that the player starts
-      // playing the song after bootup no matter what. It does this even though I
-      // already sent a "W" to the player after the player application started. Even
-      // though that first "W" worked, there is a second unpausing which occurs a
-      // little bit later. The player pauses when the first "W" is sent, and then it
-      // starts playing the track just a few moments later. This seems to happen at
-      // about the same time as the first timestamp appears on the serial port.
-      // Attempt to fix the issue by sending yet another pause statement to the 
-      // empeg immediately after it sees that first timestamp after bootup. This is
-      // experimental.
+      // Fix Github issue #26 "empegStartPause feature does not work as
+      // expected." The problem is that the player starts playing the song
+      // after bootup no matter what. It does this even though I already sent
+      // a "W" to the player after the player application started. Even though
+      // that first "W" worked, there is a second unpausing which occurs a
+      // little bit later. The player pauses when the first "W" is sent, and
+      // then it starts playing the track just a few moments later. This seems
+      // to happen at about the same time as the first timestamp appears on
+      // the serial port. Fix the issue by sending yet another pause statement
+      // to the  empeg immediately after it sees that first timestamp after
+      // bootup.
       if (empegStartPause)
       {
         Log(F("empegStartPause feature activated. Pausing player on first timestamp after boot up."));
         SendEmpegCommand('W');
       }
 
-      // This was the first timestamp we've seen since program bootup, so flip the
-      // flag so that we take action on the second timestamp and all subsequent ones.
+      // This was the first timestamp we've seen since program bootup, so flip
+      // the flag so that we take action on the second timestamp and all
+      // subsequent ones.
       empegFirstTimestamp = false;
     }
     else
     {
-      // This was NOT the first timestamp we've received from the empeg, so we can
-      // take some action on the timestamp.
+      // This was NOT the first timestamp we've received from the empeg, so we
+      // can take some action on the timestamp.
       //
-      // Check empegMs against our global variable trackPlaybackPositionMs, so that
-      // we can determine if the playback counter position has changed since the last
-      // time that we received a message about it. If it is different, we perform a
-      // special case fix: update the empegIsPlaying flag to indicate that the empeg
-      // is playing because the track times are changing. This is to work around a
-      // bug where sometimes the empeg doesn't report that it has started playing
-      // again after unpausing from its front panel. The bug causes the play/pause
-      // indicator on the car stereo's touchscreen to display the wrong playback
-      // state, indicating that the player is paused when it really isn't paused.
-      // So we will work around this by updating the state variable if we see
-      // the timestamps changing. There is a drawback to this, which is, if you
-      // are performing FF and REW from the front panel of the player while the
-      // playback is paused (this is one of the empeg's existing capabilities),
-      // then the car stereo head unit will think that playback state is "playing"
-      // during the time that you are FF/REWing on the empeg front panel. This is
-      // OK, this is a better thing to have than the incorrectly-displayed playback
-      // state during normal playback. Though there is the possibility to respond
-      // with a particular playback state to the headunit of "fast forwarding" or
-      // "rewinding", but this is not implented in my code yet. So for now, we have
-      // two possible states, playing and paused, and if we detect that the empeg
-      // has changing track timestamps then we will update that state.
+      // Check empegMs against our global variable trackPlaybackPositionMs, so
+      // that we can determine if the playback counter position has changed
+      // since the last time that we received a message about it. If it is
+      // different, we perform a special case fix: update the empegIsPlaying
+      // flag to indicate that the empeg is playing because the track times
+      // are changing. This is to work around a bug where sometimes the empeg
+      // doesn't report that it has started playing again after unpausing from
+      // its front panel. The bug causes the play/pause indicator on the car
+      // stereo's touchscreen to display the wrong playback state, indicating
+      // that the player is paused when it really isn't paused. So we will
+      // work around this by updating the state variable if we see the
+      // timestamps changing. There is a drawback to this, which is, if you
+      // are performing FF and REW from the front panel of the player while
+      // the playback is paused (this is one of the empeg's existing
+      // capabilities), then the car stereo head unit will think that playback
+      // state is "playing" during the time that you are FF/REWing on the
+      // empeg front panel. This is OK, this is a better thing to have than
+      // the incorrectly-displayed playback state during normal playback.
+      // Though there is the possibility to respond with a particular playback
+      // state to the headunit of "fast forwarding" or "rewinding", but this
+      // is not implented in my code yet. So for now, we have two possible
+      // states, playing and paused, and if we detect that the empeg has
+      // changing track timestamps then we will update that state.
       if (empegMs != trackPlaybackPositionMs)
       {
-        // The empeg is considered to be playing at this point because
-        // the current track playback position is different from the last
-        // one that we read from the serial port. Now, check to see if the
-        // state of the empeg playback has changed from what was previously
-        // expected, and if so, display a message as well as flipping the
-        // playback state variable. Must flip the variable first then display
-        // the message that the state had changed.
+        // The empeg is considered to be playing at this point because the
+        // current track playback position is different from the last one that
+        // we read from the serial port. Now, check to see if the state of the
+        // empeg playback has changed from what was previously expected, and
+        // if so, display a message as well as flipping the playback state
+        // variable. Must flip the variable first then display the message
+        // that the state had changed.
         if (empegIsPlaying == false)
         {
           empegIsPlaying = true;
           HandleEmpegStateChange();
         }
-        // If the playback state wasn't wrong to begin with, no action is needed.
+        // If the playback state wasn't wrong to begin with, no action is
+        // needed.
       }
       else
       {
-        // The empeg is considered to be paused at this point because
-        // the current track playback position is unchanged from the last
-        // time. Do the opposite variable-flip as above.
+        // The empeg is considered to be paused at this point because the
+        // current track playback position is unchanged from the last time. Do
+        // the opposite variable-flip as above.
         if (empegIsPlaying == true)
         {
           empegIsPlaying = false;
           HandleEmpegStateChange();
         }
-        // If the playback state wasn't wrong to begin with, no action is needed.
+        // If the playback state wasn't wrong to begin with, no action is
+        // needed.
       }
     }
 
     // Now that we are done checking whether or not the timestamp has changed,
-    // now we can update the global "holder" of the playback time to reflect what
-    // we read from the serial port message. Now it is stored globally and ready 
-    // to be checked against the next playback position value that we receive from
-    // the empeg serial port.
+    // now we can update the global "holder" of the playback time to reflect
+    // what we read from the serial port message. Now it is stored globally
+    // and ready  to be checked against the next playback position value that
+    // we receive from the empeg serial port.
     trackPlaybackPositionMs = empegMs;
 
     // Convert milliseconds to a string and assign it to our global playback
-    // position string as a string value that can be sent to the bluetooth chip.
+    // position string as a string value that can be sent to the bluetooth
+    // chip.
     trackPlaybackPositionString07 = String(empegMs);
 
     // Debug output of the playback milliseconds.
@@ -3670,118 +3711,121 @@ void HandleEmpegString(String &theString)
 // HandleEmpegStateChange
 //
 // When the empeg's playing state changes (playing or paused), there are
-// several things that need to be done, some commands than need to be sent
-// to the bluetooth chip to let it know about some things. Also there are
-// some things I'd like to do when the track information changes from one
-// track to the next. I think that I can do all of them here all at once.
+// several things that need to be done, some commands than need to be sent to
+// the bluetooth chip to let it know about some things. Also there are some
+// things I'd like to do when the track information changes from one track to
+// the next. I think that I can do all of them here all at once.
 // ---------------------------------------------------------------------------
 void HandleEmpegStateChange()
 {
   if (empegIsPlaying)
   {
-    // Special case: Make sure streaming is started so that there is
-    // no "cutoff" of the start of the song if we press the play button
-    // on the stereo's touch screen. Must do this before we send the
-    // command to the empeg so that it happens first.
-    // UPDATE: Do not send either STREAMING STOP or STREAMING START
-    // in the HandleEmpegStateChange code at all. This workaround is
-    // no longer needed and also it causes problems during the reset
-    // and pairing processes if we do it at the wrong time due to the
-    // empeg state changing in the middle of other things.
+    // Special case: Make sure streaming is started so that there is no
+    // "cutoff" of the start of the song if we press the play button on the
+    // stereo's touch screen. Must do this before we send the command to the
+    // empeg so that it happens first.
+    // UPDATE: Do not send either STREAMING STOP or STREAMING START in the
+    // HandleEmpegStateChange code at all. This workaround is no longer needed
+    // and also it causes problems during the reset and pairing processes if
+    // we do it at the wrong time due to the empeg state changing in the
+    // middle of other things.
     //     SendBlueGigaCommand(F("A2DP STREAMING START"));
-    
-    // Final fix for the "Kenwood Bug". Description of the Kenwood Bug:
-    // The AVRCP NFY CHANGED commands work on factory car stereo in
-    // Honda Accord 2017 model no matter what the transaction label is.
-    // This led me to believe that the transaction label was only important
-    // when performing an immediate response to a state query (i.e., when
-    // sending an "AVRCP NFY INTERIM" response), and that if I was the one
-    // who was indicating the state change (i.e., when I was sending an
-    // "AVRCP NFY CHANGED" statement to tell the host that something had
-    // changed), that the transaction label was arbitrary and that I was
-    // the person choosing the transaction label at that time. This was
-    // fine for the Honda stereo: When those commands are issued to the
-    // bluetooth chip, then the car stereo head unit immediately reacts
-    // by re-querying for more new track metadata from the bluetooth chip.
-    // 
-    // However, when using those commands on a Kenwood bluetooth-equipped
-    // car stereo, then nothing happens when the messages are sent up
-    // with arbitrary transaction labels. The Kenwood stops sending new
-    // queries for track information and just "sits there" blindly
-    // playing the audio stream without getting any new track data.
-    // 
-    // It turns out that the transaction labels aren't arbitrary if
-    // you received a "REGISTER_NOTIFICATION" message for the
-    // "PLAYBACK_STATUS_CHANGED" or the "TRACK_CHANGED" messages.
-    // Yes, you need to immediately respond with an "INTERIM"
-    // notification, but then if you send a "CHANGED" notification
-    // yourself later, then the transaction label still has to match.
-    // The Kenwood stopped querying for new track data because the
-    // transaction labels didn't match when I sent it "CHANGED"
-    // notifications. The fix is to match the transaction labels
-    // by storing them in a global variable.
-    // 
-    // Here's the first of the fixes: Send a notification to the head unit that the 
-    // "playback status changed". Command details for this command are:
+    //
+    // Final fix for the "Kenwood Bug". Description of the Kenwood Bug: The
+    // AVRCP NFY CHANGED commands work on factory car stereo in Honda Accord
+    // 2017 model no matter what the transaction label is. This led me to
+    // believe that the transaction label was only important when performing
+    // an immediate response to a state query (i.e., when sending an "AVRCP
+    // NFY INTERIM" response), and that if I was the one who was indicating
+    // the state change (i.e., when I was sending an "AVRCP NFY CHANGED"
+    // statement to tell the host that something had changed), that the
+    // transaction label was arbitrary and that I was the person choosing the
+    // transaction label at that time. This was fine for the Honda stereo:
+    // When those commands are issued to the bluetooth chip, then the car
+    // stereo head unit immediately reacts by re-querying for more new track
+    // metadata from the bluetooth chip.
+    //
+    // However, when using those commands on a Kenwood bluetooth-equipped car
+    // stereo, then nothing happens when the messages are sent up with
+    // arbitrary transaction labels. The Kenwood stops sending new queries for
+    // track information and just "sits there" blindly playing the audio
+    // stream without getting any new track data.
+    //
+    // It turns out that the transaction labels aren't arbitrary if you
+    // received a "REGISTER_NOTIFICATION" message for the
+    // "PLAYBACK_STATUS_CHANGED" or the "TRACK_CHANGED" messages. Yes, you
+    // need to immediately respond with an "INTERIM" notification, but then if
+    // you send a "CHANGED" notification yourself later, then the transaction
+    // label still has to match. The Kenwood stopped querying for new track
+    // data because the transaction labels didn't match when I sent it
+    // "CHANGED" notifications. The fix is to match the transaction labels by
+    // storing them in a global variable.
+    //
+    // Here's the first of the fixes: Send a notification to the head unit
+    // that the "playback status changed". Command details for this command
+    // are:
     //      AVRCP NFY {INTERIM | CHANGED} {transaction_label} {event_ID} [value]
     // Where:
     //      AVRCP NFY   - The notification command to send to the head unit.
-    //      CHANGED     - Indicate to the head unit that there was a change of some kind.
-    //      1           - Send this message with the specific transaction label from the
-    //                    corresponding previous "REGISTER_NOTIFICATION" if we have it, or
-    //                    if we don't have it yet, then fall back to using an arbitrary number.
-    //      1           - The notification message we will send contains event ID 1, which is "PLAYBACK_STATUS_CHANGED".
-    //      1           - The sole parameter value for the PLAYBACK_STATUS_CHANGED, with a "1" indicating "playing"
+    //      CHANGED     - Indicate to the head unit that there was a change of
+    //                    some kind.
+    //      1           - Send this message with the specific transaction label
+    //                    from the corresponding previous "REGISTER_NOTIFICATION".
+    //      1           - The notification message we will send contains event ID
+    //                    1, which is "PLAYBACK_STATUS_CHANGED".
+    //      1           - The sole parameter value for the PLAYBACK_STATUS_CHANGED,
+    //                    with a "1" indicating "playing".
     if (transactionLabelPlaybackStatusChanged == "")
     {
-      // Bugfix: If we haven't received a "REGISTER_NOTIFICATION" message to begin
-      // with at startup yet, then don't attempt to send an arbitrary notification with an
-      // arbitrary transaction label. I suspect that this arbitrary-transaction-labeled
-      // message migh be going into a queue on the BlueGiga module and then being sent up
-      // to the device later and confusing some devices. In particular I am wondering if it
-      // is confusing a bluetooth headset I'm testing with. The solution here is to comment
-      // out this line and send nothing at all in these cases.
-      //    SendBlueGigaCommand(F("AVRCP NFY CHANGED 1 1 1"));
+      // Bugfix: If we haven't received a "REGISTER_NOTIFICATION" message to
+      // begin with at startup yet, then don't attempt to send an arbitrary
+      // notification with an arbitrary transaction label. I suspect that this
+      // arbitrary-transaction-labeled message migh be going into a queue on
+      // the BlueGiga module and then being sent up to the device later and
+      // confusing some devices. In particular I am wondering if it is
+      // confusing a bluetooth headset I'm testing with. The solution here is
+      // to comment out this line and send nothing at all in these cases.
+      //     SendBlueGigaCommand(F("AVRCP NFY CHANGED 1 1 1"));
     }
     else
     {
       SendBlueGigaCommand("AVRCP NFY CHANGED " + transactionLabelPlaybackStatusChanged + " 1 1");
     }
 
-    // Indicate to the host stereo that we have started playing by sending a play command.
-    // This attempts to fix issue #22 where the bluetooth headset would get the wrong idea
-    // and it would have a desynchronization with the play/pause state. This does not make
-    // things either worse or better. Trying not doing this because it makes additional
-    // SYNTAX ERROR messages appear at times. Verdict: this has no effect on issue #22.
+    // Indicate to the host stereo that we have started playing by sending a
+    // play command. This attempts to fix issue #22 where the bluetooth
+    // headset would get the wrong idea and it would have a desynchronization
+    // with the play/pause state. This does not make things either worse or
+    // better. Trying not doing this because it makes additional SYNTAX ERROR
+    // messages appear at times. Verdict: this has no effect on issue #22.
     //     SendBlueGigaCommand(F("AVRCP PLAY"));
   }
   else
   {
-    // Note: Do not send "A2DP STREAMING STOP" here or else you will
-    // get a "cutoff" start of the song on the next unpause. Leave
-    // the stream active even when playback is stopped to prevent
-    // cutoffs. In fact, to fix a bug, we actually want to send a
-    // streaming start here instead.
-    // UPDATE: Do not send either STREAMING STOP or STREAMING START
-    // in the HandleEmpegStateChange code at all. This workaround is
-    // no longer needed and also it causes problems during the reset
-    // and pairing processes if we do it at the wrong time due to the
-    // empeg state changing in the middle of other things.
+    // Note: Do not send "A2DP STREAMING STOP" here or else you will get a
+    // "cutoff" start of the song on the next unpause. Leave the stream active
+    // even when playback is stopped to prevent cutoffs. In fact, to fix a
+    // bug, we actually want to send a streaming start here instead.
+    // UPDATE: Do not send either STREAMING STOP or STREAMING START in the
+    // HandleEmpegStateChange code at all. This workaround is no longer needed
+    // and also it causes problems during the reset and pairing processes if
+    // we do it at the wrong time due to the empeg state changing in the
+    // middle of other things.
     //     SendBlueGigaCommand(F("A2DP STREAMING START"));
 
-    
-    // Send a notification to the head unit that the playback status
-    // has changed (fix Kenwood bug). Command details are above,
-    // with the last "2" in this command indicating "paused".
+    // Send a notification to the head unit that the playback status has
+    // changed (fix Kenwood bug). Command details are above, with the last "2"
+    // in this command indicating "paused".
     if (transactionLabelPlaybackStatusChanged == "")
     {
-      // Bugfix: If we haven't received a "REGISTER_NOTIFICATION" message to begin
-      // with at startup yet, then don't attempt to send an arbitrary notification with an
-      // arbitrary transaction label. I suspect that this arbitrary-transaction-labeled
-      // message migh be going into a queue on the BlueGiga module and then being sent up
-      // to the device later and confusing some devices. In particular I am wondering if it
-      // is confusing a bluetooth headset I'm testing with. The solution here is to comment
-      // out this line and send nothing at all in these cases.
+      // Bugfix: If we haven't received a "REGISTER_NOTIFICATION" message to
+      // begin with at startup yet, then don't attempt to send an arbitrary
+      // notification with an arbitrary transaction label. I suspect that this
+      // arbitrary-transaction-labeled message migh be going into a queue on
+      // the BlueGiga module and then being sent up to the device later and
+      // confusing some devices. In particular I am wondering if it is
+      // confusing a bluetooth headset I'm testing with. The solution here is
+      // to comment out this line and send nothing at all in these cases.
       //     SendBlueGigaCommand(F("AVRCP NFY CHANGED 1 1 2"));
     }
     else
@@ -3789,36 +3833,39 @@ void HandleEmpegStateChange()
       SendBlueGigaCommand("AVRCP NFY CHANGED " + transactionLabelPlaybackStatusChanged + " 1 2");
     }
 
-    // Indicate to the host stereo that we have stopped playing by sending a pause command.
-    // This attempts to fix issue #22 where the bluetooth headset would not start playing
-    // when it was supposed to and there was a desynchronization in play state between
-    // headset and bluetooth module. This does not make things either worse or better.
-    // Trying not doing this because it makes additional SYNTAX ERROR messages appear at
-    // times. Verdict: this has no effect on issue #22.
+    // Indicate to the host stereo that we have stopped playing by sending a
+    // pause command. This attempts to fix issue #22 where the bluetooth
+    // headset would not start playing when it was supposed to and there was a
+    // desynchronization in play state between headset and bluetooth module.
+    // This does not make things either worse or better. Trying not doing this
+    // because it makes additional SYNTAX ERROR messages appear at times.
+    // Verdict: this has no effect on issue #22.
     //    SendBlueGigaCommand("AVRCP PAUSE");
   }
 
-  // In all cases, send a notification to the host stereo headunit that the track
-  // itself has changed, so that it will re-query us for the track metadata.
-  // Command details for this command are:
+  // In all cases, send a notification to the host stereo headunit that the
+  // track itself has changed, so that it will re-query us for the track
+  // metadata. Command details for this command are:
+
   //      AVRCP NFY {INTERIM | CHANGED} {transaction_label} {event_ID} [value]
   // Where:
   //      AVRCP NFY   - The notification command to send to the head unit.
-  //      CHANGED     - Indicate to the head unit that there was a change of some kind.
-  //      2           - Send this message with the specific transaction label from the
-  //                    corresponding previous "REGISTER_NOTIFICATION" if we have it, or
-  //                    if we don't have it yet, then fall back to using an arbitrary number.
-  //      2           - The notification message we will send contains event ID 2, which is "TRACK_CHANGED".
-  //      1           - The sole parameter value for the TRACK_CHANGED, with a "1" indicating that there is indeed a track selected.
+  //      CHANGED     - Indicate to the head unit that there was a change.
+  //      2           - Specific transaction label.
+  //      2           - The notification message we will send contains event
+  //                    ID 2, which is "TRACK_CHANGED".
+  //      1           - The sole parameter value for the TRACK_CHANGED, with
+  //                    a "1" indicating that there is indeed a track selected.
   if (transactionLabelTrackChanged == "")
   {
-      // BUGFIX: If we haven't received a "REGISTER_NOTIFICATION" message to begin
-      // with at startup yet, then don't attempt to send an arbitrary notification with an
-      // arbitrary transaction label. I suspect that this arbitrary-transaction-labeled
-      // message migh be going into a queue on the BlueGiga module and then being sent up
-      // to the device later and confusing some devices. In particular I am wondering if it
-      // is confusing a bluetooth headset I'm testing with. The solution here is to comment
-      // out this line and send nothing at all in these cases.
+      // BUGFIX: If we haven't received a "REGISTER_NOTIFICATION" message to
+      // begin with at startup yet, then don't attempt to send an arbitrary
+      // notification with an arbitrary transaction label. I suspect that this
+      // arbitrary-transaction-labeled message migh be going into a queue on
+      // the BlueGiga module and then being sent up to the device later and
+      // confusing some devices. In particular I am wondering if it is
+      // confusing a bluetooth headset I'm testing with. The solution here is
+      // to comment out this line and send nothing at all in these cases.
       //     SendBlueGigaCommand(F("AVRCP NFY CHANGED 2 2 1")); 
   }
   else
@@ -3826,17 +3873,18 @@ void HandleEmpegStateChange()
     SendBlueGigaCommand("AVRCP NFY CHANGED " + transactionLabelTrackChanged + " 2 1"); 
   }
   
-  // Report to our arduino console debug log what the current state of playback on the empeg is.
+  // Report to our arduino console debug log what the current state of
+  // playback on the empeg is.
   ReportEmpegPlayingState();
 }
 
 // ---------------------------------------------------------------------------
 // ReportEmpegPlayingState
 //
-// Log to the console session the current believed state of the empeg
-// whether it is playing or paused. Used only for logging, there is 
-// a different place in the code that responds to bluetooth queries
-// asking for the playback state.
+// Log to the console session the current believed state of the empeg whether
+// it is playing or paused. Used only for logging, there is  a different place
+// in the code that responds to bluetooth queries asking for the playback
+// state.
 // ---------------------------------------------------------------------------
 void ReportEmpegPlayingState()
 {
@@ -3853,17 +3901,17 @@ void ReportEmpegPlayingState()
 // ---------------------------------------------------------------------------
 // BlinkBlue
 //
-// Blink the reset/pair LED to indicate some kind of activity on the BT module.
-// If we are in normal runtime mode, blink the LED on briefly. If we are in
-// Reset/Pair mode, where the LED is expected to already be on, then blink
-// it off briefly instead. 
+// Blink the reset/pair LED to indicate some kind of activity on the BT
+// module. If we are in normal runtime mode, blink the LED on briefly. If we
+// are in Reset/Pair mode, where the LED is expected to already be on, then
+// blink it off briefly instead.
 //
 // Note: You must call this routine once to start the blink and once to stop
 // the blink, with the parameter changed each time. Call this routine at the
-// start of your indicated activity with "true" and at the end of your 
-// indicated activity with "false". Use this only for very brief indicators
-// of activity so that the end user doesn't confuse these blinks for the
-// main reset/pair mode indication.
+// start of your indicated activity with "true" and at the end of your
+// indicated activity with "false". Use this only for very brief indicators of
+// activity so that the end user doesn't confuse these blinks for the main
+// reset/pair mode indication.
 // 
 // Parameter: true to start the blink, false to stop the blink.
 //
@@ -3914,21 +3962,21 @@ void BlinkBlue(boolean startBlink)
 //
 // Quickly reset the bluetooth module and also clean out any global variables
 // which we should not be trying to save any more thanks to the module getting
-// reset. This is an attempt to avoid a bug where desynchronization between 
+// reset. This is an attempt to avoid a bug where desynchronization between
 // the bluetooth initialization state and the Arduino initialization state
 // make things go a little wonky in the software. When issuing bluetooth
 // commands to reset the player, do not simply call "RESET" or "BOOT 0" by
 // itself. Should call this routine instead.
 // 
 // Parameter:
-// resetType       0 = Use the "RESET" command and also physically reset BT module
+// resetType       0 = Use the "RESET" command
 //                 1 = Use the "BOOT 0" command
 //                 2 = Use the "SET RESET" command (factory defaults)
 //
 // Note that "SET RESET" (factory defaults) is different from "RESET" (which
-// is just a reboot). Note that this does not erase bluetooth pairings.
-// Also, I don't know if "RESET" is any different from "BOOT 0" for my
-// purposes, but it's being included here just in case.
+// is just a reboot). Note that this does not erase bluetooth pairings. Also,
+// I don't know if "RESET" is any different from "BOOT 0" for my purposes, but
+// it's being included here just in case.
 // ---------------------------------------------------------------------------
 void QuickResetBluetooth(int resetType)
 {
@@ -3948,11 +3996,10 @@ void QuickResetBluetooth(int resetType)
       ClearGlobalVariables();
       DisplayAndSwallowResponses(4, 500);
 
-      // Additional hardware reset of bluetooth after sofware reset.
-      // this allows the unit to power up fully on any voltage instead
-      // of being in sleep mode at board startup. 
-      // EXPERIMENT: Trying to not do this for every reset, instead
-      // only do it once at bootup. This is Mark Lord's suggestion to
+      // Additional hardware reset of bluetooth after sofware reset. this
+      // allows the unit to power up fully on any voltage instead of being in
+      // sleep mode at board startup. BUGFIX: Do not do this for every reset,
+      // instead only do it once at bootup. This is Mark Lord's suggestion to
       // not to this every time. Hopefully this will work reliably.
       //   ResetBluetoothPin(); 
 
@@ -3979,8 +4026,8 @@ void QuickResetBluetooth(int resetType)
 // ResetBluetoothPin
 //
 // Physically reset the bluetooth module via its RST pin. This uses a
-// connection between one of the Arduino's GPIO pins and the reset pin
-// on the bluetooth module itself.
+// connection between one of the Arduino's GPIO pins and the reset pin on the
+// bluetooth module itself.
 // ---------------------------------------------------------------------------
 void ResetBluetoothPin()
 {
@@ -3998,14 +4045,14 @@ void ResetBluetoothPin()
     Log(F("Physically resetting bluetooth module with RST line - Complete."));  
 
     // Pause for the bootup messages to appear after the reset.
-    DisplayAndSwallowResponses(3, 300);
+    DisplayAndSwallowResponses(3, 400);
   }
 }
 
 // ---------------------------------------------------------------------------
 // ClearGlobalVariables
 //
-// Clear out any global variables which we should not be remembering or 
+// Clear out any global variables which we should not be remembering or
 // re-using if the bluetooth chip happened to have gotten reset, either
 // accidentally or deliberately.
 // ---------------------------------------------------------------------------
@@ -4016,8 +4063,8 @@ void ClearGlobalVariables()
   transactionLabelTrackChanged = "";
 
   // Woops- bugfix. Don't clear this one out at all ever. Pairing mode,
-  // regular mode, any mode... Basically any time I clear this out I 
-  // get some kind of bug. This isn't the right place to clear this var.
+  // regular mode, any mode... Basically any time I clear this out I get some
+  // kind of bug. This isn't the right place to clear this var.
   // if (!pairingMode)
   // {
   //   pairAddressString = "";
