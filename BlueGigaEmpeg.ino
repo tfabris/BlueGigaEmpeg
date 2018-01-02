@@ -148,7 +148,7 @@ boolean displayTracksOnSerial=true;
 // Strings to define which codecs to use for A2DP audio transmission.
 // 
 // Uncomment this string to use default SBC codec.
-const String codecString="SET CONTROL CODEC SBC JOINT_STEREO 44100 0";
+const String codecString="SET CONTROL CODEC SBC JOINT_STEREO 44100 0\r\n            SET CONTROL CODEC APT-X_LL JOINT_STEREO 44100 1\r\n            SET CONTROL CODEC APT-X JOINT_STEREO 44100 2";
 //
 // Uncomment this string to use Apple AAC codec and fall back to the default
 // SBC codec if the AAC codec is not available. This  didn't work correctly on
@@ -355,7 +355,6 @@ String scFixMessageMatrix[8][2] =
   // clear how to respond with "no!". So I am also trying doing this with either
   // blank or 0, like above. I'm not sure which one works and I'm still not certin
   // how to respond to queries like this with a "no".
-
   { "LIST_APPLICATION_SETTING_VALUES",      "AVRCP RSP"},
  
   // Respond to "RING 1" with a streaming start command seems to help a lot of
@@ -1066,7 +1065,10 @@ void SetGlobalChipDefaults()
 
   // Configure the A2DP codec that will be used for the audio connection. This
   // string is defined at the top of this program and there are multiple
-  // options for which codec can be used.
+  // options for which codec can be used. First, send the command to clear
+  // existing codecs if there are multiple ones, then send the command to set
+  // up the codecs defined at the top of the code.
+  SendBlueGigaCommand(F("SET CONTROL CODEC"));
   SendBlueGigaCommand(codecString);
 
   // Configure the WT32i development board to NOT use the additional external
