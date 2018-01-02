@@ -146,9 +146,14 @@ boolean outputMillis=true;
 boolean displayTracksOnSerial=true;
 
 // Strings to define which codecs to use for A2DP audio transmission.
+// To remove a codec from the capability list, use its command with no
+// parameters. For example:
+//       SET CONTROL CODEC AAC
+// Will remove the AAC codec from the capability list. This is NOT in the
+// documentation, so I had to figure that out from trial and error.
 // 
 // Uncomment this string to use default SBC codec.
-const String codecString="SET CONTROL CODEC SBC JOINT_STEREO 44100 0\r\n            SET CONTROL CODEC APT-X_LL JOINT_STEREO 44100 1\r\n            SET CONTROL CODEC APT-X JOINT_STEREO 44100 2";
+const String codecString="SET CONTROL CODEC SBC JOINT_STEREO 44100 0\r\n            SET CONTROL CODEC APT-X_LL\r\n            SET CONTROL CODEC APT-X\r\n            SET CONTROL CODEC AAC";
 //
 // Uncomment this string to use Apple AAC codec and fall back to the default
 // SBC codec if the AAC codec is not available. This  didn't work correctly on
@@ -156,12 +161,12 @@ const String codecString="SET CONTROL CODEC SBC JOINT_STEREO 44100 0\r\n        
 // into a mode where no sound came out and the track titles kept getting re-
 // queried once per second, causing odd behavior on the host stereo. You might
 // be able to use this successfully, but I wasn't able to use it.
-//   const String codecString="SET CONTROL CODEC AAC JOINT_STEREO 44100 0\r\n            SET CONTROL CODEC SBC JOINT_STEREO 44100 1";
+//   const String codecString="SET CONTROL CODEC AAC JOINT_STEREO 44100 0\r\n            SET CONTROL CODEC SBC JOINT_STEREO 44100 1\r\n            SET CONTROL CODEC APT-X_LL\r\n            SET CONTROL CODEC APT-X";
 //
 // Uncomment this string to use APT-X Low Latency codec. Requires special firmware
 // download and the purchase of a special license for APT-X codec from Silicon
 // Labs.
-//   const String codecString="SET CONTROL CODEC APT-X_LL JOINT_STEREO 44100 0\r\n            SET CONTROL CODEC APT-X JOINT_STEREO 44100 1\r\n            SET CONTROL CODEC SBC JOINT_STEREO 44100 2";
+//   const String codecString="SET CONTROL CODEC APT-X_LL JOINT_STEREO 44100 0\r\n            SET CONTROL CODEC APT-X JOINT_STEREO 44100 1\r\n            SET CONTROL CODEC SBC JOINT_STEREO 44100 2\r\n            SET CONTROL CODEC AAC";
 
 // Optional - When we see the empeg player application start up, then send a
 // pause command to the player. If the bluetooth initial connection speed is
