@@ -259,37 +259,42 @@ boolean PerformUtf8Conversion = true;
 // input->output pairs for answering certain pieces of text on the bluetooth
 // module's serial port. There is other code elsewhere to handle input/output
 // that requires more detailed handling and parsing.
-int scFixMatrixSize = 8;
-String scFixMessageMatrix[8][2] =
+int scFixMatrixSize = 7;
+String scFixMessageMatrix[7][2] =
 {
     // Bluetooth in                        // Bluetooth out        
 
-  // Experiment: Attempt to fix issue #45 "Initial boot and connect problem on
-  // Honda" by COMMENTING OUT this line. See if it's possible to make things
-  // work correctly without needing to issue a "Streaming Start" command when
+  // Attempt to fix issue #45 "Initial boot and connect problem on Honda" by
+  // COMMENTING OUT this line. See if it's possible to make things work
+  // correctly without needing to issue a "Streaming Start" command when
   // someone presses "play". There should already have been such a command
   // issued when the "connect" happened so theoretically we shouldn't have
   // needed this at all. So try not doing this and see if it fixes other
-  // problems where the head unit got confused by things.  
+  // problems where the head unit got confused by things. Verdict: It neither
+  // fixes the Honda initial connection bug, nor hurts anything, when I remove
+  // this line. So remove it for now, the simpler the better.
   // { "AVRCP PLAY PRESS",                   "A2DP STREAMING START"},
 
-  // Attempting to fix some issues where there is silence on the line after
-  // first connection with some devices. Attempt to make sure the streaming is
-  // started when there are messages that indicate we have a connection of
-  // some kind.
-  { "CONNECT 2",                          "A2DP STREAMING START"},
+  // Additional attempts to fix issue #45, Honda initial connection bug, see
+  // if you can now get away with not doing a "streaming start" here too.
+  // Again, this one did not hurt anything to remove it, so leave it commented
+  // out for now. I am cautiously optimistic about this one possibly helping?
+  // In one set of tests the Honda initial connection bug got a lot better
+  // after commenting this out, but since it was an intermittent bug to begin
+  // with I can't be sure without some bake time. 
+  //   { "CONNECT 2",                          "A2DP STREAMING START"},
 
   // This one didn't work or help or fix anything. Don't use this one.
   // { "PDU_REGISTER_NOTIFICATION",          "A2DP STREAMING START"}, 
 
-  // We issue a "Streaming start" command (above) in certain situations,
-  // because that fixes a whole bunch of issues with various cases where the
-  // audio stream isn't connected when music is playing. It works. However,
-  // don't do the corresponding thing for "streaming stop", because it causes
-  // a problem where, when you unpause a song, there is a slight delay while
-  // streaming starts up again, so, if you unpause at the 00:00 mark of a
-  // song, then the beginning of the song is cut off. I am leaving this line
-  // in here, commented out, to remind myself not to ever try to do this.
+  // We issue a "Streaming start" command in certain situations, because that
+  // fixes a whole bunch of issues with various cases where the audio stream
+  // isn't connected when music is playing. However, don't do the
+  // corresponding thing for "streaming stop", because it causes a problem
+  // where, when you unpause a song, there is a slight delay while streaming
+  // starts up again, so, if you unpause at the 00:00 mark of a song, then the
+  // beginning of the song is cut off. I am leaving this line in here,
+  // commented out, to remind myself not to ever try to do this.
   //        { "AVRCP PAUSE PRESS",                  "A2DP STREAMING STOP"},
 
   // Respond to PIN code prompt as if we were a user saying OK to that PIN
@@ -365,10 +370,21 @@ String scFixMessageMatrix[8][2] =
   // Respond to "RING 1" with a streaming start command seems to help a lot of
   // initial device connection situations when host stereos first connect to
   // our bluetooth module. Some initiate streaming automatically, and some do
-  // not, and it doesn't hurt to re-issue the command to initiate streaming,
-  // to go ahead and re-start the stream each time. If the stream is already
-  // established, no interruption occurs, it just keeps playing.
-  { "RING 1",                              "A2DP STREAMING START"},
+  // not.
+  // 
+  // NOTE: I attempted to remove this one to see if depending entirely on the
+  // host headunit to start streaming would work. It only worked
+  // intermittently. Some of the time I would get a full connection with full
+  // AVRCP functionality but there would be silence because both sides were
+  // too afraid to send a streaming start command. So I don't think you can do
+  // away with this one.
+  //
+  // EXPERIMENT:  Attempt to fix issue #45 "Initial boot and connect problem
+  // on Honda" by changing the way this line behaves. Try making it "RING 2"
+  // instead of "RING 1" and see if that helps. UPDATE: nope. Trying RING 0.
+  // This doesn't seem to make any difference setting it to "0" but it doesn't
+  // seem to hurt anything either, so leaving it at 0 for now.
+  { "RING 0",                              "A2DP STREAMING START"},
 
   // Respond to this particular AVRCP connection success message with a
   // command that is supposed to force the bluetooth to repeatedly retry
