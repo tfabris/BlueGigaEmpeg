@@ -894,6 +894,8 @@ into the Arduino RX2 line. Schematic:
                              |
                              +--------------WT32i Tx
 
+Note: A pullup resistor calculator is here:
+https://ben.artins.org/electronics/pullup-resistors/?
 
 
 Bluetooth chip+Board three I2S pins PCM_CLK, PCM_SYNC, PCM_IN connected to
