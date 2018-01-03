@@ -321,7 +321,9 @@ String scFixMessageMatrix[7][2] =
   //                           can be left empty, as iWRAP will automatically
   //                           fill in the Bluetooth SIG
   //
-  { "GET_CAPABILITIES 2",                 "AVRCP RSP"},
+  // Despite this, I'm attempting to respond with the correct ID of Silicon
+  // Labs which is 02FF or decimal 767. This neither hurts nor helps it seems.
+  { "GET_CAPABILITIES 2",                 "AVRCP RSP 02FF"},
 
   // Get Capabilities 3 is asking for which status notifications my bluetooth
   // chip wants to receive. In this case track/status changes (codes 1 and 2,
@@ -383,8 +385,10 @@ String scFixMessageMatrix[7][2] =
   // on Honda" by changing the way this line behaves. Try making it "RING 2"
   // instead of "RING 1" and see if that helps. UPDATE: nope. Trying RING 0.
   // This doesn't seem to make any difference setting it to "0" but it doesn't
-  // seem to hurt anything either, so leaving it at 0 for now.
-  { "RING 0",                              "A2DP STREAMING START"},
+  // seem to hurt anything either, so leaving it at 0 for now. UPDATE: Nope.
+  // Got other problems with Bluetooth headset where it would get an A2DP
+  // connection but not an AVRCP connection. So putting it back to RING 1.
+  { "RING 1",                              "A2DP STREAMING START"},
 
   // Respond to this particular AVRCP connection success message with a
   // command that is supposed to force the bluetooth to repeatedly retry
