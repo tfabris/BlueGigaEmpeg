@@ -516,14 +516,12 @@ port which cause the chip to reboot randomly.
 
 IMPORTANT: Use extreme care when cutting JP4. Make sure not to peel up the
 pads. There are two traces running to the USB side of the JP4 pad and if you
-peel up that trace, your board will no longer be able to power up.
+peel up that trace, your board may no longer be able to power up.
 
-"Smd_2_pole_switch" set to the left or up position, to put it into always-on
-mode. The red LED on the breakout board will blink randomly when power is
-applied. Symptoms of this switch being set wrong will be: LED on the breakout
-board blinks steady when power is applied instead of randomly, and there is no
-serial port communication, and you need to press the reset button on the board
-to start up the module.
+"Smd_2_pole_switch set to the down or right position, to disconnect the BATT
+"voltage from the linear voltage regulator on the board. The BlueGigaEmpeg
+"assembly will be supplying power directly to the chip and will not use the
+"BATT power from that regulator.
 
 
 ------------------------------------------------------------------------------
@@ -824,14 +822,14 @@ MAX232 are as follows:
 
     MAX232 Pin 1 and 3 aka C1+/C1- - Bridge with a 2.2uf ceramic capacitor
     MAX232 Pin 4 and 5 aka C2+/C2- - Bridge with a 2.2uf ceramic capacitor
-    MAX232 Pin 2 aka V+ - Connect to Pololu 5v via a 2.2uf ceramic capacitor
+    MAX232 Pin 2 aka V+ - Connect to Arduino 5v via a 2.2uf ceramic capacitor
     MAX232 Pin 6 aka V- - Connect to GND via a 2.2uf ceramic capacitor
     MAX232 Pin 11 aka TTL-I1 - Connect to Arduino Mega Board 18 aka Tx1 
     MAX232 Pin 12 aka TTL-O1 - Connect to Arduino Mega Board 19 axa Rx1
     MAX232 Pin 13 aka 232-I1 - Connect to RS-232 plug pin 3 aka Tx
     MAX232 Pin 14 aka 232-O1 - Connect to RS-232 plug pin 2 aka Rx
     MAX232 Pin 15 aka GND - Connect directly to GND
-    MAX232 Pin 16 aka VCC - Connect directly to Pololu 5v output.
+    MAX232 Pin 16 aka VCC - Connect directly to Arduino 5v output.
     MAX232 Pin 16 aka VCC - Also connect to 0.1uf ceramic capacitor which
                             then connects to GND. (Pin 16 is two connections,
                             one to 5V and then also to the smoothing capacitor
@@ -844,7 +842,7 @@ on the 12v-to-5v Pololu step-down transformer power supply, and the black wire
 on the tuner connector connects to the ground input pin on the step-down power
 supply.
 
-Arduino "5v" pin is connected to the 5v output rail from the Pololu 12v-to-5v
+Arduino "Vin" pin is connected to the 5v output rail from the Pololu 12v-to-5v
 step-down transformer power supply circuit.
 
 Grounding: Multiple Arduino GND pins connected to the output ground rail of
@@ -859,47 +857,53 @@ resistor for this value. Online resistor current calculator:
 http://led.linear1.org/1led.wiz
 
 Arduino and Button - Arduino pin 52 digital I/O pin, connected to one of the
-ground legs of button. Other ground leg of button goes through 10k pulldown
-resistor to ground. One of the + legs of the button connects to +5v. Follow
-examples on the Internet of how to implement a simple temporary pushbutton on
-an Arduino: https://www.arduino.cc/en/Tutorial/Button
+ground legs of button. This same line (or the other ground leg of the button)
+also goes through 10k pulldown resistor to ground. One of the + legs of the
+button connects to +5v coming from the Arduino 5v pin. Follow examples on the
+Internet of how to implement a simple temporary pushbutton on an Arduino:
+https://www.arduino.cc/en/Tutorial/Button
 
 BlueGiga Bluetooth WT32i chip+board, critical connections:
 
-Bluetooth chip+board "VBus" or "5v" power pin connected to 5v rail from the
-step-down power supply.
+Bluetooth chip+board "5v" power pin NOT connected to anything.
+
+Bluetooth chip+board "3v3" or "VDD_IO" pin connected to the 3v output pin
+coming from the Arduino.
+
+Bluetooth chip+board "ENA" or "VREG_ENA" pin connected to the 3v output coming
+from the Arduino.
+
+Bluetooth chip+board "BATT" pin connected to the 3v output coming from the
+Arduino.
 
 Bluetooth chip+Board "Gnd" pin connected to the ground rail. Additional GND
 pins are good too, to make sure solid ground is achieved.
 
 Bluetooth chip+board serial port "RX/TX" pins connected to the "TX2/RX2" pins
 (serial port 2) of Arduino. Note: This is a crossover connection, i.e., RX
-from the Arduino is connected to TX on the dev board and vice-versa. Since
-this is at TTL level, you don't need to go through a MAX232 circuit. However,
-the Arduino is running at 5v TTL, and the BlueGiga chip runs at 3v (and our
-assembly will actually have it nominally at 2.5v), you must voltage match
-them. Decrease the  voltage for the Arduino transmit, and increase it for the
-BlueGiga transmit. Run the Arduino Tx2 output through a simple 50% voltage
-divider to step 5v TTL from Arduino down to 2.5v for the BlueGiga chip. Then
-use a 2k pullup resistor (or a pair of 1k's in series) on the WT32i Tx line
-into the Arduino RX2 line. Schematic:
+from the Arduino is connected to TX on the Bluetooth chip and vice-versa.
+Since this is at TTL level, you don't need to go through a MAX232 circuit.
+However, the Arduino is running at 5v TTL, and the BlueGiga chip runs at 3.3v.
+So you must voltage match them. Decrease the  voltage for the Arduino TX2
+output, by running it through a simple 50% voltage divider to step 5v TTL from
+Arduino down to 2.5v for the BlueGiga chip. The BlueGiga chip's transmit pin
+can stay at 3.3v and the Arduino will still read it just fine, so no changes
+are needed for that line. Schematic:
 
     ARDUINO TX2-----VVVVV----+----VVVVV-----GND
                    10Kohm    |    10Kohm
                              |
                              +--------------WT32i Rx
 
-    ARDUINO RX2--------------+----VVVVV-----5v
-                             |    2Kohm
-                             |
-                             +--------------WT32i Tx
+    ARDUINO RX2-----------------------------WT32i Tx
+ 
 
 Note: A pullup resistor calculator is here:
 https://ben.artins.org/electronics/pullup-resistors/?
 
 
 Bluetooth chip+Board three I2S pins PCM_CLK, PCM_SYNC, PCM_IN connected to
-empeg IISC, IISW, IISD1 via a special modification to the empeg the tuner
+empeg IISC, IISW, IISD1 via a special modification to the empeg tuner module
 connector, as described in the section of this document titled "Modify Empeg
 Car interior for I2S digital audio connection".
 
@@ -913,14 +917,5 @@ times for each of the I2S connections):
                             |
                             +--------------WT32i PCM_CLK
 
-Reset Line: Pin 51 of the Arduino connected to Bluetooth chip+board RST
-(reset) pin via a 50% voltage divider and a diode. Example:
-
-    ARDUINO PIN 51-----VVVVV----+----VVVVV-----GND
-                      10Kohm    |    10Kohm
-                                |
-                                |
-                                +------>|------WT32i RST
-                                   Diode 1N914
 
 

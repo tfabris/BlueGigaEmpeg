@@ -39,8 +39,9 @@ const String btPinCodeString = "SET BT AUTH * 0000";
 
 // Variable to control whether or not to do the Reset Line startup code to
 // support Mark Lord's module which needs it. Enable this if you have
-// implemented the reset line in hardware (see README.txt for details of the
-// implementation).
+// implemented the reset line in hardware. This reset line was not needed on
+// my unit when I supplied the chip directly with 3.3v power. This value
+// should be set to false in most cases.
 boolean performResetLinePhysical = false;
 
 // Control whether or not the module uses digital I2S audio, or analog line-
@@ -143,7 +144,7 @@ boolean outputMillis=true;
 // This should be set to false most of the time, and only set to true during
 // debugging sessions, since it slows down processing to put out too much
 // data on the serial port when it is not needed.
-boolean displayTracksOnSerial=true;
+boolean displayTracksOnSerial=false;
 
 // Strings to define which codecs to use for A2DP audio transmission.
 // To remove a codec from the capability list, use its command with no
@@ -708,8 +709,9 @@ int lastPairButtonState = LOW;
 // Variable for pin number of the reset/pair indicator blue LED.
 const int pairLedPin = 50;
 
-// Variable for the pin number of the Arduino pin that is connected to the
-// bluetooth chip's reset pin.
+// Variable for the pin number of the Arduino pin that, in certain specific
+// hardware designs, can be used as a physical hardware reset line connected
+// to the bluetooth chip's reset pin.
 const int resetLinePin = 51;
 
 // Variable to globally keep track of whether we have recently initiated
@@ -4022,14 +4024,6 @@ void QuickResetBluetooth(int resetType)
       SendBlueGigaCommand(F("RESET"));
       ClearGlobalVariables();
       DisplayAndSwallowResponses(4, 500);
-
-      // Additional hardware reset of bluetooth after sofware reset. this
-      // allows the unit to power up fully on any voltage instead of being in
-      // sleep mode at board startup. BUGFIX: Do not do this for every reset,
-      // instead only do it once at bootup. This is Mark Lord's suggestion to
-      // not to this every time. Hopefully this will work reliably.
-      //   ResetBluetoothPin(); 
-
       break;
 
     case 1:
@@ -4054,7 +4048,8 @@ void QuickResetBluetooth(int resetType)
 //
 // Physically reset the bluetooth module via its RST pin. This uses a
 // connection between one of the Arduino's GPIO pins and the reset pin on the
-// bluetooth module itself.
+// bluetooth module itself (via a voltage divider and a diode). This might not
+// be implemented on your hardware if it is not needed.
 // ---------------------------------------------------------------------------
 void ResetBluetoothPin()
 {
