@@ -490,17 +490,17 @@ which allows you to edit the config.ini on the player.
 Change the settings in config,ini as follows (adding new section headers such
 as [Hijack] only if that section does not already exist):
 
- [Hijack]
- suppress_notify=2
+[hijack]
+suppress_notify=2
 
- [Output]
- notify=1
+[output]
+notify=1
 
- [Serial]
- car_rate=115200
+[serial]
+car_rate=115200
 
-Make sure to synchronize with the player after changing the config.ini
-settings.
+These settings are case-sensitive. Make sure to synchronize with the player
+after changing the config.ini settings.
 
 
 ------------------------------------------------------------------------------
