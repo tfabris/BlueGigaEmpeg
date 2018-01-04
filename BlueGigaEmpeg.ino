@@ -41,7 +41,7 @@ const String btPinCodeString = "SET BT AUTH * 0000";
 // support Mark Lord's module which needs it. Enable this if you have
 // implemented the reset line in hardware (see README.txt for details of the
 // implementation).
-boolean performResetLinePhysical = true;
+boolean performResetLinePhysical = false;
 
 // Control whether or not the module uses digital I2S audio, or analog line-
 // level audio inputs (for example the line level inputs on the BlueGiga dev
