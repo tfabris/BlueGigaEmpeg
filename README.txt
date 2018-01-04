@@ -822,25 +822,24 @@ MAX232 are as follows:
 
     MAX232 Pin 1 and 3 aka C1+/C1- - Bridge with a 2.2uf ceramic capacitor
     MAX232 Pin 4 and 5 aka C2+/C2- - Bridge with a 2.2uf ceramic capacitor
-    MAX232 Pin 2 aka V+ - Connect to Arduino 5v via a 2.2uf ceramic capacitor
+    MAX232 Pin 2 aka V+ - Connect to Pololu 5v via a 2.2uf ceramic capacitor
     MAX232 Pin 6 aka V- - Connect to GND via a 2.2uf ceramic capacitor
     MAX232 Pin 11 aka TTL-I1 - Connect to Arduino Mega Board 18 aka Tx1 
     MAX232 Pin 12 aka TTL-O1 - Connect to Arduino Mega Board 19 axa Rx1
     MAX232 Pin 13 aka 232-I1 - Connect to RS-232 plug pin 3 aka Tx
     MAX232 Pin 14 aka 232-O1 - Connect to RS-232 plug pin 2 aka Rx
     MAX232 Pin 15 aka GND - Connect directly to GND
-    MAX232 Pin 16 aka VCC - Connect directly to Arduino 5v output.
+    MAX232 Pin 16 aka VCC - Connect directly to Pololu 5v output.
     MAX232 Pin 16 aka VCC - Also connect to 0.1uf ceramic capacitor which
                             then connects to GND. (Pin 16 is two connections,
-                            one to 5V and then also to the smoothing capacitor
-                            which bridges across 5v and GND. Place this cap as
-                            physically close to pin 16 as possible.)
+                            one to Pololu 5V and then also to the smoothing
+                            capacitor which bridges across 5v and GND. Place
+                            this cap as close to pin 16 as possible.)
 
-Empeg tuner connector is used to supply power to the Arduino and the rest of
-the assembly. Blue wire on tuner connector connects to the voltage input pin
-on the 12v-to-5v Pololu step-down transformer power supply, and the black wire
-on the tuner connector connects to the ground input pin on the step-down power
-supply.
+Empeg tuner connector is used to supply power to the 12v-to-5v Pololu step-
+down transformer power supply, and from there, on to the rest of the assembly.
+Blue wire on tuner connector connects to the voltage input pin on Pololu, and
+the black wire on the tuner connector connects to the ground input pin Pololu.
 
 Arduino "Vin" pin is connected to the 5v output rail from the Pololu 12v-to-5v
 step-down transformer power supply circuit.
@@ -895,11 +894,8 @@ are needed for that line. Schematic:
                              |
                              +--------------WT32i Rx
 
-    ARDUINO RX2-----------------------------WT32i Tx
- 
 
-Note: A pullup resistor calculator is here:
-https://ben.artins.org/electronics/pullup-resistors/?
+    ARDUINO RX2-----------------------------WT32i Tx
 
 
 Bluetooth chip+Board three I2S pins PCM_CLK, PCM_SYNC, PCM_IN connected to
