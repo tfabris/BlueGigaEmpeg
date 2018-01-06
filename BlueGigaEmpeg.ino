@@ -469,10 +469,8 @@ String rejMatrix[11] =
 // several responses and can sort out which response is from which query. So
 // we must respond with that same transaction label digit in our response.
 // Must have specific transaction labels to use for specific types of
-// messages. These are part of the fix to what I called the "Kenwood Bug"
-// where the Kenwood stereo refused to query for any new track titles past the
-// first track. These will also be using the memory reservation size of "2"
-// defined above since they are copies of the same transaction label.
+// messages. These will be using the memory reservation size of "2" since they
+// are copies of a single-character transaction label string.
 int transactionLabelSize = 2;
 static String transactionLabelPlaybackStatusChanged = "";
 static String transactionLabelTrackChanged = "";
@@ -2223,9 +2221,6 @@ void RespondToQueries(String &queryString)
     // Special case where we save off some possible global variables
     // which are the specific transaction labels for two specific
     // types of query/response strings we might be deailing with.
-    // This is part of the fix for the "Kenwood Bug". See comments
-    // in the function "HandleEmpegStateChange" for details on how
-    // these variables are used and how they fix the "Kenwood Bug".
     if (queryString.indexOf(F("PLAYBACK_STATUS_CHANGED")) > (-1))
     {
       // If we got a "REGISTER_NOTIFICATION" for "PLAYBACK_STATUS_CHANGED"
@@ -3178,12 +3173,19 @@ void SendEmpegCommand(char empegCommandToSend)
 
     // Handle and log whatever state changes we did AFTER we sent the command
     // (or not) to the empeg player.
-    //     HandleEmpegStateChange();
-    // Bugfix: Actually don't this at all just because we told the player to
-    // change tracks. Instead only trigger this when the player responds with
-    // new/changed information about its state (ie do this elswhere). This
-    // fixes GitHub issue #38, "Track number changes before the other
-    // metadata.".
+    //     HandleEmpegStateChange(1);
+    // Bugfix: Actually don't this merely because we told the player to change
+    // tracks. Instead only trigger a state change notification when the
+    // player responds with new/changed information about its state, i.e.,
+    // handle the empeg state change elswhere. Merely telling the empeg state
+    // to change by sending it a command doesn't mean that it actually changed
+    // yet. Notifying the host stereo that a change occurred at this moment is
+    // actually too early, and it will query for and receive false data at
+    // this too-early moment, and will waste precious time sending and
+    // receiving all the wrong track metadata, slowing down the receipt of the
+    // correct metadata a few moments later. Commenting out the call to
+    // HandleEmpegStatChange here fixes GitHub issue #38, "Track number
+    // changes before the other metadata.".
   }
 }
 
@@ -3430,30 +3432,32 @@ void HandleEmpegString(String &theString)
       // and such.
       SetTrackMetaData(empegMessageCode, empegDetailString);
 
-      // NOTE: The next line is super important. Every time the empeg gets a
-      // state change, we need to send a command to the bluetooth to make it
-      // re-query us for the track information. In this way, if the track
-      // changes on the empeg due to a state change then it will ask us for
-      // the new track data. This will need to happen each time the empeg
+      // NOTE: The next line is super important. Every time the empeg changes
+      // its track metadata, we need to send a command to the bluetooth to
+      // make it re-query us for the track information. In this way, if the
+      // track changes on the empeg due to a state change then it will ask us
+      // for the new track data. This will need to happen each time the empeg
       // changes track number, metadata, playback length, etc (though not
       // playback position). This will need to happen both when the bluetooth
       // initiates the change (ie the user presses NEXT on his steering wheel)
       // and also when the empeg moves on to the next track naturally itself
       // (i.e. you're just letting the empeg run and it goes to the next track
-      // and now new track data has appered on its serial port output). This
-      // should happen only when the empeg itself has said that the data has
-      // changed, in other words, only when the track metadata is different
-      // from whatever it was prior. There is a serial data transmit/receive
-      // cost and a processing cost associated with the (fairly large) set of
-      // queries that it makes when it gets this message, so you should only
-      // do it when the track actually changes.
-      // 
+      // and now new track data has appered on its serial port output).
+      // However, we should call out to the this function only when the empeg
+      // itself has told us that the data has changed, not merely because we
+      // sent an "n" or "p" command to the empeg. There is a serial data
+      // transmit/receive cost and a processing cost associated with the
+      // (fairly large) set of queries that it makes when it gets this
+      // message, so you should only do it when absolutely necessary.
+      //
       // Trigger this only when we get the line containing a "Genre" change
       // ("G") since that is the last of the track information sets to appear
-      // on the serial port in a block of messages.
+      // on the serial port in a block of messages. This prevents us from
+      // trying to make the large set of queries occur for every single line
+      // of metadata.
       if (empegMessageCode == 'G')
       {
-        HandleEmpegStateChange();
+        HandleEmpegStateChange(2);
       }
 
       // Bugfix for issue #32 "Fast forward can run away from you and get
@@ -3465,7 +3469,7 @@ void HandleEmpegString(String &theString)
       // front panel. This is important, so that we prevent runaway bluetooth
       // situations by stopping at track boundaries but still allow the user
       // to ff/rew across track boundaries from the player front panel. First,
-      // check to see if we were in the middle of a bluetooth- initiated FF or
+      // check to see if we were in the middle of a bluetooth-initiated FF or
       // REW operation and thus need to be doing protection at all.
       if (blueToothFastForward)
       {
@@ -3496,7 +3500,7 @@ void HandleEmpegString(String &theString)
   if ((empegMessageCode == 'S') && (empegDetailString == "1"))
   {
     empegIsPlaying = true;
-    HandleEmpegStateChange();
+    HandleEmpegStateChange(1);
     return;
   }
   
@@ -3505,7 +3509,7 @@ void HandleEmpegString(String &theString)
   if ((empegMessageCode == 'S') && (empegDetailString == "0"))
   {
     empegIsPlaying = false;
-    HandleEmpegStateChange();
+    HandleEmpegStateChange(1);
     return;
   }
 
@@ -3538,7 +3542,7 @@ void HandleEmpegString(String &theString)
 
       // Tell the head unit that we have a new playlist length to report to
       // it.
-      HandleEmpegStateChange();
+      HandleEmpegStateChange(2);
     }
   }
 
@@ -3696,7 +3700,7 @@ void HandleEmpegString(String &theString)
         if (empegIsPlaying == false)
         {
           empegIsPlaying = true;
-          HandleEmpegStateChange();
+          HandleEmpegStateChange(1);
         }
         // If the playback state wasn't wrong to begin with, no action is
         // needed.
@@ -3709,7 +3713,7 @@ void HandleEmpegString(String &theString)
         if (empegIsPlaying == true)
         {
           empegIsPlaying = false;
-          HandleEmpegStateChange();
+          HandleEmpegStateChange(1);
         }
         // If the playback state wasn't wrong to begin with, no action is
         // needed.
@@ -3739,172 +3743,105 @@ void HandleEmpegString(String &theString)
 // ---------------------------------------------------------------------------
 // HandleEmpegStateChange
 //
-// When the empeg's playing state changes (playing or paused), there are
-// several things that need to be done, some commands than need to be sent to
-// the bluetooth chip to let it know about some things. Also there are some
-// things I'd like to do when the track information changes from one track to
-// the next. I think that I can do all of them here all at once.
+// When the empeg's playing state changes (playing or paused), there are a few
+// things that need to be done, some commands than need to be sent to the
+// bluetooth chip to let it know that the state has changed. For instance this
+// function will send the AVRCP NFY CHANGED message to the head unit. This
+// routine handles doing whatver is necessary when the empeg state changes.
+//
+// Parameter:   Supply 1 for "playback status changed" (i.e., play/pause).
+//              Supply 2 for "track changed" (i.e., title/artist/etc.)
+//
+// NOTE: Though it is tempting to try, do not send either A2DP STREAMING STOP
+// or A2DP STREAMING START in the HandleEmpegStateChange function at all. It
+// causes problems during the pairing and connection processes if we do it at
+// the wrong time due to the empeg state changing in the middle of other
+// things.
+//
+// NOTE: Though it is tempting to try, do not send an AVRCP PLAY or AVRCP
+// PAUSE message during HandleEmpegStateChange. It does not help to indicate
+// to the host stereo that we have started playing by sending a play command.
+// Since we are in A2DP Source Mode, the host stereo doesn't respond to PLAY
+// or PAUSE commands. I tried to do it to fix issue #22 where the bluetooth
+// headset would get the wrong idea and it would have a desynchronization with
+// the play/pause state, but it did not make it better. The real source of the
+// desynchronization was a completely different thing. So don't do that here
+// because it makes additional SYNTAX ERROR messages appear at times and it's
+// not helpful and it's the wrong place to do it.
 // ---------------------------------------------------------------------------
-void HandleEmpegStateChange()
+void HandleEmpegStateChange(int typeOfStateChange)
 {
-  if (empegIsPlaying)
+  if (typeOfStateChange == 1)
   {
-    // Special case: Make sure streaming is started so that there is no
-    // "cutoff" of the start of the song if we press the play button on the
-    // stereo's touch screen. Must do this before we send the command to the
-    // empeg so that it happens first.
-    // UPDATE: Do not send either STREAMING STOP or STREAMING START in the
-    // HandleEmpegStateChange code at all. This workaround is no longer needed
-    // and also it causes problems during the reset and pairing processes if
-    // we do it at the wrong time due to the empeg state changing in the
-    // middle of other things.
-    //     SendBlueGigaCommand(F("A2DP STREAMING START"));
-    //
-    // Final fix for the "Kenwood Bug". Description of the Kenwood Bug: The
-    // AVRCP NFY CHANGED commands work on factory car stereo in Honda Accord
-    // 2017 model no matter what the transaction label is. This led me to
-    // believe that the transaction label was only important when performing
-    // an immediate response to a state query (i.e., when sending an "AVRCP
-    // NFY INTERIM" response), and that if I was the one who was indicating
-    // the state change (i.e., when I was sending an "AVRCP NFY CHANGED"
-    // statement to tell the host that something had changed), that the
-    // transaction label was arbitrary and that I was the person choosing the
-    // transaction label at that time. This was fine for the Honda stereo:
-    // When those commands are issued to the bluetooth chip, then the car
-    // stereo head unit immediately reacts by re-querying for more new track
-    // metadata from the bluetooth chip.
-    //
-    // However, when using those commands on a Kenwood bluetooth-equipped car
-    // stereo, then nothing happens when the messages are sent up with
-    // arbitrary transaction labels. The Kenwood stops sending new queries for
-    // track information and just "sits there" blindly playing the audio
-    // stream without getting any new track data.
-    //
-    // It turns out that the transaction labels aren't arbitrary if you
-    // received a "REGISTER_NOTIFICATION" message for the
-    // "PLAYBACK_STATUS_CHANGED" or the "TRACK_CHANGED" messages. Yes, you
-    // need to immediately respond with an "INTERIM" notification, but then if
-    // you send a "CHANGED" notification yourself later, then the transaction
-    // label still has to match. The Kenwood stopped querying for new track
-    // data because the transaction labels didn't match when I sent it
-    // "CHANGED" notifications. The fix is to match the transaction labels by
-    // storing them in a global variable.
-    //
-    // Here's the first of the fixes: Send a notification to the head unit
-    // that the "playback status changed". Command details for this command
-    // are:
+    // Send a notification to the head unit that the "playback status
+    // changed". Command details for this command are:
     //      AVRCP NFY {INTERIM | CHANGED} {transaction_label} {event_ID} [value]
     // Where:
     //      AVRCP NFY   - The notification command to send to the head unit.
     //      CHANGED     - Indicate to the head unit that there was a change of
     //                    some kind.
-    //      1           - Send this message with the specific transaction label
+    //      x           - Send this message with the specific transaction label
     //                    from the corresponding previous "REGISTER_NOTIFICATION".
     //      1           - The notification message we will send contains event ID
     //                    1, which is "PLAYBACK_STATUS_CHANGED".
     //      1           - The sole parameter value for the PLAYBACK_STATUS_CHANGED,
-    //                    with a "1" indicating "playing".
+    //                    with a "1" for "playing" and "2" for "paused"
     if (transactionLabelPlaybackStatusChanged == "")
     {
-      // Bugfix: If we haven't received a "REGISTER_NOTIFICATION" message to
-      // begin with at startup yet, then don't attempt to send an arbitrary
-      // notification with an arbitrary transaction label. I suspect that this
-      // arbitrary-transaction-labeled message migh be going into a queue on
-      // the BlueGiga module and then being sent up to the device later and
-      // confusing some devices. In particular I am wondering if it is
-      // confusing a bluetooth headset I'm testing with. The solution here is
-      // to comment out this line and send nothing at all in these cases.
-      //     SendBlueGigaCommand(F("AVRCP NFY CHANGED 1 1 1"));
+      // If we have not yet received the REGISTER_NOTIFICATION from the host
+      // stereo which contains the transaction label, we cannot send the state
+      // change message.
+      Log(F("Cannot send playback state change message to host stereo, we do not have a transaction label for this message yet."));
     }
     else
     {
-      SendBlueGigaCommand("AVRCP NFY CHANGED " + transactionLabelPlaybackStatusChanged + " 1 1");
+      // A transaction label for this type of transaction exists, so we can
+      // send the notification message.
+      if (empegIsPlaying)
+      {
+        // If the empeg is playing, send the notification that we are playing.
+        SendBlueGigaCommand("AVRCP NFY CHANGED " + transactionLabelPlaybackStatusChanged + " 1 1");
+      }
+      else
+      { 
+        // If the empeg is paused, send the notification that we are paused.       
+        SendBlueGigaCommand("AVRCP NFY CHANGED " + transactionLabelPlaybackStatusChanged + " 1 2");
+      }
     }
 
-    // Indicate to the host stereo that we have started playing by sending a
-    // play command. This attempts to fix issue #22 where the bluetooth
-    // headset would get the wrong idea and it would have a desynchronization
-    // with the play/pause state. This does not make things either worse or
-    // better. Trying not doing this because it makes additional SYNTAX ERROR
-    // messages appear at times. Verdict: this has no effect on issue #22.
-    //     SendBlueGigaCommand(F("AVRCP PLAY"));
+    // Report to our arduino console debug log what the current state of
+    // playback on the empeg is.
+    ReportEmpegPlayingState();
   }
-  else
-  {
-    // Note: Do not send "A2DP STREAMING STOP" here or else you will get a
-    // "cutoff" start of the song on the next unpause. Leave the stream active
-    // even when playback is stopped to prevent cutoffs. In fact, to fix a
-    // bug, we actually want to send a streaming start here instead.
-    // UPDATE: Do not send either STREAMING STOP or STREAMING START in the
-    // HandleEmpegStateChange code at all. This workaround is no longer needed
-    // and also it causes problems during the reset and pairing processes if
-    // we do it at the wrong time due to the empeg state changing in the
-    // middle of other things.
-    //     SendBlueGigaCommand(F("A2DP STREAMING START"));
 
-    // Send a notification to the head unit that the playback status has
-    // changed (fix Kenwood bug). Command details are above, with the last "2"
-    // in this command indicating "paused".
-    if (transactionLabelPlaybackStatusChanged == "")
+  if (typeOfStateChange == 2)
+  {
+    // Send a notification to the host stereo headunit that the track itself
+    // has changed, so that it will re-query us for the track metadata.
+    // Command details for this command are:
+    //      AVRCP NFY {INTERIM | CHANGED} {transaction_label} {event_ID} [value]
+    // Where:
+    //      AVRCP NFY   - The notification command to send to the head unit.
+    //      CHANGED     - Indicate to the head unit that there was a change.
+    //      x           - Specific transaction label.
+    //      2           - The notification message we will send contains event
+    //                    ID 2, which is "TRACK_CHANGED".
+    //      1           - The sole parameter value for the TRACK_CHANGED, with
+    //                    a "1" indicating that there is indeed a track selected.
+    if (transactionLabelTrackChanged == "")
     {
-      // Bugfix: If we haven't received a "REGISTER_NOTIFICATION" message to
-      // begin with at startup yet, then don't attempt to send an arbitrary
-      // notification with an arbitrary transaction label. I suspect that this
-      // arbitrary-transaction-labeled message migh be going into a queue on
-      // the BlueGiga module and then being sent up to the device later and
-      // confusing some devices. In particular I am wondering if it is
-      // confusing a bluetooth headset I'm testing with. The solution here is
-      // to comment out this line and send nothing at all in these cases.
-      //     SendBlueGigaCommand(F("AVRCP NFY CHANGED 1 1 2"));
+      // If we have not yet received the REGISTER_NOTIFICATION from the host
+      // stereo which contains the transaction label, we cannot send the state
+      // change message.
+      Log(F("Cannot send track metadata change message to host stereo, we do not have a transaction label for this message yet."));
     }
     else
     {
-      SendBlueGigaCommand("AVRCP NFY CHANGED " + transactionLabelPlaybackStatusChanged + " 1 2");
+      // A transaction label for this type of notification exists, we can send
+      // the message to the host stereo.
+      SendBlueGigaCommand("AVRCP NFY CHANGED " + transactionLabelTrackChanged + " 2 1"); 
     }
-
-    // Indicate to the host stereo that we have stopped playing by sending a
-    // pause command. This attempts to fix issue #22 where the bluetooth
-    // headset would not start playing when it was supposed to and there was a
-    // desynchronization in play state between headset and bluetooth module.
-    // This does not make things either worse or better. Trying not doing this
-    // because it makes additional SYNTAX ERROR messages appear at times.
-    // Verdict: this has no effect on issue #22.
-    //    SendBlueGigaCommand("AVRCP PAUSE");
   }
-
-  // In all cases, send a notification to the host stereo headunit that the
-  // track itself has changed, so that it will re-query us for the track
-  // metadata. Command details for this command are:
-
-  //      AVRCP NFY {INTERIM | CHANGED} {transaction_label} {event_ID} [value]
-  // Where:
-  //      AVRCP NFY   - The notification command to send to the head unit.
-  //      CHANGED     - Indicate to the head unit that there was a change.
-  //      2           - Specific transaction label.
-  //      2           - The notification message we will send contains event
-  //                    ID 2, which is "TRACK_CHANGED".
-  //      1           - The sole parameter value for the TRACK_CHANGED, with
-  //                    a "1" indicating that there is indeed a track selected.
-  if (transactionLabelTrackChanged == "")
-  {
-      // BUGFIX: If we haven't received a "REGISTER_NOTIFICATION" message to
-      // begin with at startup yet, then don't attempt to send an arbitrary
-      // notification with an arbitrary transaction label. I suspect that this
-      // arbitrary-transaction-labeled message migh be going into a queue on
-      // the BlueGiga module and then being sent up to the device later and
-      // confusing some devices. In particular I am wondering if it is
-      // confusing a bluetooth headset I'm testing with. The solution here is
-      // to comment out this line and send nothing at all in these cases.
-      //     SendBlueGigaCommand(F("AVRCP NFY CHANGED 2 2 1")); 
-  }
-  else
-  {
-    SendBlueGigaCommand("AVRCP NFY CHANGED " + transactionLabelTrackChanged + " 2 1"); 
-  }
-  
-  // Report to our arduino console debug log what the current state of
-  // playback on the empeg is.
-  ReportEmpegPlayingState();
 }
 
 // ---------------------------------------------------------------------------
