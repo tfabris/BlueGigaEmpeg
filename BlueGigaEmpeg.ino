@@ -3791,7 +3791,7 @@ void HandleEmpegStateChange(int typeOfStateChange)
       // If we have not yet received the REGISTER_NOTIFICATION from the host
       // stereo which contains the transaction label, we cannot send the state
       // change message.
-      Log(F("Cannot send playback state change message to host stereo, we do not have a transaction label for this message yet."));
+      //   Log(F("Cannot send playback state change message to host stereo, we do not have a transaction label for this message yet."));
     }
     else
     {
@@ -3800,7 +3800,7 @@ void HandleEmpegStateChange(int typeOfStateChange)
       if (empegIsPlaying)
       {
         // If the empeg is playing, send the notification that we are playing.
-        //   SendBlueGigaCommand("AVRCP NFY CHANGED " + transactionLabelPlaybackStatusChanged + " 1 1");
+        SendBlueGigaCommand("AVRCP NFY CHANGED " + transactionLabelPlaybackStatusChanged + " 1 1");
       }
       else
       { 
