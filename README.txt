@@ -98,7 +98,7 @@ step in this checklist. Each step is detailed in its own section, below.
 - Modify Empeg Car interior for I2S digital audio connection
 - Upgrade the empeg Car's hijack kernel and set "Serial Port Assignment"
 - Empeg Car configuration changes
-- Set jumpers, switches, and traces
+- Set jumpers, switches, and traces, and modify bluetooth board
 - Connect external hardware connections
 - Set Bluetooth PIN code if needed (most likely not needed)
 - Apply power and pair Bluetooth
@@ -177,6 +177,9 @@ of this writing, here were the steps I took:
    connected. It needs to be connected any time you do firmware updates to the
    WT32i chip.
 
+ - Make sure that 470uF capacitor C16 is soldered onto the BetzTechnik WT32i
+   Bluetooth board. It needs to be connected any time you do firmware updates.
+
  - Make sure the Bluetooth breakout board is fully disconnected from the
    Arduino and all of its related electronics modules which are part of this
    assembly. Upgrade will not work if it is connected to Arduino serial port.
@@ -232,6 +235,11 @@ of this writing, here were the steps I took:
    when cutting JP4. Make sure not to peel up the pads. There are two traces
    running to the USB side of the JP4 pad and if you peel up that trace, your
    board will no longer be able to power up.
+
+ - With everything still disconnected, desolder the 470uF capacitor at C16.
+   IMPORTANT: Use extreme care so that you save the capacitor and the pads to
+   which it is connected. Remember the capacitor direction, and save the
+   capacitor in case you need to do a firmware update later.
 
 
 ------------------------------------------------------------------------------
@@ -504,7 +512,7 @@ after changing the config.ini settings.
 
 
 ------------------------------------------------------------------------------
-Set jumpers, switches, and traces
+Set jumpers, switches, and traces, and modify bluetooth board
 ------------------------------------------------------------------------------
 These instructions are for the the BetzTechnik WT32i Breakout board V2.
 
@@ -517,6 +525,14 @@ port which cause the chip to reboot randomly.
 IMPORTANT: Use extreme care when cutting JP4. Make sure not to peel up the
 pads. There are two traces running to the USB side of the JP4 pad and if you
 peel up that trace, your board may no longer be able to power up.
+
+On the BetzTechnik board, carefully desolder the 470uF capacitor at C16, but
+only do this AFTER successfully updating the chip's firmware to the latest
+version. Remember the capacitor's direction, and save the capacitor for later,
+in case you need to do a firmware update later.
+
+IMPORTANT: Use extreme care when desoldering C16. Make sure not to peel up the
+pads.
 
 "Smd_2_pole_switch set to the down or right position, to disconnect the BATT
 "voltage from the linear voltage regulator on the board. The BlueGigaEmpeg
@@ -863,6 +879,12 @@ Internet of how to implement a simple temporary pushbutton on an Arduino:
 https://www.arduino.cc/en/Tutorial/Button
 
 BlueGiga Bluetooth WT32i chip+board, critical connections:
+
+BetzTechnik board JP4 FTDI Uart Enable jumper is cut after applying firmware
+update.
+
+BetzTechnik board 470uF capacitor C16 desoldered and saved after applying
+firmware update.
 
 Bluetooth chip+board "5v" power pin NOT connected to anything.
 
