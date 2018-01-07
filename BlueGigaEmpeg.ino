@@ -677,16 +677,24 @@ boolean empegPlayerIsRunning = true;
 
 // Variable to keep track of whether or not we have seen a timestamp message
 // from the empeg serial port yet so far. The very first timestamp we receive
-// from the empeg should be recorded, but not acted upon. There is a routine
-// to detect whether or not the player is playing or paused depending on
-// whether the timestamp is changing or frozen. The problem is that the
-// timestamp, the very first time we receive one after bootup, will almost
-// always be considered to be different from the one extant in memory (which
-// at bootup is 00:00:00) so there will at every bootup be a "mistake" where
-// it thinks the empeg is playing when it isn't necessarily playing. So keep
-// track of when we got the FIRST timestamp since bootup so that we don't "do
-// stuff" the very first time, we just record the timestamp.
+// from the empeg after a boot, a W or C command, or a track change command,
+// should be recorded, but not acted upon. There is a routine to detect
+// whether or not the player is playing or paused depending on whether the
+// timestamp is changing or frozen. The problem is that the timestamp, the
+// very first time we receive one after bootup or W or C or whatnot, will
+// almost always be considered to be different from the one extant in memory
+// (which at bootup or track change is 00:00:00) so there will at every bootup
+// be a "mistake" where it thinks the empeg is playing when it isn't
+// necessarily playing. So keep track of when we got the FIRST timestamp since
+// bootup so that we don't "do stuff" the very first time, we just record the
+// timestamp.
 boolean empegFirstTimestamp = true;
+
+// Additional variable to keep track of whether or not we have seen the first
+// timestamp since first bootup. This is an additional level bugfix for issue
+// #26 that is required after the fix to issue #57 which complicated things a
+// little bit.
+boolean empegFirstTimestampSinceBootup = true;
 
 // Variables for the state of the "Reset/Pair" button that I am implementing
 // on this assembly. The button, when pressed, will clear out the module's
@@ -3122,6 +3130,20 @@ String ReplaceHighAsciiWithUtf8(String &stringToMakeUtf8Char)
 // ---------------------------------------------------------------------------
 void SendEmpegCommand(char empegCommandToSend)
 {
+  // Partial fix for issue #57 - Flickering play/pause icons because of double
+  // issuance of play/pause state reporting to head unit due to timestamp
+  // changing after getting S0 or S1 from the player. When we issue a W or C
+  // or whatnot command to the player, it will respond with its play state
+  // being paused or playing by saying S0 or S1 on the serial port. But then
+  // shortly thereafter another timestamp appears on the serial port so it
+  // then triggers my code which detects that play state has gone pausey or
+  // unpausey based on the timestamp. We need to mute that code for Just One
+  // More Timestamp when we issue a W or a C or a whatnot to the player so
+  // that the first timestamp coming out of the player after a W or a C or a
+  // whatnot doesn't cause the play/pause icon on the car stereo touchscreen
+  // to flicker back and forth between play and pause.
+  empegFirstTimestamp=true;
+
   // Set the empeg's state variable based on the command we will send. Ideally
   // we would always let the empeg tell us what state it's in and never change
   // this state ourselves. However there is a special case which needs this.
@@ -3625,39 +3647,47 @@ void HandleEmpegString(String &theString)
     // as longs in the final calcuation instead of ints.
     empegMs = (empegHours * 1000L * 60L * 60L) + (empegMinutes * 1000L * 60L) + (empegSeconds * 1000L);
 
-    // The next section of code must only be done if it was NOT the first
-    // timestamp message we ever received from the empeg since boot up.
-    // Because the first  timestamp we receive will almost always be different
-    // from the timestamp in global memory, the very first one will frequently
-    // be flagged as having made a pause/play-state change even if there
-    // really wasn't one. So instead only do this in cases where it wasn't the
-    // first timestamp. If we hit this routine and it WAS the first timestamp,
-    // then flip the flag to false for the rest of the program run.
-    if (empegFirstTimestamp)
+    // Fix Github issue #26 "empegStartPause feature does not work as
+    // expected." The problem is that the player starts playing the song
+    // after bootup no matter what. It does this even though I already sent
+    // a "W" to the player after the player application started. Even though
+    // that first "W" worked, there is a second unpausing which occurs a
+    // little bit later. The player pauses when the first "W" is sent, and
+    // then it starts playing the track just a few moments later. This seems
+    // to happen at about the same time as the first timestamp appears on
+    // the serial port. Fix the issue by sending yet another pause statement
+    // to the  empeg immediately after it sees that first timestamp after
+    // bootup.
+    if (empegFirstTimestampSinceBootup)
     {
-      // Log that we have entered this "first time" code.
-      Log(F("First timestamp received from empeg Car - Not performing play-pause state change code just yet."));
-
-      // Fix Github issue #26 "empegStartPause feature does not work as
-      // expected." The problem is that the player starts playing the song
-      // after bootup no matter what. It does this even though I already sent
-      // a "W" to the player after the player application started. Even though
-      // that first "W" worked, there is a second unpausing which occurs a
-      // little bit later. The player pauses when the first "W" is sent, and
-      // then it starts playing the track just a few moments later. This seems
-      // to happen at about the same time as the first timestamp appears on
-      // the serial port. Fix the issue by sending yet another pause statement
-      // to the  empeg immediately after it sees that first timestamp after
-      // bootup.
       if (empegStartPause)
       {
         Log(F("empegStartPause feature activated. Pausing player on first timestamp after boot up."));
         SendEmpegCommand('W');
       }
 
-      // This was the first timestamp we've seen since program bootup, so flip
-      // the flag so that we take action on the second timestamp and all
-      // subsequent ones.
+      // When we are done processing this first bootup timestamp flag, then
+      // clear the flag so it works normally thereafter.
+      empegFirstTimestampSinceBootup = false;
+    }
+
+    // The next section of code must only be done if it was NOT the first
+    // timestamp message we ever received from the empeg since either boot up
+    // or since sending a command to pause, unpause, or change tracks. Because
+    // the first  timestamp we receive will almost always be different from
+    // the timestamp in global memory, the very first one will frequently be
+    // flagged as having made a pause/play-state change even if there really
+    // wasn't one. So instead only do this in cases where it wasn't the first
+    // timestamp. If we hit this routine and it WAS the first timestamp, then
+    // flip the flag to false for the rest of the program run.
+    if (empegFirstTimestamp)
+    {
+      // Log that we have entered this "first time" code.
+      Log(F("First timestamp received from empeg Car - Not performing play-pause state change code just yet."));
+
+      // This was the first timestamp we've seen since program bootup or since
+      // issuing a W or C or whatnot, so flip the flag so that we take action
+      // on the second timestamp and all subsequent ones.
       empegFirstTimestamp = false;
     }
     else
@@ -3771,6 +3801,15 @@ void HandleEmpegString(String &theString)
 // ---------------------------------------------------------------------------
 void HandleEmpegStateChange(int typeOfStateChange)
 {
+  // Partial fix for issue #57 - Flickering play/pause icons because of double
+  // issuance of play/pause state reporting to head unit due to timestamp
+  // changing. Immediately after notifying the head unit that there was a
+  // state change (either due to track change or due to play/pause state
+  // change) then there is a chance that the next timestamp message from the
+  // empeg will be misinterpreted so don't do timestamp processing immediately
+  // after having told the headunit that there was a state change.
+  empegFirstTimestamp=true;
+
   if (typeOfStateChange == 1)
   {
     // Send a notification to the head unit that the "playback status
