@@ -3935,13 +3935,13 @@ void HandleEmpegStateChange(int typeOfStateChange)
       // metadata up the Bluetooth, and if so, don't bother sending it up
       // again since that wastes bandwidth and CPU time.
       boolean dataIsTheSameThisTime = true;
-      if ( priorTitleString01            ==  trackTitleString01             ) { dataIsTheSameThisTime = false;}
-      if ( priorArtistString02           ==  trackArtistString02            ) { dataIsTheSameThisTime = false;}
-      if ( priorAlbumString03            ==  trackAlbumString03             ) { dataIsTheSameThisTime = false;} 
-      if ( priorNumberString04           ==  trackNumberString04            ) { dataIsTheSameThisTime = false;} 
-      if ( priorTotalNumberString05      ==  trackTotalNumberString05       ) { dataIsTheSameThisTime = false;} 
-      if ( priorGenreString06            ==  trackGenreString06             ) { dataIsTheSameThisTime = false;} 
-      if ( priorPlaybackPositionString07 ==  trackPlaybackPositionString07  ) { dataIsTheSameThisTime = false;} 
+      if ( priorTitleString01            !=  trackTitleString01             ) { dataIsTheSameThisTime = false;}
+      if ( priorArtistString02           !=  trackArtistString02            ) { dataIsTheSameThisTime = false;}
+      if ( priorAlbumString03            !=  trackAlbumString03             ) { dataIsTheSameThisTime = false;} 
+      if ( priorNumberString04           !=  trackNumberString04            ) { dataIsTheSameThisTime = false;} 
+      if ( priorTotalNumberString05      !=  trackTotalNumberString05       ) { dataIsTheSameThisTime = false;} 
+      if ( priorGenreString06            !=  trackGenreString06             ) { dataIsTheSameThisTime = false;} 
+      if ( priorPlaybackPositionString07 !=  trackPlaybackPositionString07  ) { dataIsTheSameThisTime = false;} 
 
       // Check to see if any of the data has changed this time round.
       if (!dataIsTheSameThisTime)
