@@ -623,6 +623,20 @@ static String trackPlaybackPositionString07 = "00";
 static String trackPlaybackLengthString="999999";
 long trackPlaybackPositionMs = -1L; // Initialize to flag value meaning "unknown"
 
+// Global variables to hold the track metadata information which was the
+// last set of metadata reported by the HandleEmpegStateChange routine. This set
+// of variables is used for the purpose of limiting too much oversending of data
+// up the Bluetooth. If all the data was the same as the last runthrough of the
+// HandleEmpegStateChange function, then it won't bother to send the
+// notification.
+static String priorTitleString01 = "Unknown track on empeg Car";
+static String priorArtistString02 = "Unknown artist on empeg Car";
+static String priorAlbumString03 = "(Album N/A)";
+static String priorNumberString04 = "00";
+static String priorTotalNumberString05 = "99999";
+static String priorGenreString06 = "Unknown genre on empeg Car";
+static String priorPlaybackPositionString07 = "00";
+
 // Strings to control the audio routing on the chip. Choose which string to
 // use by setting the boolean variable "digitalAudio" in the code above. This
 // string is used if you are using the Line In jacks on the bluetooth device
@@ -667,6 +681,14 @@ boolean empegStringComplete = false;
 // playback state. The empeg is always either playing or paused, so this is
 // either true or false.
 boolean empegIsPlaying = false; 
+
+// Variable to keep track of what the last playing state we sent up to the
+// bluetooth was, so that if it hasn't changed then we don't need to waste the
+// serial bandwidth to send it information that it already knows. "0" is the
+// original startup state so that it knows whether it's sent something at all
+// to begin with. At runtime after having sent one of the states up the
+// Bluetooth at least once, then this value will be either "1" or "2".
+static String priorIsPlaying = "0";
 
 // Variable to keep track of whether or not we think the empeg has completed
 // its bootup procedure and the player is running, or if it's some unknown
@@ -792,6 +814,7 @@ void setup()
   pairAddressString.reserve(pairAddressStringMaxLength);
   transactionLabelPlaybackStatusChanged.reserve(transactionLabelSize);
   transactionLabelTrackChanged.reserve(transactionLabelSize);
+  priorIsPlaying.reserve(2);
 
   // Reserve bytes for all the track metadata strings to save memeory.
   trackTitleString01.reserve(metadataMaxLength);
@@ -802,6 +825,14 @@ void setup()
   trackGenreString06.reserve(metadataMaxLength);
   trackPlaybackPositionString07.reserve(metadataSmallLength);
   trackPlaybackLengthString.reserve(metadataSmallLength);
+
+  priorTitleString01.reserve(metadataMaxLength);
+  priorArtistString02.reserve(metadataMaxLength);
+  priorAlbumString03.reserve(metadataMaxLength);
+  priorNumberString04.reserve(metadataSmallLength);
+  priorTotalNumberString05.reserve(metadataSmallLength);
+  priorGenreString06.reserve(metadataMaxLength);
+  priorPlaybackPositionString07.reserve(metadataSmallLength);
   
   // Open serial communications on the built Arduino debug console serial port
   // which is pins 0 and 1, this is the same serial output that you see when
@@ -2536,7 +2567,7 @@ void RespondToQueries(String &queryString)
       // Start by finding the prior spot in the string where we had finished
       // our selection and interpretation of the number. If this is the first
       // time through the loop, this will be the string position immediately
-      // folloing the space after the number of elements. If this is a
+      // following the space after the number of elements. If this is a
       // subsequent time through the loop, then this will be the string
       // position immediately following the space after the prior element code
       // number.
@@ -3682,8 +3713,8 @@ void HandleEmpegString(String &theString)
     // flip the flag to false for the rest of the program run.
     if (empegFirstTimestamp)
     {
-      // Log that we have entered this "first time" code.
-      Log(F("First timestamp received from empeg Car - Not performing play-pause state change code just yet."));
+      // Debug log that we have entered this "first time" code.
+      //    Log(F("First timestamp received from empeg Car - Not performing play-pause state change code just yet."));
 
       // This was the first timestamp we've seen since program bootup or since
       // issuing a W or C or whatnot, so flip the flag so that we take action
@@ -3825,32 +3856,60 @@ void HandleEmpegStateChange(int typeOfStateChange)
     //                    1, which is "PLAYBACK_STATUS_CHANGED".
     //      1           - The sole parameter value for the PLAYBACK_STATUS_CHANGED,
     //                    with a "1" for "playing" and "2" for "paused"
-    if (transactionLabelPlaybackStatusChanged == "")
-    {
-      // If we have not yet received the REGISTER_NOTIFICATION from the host
-      // stereo which contains the transaction label, we cannot send the state
-      // change message.
-      //   Log(F("Cannot send playback state change message to host stereo, we do not have a transaction label for this message yet."));
-    }
-    else
+    if (transactionLabelPlaybackStatusChanged != "")
     {
       // A transaction label for this type of transaction exists, so we can
       // send the notification message.
       if (empegIsPlaying)
       {
-        // If the empeg is playing, send the notification that we are playing.
-        SendBlueGigaCommand("AVRCP NFY CHANGED " + transactionLabelPlaybackStatusChanged + " 1 1");
+        // Only send the message if the playback state really changed. Don't
+        // waste the bandwidth if it hasn't changed since the last time we
+        // sent a status change message.
+        if (priorIsPlaying != F("1"))
+        {
+          // If the empeg is playing, send the notification that we are
+          // playing.
+          SendBlueGigaCommand("AVRCP NFY CHANGED " + transactionLabelPlaybackStatusChanged + " 1 1");
+
+          // Update our variable that indicates what the last runthrough of
+          // sending PLAYBACK_STATUS_CHANGED up the Bluetooth did.
+          priorIsPlaying = F("1");
+
+          // Report to our arduino console debug log what the current state of
+          // playback on the empeg is.
+          ReportEmpegPlayingState();                 
+        }
+        else
+        {
+          // Debugging message
+          Log(F("Not sending PLAYBACK_STATUS_CHANGED notification with the PLAYING status because there is no state change, we already tried to send this data."));
+        }
       }
       else
       { 
-        // If the empeg is paused, send the notification that we are paused.       
-        SendBlueGigaCommand("AVRCP NFY CHANGED " + transactionLabelPlaybackStatusChanged + " 1 2");
+        // Only send the message if the playback state really changed. Don't
+        // waste the bandwidth if it hasn't changed since the last time we
+        // sent a status change message.
+        if (priorIsPlaying != F("2"))
+        {
+          // If the empeg is paused, send the notification that we are paused.
+          SendBlueGigaCommand("AVRCP NFY CHANGED " + transactionLabelPlaybackStatusChanged + " 1 2");
+    
+          // Update our variable that indicates what the last runthrough of
+          // sending PLAYBACK_STATUS_CHANGED up the Bluetooth did.
+          priorIsPlaying = F("2");
+
+          // Report to our arduino console debug log what the current state of
+          // playback on the empeg is.
+          ReportEmpegPlayingState();          
+        }
+        else
+        {
+          // Debugging message
+          Log(F("Not sending PLAYBACK_STATUS_CHANGED notification with the PAUSED status because there is no state change, we already tried to send this data."));
+        }
       }
     }
-
-    // Report to our arduino console debug log what the current state of
-    // playback on the empeg is.
-    ReportEmpegPlayingState();
   }
 
   if (typeOfStateChange == 2)
@@ -3867,18 +3926,47 @@ void HandleEmpegStateChange(int typeOfStateChange)
     //                    ID 2, which is "TRACK_CHANGED".
     //      1           - The sole parameter value for the TRACK_CHANGED, with
     //                    a "1" indicating that there is indeed a track selected.
-    if (transactionLabelTrackChanged == "")
-    {
-      // If we have not yet received the REGISTER_NOTIFICATION from the host
-      // stereo which contains the transaction label, we cannot send the state
-      // change message.
-      //   Log(F("Cannot send track metadata change message to host stereo, we do not have a transaction label for this message yet."));
-    }
-    else
+    if (transactionLabelTrackChanged != "")
     {
       // A transaction label for this type of notification exists, we can send
       // the message to the host stereo.
-      SendBlueGigaCommand("AVRCP NFY CHANGED " + transactionLabelTrackChanged + " 2 1"); 
+
+      // But first check to see if we have already sent this exact same track
+      // metadata up the Bluetooth, and if so, don't bother sending it up
+      // again since that wastes bandwidth and CPU time.
+      boolean dataIsTheSameThisTime = true;
+      if ( priorTitleString01            ==  trackTitleString01             ) { dataIsTheSameThisTime = false;}
+      if ( priorArtistString02           ==  trackArtistString02            ) { dataIsTheSameThisTime = false;}
+      if ( priorAlbumString03            ==  trackAlbumString03             ) { dataIsTheSameThisTime = false;} 
+      if ( priorNumberString04           ==  trackNumberString04            ) { dataIsTheSameThisTime = false;} 
+      if ( priorTotalNumberString05      ==  trackTotalNumberString05       ) { dataIsTheSameThisTime = false;} 
+      if ( priorGenreString06            ==  trackGenreString06             ) { dataIsTheSameThisTime = false;} 
+      if ( priorPlaybackPositionString07 ==  trackPlaybackPositionString07  ) { dataIsTheSameThisTime = false;} 
+
+      // Check to see if any of the data has changed this time round.
+      if (!dataIsTheSameThisTime)
+      {
+        // If some/any of the data has changed, send it up the Bluetooth. We
+        // don't get to control which pieces of data go up the Bluetooth. The
+        // bluetooth host head unit queries for the data it wants after we
+        // notify that the track data changed.
+        SendBlueGigaCommand("AVRCP NFY CHANGED " + transactionLabelTrackChanged + " 2 1"); 
+
+        // Update our variables that indicate what the last runthrough of
+        // sending TRACK_CHANGED up the Bluetooth did.
+        priorTitleString01            =  trackTitleString01            ;
+        priorArtistString02           =  trackArtistString02           ;
+        priorAlbumString03            =  trackAlbumString03            ;
+        priorNumberString04           =  trackNumberString04           ;
+        priorTotalNumberString05      =  trackTotalNumberString05      ;
+        priorGenreString06            =  trackGenreString06            ;
+        priorPlaybackPositionString07 =  trackPlaybackPositionString07 ;         
+      }
+      else
+      {
+        // Debugging message
+        Log(F("Not sending TRACK_CHANGED notification because there is no new track data, we already tried to send this data."));
+      }
     }
   }
 }
@@ -4067,5 +4155,14 @@ void ClearGlobalVariables()
   // {
   //   pairAddressString = "";
   // }
+
+  priorTitleString01            =  "" ;
+  priorArtistString02           =  "" ;
+  priorAlbumString03            =  "" ;
+  priorNumberString04           =  "" ;
+  priorTotalNumberString05      =  "" ;
+  priorGenreString06            =  "" ;
+  priorPlaybackPositionString07 =  "" ; 
+  priorIsPlaying = "0";
 }
 
