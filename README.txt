@@ -897,8 +897,7 @@ from the Arduino.
 Bluetooth chip+board "BATT" pin connected to the 3v output coming from the
 Arduino.
 
-Bluetooth chip+Board "Gnd" pin connected to the ground rail. Additional GND
-pins are good too, to make sure solid ground is achieved.
+Bluetooth chip+Board "Gnd" pin connected to the ground rail.
 
 Bluetooth chip+board serial port "RX/TX" pins connected to the "TX2/RX2" pins
 (serial port 2) of Arduino. Note: This is a crossover connection, i.e., RX
@@ -926,12 +925,12 @@ connector, as described in the section of this document titled "Modify Empeg
 Car interior for I2S digital audio connection".
 
 Each one of the three I2S pins will need to be coming in through a set of
-resistors arranged in a voltage divider configuration, with a 4.7k and a 10k
-resistor for each one of the three lines. Example of one line (repeat three
-times for each of the I2S connections):
+resistors arranged in a voltage divider configuration, two 10k resistors for
+each one of the three lines. Example of one line (repeat a total of three
+times, one for each of the I2S connections):
 
     EMPEG IISC-----VVVVV----+----VVVVV-----GND
-                  4.7Kohm   |    10Kohm                    (3x) 
+                  10Kohm    |    10Kohm                    (3x) 
                             |
                             +--------------WT32i PCM_CLK
 
