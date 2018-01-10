@@ -37,13 +37,6 @@ const String btAuthTypeString = "SET BT SSP 1 0";
 // codes up to 16 digits long.
 const String btPinCodeString = "SET BT AUTH * 0000";
 
-// Variable to control whether or not to do the Reset Line startup code to
-// support Mark Lord's module which needs it. Enable this if you have
-// implemented the reset line in hardware. This reset line was not needed on
-// my unit when I supplied the chip directly with 3.3v power. This value
-// should be set to false in most cases.
-boolean performResetLinePhysical = false;
-
 // Control whether or not the module uses digital I2S audio, or analog line-
 // level audio inputs (for example the line level inputs on the BlueGiga dev
 // board).
@@ -168,32 +161,6 @@ const String codecString="SET CONTROL CODEC SBC JOINT_STEREO 44100 0\r\n        
 // download and the purchase of a special license for APT-X codec from Silicon
 // Labs.
 //   const String codecString="SET CONTROL CODEC APT-X_LL JOINT_STEREO 44100 0\r\n            SET CONTROL CODEC APT-X JOINT_STEREO 44100 1\r\n            SET CONTROL CODEC SBC JOINT_STEREO 44100 2\r\n            SET CONTROL CODEC AAC";
-
-// Optional - When we see the empeg player application start up, then send a
-// pause command to the player. If the bluetooth initial connection speed is
-// faster than the empeg bootup speed, then this will mean things start up in
-// pause mode. However if the empeg finishes bootup and starts its player
-// application before the bluetooth connection process is complete, then the
-// act of connecting the the bluetooth will issue the commands to start
-// playback, so things will start up playing. The reason for this feature to
-// exist is to reduce the amount of  time that the empeg is playing "silently"
-// with no bluetooth device listeneing to what it is playing. For example, in
-// a situation where you start the car and it takes 25 seconds for the car
-// stereo to boot up and connect to the bluetooth, while the empeg only takes
-// about 8 seconds to boot up, then you will have skipped about 17 seconds of
-// the song you were listening to when you turned the car off. With this
-// feature, theoretically, you will not lose much if any of that time and the
-// empeg will resume playing more or less where you left off. (In theory, when
-// it works.) The drawback is, if you are pairing with a stereo which pairs up
-// quickly, connecting faster than the empeg completing its bootup procedure,
-// then the empeg might start in pause mode and you have to unpause it by
-// hand.
-// TO DO: Implement Issue #42: Create a flag that detects when bluetooth is
-// successfully paired and streaming, and then skip sending the pause command
-// if the bluetooth is streaming at the moment the empeg finishes booting up.
-// If we  can do that successfully then this won't need to be a flag, we can
-// just implement it 100 percent of the time.
-boolean empegStartPause = true;
 
 // String to tell the unit to automatically try reconnecting every few seconds
 // when and if it ever becomes disconnected from its main pairing buddy.
@@ -595,6 +562,11 @@ String empegCommandMessageMatrix[13][2] =
   { "AVRCP REWIND RELEASE",       "A"},
 };
 
+// Issue #42: Global variable to keep track of whether or not we are connected
+// and streaming to the Bluetooth. Certain behaviors should only be done when
+// connected.
+bool connected = false;
+
 // Global variables to hold the track metadata information for the currently-
 // playing track on the empeg Car, so that they can be in the responses to the
 // queries from the host stereo to the bluetooth chip. The numbers in the
@@ -737,11 +709,6 @@ int lastPairButtonState = LOW;
 // Variable for pin number of the reset/pair indicator blue LED.
 const int pairLedPin = 50;
 
-// Variable for the pin number of the Arduino pin that, in certain specific
-// hardware designs, can be used as a physical hardware reset line connected
-// to the bluetooth chip's reset pin.
-const int resetLinePin = 51;
-
 // Variable to globally keep track of whether we have recently initiated
 // reset/pairing mode.
 bool pairingMode = false;
@@ -793,16 +760,6 @@ void setup()
   
   // Set up the pair button to be in the "read" state.
   pinMode(pairButtonPin, INPUT);
-
-  // Set up the reset line pin (if it is implemented) to be in a clean "read"
-  // state most of the time and only be set to write mode when we're using it.
-  // Do this globally once at startup regardless of whether or not we are
-  // calling ResetBluetoothPin() immediately afterward, because the position
-  // of that call might move or change in the future. So do this on its own.
-  if (performResetLinePhysical)
-  {
-    pinMode(resetLinePin, INPUT);
-  }
 
   // Reserve bytes for the input strings, which are the strings we check to
   // see, for example, if there is a valid processable bluetooth AVRCP command
@@ -878,10 +835,6 @@ void setup()
   // Log("Size of rejMatrix is:                 " + String(sizeof(rejMatrix)));
   // Log("Size of pmMessageMatrix is:           " + String(sizeof(pmMessageMatrix)));
   // Log("Size of empegCommandMessageMatrix is: " + String(sizeof(empegCommandMessageMatrix)));
-
-  // Perform the hardware reset with the RESET line on the bluetooth chip to
-  // bring the chip out of "Sleep" mode on power up (if implemented).
-  ResetBluetoothPin();
 
   // Configre the Bluetooth device at startup, call my routine which sets all
   // data to the desired overall system defaults. This does not erase any
@@ -1713,6 +1666,22 @@ void HandleString(String &theString)
     ClearGlobalVariables();
   }  
 
+  // If the string indicates that we are connected to the Bluetooth, then set
+  // the corresponding global variable that indicates we are connected to the
+  // Bluetooth.
+  if (theString.indexOf(F("A2DP STREAMING START")) > (-1)) {connected = true;}
+  if (theString.indexOf(F("CONNECT 1 A2DP"))       > (-1)) {connected = true;}
+  if (theString.indexOf(F("CONNECT 2 A2DP"))       > (-1)) {connected = true;}
+  if (theString.indexOf(F("AUDIO ROUTE"))          > (-1)) {connected = true;}
+
+  // If the string indicates that we are disconnected from the Bluetooth, then
+  // set the corresponding global variable that indicates we are disconnected
+  // from the Bluetooth.
+  if (theString.indexOf(F("A2DP STREAMING STOP"))  > (-1)) {connected = false;}
+  if (theString.indexOf(F("WRAP THOR AI"))         > (-1)) {connected = false;}
+  if (theString.indexOf(F("NO CARRIER 0 ERROR 0")) > (-1)) {connected = false;}
+  if (theString.indexOf(F("NO CARRIER 1 ERROR 0")) > (-1)) {connected = false;}
+ 
   // Handle "get bluetooth address" strings - these are strings that are
   // intended to tell me who my current pairing buddy is. This must come early
   // in the process so that if the GBA strings are found in the list, they
@@ -3347,29 +3316,31 @@ void HandleEmpegString(String &theString)
       empegPlayerIsRunning = true;
     }
 
-    // Behavior controlled by "empegStartPause" flag: If we get an empeg
-    // startup message, indicating that its boot sequence is done and the
-    // player app has started, then send a pause command to the player as an
-    // attempt to help prevent too much lost time in songs at the startup of
-    // your car.
-    // 
-    // Notes on this procedure: 
+    // Do not allow empeg to play silently if there is no Bluetooth connected.
+    // If we get an empeg startup message, indicating that its boot sequence
+    // is done and the player app has started, then send a pause command to
+    // the player as an attempt to help prevent too much lost time in songs at
+    // the startup of your car. Without this feature, in situations where the
+    // Bluetooth was not connected/paired/streaming yet, then the empeg would
+    // sit there silently playing all your tunes to nobody.
     //
-    //  Might cause player to come up and be in "pause" mode if the bluetooth
-    //  pairup speed  beats the empeg bootup speed. In my car, the bluetooth
-    //  pairup is always slower than  the empeg bootup, but for some other
-    //  devices like bluetooth headsets this might win.
+    // Currently using the Prolux Visuals message as the way of finding the
+    // startup of the empeg player because the "Starting player" message is a
+    // little iffy and not always detected by this routine. Not sure why but
+    // it didn't always work when I tried it.
     //
-    //  Currently using the Prolux Visuals message as the way of finding the
-    //  startup of the  player because the "Starting player" message is a
-    //  little iffy and not always detected  by this routine. Not sure why but
-    //  it didn't always work when I tried it.
-    //
-    if (empegStartPause)
+    // Also here: Fix issue #42, base certain behaviors off of whether or not
+    // the Bluetooth seems to be connected.
+    if (connected)
     {
-        Log(F("Detected empeg bootup sequence completion, sending pause command to player."));
-        SendEmpegCommand('W');
+      Log(F("Detected empeg bootup sequence completion, but we are already connected to Bluetooth. Not pausing player."));
     }
+    else
+    {
+      Log(F("Detected empeg bootup sequence completion, sending pause command to player."));
+      SendEmpegCommand('W');
+    }
+    
   }
   
   // Look for the string position of our trigger phrase in the text of the
@@ -3687,13 +3658,19 @@ void HandleEmpegString(String &theString)
     // then it starts playing the track just a few moments later. This seems
     // to happen at about the same time as the first timestamp appears on
     // the serial port. Fix the issue by sending yet another pause statement
-    // to the  empeg immediately after it sees that first timestamp after
+    // to the empeg immediately after it sees that first timestamp after
     // bootup.
     if (empegFirstTimestampSinceBootup)
     {
-      if (empegStartPause)
+      // Issue #42, base certain behaviors off of whether or not the Bluetooth
+      // seems to be connected.
+      if (connected)
       {
-        Log(F("empegStartPause feature activated. Pausing player on first timestamp after boot up."));
+        Log(F("First timestamp after bootup detected, but we are already connected to Bluetooth. Not pausing player."));
+      }
+      else
+      {
+        Log(F("Pausing player on first timestamp after boot up."));
         SendEmpegCommand('W');
       }
 
@@ -4088,12 +4065,14 @@ void QuickResetBluetooth(int resetType)
       SendBlueGigaCommand(F("RESET"));
       ClearGlobalVariables();
       DisplayAndSwallowResponses(4, 500);
+      connected = false;
       break;
 
     case 1:
       SendBlueGigaCommand(F("BOOT 0"));
       ClearGlobalVariables();
       DisplayAndSwallowResponses(4, 500);
+      connected = false;
       break;
 
     case 2:
@@ -4104,34 +4083,6 @@ void QuickResetBluetooth(int resetType)
 
     default:
       return;
-  }
-}
-
-// ---------------------------------------------------------------------------
-// ResetBluetoothPin
-//
-// Physically reset the bluetooth module via its RST pin. This uses a
-// connection between one of the Arduino's GPIO pins and the reset pin on the
-// bluetooth module itself (via a voltage divider and a diode). This might not
-// be implemented on your hardware if it is not needed.
-// ---------------------------------------------------------------------------
-void ResetBluetoothPin()
-{
-  // Only perform this routine if we have implemented the physical reset line.
-  if (performResetLinePhysical)
-  {
-    // Perform the steps to physically fire the reset line
-    Log(F("Physically resetting bluetooth module with RST line - Begin."));  
-    pinMode(resetLinePin, OUTPUT);
-    digitalWrite(resetLinePin, HIGH);
-    DisplayAndProcessCommands(100, false);
-    digitalWrite(resetLinePin, LOW);
-    DisplayAndProcessCommands(100, false);
-    pinMode(resetLinePin, INPUT);
-    Log(F("Physically resetting bluetooth module with RST line - Complete."));  
-
-    // Pause for the bootup messages to appear after the reset.
-    DisplayAndSwallowResponses(3, 400);
   }
 }
 
