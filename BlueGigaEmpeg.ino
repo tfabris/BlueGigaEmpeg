@@ -66,6 +66,11 @@ boolean digitalAudio = true;
 // debugging sessions
 boolean EmpegSendCommandDebug=false;
 
+// Special case debugging feature - If you type Z on the Arduino debugging
+// console, enter pairing mode as if you'd pressed the RESET/PAIR button on
+// the BlueGigaEmpeg assembly. Use with caution and enable at your own risk.
+boolean TypeZtoPair=false;
+
 // Choose whether or not to display the empeg Serial Port outputs (for
 // instance the empeg boot up messages) on the serial debug console of the
 // Arduino. Only needed for debugging, not needed for final build runtime.
@@ -179,10 +184,19 @@ const String codecString="SET CONTROL CODEC SBC JOINT_STEREO 44100 0\r\n        
 // should be *longer* than 500ms. However I have found it should even be
 // longer than that, to prevent other timing and bug issues, seemingly caused
 // by trying to reconnect too quickly.
+//
+// Set it to this (blank string) if you want to turn off the BlueGiga iWrap6
+// reconnect feature and depend upon your stereo headunit to reconnect.
+//    const String autoReconnectString = "";
+// 
+// Set it to this to use BlueGiga iWrap6 auto reconnect feature and control
+// its reconnect speed. This string will not be used if the Monkey Reconnect 
+// feature is enabled.
 const String autoReconnectString = "SET CONTROL RECONNECT 4800 0 0 7 0 A2DP A2DP AVRCP\r\n            STORECONFIG";
 //
-// Note: To repro the "Bad PDU Registration bug", uncomment this line (a short
-// reconnect repros the issue frequently):
+// Note: To repro the "Bad PDU Registration bug", uncomment this line and
+// disable the Monkey Reconnect feature. A short reconnect interval repros the
+// Bad PDU Registration issue frequently:
 //    const String autoReconnectString = "SET CONTROL RECONNECT 800 0 0 7 0 A2DP A2DP AVRCP\r\n            STORECONFIG";
 //
 // Version 2: "SET CONTROL AUTOCALL". This seems to work well, when it works.
@@ -192,6 +206,16 @@ const String autoReconnectString = "SET CONTROL RECONNECT 4800 0 0 7 0 A2DP A2DP
 // power on. Without rhyme or reason.  Note: "19" is the secret code for
 // "A2DP" (it is the "L2CAP PSM" code for A2DP).
 //     const String autoReconnectString = "SET CONTROL AUTOCALL 19 501 A2DP";
+//
+// Version 3: Monkey reconnect. A reconnect by my monkey code instead of the
+// built-in reconnect. Attempt my own personal reconnect feature just by
+// looping in my code. See if that's any better and if it solves any problems
+// that occur during the built-in reconnect. Don't make this value too small
+// or you will overrun the module's ability to respond to its own failed
+// connection attempts. Each connection attempt has a response and it
+// shouldn't overload those.
+const unsigned long monkeyReconnectInterval = 3600L;
+boolean monkeyReconnectEnabled = true;
 
 // Variable to control whether or not this program performs a conversion of
 // High ASCII to UTF-8 in the code. For instance, on the empeg, you might have
@@ -227,8 +251,8 @@ boolean PerformUtf8Conversion = true;
 // input->output pairs for answering certain pieces of text on the bluetooth
 // module's serial port. There is other code elsewhere to handle input/output
 // that requires more detailed handling and parsing.
-int scFixMatrixSize = 7;
-String scFixMessageMatrix[7][2] =
+int scFixMatrixSize = 11;
+String scFixMessageMatrix[11][2] =
 {
     // Bluetooth in                        // Bluetooth out        
 
@@ -349,24 +373,28 @@ String scFixMessageMatrix[7][2] =
   // too afraid to send a streaming start command. So I don't think you can do
   // away with this one.
   //
-  // EXPERIMENT:  Attempt to fix issue #45 "Initial boot and connect problem
-  // on Honda" by changing the way this line behaves. Try making it "RING 2"
-  // instead of "RING 1" and see if that helps. UPDATE: nope. Trying RING 0.
-  // This doesn't seem to make any difference setting it to "0" but it doesn't
-  // seem to hurt anything either, so leaving it at 0 for now. UPDATE: Nope.
-  // Got other problems with Bluetooth headset where it would get an A2DP
-  // connection but not an AVRCP connection. So putting it back to RING 1.
+  // EXPERIMENT:  Attempt to fix issue #45/60 "Initial boot and connect
+  // problem on Honda" by changing the way this line behaves. Try making it
+  // "RING 2" instead of "RING 1" and see if that helps. UPDATE: nope. Trying
+  // RING 0. This doesn't seem to make any difference setting it to "0" but it
+  // doesn't seem to hurt anything either, so leaving it at 0 for now. UPDATE:
+  // Nope. Got other problems with Bluetooth headset where it would get an
+  // A2DP connection but not an AVRCP connection. So putting it back to RING
+  // 1. UPDATE: I got a situation where sometimes the stereo says RING 0, 2,
+  // and 3 but not RING 1 so perhaps I need others here. Trying more than one.
+  // Specifically, having this be all of RING 1, 2, and 3 is an attempt to
+  // fix the issue where sometimes I would get crackling audio when using the
+  // monkey reconnect method. However, this didn't fix it though it also
+  // didn't seem to make it worse. Trying it for a while.
   { "RING 1",                              "A2DP STREAMING START"},
+  { "RING 2",                              "A2DP STREAMING START"},
+  { "RING 3",                              "A2DP STREAMING START"},
 
-  // Respond to this particular AVRCP connection success message with a
-  // command that is supposed to force the bluetooth to repeatedly retry
-  // connections if it ever becomes disconnected. Hopefully this will increase
-  // the chances that the empeg connects to the car stereo when you start the
-  // car, instead of connecting to your phone in your pocket. On my stereo,
-  // when this system works, it results in the perfect combination of the
-  // phone pairing to the car as a phone only (no music, just phone), and the
-  // empeg pairing as the music source, simultaneously.
-  { "AUDIO ROUTE 0 A2DP LEFT RIGHT",          autoReconnectString},
+  // Trying to add some streaming starts here where to try to fix some of the
+  // silent/crackling playback issues at initial connect in issue #60.
+  { "CONNECT 1 A2DP 19",                   "A2DP STREAMING START"},
+  { "CONNECT 2 A2DP 19",                   "A2DP STREAMING START"},
+  { "CONNECT 3 A2DP 19",                   "A2DP STREAMING START"},
 };
 
 // Strings that will be handled by our more detailed call-and-response
@@ -1199,11 +1227,6 @@ void SetGlobalChipDefaults()
 // ---------------------------------------------------------------------------
 void PairBluetooth()
 {
-  // Debug code only.
-  // Unit test code the force quick reconnect via a
-  // button press. Comment this out for normal runtime.
-  // ForceQuickReconnect(); return;
-
   // Don't execute this if we are currently already in pairing mode. Protect
   // against possible re-entrant code.
   if (pairingMode)
@@ -1217,10 +1240,6 @@ void PairBluetooth()
   pairingMode = true;
   digitalWrite(pairLedPin, HIGH);
 
-  // Set the Pair Address string to a blank to indicate that we need to get a
-  // new address to pair with.
-  pairAddressString = "";
-
   // Log what we are about to do, to the Arduino debugging console.
   Log (F(" "));
   Log (F("--------------------------------------"));
@@ -1228,19 +1247,41 @@ void PairBluetooth()
   Log (F("--------------------------------------"));
   Log (F(" "));
 
-  // Erase all previous bluetooth pairings (not included in the factory
-  // default reset below).
-  SendBlueGigaCommand(F("SET BT PAIR *"));  // Star is required to erase pairings
+  // Close current bluetooth pairings so that we can erase them. Turns out
+  // that the command to erase Bluetooth pairings (used below) will get a
+  // SYNTAX ERROR if you issue the command while it's connected.
+  SendBlueGigaCommand(F("CLOSE 0"));
+  DisplayAndSwallowResponses(1, 100);
+  SendBlueGigaCommand(F("CLOSE 1"));
+  DisplayAndSwallowResponses(1, 100);
+
+  // Clear the global variable of our pairing buddy to occur as close as
+  // possible to the erasing of the pairings from the Bluetooth chip.
+  pairAddressString = ""; 
+
+  // Erase all previous Bluetooth pairings (not included in the factory
+  // default reset below). Note: the Star is required to erase pairings,
+  // otherwise the command would just list the pairings.
+  SendBlueGigaCommand(F("SET BT PAIR *")); 
+  DisplayAndSwallowResponses(1, 100);
 
   // Erase all previous auto-reconnect settings (not included in the factory
   // default reset and must be disabled before attempting to pair).
   SendBlueGigaCommand(F("SET CONTROL AUTOCALL"));     // Blank is required to disable 
+  DisplayAndSwallowResponses(1, 100);
   SendBlueGigaCommand(F("SET CONTROL RECONNECT *"));  // Star is required to disable
+  DisplayAndSwallowResponses(1, 100);
   SendBlueGigaCommand(F("STORECONFIG"));              // Make sure SET CONTROL RECONNECT is stored
+  DisplayAndSwallowResponses(1, 100);
 
   // Make certain that the above changes are saved and "take" - RESET seems to
-  // be the sure way
+  // be the sure way.
   QuickResetBluetooth(0);
+
+  // See what our settings are after this. Debugging an issue where the stuff
+  // above didn't clear out our current pairing buddy. It should have.
+  SendBlueGigaCommand(F("SET BT PAIR"));
+  DisplayAndSwallowResponses(2, 300);
 
   // Reset device to factory defaults using "SET RESET" command (parameter 2).
   // Note that "SET RESET" (factory defaults) is different from "RESET" (which
@@ -1519,6 +1560,17 @@ char MainInputOutput()
       // Local echo the character back to the debug console.
       LogChar(userChar);
       
+      // Special Case Debug code only. Bench test code to force pairing mode
+      // to start via a typed console command. Type Z to start pairing if this
+      // feature is enabled by the TypeZtoPair at the top of the code.
+      if (TypeZtoPair)
+      {
+        if (String("z").equalsIgnoreCase((String)userChar))
+        {
+          PairBluetooth();
+        }
+      }
+
       // Perform special debugging trick in which we test the empeg Serial
       // port commands if we are in the special empeg debugging mode. To use
       // this feature, enable EmpegSendCommandDebug flag at the top of the
@@ -1526,14 +1578,6 @@ char MainInputOutput()
       // inensitive) to the Arduino serial console to trigger the effect.
       if (EmpegSendCommandDebug)
       {
-        // // Special Case Debug code only. Disable for final release version.
-        // // Unit test code for force quick reconnect via a typed console
-        // // command        
-        // if (String("z").equalsIgnoreCase((String)userChar))
-        // {
-        //   ForceQuickReconnect();
-        // }
-
         // Iterate through our matrix of incoming avrcp commands looking for a
         // match.
         for (int i=0; i<empegCommandMatrixSize; i++)
@@ -1555,6 +1599,71 @@ char MainInputOutput()
             HandleString(empegCommandMessageMatrix[i][0]);
           }
         }      
+      }
+    }
+  }
+
+  // Monkey Reconnect is an attempt to work around issues I encountered with
+  // the existing reconnect features found in the iWrap6 language which had
+  // interesting problems. Instead of using either of the automatic reconnect
+  // features in the iWrap6 language, since both of them gave me troubles on
+  // my Honda stereo, attempt to control my own reconnects by doing it myself
+  // in my main input loop and see if that solves any of the troubles I was
+  // having. This is one some different possible attempts to fix issue #60.
+  if (monkeyReconnectEnabled)
+  {
+    // First, check to see if it's been x seconds of elapsed time since bootup
+    // (where x is the monkey reconnect interval specified at the top of this
+    // code) by using the modulo artithmetic operator. For instance if you
+    // divide the current timestamp milliseconds by 5000 then the remainder
+    // value (the result of the modulo % operation) will come out as zero only
+    // once every five seconds. This is a simple way to do a one-line repeat
+    // timer without needing to store and flip flags and such.
+    if((millis() % monkeyReconnectInterval) == 0)
+    {
+      // If we are not yet connected and we are not already in pairing mode,
+      // then try to connect to our existing pairing buddy if we have one.
+      if (!pairingMode && !connected)
+      {
+        // If we don't have a pairing buddy yet, then we need to try to find
+        // out who that pairing buddy is/was. To do this, we issue a command
+        // to the bluetooth chip to report who its pairing buddies are. The
+        // command which asks for a list of pairing buddies is "SET BT PAIR".
+        // Then, there is code elsewhere, in the string handler routines,
+        // which automatically detects the resulting response of the list of
+        // pairing buddies and parses out the correct pairAddressString from
+        // that list and places it in the variable for us. So we won't be able
+        // to make a connection attempt on this loop, but on a later loop, if
+        // there was a pairing buddy in the list, then the pairAddressString
+        // will be populated on our next loop through and then it will try to
+        // pair with that address. If there is no current pairing buddy, then
+        // the string will remain blank and we'll just keep asking over and
+        // over again in a loop.
+        if (pairAddressString == "")
+        {
+          // Check to see if the bluetooth chip has a pairing buddy already.
+          Log(F("Trying to find out if we have a pairing buddy yet."));
+          SendBlueGigaCommand(F("SET BT PAIR"));
+
+          // Prevent this code from firing twice in the same millisecond if
+          // the loop happens to execute extra fast. Normally I would cringe
+          // at a blind sleep in the code, but this can only occur if there
+          // hasn't been a connection yet and so the BlueGigaEmpeg isn't doing
+          // much critical yet. And also, it's only for 1 millisecond every
+          // few seconds, so it has less chance of causing problems. We'll see
+          // how it does.
+          delay(1);
+        }
+        else
+        {
+          // We have a pairing buddy address, so try to connect to that buddy.
+          Log(F("Trying to connect now to our current pairing buddy."));
+          SendBlueGigaCommand("CALL " + pairAddressString + " 19 A2DP");
+
+          // Prevent this code from firing twice in the same millisecond if
+          // the loop happens to execute extra fast. Same caveats as above.
+          delay(1);
+        }
       }
     }
   }
@@ -1669,18 +1778,20 @@ void HandleString(String &theString)
   // If the string indicates that we are connected to the Bluetooth, then set
   // the corresponding global variable that indicates we are connected to the
   // Bluetooth.
-  if (theString.indexOf(F("A2DP STREAMING START")) > (-1)) {connected = true;}
-  if (theString.indexOf(F("CONNECT 1 A2DP"))       > (-1)) {connected = true;}
-  if (theString.indexOf(F("CONNECT 2 A2DP"))       > (-1)) {connected = true;}
-  if (theString.indexOf(F("AUDIO ROUTE"))          > (-1)) {connected = true;}
+  if (theString.indexOf(F("A2DP STREAMING START"))   > (-1)) {connected = true;}
+  if (theString.indexOf(F("CONNECT 1 A2DP"))         > (-1)) {connected = true;}
+  if (theString.indexOf(F("CONNECT 2 A2DP"))         > (-1)) {connected = true;}
+  if (theString.indexOf(F("AUDIO ROUTE"))            > (-1)) {connected = true;}
+  if (theString.indexOf(F("GET_ELEMENT_ATTRIBUTES")) > (-1)) {connected = true;}
+  if (theString.indexOf(F("GET_PLAY_STATUS"))        > (-1)) {connected = true;}
 
   // If the string indicates that we are disconnected from the Bluetooth, then
   // set the corresponding global variable that indicates we are disconnected
   // from the Bluetooth.
   if (theString.indexOf(F("A2DP STREAMING STOP"))  > (-1)) {connected = false;}
   if (theString.indexOf(F("WRAP THOR AI"))         > (-1)) {connected = false;}
-  if (theString.indexOf(F("NO CARRIER 0 ERROR 0")) > (-1)) {connected = false;}
-  if (theString.indexOf(F("NO CARRIER 1 ERROR 0")) > (-1)) {connected = false;}
+  if (theString.indexOf(F("NO CARRIER 0 ERROR"))   > (-1)) {connected = false;}
+  if (theString.indexOf(F("NO CARRIER 1 ERROR"))   > (-1)) {connected = false;}
  
   // Handle "get bluetooth address" strings - these are strings that are
   // intended to tell me who my current pairing buddy is. This must come early
@@ -1822,6 +1933,28 @@ void HandleString(String &theString)
 
       // Send the special case fix command.
       SendBlueGigaCommand(commandToSend);
+    }
+  }
+
+  // Respond to this particular AVRCP connection success message with a
+  // command that is supposed to force the bluetooth to repeatedly retry
+  // connections if it ever becomes disconnected. Hopefully this will increase
+  // the chances that the empeg connects to the car stereo when you start the
+  // car, instead of connecting to your phone in your pocket. On my stereo,
+  // when this system works, it results in the perfect combination of the
+  // phone pairing to the car as a phone only (no music, just phone), and the
+  // empeg pairing as the music source, simultaneously.
+  //
+  // This string was originally part of scFixMessageMatrix. It has been
+  // removed from there and placed in here as a "by hand" check because the
+  // reconnection string code is now only done if we're not doing the other
+  // reconnect method (the monkey reconnect). So it needs a special if
+  // statement here.
+  if (!monkeyReconnectEnabled)
+  { 
+    if (theString.indexOf(F("AUDIO ROUTE 0 A2DP LEFT RIGHT") > (-1)))
+    {
+      SendBlueGigaCommand(autoReconnectString);
     }
   }
     
@@ -2659,10 +2792,14 @@ void ForceQuickReconnect()
   // Set the flag indicating we are about to try a forced reconnect.
   forceQuickReconnectMode = true;
 
-  // Make sure bluetooth chip configured and ready to
-  // immediately reconnect as soon as it disconnects.
-  SendBlueGigaCommand(autoReconnectString);
-
+  // Make sure bluetooth chip configured and ready to immediately reconnect as
+  // soon as it disconnects. But only if we are not doing the "manual" monkey
+  // reconnect feature.
+  if (!monkeyReconnectEnabled)
+  {
+    SendBlueGigaCommand(autoReconnectString);
+  }
+  
   // UPDATE: After a lot of work for doing a truly quick reconnect version,
   // and for all the bugs it exposed and that I subsequently had to fix, and
   // finally when I got the thing working with expected behavior... ... ... It
