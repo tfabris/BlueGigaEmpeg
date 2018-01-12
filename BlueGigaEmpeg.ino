@@ -421,28 +421,6 @@ String scFixMessageMatrix[14][2] =
   { "CONNECT 3 A2DP 19",        "CALL {0} 17 AVRCP"},
 };
 
-// Strings that will be handled by our more detailed call-and-response
-// routine, "RespondToQueries", later in the code. These strings require more
-// detailed processing than just "string in, string out", so this is merely a
-// preliminary checklist that indicates whether a string needs a detailed
-// response at all, to speed up string processing later. So this is merely a
-// small list of possible strings that might need detailed responses if these
-// strings are received. There is a piece of code later in the main string
-// handling routine which will check to see if the string matches one of these
-// list items, and if it does, it will pass it on to the function that will do
-// the actual detailed responding. NOTE: if you add a new response string to
-// this list, then also add the necessary detailed response prorgramming to
-// the "RespondToQueries" function.
-int rspMatrixSize = 5;
-String rspMatrix[5] =
-{
-  "PLAYBACK_STATUS_CHANGED",
-  "TRACK_CHANGED",
-  "GET_PLAY_STATUS",
-  "GET_ELEMENT_ATTRIBUTES",
-  "PDU_REGISTER_NOTIFICATION",
-};  
-
 // Variabe to control whether or not we reconnect the bluetooth module
 // whenever we see a bad PDU_REGISTER_NOTIFICATION message. Ideally we want to
 // reject any attempts to register any notifications that we won't be able to
@@ -457,28 +435,6 @@ String rspMatrix[5] =
 // it isn't getting responses to its registration requests. But that's a
 // different issue than a reboot loop.
 boolean reconnectIfBadRegistrationReceived=true;
-
-// Table of events that we will cause us to reconnect when we received a
-// PDU_REGISTER_NOTIFICATION request for these particular events. The event
-// number for each one is specific and can be found in section 6.3.3 of the
-// BlueGiga iWrap AVRCP command reference documentation. This is part of an
-// attempt to work around a bug where we get queried for these particular
-// registrations when we were not supposed to be queried for them at all.
-int rejMatrixSize = 11;
-String rejMatrix[11] =
-{
- "TRACK_REACHED_END",                   
- "TRACK_REACHED_START",                 
- "PLAYBACK_POSITION_CHANGED",           
- "BATT_STATUS_CHANGED",                 
- "SYSTEM_STATUS_CHANGED",               
- "PLAYER_APPLICATION_SETTING_CHANGED",  
- "NOW_PLAYING_CHANGED",                 
- "AVAILABLE_PLAYERS_CHANGED",           
- "ADDRESSED_PLAYERS_CHANGED",           
- "UIDS_CHANGED",                        
- "VOLUME_CHANGED",                      
-};
 
 // Reserve variable space for the transaction status labels used to hold a
 // particular string in memory in the query/response code. The host stereo
@@ -888,8 +844,6 @@ void setup()
 
   // Debugging
   // Log("Size of scFixMessageMatrix is:        " + String(sizeof(scFixMessageMatrix)));
-  // Log("Size of rspMatrix is:                 " + String(sizeof(rspMatrix)));
-  // Log("Size of rejMatrix is:                 " + String(sizeof(rejMatrix)));
   // Log("Size of pmMessageMatrix is:           " + String(sizeof(pmMessageMatrix)));
   // Log("Size of empegCommandMessageMatrix is: " + String(sizeof(empegCommandMessageMatrix)));
 
@@ -1850,35 +1804,15 @@ void HandleString(String &theString)
   // playback status information. Make sure our program responds to these
   // queries in a timely fashion if it receives them. This is a time-sensitive
   // routine that needs to respond immediately as soon as we get a query
-  // string so I have put it at the top of the string handling routing.
+  // string so I have put it near the top of the string handling routine.
   // However there is a catch-22 where one of the responses might need to be
   // the track metadata from the empeg. Since getting the track metadata from
   // the empeg might be slow, we need to be careful here and not spend "slow
-  // time" trying to get the empeg track metadata every single time.
-  //
-  // Initially, look inside the quick-and-dirty matrix of possible queries to
-  // respond to...
-  for (int i=0; i<rspMatrixSize; i++)
-  {  
-    // Make the string comparison to find out if there is a match.
-    if (theString.indexOf(rspMatrix[i]) > (-1))
-    {
-      // A match has been found, process the query/repsonse command. The
-      // function will do all detailed handling of these strings.
-      RespondToQueries(theString);
-
-      // Bugfix: Only respond to queries once based on the contents of the
-      // quick-and-dirty response matrix. There are some entries in the matrix
-      // which may generate a double response if we don't break here. For
-      // instance, the host stereo might query for the string like this:
-      //    AVRCP 1 PDU_REGISTER_NOTIFICATION 4 PLAYBACK_STATUS_CHANGED 0
-      // This might generate two hits in our matrix, once for
-      // PLAYBACK_STATUS_CHANGED and once for PDU_REGISTER_NOTIFICATION. So
-      // place a break statement here to stop going through the loop once we
-      // have found a hit in the table.
-      break;
-    }
-  }
+  // time" trying to get the empeg track metadata every single time. This is
+  // OK because the track metadata is gathered in a separate routine and
+  // stored in global variables that this routine can then respond with when
+  // needed.
+  RespondToQueries(theString);
 
   // If we are inside the pairing process and we have detected that the
   // pairing process is complete, then set the flag to indicate that the
@@ -2303,12 +2237,17 @@ void SendBlueGigaCommand(String commandString)
 //
 // Command the bluetooth chipset to respond to certain queries made by the
 // host stereo, such as queries for playback status and track titles.
-//
-// NOTE: If you add new code below to handle a new query/response string, then
-// make sure to update the "rspMatrix" at the top of the code, and vice-versa.
 // ---------------------------------------------------------------------------
 void RespondToQueries(String &queryString)
 {
+  // Quick check to make sure that the string is one of the strings that we
+  // can respond to in this function. Return if not, to save time.
+  if (queryString.indexOf(F("PLAYBACK_STATUS_CHANGED"))   < 0) {return;}
+  if (queryString.indexOf(F("TRACK_CHANGED"))             < 0) {return;}
+  if (queryString.indexOf(F("GET_PLAY_STATUS"))           < 0) {return;}
+  if (queryString.indexOf(F("GET_ELEMENT_ATTRIBUTES"))    < 0) {return;}
+  if (queryString.indexOf(F("PDU_REGISTER_NOTIFICATION")) < 0) {return;}
+
   // Obtain the transaction label from these queries. Some of the queries
   // we're responding to here have a transaction label, and our response must
   // contain the same transaction label in the response. Query comes in from
@@ -2353,9 +2292,6 @@ void RespondToQueries(String &queryString)
   //                    "playing" and other values indicating other things.
   //
 
-  // Debugging: 
-  // Log(F("Entering RespondToQueries function."));
-
   // Set up variables.
   String transactionLabel;
   static int transactionLabelStringPosition = 0;
@@ -2391,9 +2327,6 @@ void RespondToQueries(String &queryString)
     // transaction label.
     transactionLabel = queryString.substring(transactionLabelStringPosition + 21, transactionLabelStringPosition + 24);
     transactionLabel.trim();
-
-    // Debugging: 
-    // Log("Transaction label string found, label is: " + transactionLabel);
 
     // Special case where we save off some possible global variables
     // which are the specific transaction labels for two specific
@@ -2459,37 +2392,35 @@ void RespondToQueries(String &queryString)
     //
     if (reconnectIfBadRegistrationReceived)
     {
-      for (int l=0; l<rejMatrixSize; l++)
-      {  
-        // Make the string comparison to find out if there is a match.
-        if (queryString.indexOf(rejMatrix[l]) > (-1))
-        {
-          // For now: Don't respond: Simply reset the chip when it hits one of
-          // these things. This works around the problem on my Honda stereo
-          // because it stops asking for these messages to be registered on
-          // the SECOND connection after startup (it only asks on the first
-          // connection after the startup). It shouldn't ever be asking for
-          // these messages at all because my response to "GET_CAPABILITIES 3"
-          // should have told it that I only want registrations for messages 1
-          // and 2.
-          //
-          // WARNING: This crazy messed up workaround has the potential to put
-          // this whole thing into an infinite reboot loop, but it's the best
-          // I've got at the moment. Hopefully it will only reboot the one
-          // time and then work correctly the second time. If you get an
-          // infinite reboot loop, set the variable
-          // reconnectIfBadRegistrationReceived at the top of the program to
-          // "false", though that means you have bigger problems because your
-          // host stereo is not paying attention to you when you told it only
-          // register for messages 1 and 2. Your host stereo will likely hang
-          // and not get track titles or be able to send steering wheel
-          // control commands to the player.
-          //
-          Log(F("Unexpected registration message received. Something went wrong. Forcing bluetooth reconnect."));
-          ForceQuickReconnect();
-          return;
-        }
-      }
+      // For now: Don't respond: Simply reset the chip when it hits one of
+      // these things. This works around the problem on my Honda stereo
+      // because it stops asking for these messages to be registered on the
+      // SECOND connection after startup (it only asks on the first connection
+      // after the startup). It shouldn't ever be asking for these messages at
+      // all because my response to "GET_CAPABILITIES 3" should have told it
+      // that I only want registrations for messages 1 and 2.
+      //
+      // WARNING: This crazy messed up workaround has the potential to put
+      // this whole thing into an infinite reboot loop, but it's the best I've
+      // got at the moment. Hopefully it will only reboot the one time and
+      // then work correctly the second time. If you get an infinite reboot
+      // loop, set the variable reconnectIfBadRegistrationReceived at the top
+      // of the program to "false", though that means you have bigger problems
+      // because your host stereo is not paying attention to you when you told
+      // it only register for messages 1 and 2. Your host stereo will likely
+      // hang and not get track titles or be able to send steering wheel
+      // control commands to the player.
+      if (queryString.indexOf(F("TRACK_REACHED_END"))                  > (-1)) { Log(F("WARNING: Bad registration message received. Rebooting.")); ForceQuickReconnect(); return;}
+      if (queryString.indexOf(F("TRACK_REACHED_START"))                > (-1)) { Log(F("WARNING: Bad registration message received. Rebooting.")); ForceQuickReconnect(); return;}
+      if (queryString.indexOf(F("PLAYBACK_POSITION_CHANGED"))          > (-1)) { Log(F("WARNING: Bad registration message received. Rebooting.")); ForceQuickReconnect(); return;}
+      if (queryString.indexOf(F("BATT_STATUS_CHANGED"))                > (-1)) { Log(F("WARNING: Bad registration message received. Rebooting.")); ForceQuickReconnect(); return;}
+      if (queryString.indexOf(F("SYSTEM_STATUS_CHANGED"))              > (-1)) { Log(F("WARNING: Bad registration message received. Rebooting.")); ForceQuickReconnect(); return;}
+      if (queryString.indexOf(F("PLAYER_APPLICATION_SETTING_CHANGED")) > (-1)) { Log(F("WARNING: Bad registration message received. Rebooting.")); ForceQuickReconnect(); return;}
+      if (queryString.indexOf(F("NOW_PLAYING_CHANGED"))                > (-1)) { Log(F("WARNING: Bad registration message received. Rebooting.")); ForceQuickReconnect(); return;}
+      if (queryString.indexOf(F("AVAILABLE_PLAYERS_CHANGED"))          > (-1)) { Log(F("WARNING: Bad registration message received. Rebooting.")); ForceQuickReconnect(); return;}
+      if (queryString.indexOf(F("ADDRESSED_PLAYERS_CHANGED"))          > (-1)) { Log(F("WARNING: Bad registration message received. Rebooting.")); ForceQuickReconnect(); return;}
+      if (queryString.indexOf(F("UIDS_CHANGED"))                       > (-1)) { Log(F("WARNING: Bad registration message received. Rebooting.")); ForceQuickReconnect(); return;}
+      if (queryString.indexOf(F("VOLUME_CHANGED"))                     > (-1)) { Log(F("WARNING: Bad registration message received. Rebooting.")); ForceQuickReconnect(); return;}
     }
   }
 
@@ -2497,9 +2428,6 @@ void RespondToQueries(String &queryString)
   // response might look like: "AVRCP NFY INTERIM 4 1 1"
   if (queryString.indexOf(F("PLAYBACK_STATUS_CHANGED")) > (-1))
   {
-    // Debugging
-    // Log(F("Respondable string found."));
-
     queryResponseString = "";
 
     // Answer with an "AVRCP NFY INTERIM" command.
@@ -2545,9 +2473,6 @@ void RespondToQueries(String &queryString)
   // might look like: "AVRCP NFY INTERIM 4 2 1"
   if (queryString.indexOf(F("TRACK_CHANGED")) > (-1))
   {
-    // Debugging
-    // Log(F("Respondable string found."));
-
     queryResponseString = "";
 
     // Answer with an "AVRCP NFY INTERIM" command.
@@ -2577,9 +2502,6 @@ void RespondToQueries(String &queryString)
   // Example response might look like: "AVRCP RSP 4294967295 4294967295 1"
   if (queryString.indexOf(F("GET_PLAY_STATUS")) > (-1))
   {
-    // Debugging
-    // Log(F("Respondable string found."));
-
     queryResponseString = "";
 
     // Answer with an "AVRCP RSP" command.
@@ -2631,9 +2553,6 @@ void RespondToQueries(String &queryString)
   // Example response might look like: "AVRCP RSP 1 3 \"Album on empeg Car\""
   if (queryString.indexOf(F("GET_ELEMENT_ATTRIBUTES ")) > (-1))
   {
-    // Debugging
-    // Log(F("Respondable string found."));
-
     // Zero out our response string to start
     queryResponseString = "";
 
