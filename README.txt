@@ -155,6 +155,7 @@ Molex connector screws: 2x  https://www.digikey.com/product-detail/en/b-f-fasten
 LED:                        https://www.digikey.com/product-detail/en/cree-inc/C503B-BCN-CV0Z0461/C503B-BCN-CV0Z0461-ND/1922945
 Reset button:               https://www.digikey.com/product-detail/en/e-switch/TL1105LF250Q/EG2506-ND/378972
 Male conn. headers:         https://www.digikey.com/product-detail/en/3m/961236-6404-AR/3M9466-36-ND/2071927
+                            https://www.digikey.com/product-detail/en/molex-llc/0010897060/WM9874-ND/3068084
                         3x  https://www.digikey.com/product-detail/en/3m/961110-6404-AR/3M9457-10-ND/2071896
                         4x  https://www.digikey.com/product-detail/en/3m/961108-6404-AR/3M9457-08-ND/7104637
 Female conn. header asst:   https://www.amazon.com/gp/product/B074GQ9LKY/ref=oh_aui_detailpage_o01_s00

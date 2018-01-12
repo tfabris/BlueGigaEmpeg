@@ -215,7 +215,7 @@ const String autoReconnectString = "SET CONTROL RECONNECT 4800 0 0 7 0 A2DP A2DP
 // connection attempts. Each connection attempt has a response and it
 // shouldn't overload those.
 const unsigned long monkeyReconnectInterval = 3600L;
-boolean monkeyReconnectEnabled = true;
+boolean monkeyReconnectEnabled = false;
 
 // Variable to control whether or not this program performs a conversion of
 // High ASCII to UTF-8 in the code. For instance, on the empeg, you might have
@@ -1768,12 +1768,15 @@ void HandleString(String &theString)
   // If the string indicates that we are connected to the Bluetooth, then set
   // the corresponding global variable that indicates we are connected to the
   // Bluetooth.
-  if (theString.indexOf(F("A2DP STREAMING START"))   > (-1)) {connected = true;}
-  if (theString.indexOf(F("CONNECT 1 A2DP"))         > (-1)) {connected = true;}
-  if (theString.indexOf(F("CONNECT 2 A2DP"))         > (-1)) {connected = true;}
-  if (theString.indexOf(F("AUDIO ROUTE"))            > (-1)) {connected = true;}
-  if (theString.indexOf(F("GET_ELEMENT_ATTRIBUTES")) > (-1)) {connected = true;}
-  if (theString.indexOf(F("GET_PLAY_STATUS"))        > (-1)) {connected = true;}
+  if (theString.indexOf(F("A2DP STREAMING START"))      > (-1)) {connected = true;}
+  if (theString.indexOf(F("CONNECT 1 A2DP"))            > (-1)) {connected = true;}
+  if (theString.indexOf(F("CONNECT 2 A2DP"))            > (-1)) {connected = true;}
+  if (theString.indexOf(F("AUDIO ROUTE"))               > (-1)) {connected = true;}
+  if (theString.indexOf(F("GET_ELEMENT_ATTRIBUTES"))    > (-1)) {connected = true;}
+  if (theString.indexOf(F("GET_PLAY_STATUS"))           > (-1)) {connected = true;}
+  if (theString.indexOf(F("PLAYBACK_STATUS_CHANGED"))   > (-1)) {connected = true;}
+  if (theString.indexOf(F("PDU_REGISTER_NOTIFICATION")) > (-1)) {connected = true;}
+
 
   // If the string indicates that we are disconnected from the Bluetooth, then
   // set the corresponding global variable that indicates we are disconnected
@@ -1922,7 +1925,7 @@ void HandleString(String &theString)
   // statement here.
   if (!monkeyReconnectEnabled)
   { 
-    if (theString.indexOf(F("AUDIO ROUTE 0 A2DP LEFT RIGHT") > (-1)))
+    if (theString.indexOf(F("AUDIO ROUTE 0 A2DP LEFT RIGHT")) > (-1))
     {
       SendBlueGigaCommand(autoReconnectString);
     }
@@ -2242,11 +2245,13 @@ void RespondToQueries(String &queryString)
 {
   // Quick check to make sure that the string is one of the strings that we
   // can respond to in this function. Return if not, to save time.
-  if (queryString.indexOf(F("PLAYBACK_STATUS_CHANGED"))   < 0) {return;}
-  if (queryString.indexOf(F("TRACK_CHANGED"))             < 0) {return;}
-  if (queryString.indexOf(F("GET_PLAY_STATUS"))           < 0) {return;}
-  if (queryString.indexOf(F("GET_ELEMENT_ATTRIBUTES"))    < 0) {return;}
-  if (queryString.indexOf(F("PDU_REGISTER_NOTIFICATION")) < 0) {return;}
+  boolean canRespondToThisQuery = false;
+  if (queryString.indexOf(F("PLAYBACK_STATUS_CHANGED"))   > (-1)) {canRespondToThisQuery = true;}
+  if (queryString.indexOf(F("TRACK_CHANGED"))             > (-1)) {canRespondToThisQuery = true;}
+  if (queryString.indexOf(F("GET_PLAY_STATUS"))           > (-1)) {canRespondToThisQuery = true;}
+  if (queryString.indexOf(F("GET_ELEMENT_ATTRIBUTES"))    > (-1)) {canRespondToThisQuery = true;}
+  if (queryString.indexOf(F("PDU_REGISTER_NOTIFICATION")) > (-1)) {canRespondToThisQuery = true;}
+  if (!canRespondToThisQuery) {return;}
 
   // Obtain the transaction label from these queries. Some of the queries
   // we're responding to here have a transaction label, and our response must
@@ -2706,7 +2711,10 @@ void RespondToQueries(String &queryString)
     return;
   }
 
-    // Debugging: 
+    // This turns out to be a very useful debugging message, don't delete it.
+    // It helped me discover an important bug at one point. If this message
+    // appears it  means I did something wrong, or perhaps there is a new
+    // Bluetooth message I don't know how to handle.
     Log(F("Dropping out of the bottom of the RespondToQueries function without responding."));
 }
 
