@@ -159,8 +159,7 @@ Male conn. headers:         https://www.digikey.com/product-detail/en/3m/961236-
                         4x  https://www.digikey.com/product-detail/en/3m/961108-6404-AR/3M9457-08-ND/7104637
 Female conn. header asst:   https://www.amazon.com/gp/product/B074GQ9LKY/ref=oh_aui_detailpage_o01_s00
 Ceramic Capacitor asst:     https://www.amazon.com/gp/product/B071VVTC7Z/ref=oh_aui_detailpage_o04_s00
-10k ohm resistors:      8x  https://www.amazon.com/gp/product/B0185FIOTA/ref=oh_aui_detailpage_o02_s00
-4.7k ohm resistors:     3x  https://www.amazon.com/gp/product/B0185FC5OK/ref=oh_aui_detailpage_o02_s00
+10k ohm resistors:      9x  https://www.amazon.com/gp/product/B0185FIOTA/ref=oh_aui_detailpage_o02_s00
 100 ohm resistor:           https://www.digikey.com/product-detail/en/stackpole-electronics-inc/CF18JT100R/CF18JT100RCT-ND/2022718
 1N914 diode:                https://www.digikey.com/product-detail/en/on-semiconductor/1N914/1N914FS-ND/978749
 

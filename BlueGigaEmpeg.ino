@@ -251,8 +251,8 @@ boolean PerformUtf8Conversion = true;
 // input->output pairs for answering certain pieces of text on the bluetooth
 // module's serial port. There is other code elsewhere to handle input/output
 // that requires more detailed handling and parsing.
-int scFixMatrixSize = 11;
-String scFixMessageMatrix[11][2] =
+int scFixMatrixSize = 14;
+String scFixMessageMatrix[14][2] =
 {
     // Bluetooth in                        // Bluetooth out        
 
@@ -273,7 +273,8 @@ String scFixMessageMatrix[11][2] =
   // out for now. I am cautiously optimistic about this one possibly helping?
   // In one set of tests the Honda initial connection bug got a lot better
   // after commenting this out, but since it was an intermittent bug to begin
-  // with I can't be sure without some bake time. 
+  // with I can't be sure without some bake time. NOTE: I added this back
+  // later in some sections below.
   //   { "CONNECT 2",                          "A2DP STREAMING START"},
 
   // This one didn't work or help or fix anything. Don't use this one.
@@ -395,6 +396,29 @@ String scFixMessageMatrix[11][2] =
   { "CONNECT 1 A2DP 19",                   "A2DP STREAMING START"},
   { "CONNECT 2 A2DP 19",                   "A2DP STREAMING START"},
   { "CONNECT 3 A2DP 19",                   "A2DP STREAMING START"},
+
+  // Respond to messages such as "CONNECT 0 A2DP 19" Respond during the pair
+  // process with a connection attempt. Response should be "CALL", the address
+  // to connect to, then a special code indicating the target type and profile
+  // type. "17" is a special code for a certain kind of target which is a
+  // particular secret-code hard-to find value called an "L2CAP psm" and the
+  // special secret L2CAP psm for AVRCP is "17".
+  //
+  // NOTE BUGFIX: Don't do an AVRCP call while the host is in the middle of
+  // pairing its second A2DP channel. In other words, don't do an AVRCP call
+  // on the first ("0") connect from the host stereo, only  do it on the
+  // second ("1") one. So comment out this line:
+  //       { "CONNECT 0 A2DP 19",        "CALL {0} 17 AVRCP"},
+  // But subsequent ones are OK to do, and in fact are required for AVRCP to
+  // work on the paired system.
+  //
+  // EXPERIMENT: Try to fix issue #60 and or issue #21 by moving these to the
+  // main string response matrix rather than hiding them here in the pairing
+  // matrix. I think they might need to be there for all possible situations,
+  // not just pairing.
+  { "CONNECT 1 A2DP 19",        "CALL {0} 17 AVRCP"},
+  { "CONNECT 2 A2DP 19",        "CALL {0} 17 AVRCP"},
+  { "CONNECT 3 A2DP 19",        "CALL {0} 17 AVRCP"},
 };
 
 // Strings that will be handled by our more detailed call-and-response
@@ -477,8 +501,8 @@ static String transactionLabelTrackChanged = "";
 // the response string. The "{0}" is also defined in another variable below.
 // NOTE: Update the matrix size and the array size both, if you are changing
 // these.
-int pmMatrixSize=4;
-String pmMessageMatrix[4][2] =
+int pmMatrixSize=2;
+String pmMessageMatrix[2][2] =
 {
   // Respond to messages such as INQUIRY_PARTIAL 0a:ea:ea:6a:7a:6a 240404
   { "INQUIRY_PARTIAL ",          "PAIR {0}"},
@@ -505,8 +529,13 @@ String pmMessageMatrix[4][2] =
   //       { "CONNECT 0 A2DP 19",        "CALL {0} 17 AVRCP"},
   // But subsequent ones are OK to do, and in fact are required for AVRCP to
   // work on the paired system.
-  { "CONNECT 1 A2DP 19",        "CALL {0} 17 AVRCP"},
-  { "CONNECT 2 A2DP 19",        "CALL {0} 17 AVRCP"},
+  //
+  // EXPERIMENT: Try to fix issue #60 and or issue #21 by moving these to the
+  // main string response matrix rather than hiding them here in the pairing
+  // matrix. I think they might need to be there for all possible situations,
+  // not just pairing.
+  //   { "CONNECT 1 A2DP 19",        "CALL {0} 17 AVRCP"},
+  //   { "CONNECT 2 A2DP 19",        "CALL {0} 17 AVRCP"},
 };
 
 // String to be used in token substitutions above (change both the matrix
@@ -1659,6 +1688,13 @@ char MainInputOutput()
           // We have a pairing buddy address, so try to connect to that buddy.
           Log(F("Trying to connect now to our current pairing buddy."));
           SendBlueGigaCommand("CALL " + pairAddressString + " 19 A2DP");
+
+          // DO NOT DO THIS IN THIS SPOT: Attempted fix for issue #60 or issue
+          // #21 but it caused other problems where AVRCP connected first but
+          // then A2DP did not connect and therefore the cell phone won the
+          // race. I think that the correct place to CALL for AVRCP is only
+          // after getting a CONNECT message for A2DP. Not sure.
+          //      SendBlueGigaCommand("CALL " + pairAddressString + " 17 AVRCP");
 
           // Prevent this code from firing twice in the same millisecond if
           // the loop happens to execute extra fast. Same caveats as above.
