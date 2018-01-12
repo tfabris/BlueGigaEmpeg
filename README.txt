@@ -369,7 +369,7 @@ display board.
 
 Refer to the annotated phototgraph in this repository named "I2S Wiring
 Modification Photo.jpg" to help understand the wiring instructions below. Here
-is a direct link to the photo:
+is a direct link to download the photo:
 
   https://github.com/tfabris/BlueGigaEmpeg/blob/master/I2S%20Wiring%20Modification%20Photo.jpg
 
@@ -389,14 +389,22 @@ empeg. The pinouts of these five pads are:
     4 = IISD1 aka  SD      aka "serial data" (1 of 2)
     5 = IISD2 aka  SD      aka "serial data" (2 of 2)
 
-Carefully solder some small jumper wires to pads 1,2, and 4, and you must keep
-track of which wires are soldered to which pads.
+Carefully solder some jumper wires to pads 1,2, and 4, and you must keep track
+of which wires are soldered to which pads.
 
 When soldering, make sure the jumper wires and the solder joints are flat to
 the board instead of sticking upwards. The disk drive tray gets close to that
 location when mounted, so make sure they don't have a chance to contact the
 tray. After soldering, cover the solder points with tape or some other
 insulator to prevent them from shorting out on the drive tray.
+
+Glue down the wires near the I2S pads so that they do not wiggle and rip away
+the I2S pads. Some empeg Car units will have a chip at that location that you
+can glue onto, others will have a blank area of the PCB in that location that
+you can glue onto. Use RTV silicone or cyanoacrylate superglue to glue them
+down. Use a small amount and make sure the blob of glue does not "stick up"
+since the disk drive tray gets very close to that location. Make sure to let
+the glue dry before reassembling.
 
 Locate the two white connectors on the back part of the empeg motherboard
 which connect two groups of small colored wires to the docking connector
@@ -426,8 +434,10 @@ interior wires in this order:
  IIS Pad 4 (IISD1) jumpered to Red wire, originally second from end.
 
 Make sure that your jumper wires are carefully tucked down around the left
-side of the empeg and out of the way of the disk drive tray assembly when you
-reinstall it.
+side of the empeg and out of the way of the disk drive tray assembly as shown
+in the photo. Then carefully reassemble the player.
+
+
 
 Final wiring positions and colors:
 
