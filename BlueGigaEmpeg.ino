@@ -173,30 +173,73 @@ const String codecString="SET CONTROL CODEC SBC JOINT_STEREO 44100 0\r\n        
 // instead of connecting to my cellphone every time. Tried two possible
 // versions of this, only one of which produced decent results.
 //
-// Version 1: "SET CONTROL RECONNECT". Getting the timing parameter just right
-// on this command seems to affect whether or not the host stereo asks me for
-// incorrect PDU messages and other possible bug-like issues I encountered.
-// The string includes a baked-in second additional STORECONFIG command to
+// Version 1: "SET CONTROL RECONNECT". 
+//
+// The string may include a baked-in second additional STORECONFIG command to
 // store the configuration of the connection. The docs say that this
 // STORECONFIG command is merely to store the reconnect functionality but it's
 // not made clear if it stores all configuration information or just that one.
-// NOTE: The docs say that the reconnect timer (the first numeric parameter)
-// should be *longer* than 500ms. However I have found it should even be
-// longer than that, to prevent other timing and bug issues, seemingly caused
-// by trying to reconnect too quickly.
+//
+// First parameter (such as 4800 or 600 or whatnot) is retry interval in
+// milliseconds. The docs say that the reconnect timer should be longer than
+// 500ms.
+//
+// Second and third parameters (0 0) are max attempts and total timeout, which
+// are set to zero to indicate infinite retry.
+//
+// Third parameter is a 16 bit bitmask. See section 6.89 in the "iWRAP 6.1.1
+// USER GUIDE AND API REFERENCE" document for details. It must be typed in as
+// a hexadecimal number. The bitmask values are:
+//
+// Bit 0 (value 1): Automatically store connection order after each established
+// connection. If this bit is set to 0 then user must manually store device order
+// before power off device by command: STORECONFIG
+//
+// Bit 1 (value 2): Start again reconnection after correctly disconnected device.
+//
+// Bit 2 (value 4): Automatically make defragmentation and reset module when
+// there is no free memory for storing connection history order.
+//
+// Bit 3 (value 8): Automatically make reset module when link loss connection
+// appear.
+//
+// Bit 4 (value 16): Reconnect to all devices. When currently BT connection is
+// disconnected by the user and Bit 1 is set then last connected device will be
+// taken into account during reconnection procedure as a last device in queue.
+// When this bit is 0 and Bit 1 is set then last connected device will be out of
+// reconnection list until next reset or successful connection appear.
+//
+// Bit 5 (value 32): If during reconnection link key from remote device is
+// missing then it will be removed automatically from paired device list.
+//
+// Remaining bits of the third parameter must be zero.
+//
+// Fourth and fifth parameters are custom target and custom profile which I
+// think I had wrong in earlier versions. I think it should be "19 A2DP" if I
+// am using the custom profile, or "0 NONE" if I am not, and I was doing
+// neither of those things in previous versions. I think that these two
+// parameters must go together. "19" is the secret code for "A2DP", it is the
+// "L2CAP PSM" code for A2DP, and I think that the 19 must always be followed
+// by A2DP even though the docs are not clear on this point. Changing these
+// parameters to "19 A2DP" and leaving off all the other profile parameters
+// seems to fix issue #60.
+//
+// Set it to this to use BlueGiga iWrap6 auto reconnect feature and control
+// its reconnect speed. This string will not be used if the Monkey Reconnect 
+// feature is enabled.
+const String autoReconnectString = "SET CONTROL RECONNECT 600 0 0 1f 19 A2DP";
 //
 // Set it to this (blank string) if you want to turn off the BlueGiga iWrap6
 // reconnect feature and depend upon your stereo headunit to reconnect.
 //    const String autoReconnectString = "";
-// 
-// Set it to this to use BlueGiga iWrap6 auto reconnect feature and control
-// its reconnect speed. This string will not be used if the Monkey Reconnect 
-// feature is enabled.
-const String autoReconnectString = "SET CONTROL RECONNECT 4800 0 0 7 0 A2DP A2DP AVRCP\r\n            STORECONFIG";
 //
-// Note: To repro the "Bad PDU Registration bug", uncomment this line and
-// disable the Monkey Reconnect feature. A short reconnect interval repros the
-// Bad PDU Registration issue frequently:
+// Keeping this for future reference: Intermittently buggy one caused issue #60:
+//    const String autoReconnectString = "SET CONTROL RECONNECT 4800 0 0 7 0 A2DP A2DP AVRCP\r\n            STORECONFIG";
+//
+// Note: To repro the "Bad PDU registration bug" frequently instead of
+// intermittently, uncomment this line and disable the Monkey Reconnect
+// feature. A short reconnect interval repros the Bad PDU registration issue
+// frequently:
 //    const String autoReconnectString = "SET CONTROL RECONNECT 800 0 0 7 0 A2DP A2DP AVRCP\r\n            STORECONFIG";
 //
 // Version 2: "SET CONTROL AUTOCALL". This seems to work well, when it works.
@@ -251,8 +294,8 @@ boolean PerformUtf8Conversion = true;
 // input->output pairs for answering certain pieces of text on the bluetooth
 // module's serial port. There is other code elsewhere to handle input/output
 // that requires more detailed handling and parsing.
-int scFixMatrixSize = 14;
-String scFixMessageMatrix[14][2] =
+int scFixMatrixSize = 11;
+String scFixMessageMatrix[11][2] =
 {
     // Bluetooth in                        // Bluetooth out        
 
@@ -416,9 +459,15 @@ String scFixMessageMatrix[14][2] =
   // main string response matrix rather than hiding them here in the pairing
   // matrix. I think they might need to be there for all possible situations,
   // not just pairing.
-  { "CONNECT 1 A2DP 19",        "CALL {0} 17 AVRCP"},
-  { "CONNECT 2 A2DP 19",        "CALL {0} 17 AVRCP"},
-  { "CONNECT 3 A2DP 19",        "CALL {0} 17 AVRCP"},
+  //
+  // DE-EXPERIMENT: Nope, this did not fix issue #60 and also caused another
+  // problem where the {0} isn't yet translated into an address yet and so
+  // these messages are simply not interpreted correctly at all. Move them
+  // back to the pairing routine. The SET CONTROL RECONNECT works correctly
+  // for these once you have fixed the bugs in its parameters.
+  // { "CONNECT 1 A2DP 19",        "CALL {0} 17 AVRCP"},
+  // { "CONNECT 2 A2DP 19",        "CALL {0} 17 AVRCP"},
+  // { "CONNECT 3 A2DP 19",        "CALL {0} 17 AVRCP"},
 };
 
 // Variabe to control whether or not we reconnect the bluetooth module
@@ -472,8 +521,8 @@ static String avrcpChannel = "";
 // the response string. The "{0}" is also defined in another variable below.
 // NOTE: Update the matrix size and the array size both, if you are changing
 // these.
-int pmMatrixSize=2;
-String pmMessageMatrix[2][2] =
+int pmMatrixSize=5;
+String pmMessageMatrix[5][2] =
 {
   // Respond to messages such as INQUIRY_PARTIAL 0a:ea:ea:6a:7a:6a 240404
   { "INQUIRY_PARTIAL ",          "PAIR {0}"},
@@ -500,13 +549,9 @@ String pmMessageMatrix[2][2] =
   //       { "CONNECT 0 A2DP 19",        "CALL {0} 17 AVRCP"},
   // But subsequent ones are OK to do, and in fact are required for AVRCP to
   // work on the paired system.
-  //
-  // EXPERIMENT: Try to fix issue #60 and or issue #21 by moving these to the
-  // main string response matrix rather than hiding them here in the pairing
-  // matrix. I think they might need to be there for all possible situations,
-  // not just pairing.
-  //   { "CONNECT 1 A2DP 19",        "CALL {0} 17 AVRCP"},
-  //   { "CONNECT 2 A2DP 19",        "CALL {0} 17 AVRCP"},
+  { "CONNECT 1 A2DP 19",        "CALL {0} 17 AVRCP"},
+  { "CONNECT 2 A2DP 19",        "CALL {0} 17 AVRCP"},
+  { "CONNECT 3 A2DP 19",        "CALL {0} 17 AVRCP"},
 };
 
 // String to be used in token substitutions above (change both the matrix
