@@ -450,6 +450,21 @@ int transactionLabelSize = 2;
 static String transactionLabelPlaybackStatusChanged = "";
 static String transactionLabelTrackChanged = "";
 
+// Reserve variable space for which Bluetooth channel the AVRCP connection is
+// currently on, for example, the LIST command might look like:
+//
+// list
+// 0001758 LIST 3
+// 0000047 LIST 0 CONNECTED A2DP 672 0 0 374 0 0 ...
+// 0000039 LIST 1 CONNECTED A2DP 672 0 0 374 0 0 ...
+// 0000038 LIST 2 CONNECTED AVRCP 672 0 0 1 0 0  ...
+//
+// The numbers after the word LIST are the channel that each of those things
+// is set to run upon. Mostly I don't care or need to know those but there is
+// one situation where it is useful: If I am bouncing just the AVRCP channel
+// to fix a bug, I need to know which one it's on.
+static String avrcpChannel = "";
+
 // Matrix of messages and responses which are needed when in special pairing
 // mode. These also include some special casing for the bluetooth device
 // address. The "{0}" in these strings are a special cased token indicating
@@ -727,9 +742,10 @@ const int pairLedPin = 50;
 bool pairingMode = false;
 
 // Variable to globally keep track of whether we have recently initiated a
-// reset and should therefore not be trying to reset yet again in the same
-// breath. Protect against reentrant code.
+// reset or a bounce of the AVRCP channel and should therefore not be trying
+// to reset yet again in the same breath. Protect against reentrant code.
 bool forceQuickReconnectMode = false;
+bool bounceAvrcpMode = false;
 
 // Variable to globally keep track of whether we are in the middle of a fast
 // forward or rewind operation that was initiated from the bluetooth. This is
@@ -784,6 +800,7 @@ void setup()
   pairAddressString.reserve(pairAddressStringMaxLength);
   transactionLabelPlaybackStatusChanged.reserve(transactionLabelSize);
   transactionLabelTrackChanged.reserve(transactionLabelSize);
+  avrcpChannel.reserve(transactionLabelSize);
   priorIsPlaying.reserve(2);
 
   // Reserve bytes for all the track metadata strings to save memeory.
@@ -1119,6 +1136,23 @@ void SetGlobalChipDefaults()
   //  - Major service class: Audio
   //  - Major device class:  AudioVideo
   //  - Minor device class:  HiFi Audio and Car Audio
+  // 0x240438 =
+  //  - Major service class: Rendering and Audio
+  //  - Major device class:  AudioVideo
+  // 0x240100 =
+  //  - Major service class: Rendering and Audio
+  //  - Major device class:  Computer
+  // 0x240200 = 
+  //  - Major service class: Rendering and Audio
+  //  - Major device class:  Phone
+  // 0x24020C =
+  //  - Major service class: Rendering and Audio
+  //  - Major device class:  Phone
+  //  - Minor device class:  Smartphone
+  // 0x60020C = 
+  //  - Major service class: Telephony and Audio
+  //  - Major device class:  Phone
+  //  - Minor device class:  Smartphone  
   // 
   // The docs say: "In the case of A2DP Source, the specification mandates the
   // use of the Capturing Service bit (0x080000). The Audio Service (0x200000)
@@ -1150,7 +1184,7 @@ void SetGlobalChipDefaults()
   // - Bit Value 0004 - Category 3: Tuner - must support CHUP and CHDN (channel up and down)
   // - Bit Value 0008 - Category 4: Menu - must support MSELECT, MUP, MDN, MLEFT, MRIGHT (menu select and directions)
   // Example: value of "3" would be Player/recorder plus Monitor/Amplifier.
-  SendBlueGigaCommand(F("SET PROFILE AVRCP TARGET 3"));
+  SendBlueGigaCommand(F("SET PROFILE AVRCP TARGET 1"));
 
   // Our project identifies itself nicely on car stereo's LCD screen when
   // pairing, with a nice happy friendly name that we like very much.
@@ -1239,8 +1273,10 @@ void PairBluetooth()
   DisplayAndSwallowResponses(1, 100);
 
   // Clear the global variable of our pairing buddy to occur as close as
-  // possible to the erasing of the pairings from the Bluetooth chip.
+  // possible to the erasing of the pairings from the Bluetooth chip. Also do
+  // the avrcpChannel at the same time since it's part of all that.
   pairAddressString = ""; 
+  avrcpChannel = "";
 
   // Erase all previous Bluetooth pairings (not included in the factory
   // default reset below). Note: the Star is required to erase pairings,
@@ -1803,6 +1839,23 @@ void HandleString(String &theString)
     }
   }
 
+  // Handle "grab channel number" strings - These are strings that represent
+  // which channel a given Bluetooth connection is using on the bluetooth
+  // chip. The things after the word LIST are the channel numbers. 
+  // list
+  // 0001758 LIST 3
+  // 0000047 LIST 0 CONNECTED A2DP 672 0 0 374 0 0 ...
+  // 0000039 LIST 1 CONNECTED A2DP 672 0 0 374 0 0 ...
+  // 0000038 LIST 2 CONNECTED AVRCP 672 0 0 1 0 0  ...
+  if (theString.indexOf(F("LIST ")) > (-1) && theString.indexOf(F("CONNECTED ")) > (-1) )
+  {
+    // Process the pullout of the address of our pairing buddy
+    // out of the string that is expected to contain our 
+    // pairing buddy's address in it.
+    GrabChannelNumber(theString);
+  }
+
+
   // Handle query/response strings for things like the track metadata and the
   // playback status information. Make sure our program responds to these
   // queries in a timely fashion if it receives them. This is a time-sensitive
@@ -2063,6 +2116,77 @@ void GrabPairAddressString(String stringToParse, String triggerString)
       Log (F("------------------------------------"));
       Log (F("   Pairing buddy device address:    "));
       Log (pairAddressString);
+      Log (F("------------------------------------"));
+    }
+  }
+}
+
+// ---------------------------------------------------------------------------
+// GrabChannelNumber
+//
+// Grabs the bluetooth channel number from a string that looks like this:
+// "LIST 2 CONNECTED AVRCP 672 0 0 235 ..."  and puts it into one of my global
+// variables for keeping track of channel numbers such as "avrcpChannel".
+// Parameters:
+//     stringToParse: The string that will be parsed to extract the pairing
+//                    address such as: 
+//                           LIST 2 CONNECTED AVRCP 672 0 0 235 ...
+//
+// Note: At the moment this only grabs the AVRCP channel number, it can be
+// expanded later to include other channel numbers if needed.
+// ---------------------------------------------------------------------------
+void GrabChannelNumber(String stringToParse)
+{
+  // Set variables we will be using the parsing code below.
+  static int firstSpace = 0;
+  static int lastSpace = 0;
+  firstSpace = 0;
+  lastSpace = 0;
+
+  // Quick bailout if it's not the AVRCP line we're looking for. At the
+  // current time I'm only doing the AVRCP channel but I can expand this later
+  // to also get the first and second A2DP channels if I end up needing them.
+  // Note that the routine which calls this already looked for "LIST" and
+  // "CONNECTED" so I don't have to call that here.
+  if (stringToParse.indexOf(F("AVRCP")) < 0) {return;}
+
+  // Set the value we're trying to grab to blank to start.
+  avrcpChannel = "";
+
+  // Get our channel out of the string if it's the one exact special case
+  // string that we expect to see at this particular moment.
+  if (stringToParse.indexOf(F("LIST ")) > (-1))
+  {
+    // Obtain the location of the first space character which is at the end of
+    // the trigger string. Start searching shortly before the end of the
+    // trigger string since the trigger string I'm passing in here contains
+    // the space too. For example if our trigger string is "LIST "
+    // which is 5 characters including the space, start searching at 4.
+    firstSpace = stringToParse.indexOf(F(" "), 4);
+
+    // Obtain the location of the second space, start looking for it a couple
+    // characters after the first space.
+    lastSpace = stringToParse.indexOf(F(" "), firstSpace + 2);
+
+    // Obtain the substring between the two spaces
+    avrcpChannel = stringToParse.substring(firstSpace, lastSpace);  
+
+    // Trim the string of any possible whitespace
+    avrcpChannel.trim();
+
+    // Find out if the thing we got was an address. It should contain a low single digit numbner
+    // at the very least. Throw it away if it's not.
+    if ( (avrcpChannel != "0") && (avrcpChannel != "1") && (avrcpChannel != "2") && (avrcpChannel != "3") && (avrcpChannel != "4") ) 
+    {
+      // Clear it out, it wasn't what we wanted, set it to nothing.
+      avrcpChannel = "";
+    }
+    else
+    {
+      // Log what we got.
+      Log (F("------------------------------------"));
+      Log (F("         AVRCP Channel is:"));
+      Log (avrcpChannel);
       Log (F("------------------------------------"));
     }
   }
@@ -2415,17 +2539,17 @@ void RespondToQueries(String &queryString)
       // it only register for messages 1 and 2. Your host stereo will likely
       // hang and not get track titles or be able to send steering wheel
       // control commands to the player.
-      if (queryString.indexOf(F("TRACK_REACHED_END"))                  > (-1)) { Log(F("WARNING: Bad registration message received. Rebooting.")); ForceQuickReconnect(); return;}
-      if (queryString.indexOf(F("TRACK_REACHED_START"))                > (-1)) { Log(F("WARNING: Bad registration message received. Rebooting.")); ForceQuickReconnect(); return;}
-      if (queryString.indexOf(F("PLAYBACK_POSITION_CHANGED"))          > (-1)) { Log(F("WARNING: Bad registration message received. Rebooting.")); ForceQuickReconnect(); return;}
-      if (queryString.indexOf(F("BATT_STATUS_CHANGED"))                > (-1)) { Log(F("WARNING: Bad registration message received. Rebooting.")); ForceQuickReconnect(); return;}
-      if (queryString.indexOf(F("SYSTEM_STATUS_CHANGED"))              > (-1)) { Log(F("WARNING: Bad registration message received. Rebooting.")); ForceQuickReconnect(); return;}
-      if (queryString.indexOf(F("PLAYER_APPLICATION_SETTING_CHANGED")) > (-1)) { Log(F("WARNING: Bad registration message received. Rebooting.")); ForceQuickReconnect(); return;}
-      if (queryString.indexOf(F("NOW_PLAYING_CHANGED"))                > (-1)) { Log(F("WARNING: Bad registration message received. Rebooting.")); ForceQuickReconnect(); return;}
-      if (queryString.indexOf(F("AVAILABLE_PLAYERS_CHANGED"))          > (-1)) { Log(F("WARNING: Bad registration message received. Rebooting.")); ForceQuickReconnect(); return;}
-      if (queryString.indexOf(F("ADDRESSED_PLAYERS_CHANGED"))          > (-1)) { Log(F("WARNING: Bad registration message received. Rebooting.")); ForceQuickReconnect(); return;}
-      if (queryString.indexOf(F("UIDS_CHANGED"))                       > (-1)) { Log(F("WARNING: Bad registration message received. Rebooting.")); ForceQuickReconnect(); return;}
-      if (queryString.indexOf(F("VOLUME_CHANGED"))                     > (-1)) { Log(F("WARNING: Bad registration message received. Rebooting.")); ForceQuickReconnect(); return;}
+      if (queryString.indexOf(F("TRACK_REACHED_END"))                  > (-1)) { Log(F("WARNING: Bad registration message received.")); ForceQuickReconnect(); return;}
+      if (queryString.indexOf(F("TRACK_REACHED_START"))                > (-1)) { Log(F("WARNING: Bad registration message received.")); ForceQuickReconnect(); return;}
+      if (queryString.indexOf(F("PLAYBACK_POSITION_CHANGED"))          > (-1)) { Log(F("WARNING: Bad registration message received.")); ForceQuickReconnect(); return;}
+      if (queryString.indexOf(F("BATT_STATUS_CHANGED"))                > (-1)) { Log(F("WARNING: Bad registration message received.")); ForceQuickReconnect(); return;}
+      if (queryString.indexOf(F("SYSTEM_STATUS_CHANGED"))              > (-1)) { Log(F("WARNING: Bad registration message received.")); ForceQuickReconnect(); return;}
+      if (queryString.indexOf(F("PLAYER_APPLICATION_SETTING_CHANGED")) > (-1)) { Log(F("WARNING: Bad registration message received.")); ForceQuickReconnect(); return;}
+      if (queryString.indexOf(F("NOW_PLAYING_CHANGED"))                > (-1)) { Log(F("WARNING: Bad registration message received.")); ForceQuickReconnect(); return;}
+      if (queryString.indexOf(F("AVAILABLE_PLAYERS_CHANGED"))          > (-1)) { Log(F("WARNING: Bad registration message received.")); ForceQuickReconnect(); return;}
+      if (queryString.indexOf(F("ADDRESSED_PLAYERS_CHANGED"))          > (-1)) { Log(F("WARNING: Bad registration message received.")); ForceQuickReconnect(); return;}
+      if (queryString.indexOf(F("UIDS_CHANGED"))                       > (-1)) { Log(F("WARNING: Bad registration message received.")); ForceQuickReconnect(); return;}
+      if (queryString.indexOf(F("VOLUME_CHANGED"))                     > (-1)) { Log(F("WARNING: Bad registration message received.")); ForceQuickReconnect(); return;}
     }
   }
 
@@ -2716,6 +2840,91 @@ void RespondToQueries(String &queryString)
     // appears it  means I did something wrong, or perhaps there is a new
     // Bluetooth message I don't know how to handle.
     Log(F("Dropping out of the bottom of the RespondToQueries function without responding."));
+}
+
+// ---------------------------------------------------------------------------
+// BounceAvrcpChannel
+//
+// Quickly disconnect and reconnect only the AVRCP channel of a connection.
+// This is an attempt to work around issue #60 to get rid of the bad PDU
+// registration messages on my Honda stereo.
+//
+// UPDATE: This did not fix issue #60. The result was that, despite the AVRCP
+// connection successfully disconnecting and reconnecting and doing everything
+// I designed this routine to do, it didn't fix it. What happened after the
+// reconnection was that all AVRCP communication just halted at that point.
+// Subsequent disco/recos didn't improve it. So this is an abandoned fix.
+// Keeping the code around for posterity because it has some good insights.
+// ---------------------------------------------------------------------------
+void BounceAvrcpChannel()
+{
+  // Check to see if we're already trying to bounce AVRCP. If we are then
+  // don't try to do it twice (protect against reentrant code).
+  if (bounceAvrcpMode)
+  {
+    Log(F("Already in the process of trying to bounce the AVRCP channel. Not doing it again."));
+    return;
+  }
+
+  // Set the flag indicating we are about to try bouncing the AVRCP channel.
+  bounceAvrcpMode = true;
+
+  // Log what we are about to do.
+  Log(F("Preparing to quick-bounce the AVRCP connection to fix an issue with AVRCP messages."));
+
+  // Clear out our variable for the AVRCP channel so we can grab it fresh and
+  // be sure it's fresh once we've grabbed it.
+  avrcpChannel = "";
+
+  // Send the command to the Bluetooth that we'd like to see a list of
+  // channels so that other parts of my code will then automatically grab the
+  // channel number from the resulting output. Then freewheel a bit to allow
+  // the system to find that AVRCP channel number from the list. Freewheel
+  // can be kind of long in case there are other bad PDU registrations in
+  // the serial queue, let those spool out.
+  SendBlueGigaCommand(F("LIST"));
+  DisplayAndProcessCommands(600, false);
+
+  // Make sure we have a pairing buddy address in memory. Send the command to
+  // go find who our pairing buddy is. Other code in my main interpreter loop
+  // will automatically extract that value for us. Make  sure to freewheel
+  // long enough to allow the main interpreter loop to grab the value.
+  SendBlueGigaCommand(F("SET BT PAIR"));
+  DisplayAndProcessCommands(600, false);
+
+  // If we have both of the values, then send the commands to bounce the AVRCP
+  // channel. Otherwise. I can't do it, so fall back to a full reconnect.
+  if ((avrcpChannel != "") && (pairAddressString != ""))
+  {
+    Log(F("Quick-bouncing the AVRCP connection now."));
+
+    // Close only the AVRCP channel while leaving the A2DP channels open so
+    // that the user does not notice a dropout in the audio while we do this.
+    SendBlueGigaCommand("CLOSE " + avrcpChannel);
+
+    // The CLOSE command will be immediately followed by a NO CARRIER message
+    // which, if we don't swallow the response, will cause the player to 
+    // become paused by other automatic code elsewhere. So swallow the pause
+    // message to fix that.
+    DisplayAndSwallowResponses(2, 300);
+
+    // Freewheel a bit to make sure the channel is really closed.
+    DisplayAndProcessCommands(600, false);
+
+    // Reopen another AVRCP channel, hopefully this one will be better than
+    // the last one.
+    SendBlueGigaCommand("CALL " + pairAddressString + " 17 AVRCP");
+  }
+  else
+  {
+    // If the above didn't work, then fall back to our old brute force method
+    // of fixing the issue: A full reconnect. This will blip the audio.
+    Log(F("Unable to quick-bounce the AVRCP connection as requested, forcing reconnect instead."));
+    ForceQuickReconnect();
+  }
+
+  // Clear the flag that protected against reentrant code.
+  bounceAvrcpMode = false;
 }
 
 // ---------------------------------------------------------------------------
