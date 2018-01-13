@@ -180,9 +180,8 @@ const String codecString="SET CONTROL CODEC SBC JOINT_STEREO 44100 0\r\n        
 // STORECONFIG command is merely to store the reconnect functionality but it's
 // not made clear if it stores all configuration information or just that one.
 //
-// First parameter (such as 4800 or 600 or whatnot) is retry interval in
-// milliseconds. The docs say that the reconnect timer should be longer than
-// 500ms.
+// First parameter is retry interval in milliseconds. The docs say that the
+// reconnect timer should be longer than 500ms.
 //
 // Second and third parameters (0 0) are max attempts and total timeout, which
 // are set to zero to indicate infinite retry.
@@ -227,7 +226,7 @@ const String codecString="SET CONTROL CODEC SBC JOINT_STEREO 44100 0\r\n        
 // Set it to this to use BlueGiga iWrap6 auto reconnect feature and control
 // its reconnect speed. This string will not be used if the Monkey Reconnect 
 // feature is enabled.
-const String autoReconnectString = "SET CONTROL RECONNECT 600 0 0 1f 19 A2DP";
+const String autoReconnectString = "SET CONTROL RECONNECT 2888 0 0 1f 19 A2DP";
 //
 // Set it to this (blank string) if you want to turn off the BlueGiga iWrap6
 // reconnect feature and depend upon your stereo headunit to reconnect.
