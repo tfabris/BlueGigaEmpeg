@@ -293,34 +293,18 @@ boolean PerformUtf8Conversion = true;
 // input->output pairs for answering certain pieces of text on the bluetooth
 // module's serial port. There is other code elsewhere to handle input/output
 // that requires more detailed handling and parsing.
-int scFixMatrixSize = 11;
-String scFixMessageMatrix[11][2] =
+int scFixMatrixSize = 9;
+String scFixMessageMatrix[9][2] =
 {
     // Bluetooth in                        // Bluetooth out        
 
-  // Attempt to fix issue #45 "Initial boot and connect problem on Honda" by
-  // COMMENTING OUT this line. See if it's possible to make things work
-  // correctly without needing to issue a "Streaming Start" command when
-  // someone presses "play". There should already have been such a command
-  // issued when the "connect" happened so theoretically we shouldn't have
-  // needed this at all. So try not doing this and see if it fixes other
-  // problems where the head unit got confused by things. Verdict: It neither
-  // fixes the Honda initial connection bug, nor hurts anything, when I remove
-  // this line. So remove it for now, the simpler the better.
-  // { "AVRCP PLAY PRESS",                   "A2DP STREAMING START"},
-
-  // Additional attempts to fix issue #45, Honda initial connection bug, see
-  // if you can now get away with not doing a "streaming start" here too.
-  // Again, this one did not hurt anything to remove it, so leave it commented
-  // out for now. I am cautiously optimistic about this one possibly helping?
-  // In one set of tests the Honda initial connection bug got a lot better
-  // after commenting this out, but since it was an intermittent bug to begin
-  // with I can't be sure without some bake time. NOTE: I added this back
-  // later in some sections below.
-  //   { "CONNECT 2",                          "A2DP STREAMING START"},
-
-  // This one didn't work or help or fix anything. Don't use this one.
-  // { "PDU_REGISTER_NOTIFICATION",          "A2DP STREAMING START"}, 
+  // Respond to PIN code prompt as if we were a user saying OK to that PIN
+  // code. This was needed on Mark Lord's car stereo. It is expected to be
+  // needed when the pairing security scheme is set for "SET BT SSP 1 0" at
+  // the top of this program. NOTE: This uses the pair address substitution
+  // string in the same way that the Pairing Mode strings use it. See the
+  // pmMessageMatrix for details.
+  { "SSP CONFIRM ",                                 "SSP CONFIRM {0} OK"},
 
   // We issue a "Streaming start" command in certain situations, because that
   // fixes a whole bunch of issues with various cases where the audio stream
@@ -331,14 +315,6 @@ String scFixMessageMatrix[11][2] =
   // beginning of the song is cut off. I am leaving this line in here,
   // commented out, to remind myself not to ever try to do this.
   //        { "AVRCP PAUSE PRESS",                  "A2DP STREAMING STOP"},
-
-  // Respond to PIN code prompt as if we were a user saying OK to that PIN
-  // code. This was needed on Mark Lord's car stereo. It is expected to be
-  // needed when the pairing security scheme is set for "SET BT SSP 1 0" at
-  // the top of this program. NOTE: This uses the pair address substitution
-  // string in the same way that the Pairing Mode strings use it. See the
-  // pmMessageMatrix for details.
-  { "SSP CONFIRM ",                                 "SSP CONFIRM {0} OK"},
 
   // Get Capbailities 2 is asking for manufacturer ID. According to the
   // BlueGiga documentation the chip will fill in the response details for
@@ -371,39 +347,36 @@ String scFixMessageMatrix[11][2] =
   // is the generalized query to find out what attributes are supported by your
   // playback device at all, it is not asking for individual setting values.
   //
-  // At the current time I want to respond with "none" to indicate that I have
-  // no settings that I want to be changeable from the host stereo's user
-  // interface. However, the documentation for the BlueGiga module isn't clear
-  // on how to respond with "no" or none" so that the host stereo never tries
-  // to change our settings for us. I've tried responding with "blank", i.e.,
-  // "AVRCP RSP", and also with a 0, i.e., "AVRCP RSP 0". Both methods seem to
-  // give approximately the same results which is that on some host stereos it
-  // seems to work and make the host stereo stop querying for settings
-  // changes, whereas on others there are still additional queries I must
-  // respond to (see next entry below).
-  //
-  // At some point in the future I may expand this and allow for certain
-  // settings to be changeable, at which point I will edit this response in
-  // more detail. Since "settings" encompasses Shuffle and Repeat in the
-  // bluetooth spec, then someday we might be able to do more detailed work
-  // with this response so that we can interpret commands to change the Repeat
-  // mode and the Shuffle mode on the empeg.
-  { "LIST_APPLICATION_SETTING_ATTRIBUTES",  "AVRCP RSP"},
+  // Responding with "3" meaning "Shuffle" so that my empeg player can respond
+  // to commands from the car stereo head unit to turn shuffle on and off.
+  { "LIST_APPLICATION_SETTING_ATTRIBUTES",  "AVRCP RSP 3"},
 
-  // "LIST_APPLICATION_SETTING_VALUES" is the way that the host stereo queries your
-  // bluetooth module for specific indvidual setting values. Not generally whether
-  // a particular settings group is supported at all, but rather, looking
-  // specifically for the exact setting of this particular thing it's querying. If
-  // I responded to the application setting attributes with a blank or 0 response,
-  // my personal opinion is that the host stereo shouldn't then turn around and ask
-  // me for specific setting values, since I just told it "no". But guess what the
-  // Kenwood stereo does? It asks me for setting values anyway. Sigh. Respond to
-  // them with this entry below. Again, the BlueGiga documentation does not make it
-  // clear how to respond with "no!". So I am also trying doing this with either
-  // blank or 0, like above. I'm not sure which one works and I'm still not certin
-  // how to respond to queries like this with a "no".
-  { "LIST_APPLICATION_SETTING_VALUES",      "AVRCP RSP"},
- 
+  // "LIST_APPLICATION_SETTING_VALUES" is the way that the host stereo queries
+  // your bluetooth module for the range of supported indvidual setting values
+  // for a given settings group. Not generally whether a particular settings
+  // group is supported at all, but rather, looking for the list of possible
+  // setting values of of this particular thing it's querying. In this case,
+  // the host stereo is not expected to ask for anything but the shuffle value,
+  // since in the original query above, we have responded only with saying that
+  // shuffle ("3") is available. So we respond with "1 2" indicating that the
+  // setting for "shuffle" can have two possible values: 1 for "off" and 2 for
+  // "all tracks". 
+  { "LIST_APPLICATION_SETTING_VALUES",      "AVRCP RSP 1 2"},
+
+  // "GET_APPLICATION_SETTING_VALUE" is the way that the host stereo queries
+  // your bluetooth module for the current state of the setting. For instance,
+  // it is asking whether Shuffle is currently on or off. The host stereo is
+  // not expected to ask for anything but the shuffle value, since in the
+  // original query above, we have responded only with saying that shuffle
+  // ("3") is available. So we respond with "1" indicating that shuffle is off.
+  // This is tricky, since the empeg does not tell us the shuffle state on its
+  // serial port (it merely toggles its shuffle state when it receives a "%"
+  // command but says nothing in response) then we have no way of responding
+  // back to the head unit accurately as to whether or not shuffle is on or
+  // off. We merely can listen for the query and try to respond with
+  // "something" to prevent the host headunit from hanging at this point.
+  { "GET_APPLICATION_SETTING_VALUE",      "AVRCP RSP 1"},
+
   // Respond to "RING 1" with a streaming start command seems to help a lot of
   // initial device connection situations when host stereos first connect to
   // our bluetooth module. Some initiate streaming automatically, and some do
@@ -429,47 +402,27 @@ String scFixMessageMatrix[11][2] =
   // fix the issue where sometimes I would get crackling audio when using the
   // monkey reconnect method. However, this didn't fix it though it also
   // didn't seem to make it worse. Trying it for a while.
+  // UPDATE: Experiment to see if this is no longer needed since I finally
+  // fixed issue #60 in a different way. UPDATE: Nope, we still need these.
+  // Without these the empeg plays silently until it receives this message.
   { "RING 1",                              "A2DP STREAMING START"},
   { "RING 2",                              "A2DP STREAMING START"},
   { "RING 3",                              "A2DP STREAMING START"},
 
   // Trying to add some streaming starts here where to try to fix some of the
   // silent/crackling playback issues at initial connect in issue #60.
-  { "CONNECT 1 A2DP 19",                   "A2DP STREAMING START"},
-  { "CONNECT 2 A2DP 19",                   "A2DP STREAMING START"},
-  { "CONNECT 3 A2DP 19",                   "A2DP STREAMING START"},
-
-  // Respond to messages such as "CONNECT 0 A2DP 19" Respond during the pair
-  // process with a connection attempt. Response should be "CALL", the address
-  // to connect to, then a special code indicating the target type and profile
-  // type. "17" is a special code for a certain kind of target which is a
-  // particular secret-code hard-to find value called an "L2CAP psm" and the
-  // special secret L2CAP psm for AVRCP is "17".
-  //
-  // NOTE BUGFIX: Don't do an AVRCP call while the host is in the middle of
-  // pairing its second A2DP channel. In other words, don't do an AVRCP call
-  // on the first ("0") connect from the host stereo, only  do it on the
-  // second ("1") one. So comment out this line:
-  //       { "CONNECT 0 A2DP 19",        "CALL {0} 17 AVRCP"},
-  // But subsequent ones are OK to do, and in fact are required for AVRCP to
-  // work on the paired system.
-  //
-  // EXPERIMENT: Try to fix issue #60 and or issue #21 by moving these to the
-  // main string response matrix rather than hiding them here in the pairing
-  // matrix. I think they might need to be there for all possible situations,
-  // not just pairing.
-  //
-  // DE-EXPERIMENT: Nope, this did not fix issue #60 and also caused another
-  // problem where the {0} isn't yet translated into an address yet and so
-  // these messages are simply not interpreted correctly at all. Move them
-  // back to the pairing routine. The SET CONTROL RECONNECT works correctly
-  // for these once you have fixed the bugs in its parameters.
-  // { "CONNECT 1 A2DP 19",        "CALL {0} 17 AVRCP"},
-  // { "CONNECT 2 A2DP 19",        "CALL {0} 17 AVRCP"},
-  // { "CONNECT 3 A2DP 19",        "CALL {0} 17 AVRCP"},
+  // UPDATE: Remove these because I fixed issue #60 in a different way. See
+  // if removing these fixes issue #61, "screen says no device connected".
+  // UPDATE: Removing these does not fix either the "connect time" part of
+  // issue #61 nor the "pair time" part of #61. But removing them also does
+  // not seem to hurt anything, I still get pairing and good audio, so leaving
+  // these out of the stew for now. 
+  // { "CONNECT 1 A2DP 19",                   "A2DP STREAMING START"},
+  // { "CONNECT 2 A2DP 19",                   "A2DP STREAMING START"},
+  // { "CONNECT 3 A2DP 19",                   "A2DP STREAMING START"},
 };
 
-// Variabe to control whether or not we reconnect the bluetooth module
+// Variable to control whether or not we reconnect the bluetooth module
 // whenever we see a bad PDU_REGISTER_NOTIFICATION message. Ideally we want to
 // reject any attempts to register any notifications that we won't be able to
 // respond to. The host stereo should never ask us for anything other than
@@ -615,8 +568,8 @@ int pairAddressStringMaxLength = 25;
 // come in from the bluetooth module.
 // NOTE: Update the matrix size and the array size both, if you are changing
 // these.
-int empegCommandMatrixSize = 13;
-String empegCommandMessageMatrix[13][2] =
+int empegCommandMatrixSize = 14;
+String empegCommandMessageMatrix[14][2] =
 {
   // Bluetooth Module reports     // Send command to empeg
   { "AVRCP PLAY PRESS",           "C"},
@@ -632,6 +585,17 @@ String empegCommandMessageMatrix[13][2] =
   { "AVRCP FAST_FORWARD RELEASE", "A"},  
   { "AVRCP REWIND PRESS",         "B"},  
   { "AVRCP REWIND RELEASE",       "A"},
+
+  // Special case here for "Shuffle". Shuffle is is considered a "setting" in
+  // the Bluetooth specification, meaning that the head unit queries for what
+  // settings are supported and then we respond with what settings our device
+  // supports, and what the available values are. The problem is that with
+  // shuffle, the empeg does not report back to us the current state of the
+  // shuffle, so we cannot report accurately back to the headunit whether
+  // shuffle is on or shuffle is off. So all we can do is blindly toggle it
+  // every time we get a message that (we hope) is telling us to toggle
+  // shuffle on or off. 
+  { "SET_APPLICATION_SETTING_VALUE", "%"},
 };
 
 // Issue #42: Global variable to keep track of whether or not we are connected
