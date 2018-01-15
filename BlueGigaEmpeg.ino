@@ -360,21 +360,26 @@ String scFixMessageMatrix[9][2] =
   // since in the original query above, we have responded only with saying that
   // shuffle ("3") is available. So we respond with "1 2" indicating that the
   // setting for "shuffle" can have two possible values: 1 for "off" and 2 for
-  // "all tracks". 
+  // "all tracks". Note: Cannot add "Repeat" in here because the emepg car serial
+  // command set does not contain a command for "Repeat".
   { "LIST_APPLICATION_SETTING_VALUES",      "AVRCP RSP 1 2"},
 
-  // "GET_APPLICATION_SETTING_VALUE" is the way that the host stereo queries
-  // your bluetooth module for the current state of the setting. For instance,
-  // it is asking whether Shuffle is currently on or off. The host stereo is
-  // not expected to ask for anything but the shuffle value, since in the
-  // original query above, we have responded only with saying that shuffle
-  // ("3") is available. So we respond with "1" indicating that shuffle is off.
-  // This is tricky, since the empeg does not tell us the shuffle state on its
-  // serial port (it merely toggles its shuffle state when it receives a "%"
-  // command but says nothing in response) then we have no way of responding
-  // back to the head unit accurately as to whether or not shuffle is on or
-  // off. We merely can listen for the query and try to respond with
-  // "something" to prevent the host headunit from hanging at this point.
+  // "GET_APPLICATION_SETTING_VALUE" is the way that the host stereo queries your
+  // bluetooth module for the current state of the setting. For instance, it is
+  // asking whether Shuffle is currently on or off. The host stereo is not expected
+  // to ask for anything but the shuffle value, since in the original query above,
+  // we have responded only with saying that shuffle ("3") is available. So we
+  // blindly respond with "1" indicating that shuffle is off. This is tricky, since
+  // the empeg does not tell us the shuffle state on its serial port (it merely
+  // toggles its shuffle state when it receives a "%" command but says nothing in
+  // response) then we have no way of responding back to the head unit accurately
+  // as to whether or not shuffle is on or off. We merely can listen for the query
+  // and try to respond with "something" to prevent the host headunit from hanging
+  // at this point. It turns out that this blind response works well on the one
+  // host headunit that I've got to test it against (Vixy and Fishy's Kenwood).
+  // Pressing the  shuffle button on their stereo works fine and toggles shuffle.
+  // Note: Cannot add "Repeat" in here because the emepg car serial command set
+  // does not contain a command for "Repeat".
   { "GET_APPLICATION_SETTING_VALUE",      "AVRCP RSP 1"},
 
   // Respond to "RING 1" with a streaming start command seems to help a lot of
@@ -593,8 +598,10 @@ String empegCommandMessageMatrix[14][2] =
   // shuffle, the empeg does not report back to us the current state of the
   // shuffle, so we cannot report accurately back to the headunit whether
   // shuffle is on or shuffle is off. So all we can do is blindly toggle it
-  // every time we get a message that (we hope) is telling us to toggle
-  // shuffle on or off. 
+  // every time we get a message that is telling us to toggle shuffle on or
+  // off. This works well on the one stereo I've got to test it on so far,
+  // which is Vixy & Fishy's Kenwood. NOTE: Cannot add "repeat" since the
+  // empeg serial port command set does not contain a repeat command.
   { "SET_APPLICATION_SETTING_VALUE", "%"},
 };
 
