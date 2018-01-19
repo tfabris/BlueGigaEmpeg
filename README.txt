@@ -93,6 +93,7 @@ Checklist
 Implementing this requires some manual labor. Make sure to go through each
 step in this checklist. Each step is detailed in its own section, below.
 
+- Prerequisites
 - Bluetooth Chip Firmware Upgrade
 - Modify your Arduino compiler for larger buffer size
 - Compile and upload the latest version of BlueGigaEmpeg.ino to the Arduino
@@ -109,65 +110,36 @@ step in this checklist. Each step is detailed in its own section, below.
 
 
 ------------------------------------------------------------------------------
-Resources
+Prerequisites
 ------------------------------------------------------------------------------
+Make sure you have all of these things before working with the BlueGigaEmpeg:
+
 Purchase:
-Empeg Car player:           http://empegbbs.com/ubbthreads.php/forums/11/1/For_Sale
-Arduino MEGA 2560 R3 Board: https://www.amazon.com/gp/product/B01H4ZLZLQ       
-BetzTechnik WT32i Breakout: http://www.betztechnik.ca/store/p3/WT32i_breakout_board.html
-BlueGigaEmpeg Interface:    TBA (I plan to make my interface board available)
 
-Bluetooth information, schematics, and command references:
-Bluetooth AVRCP specs:      https://www.bluetooth.org/docman/handlers/DownloadDoc.ashx?doc_id=292286
-Command reference:          https://www.silabs.com/documents/login/reference-manuals/iWRAP6-API-RM.pdf
-AVRCP command reference:    https://www.silabs.com/documents/login/application-notes/AN986.pdf
-Dev Board User Guide:       https://www.silabs.com/documents/login/user-guides/UG215.pdf
-Dev Board Data Sheet:       https://www.silabs.com/documents/login/data-sheets/WT32i-DataSheet.pdf
-Dev Board Reference Design: https://www.silabs.com/documents/login/reference-designs/Reference-Design-DKWT32i.pdf
-Dev Board Full Schematic:   https://www.silabs.com/documents/login/reference-designs/DKWT32i-v2.2.zip
-BetzTechnik Schematic:      http://www.betztechnik.ca/uploads/2/5/6/7/25674051/wt32i.pdf
-Pololu V.Reg #2853 Pinout:  https://a.pololu-files.com/picture/0J5850.1200.jpg
-Arduino Mega Pin Map:       https://www.arduino.cc/en/uploads/Hacking/Atmega168PinMap2.png
-Arduino Mega Standalone:    https://www.arduino.cc/en/Main/Standalone
-ClassOfDevice generators:   http://bluetooth-pentest.narod.ru/software/bluetooth_class_of_device-service_generator.html
-                            http://www.ampedrftech.com/cod.htm
-MAX232 circuit for Arduino: https://www.avrprogrammers.com/articles/max232-arduino
-TI MAX232E datasheet:       http://www.ti.com/lit/ds/symlink/max232e.pdf
-BlueGiga Forum:             https://www.silabs.com/community/wireless/bluetooth
-Empeg BBS thread:           http://empegbbs.com/ubbthreads.php/topics/370217
+ Empeg Mk2 or Rio Car player: http://empegbbs.com/ubbthreads.php/forums/11/1/For_Sale
+ Arduino MEGA 2560 R3 Board:  https://www.amazon.com/gp/product/B01H4ZLZLQ       
+ BetzTechnik WT32i Breakout:  http://www.betztechnik.ca/store/p3/WT32i_breakout_board.html
+ BlueGigaEmpeg Interface:     http://www.empegbbs.com or direct email to tfabris@gmail.com
 
-Software:
-Arduino software:           https://www.arduino.cc/
-Hijack Kernel for empeg:    http://empeg-hijack.sourceforge.net/
-Tony's Empeg Logo Editor:   http://empegbbs.com/ubbthreads.php/ubb/download/Number/7067/filename/logoedit17.zip
+Download software (Windows PC or Windows VM required for some of these items):
 
-Upgrading firmware on the WT32i:
-Firmware Update Guide:      https://www.silabs.com/documents/login/user-guides/UG216.pdf
-Page containing firmware:   https://www.silabs.com/documents/login/data-sheets/WT32i-DataSheet.pdf
-Link to firmware zip file:  https://www.silabs.com/documents/login/software/iWRAP-Firmware-Releases.zip
-Prolific PL2303 USB driver: http://www.prolific.com.tw/US/ShowProduct.aspx?p_id=225&pcid=41
-FTDI USB driver:            http://www.ftdichip.com/FTDrivers.htm
+ Arduino IDE:                 https://www.arduino.cc/en/Main/Software
+ BlueGigaEmpeg sketch:        https://github.com/tfabris/BlueGigaEmpeg
+ Hijack Kernel for empeg:     http://empeg-hijack.sourceforge.net/
+ Tony's Empeg Logo Editor:    http://empegbbs.com/ubbthreads.php/ubb/download/Number/7067/filename/logoedit17.zip
+ WT32i Firmware Upgrade:      https://www.silabs.com/documents/login/software/iWRAP-Firmware-Releases.zip
+ FTDI USB driver:             http://www.ftdichip.com/FTDrivers.htm
 
-Parts used in BlueGigaEmpeg interface board:
-Pololu 7.5v V.Reg #2853:    https://www.pololu.com/product/2853
-TI MAX232E:                 https://www.digikey.com/product-detail/en/texas-instruments/MAX232EIN/296-27963-5-ND/1511027
-RS-232 connector:           https://www.digikey.com/product-detail/en/assmann-wsw-components/A-DS-09-A-KG-T2S/AE10968-ND/1241804
-Molex tuner connector:      https://www.digikey.com/product-detail/en/molex-llc/0039295083/WM3923-ND/356037
-Molex connector screws:  2x https://www.digikey.com/product-detail/en/b-f-fastener-supply/MPMS-003-0008-PH/H743-ND/274954
-LED:                        https://www.digikey.com/product-detail/en/cree-inc/C503B-BCN-CV0Z0461/C503B-BCN-CV0Z0461-ND/1922945
-Reset button:               https://www.digikey.com/product-detail/en/e-switch/TL1105LF250Q/EG2506-ND/378972
-Male conn. headers: 2x18    https://www.digikey.com/product-detail/en/3m/961236-6404-AR/3M9466-36-ND/2071927
-                    2x3     https://www.digikey.com/product-detail/en/molex-llc/0010897060/WM9874-ND/3068084
-                    22x1 2x https://www.digikey.com/product-detail/en/3m/961122-6404-AR/3M9457-22-ND/2071905
-                    10x1 3x https://www.digikey.com/product-detail/en/3m/961110-6404-AR/3M9457-10-ND/2071896
-                    8x1  4x https://www.digikey.com/product-detail/en/3m/961108-6404-AR/3M9457-08-ND/7104637
-Female 22p conn. headers 2x https://www.digikey.com/product-detail/en/3m/929850-01-22-RA/929850E-01-22-ND/1094203
-Female conn. header asst:   https://www.amazon.com/gp/product/B074GQ9LKY/ref=oh_aui_detailpage_o01_s00
-Ceramic Capacitor asst:     https://www.amazon.com/gp/product/B071VVTC7Z/ref=oh_aui_detailpage_o04_s00
-10k ohm resistors:       9x https://www.amazon.com/gp/product/B0185FIOTA/ref=oh_aui_detailpage_o02_s00
-100 ohm resistor:           https://www.digikey.com/product-detail/en/stackpole-electronics-inc/CF18JT100R/CF18JT100RCT-ND/2022718
-1N914 diode:                https://www.digikey.com/product-detail/en/on-semiconductor/1N914/1N914FS-ND/978749
+Be sure you are capable of safely making the internal modification to the
+empeg Car player as described in the section of this document titled "Modify
+Empeg Car interior for I2S digital audio connection". Here is a picture of the
+mod:
 
+ https://github.com/tfabris/BlueGigaEmpeg/blob/master/I2S%20Wiring%20Modification%20Photo.jpg
+
+You must already be comfortable with safely dismantling and repairing your
+empeg Car in order to safely make this modification. I take no responsibility
+for damage incurred while you are dismantling your empeg Car player.
 
 ------------------------------------------------------------------------------
 Bluetooth Chip Firmware Upgrade
@@ -195,7 +167,7 @@ Steps:
    the WT32i chip.
 
  - Download and unzip the "iWRAP-Firmware-Releases.zip" file linked in the
-   "Resources" section of this document.
+   "Prerequisites" section of this document.
 
  - Firmware upgrade must be performed from a Windows computer since the
    upgrading software is Windows software. Virtualized Windows works, too, for
@@ -209,10 +181,8 @@ Steps:
 
  - If it has a little yellow boo boo icon instead of a serial port, then...
 
- - Install the necessary drivers for the USB-serial connection to the dev
-   board. These will be a Prolific brand driver if you are using a BlueGiga
-   dev board, or an FTDI brand driver if you are using a BetzTechnik dev
-   board. Links to these drivers are in the "Resources" section of this
+ - Install the necessary FTDI drivers for the USB-serial connection to the dev
+   board. Links to these drivers are in the "Prerequisites" section of this
    document.
 
  - Now, plugging in the dev board into the PC with the USB cable makes a
@@ -263,14 +233,23 @@ Steps:
 ------------------------------------------------------------------------------
 Modify your Arduino compiler for larger buffer size
 ------------------------------------------------------------------------------
-For this code to work you must increase the size of the serial port buffers in
-the Arduino compiler, otherwise some of the track titles will not work. The
-symptom will be that you switch songs on the empeg, and the track title on the
-car stereo screen does not change to the new song title every time.
+Note: If you obtained the Arduino board from Tony Fabris, then the Arduino is
+already programmed correctly. This step is only needed if you purchased the
+Arduino board yourself, or if you are making additional custom modifications
+to the software running on the Arduino board.
+
+First, you must download and install the standalone Arduino IDE from the link
+in the "Prerequisites" section of this document.
+
+For BlueGigaEmpeg to work you must increase the size of the serial port
+buffers in the Arduino compiler, otherwise some of the track titles will not
+work. The symptom will be that you switch songs on the empeg, and the track
+title on the car stereo screen does not change to the new song title every
+time.
 
 To fix the issue, you must edit one of the header files in the Arduino
 compiler libraries, and then you must compile and upload your sketch from your
-local PC using the local Arduino compiler and uploader. Arduino offers an
+local PC using the standalone version of the Arduino IDE. Arduino offers an
 online web editor for uploading code sketches, but the web editor won't work
 for this project because it doesn't have the capability of changing the header
 code to increase the size of the serial port buffer.
@@ -317,26 +296,19 @@ HardwareSerial.h open, locate the following code section:
          #endif
          #endif
 
-First, check to make sure this section of code is getting compiled at all.
-Insert the following line immediately before the line which says
-"#define SERIAL_RX_BUFFER_SIZE 64"
-
-   #error This line of code has been reached successfully
-
-Now, in your Arduino compiler program, attempt to verify/compile the
-BlueGigaEmpeg.ino sketch. The compilation step should fail and it should
-clearly show the error message that you just inserted. Now you know that the
-header file is the correct header file and that your compiler is picking it up
-and using it.
-
-Now remove the error line from the header file so that it will build again.
-
-Now, instead, edit the lines "#define SERIAL_TX_BUFFER_SIZE 64" and
-"#define SERIAL_RX_BUFFER_SIZE 64" and change them to this instead:
+Now edit the lines "#define SERIAL_TX_BUFFER_SIZE 64" and "#define
+SERIAL_RX_BUFFER_SIZE 64" and change them to this instead:
 
    #define SERIAL_TX_BUFFER_SIZE 128
-       ...    ...    ...
+
    #define SERIAL_RX_BUFFER_SIZE 256
+
+In other words, you are making the larger of the two possible transmit buffer
+sizes even larger (changing 64 to 128) and the larger of the two possible
+receive buffers even larger (changing 64 to 256).
+
+Note: Leave the "SERIAL_xx_BUFFER_SIZE 16" lines alone. Only modify the ones
+that were originally set to "64" and increase them as described above.
 
 Save the file.
 
@@ -344,8 +316,17 @@ Save the file.
 ------------------------------------------------------------------------------
 Compile and upload the latest version of BlueGigaEmpeg.ino to the Arduino
 ------------------------------------------------------------------------------
-Using the Arduino development software, compile and upload "BlueGigaEmpeg.ino"
-to the Arduino Mega board. Use the Arduino Serial Monitor feature, set to
+Note: If you obtained the Arduino board from Tony Fabris, then this step
+has already been done for you. If you obtained the Arduino board directly
+yourself, then you will need to do the prior step of modifying the Arduino
+compiler, and then you can upload this software to the Arduino.
+
+Obtain the BlueGigaEmpeg firmware from GitHub, linked in the "Prerequisites"
+section of this document. Unzip it onto a folder named "BlueGigaEmpeg" on
+your computer's hard disk.
+
+Using the Arduino IDE, open the BlueGigaEmpeg project and compile and upload
+it to the Arduino Mega board. Use the Arduino Serial Monitor feature, set to
 115200 BPS, to observe the serial port output from the Arduino. It should list
 the RX and TX buffer sizes near the beginning of the output and indicate
 whether they are good or not.
@@ -478,14 +459,14 @@ input.
 Upgrade the empeg Car's hijack kernel and set "Serial Port Assignment"
 ------------------------------------------------------------------------------
 Install the latest Hijack Kernel onto the empeg Car player if it is not
-already installed. Link to the Hijack kernel is found in the "Resources"
+already installed. Link to the Hijack kernel is found in the "Prerequisites"
 section of this document. Make sure it is Hijack version 524 or later.
 
 To install the Hijack kernel, run Tony's Empeg Logo Editor, with the empeg
 connected to your Windows computer's RS-232 serial port (or an RS-232 adapter)
 and use the "Kernel Flash Utility" on its menu. Link to the Tony's Empeg Logo
-Editor program is in the "Resources" section of this document. Make sure to
-read the Tony's Empeg Logo Editor documentation.
+Editor program is in the "Prerequisites" section of this document. Make sure
+to read the Tony's Empeg Logo Editor documentation.
 
 Once hijack is installed, open up the Hijack kernel settings on the player via
 a longpress on the rotary encoder dial. Change "Serial port assignment" to
@@ -797,7 +778,7 @@ echo.
 
 Variables in the Arduino sketch:
 
-There are several flag variable in the BlueGigaEmpeg.ino sketch file, defined
+There are several flag variables in the BlueGigaEmpeg.ino sketch file, defined
 at the top of the code, which can be modified if you need them when debugging.
 Change them as you see fit, and re-upload the sketch to the Arduino. Remember
 to change them back to their default values when you are done debugging, as
@@ -977,4 +958,64 @@ times, one for each of the I2S connections):
                             +--------------WT32i PCM_CLK
 
 
+------------------------------------------------------------------------------
+Resources
+------------------------------------------------------------------------------
+Purchase:
+Empeg Car player:           http://empegbbs.com/ubbthreads.php/forums/11/1/For_Sale
+Arduino MEGA 2560 R3 Board: https://www.amazon.com/gp/product/B01H4ZLZLQ       
+BetzTechnik WT32i Breakout: http://www.betztechnik.ca/store/p3/WT32i_breakout_board.html
+BlueGigaEmpeg Interface:    http://www.empegbbs.com or direct email to tfabris@gmail.com
 
+Download software:
+Arduino IDE:                https://www.arduino.cc/en/Main/Software
+BlueGigaEmpeg sketch:       https://github.com/tfabris/BlueGigaEmpeg
+Hijack Kernel for empeg:    http://empeg-hijack.sourceforge.net/
+Tony's Empeg Logo Editor:   http://empegbbs.com/ubbthreads.php/ubb/download/Number/7067/filename/logoedit17.zip
+WT32i Firmware Upgrade:     https://www.silabs.com/documents/login/software/iWRAP-Firmware-Releases.zip
+FTDI USB driver:            http://www.ftdichip.com/FTDrivers.htm
+
+Bluetooth information, schematics, and command references:
+Bluetooth AVRCP specs:      https://www.bluetooth.org/docman/handlers/DownloadDoc.ashx?doc_id=292286
+Command reference:          https://www.silabs.com/documents/login/reference-manuals/iWRAP6-API-RM.pdf
+AVRCP command reference:    https://www.silabs.com/documents/login/application-notes/AN986.pdf
+Dev Board User Guide:       https://www.silabs.com/documents/login/user-guides/UG215.pdf
+Dev Board Data Sheet:       https://www.silabs.com/documents/login/data-sheets/WT32i-DataSheet.pdf
+Dev Board Reference Design: https://www.silabs.com/documents/login/reference-designs/Reference-Design-DKWT32i.pdf
+Dev Board Full Schematic:   https://www.silabs.com/documents/login/reference-designs/DKWT32i-v2.2.zip
+BetzTechnik Schematic:      http://www.betztechnik.ca/uploads/2/5/6/7/25674051/wt32i.pdf
+Pololu V.Reg #2853 Pinout:  https://a.pololu-files.com/picture/0J5850.1200.jpg
+Arduino Mega Pin Map:       https://www.arduino.cc/en/uploads/Hacking/Atmega168PinMap2.png
+Arduino Mega Standalone:    https://www.arduino.cc/en/Main/Standalone
+ClassOfDevice generators:   http://bluetooth-pentest.narod.ru/software/bluetooth_class_of_device-service_generator.html
+                            http://www.ampedrftech.com/cod.htm
+MAX232 circuit for Arduino: https://www.avrprogrammers.com/articles/max232-arduino
+TI MAX232E datasheet:       http://www.ti.com/lit/ds/symlink/max232e.pdf
+BlueGiga Forum:             https://www.silabs.com/community/wireless/bluetooth
+Empeg BBS thread:           http://empegbbs.com/ubbthreads.php/topics/370217
+
+Upgrade firmware on the WT32i:
+Firmware Update Guide:      https://www.silabs.com/documents/login/user-guides/UG216.pdf
+Page containing firmware:   https://www.silabs.com/documents/login/data-sheets/WT32i-DataSheet.pdf
+Link to firmware zip file:  https://www.silabs.com/documents/login/software/iWRAP-Firmware-Releases.zip
+Prolific PL2303 USB driver: http://www.prolific.com.tw/US/ShowProduct.aspx?p_id=225&pcid=41
+FTDI USB driver:            http://www.ftdichip.com/FTDrivers.htm
+
+Parts list used in BlueGigaEmpeg interface board:
+Pololu 7.5v V.Reg #2853:       https://www.pololu.com/product/2853
+TI MAX232E:                    https://www.digikey.com/product-detail/en/texas-instruments/MAX232EIN/296-27963-5-ND/1511027
+RS-232 connector:              https://www.digikey.com/product-detail/en/assmann-wsw-components/A-DS-09-A-KG-T2S/AE10968-ND/1241804
+Molex tuner connector:         https://www.digikey.com/product-detail/en/molex-llc/0039295083/WM3923-ND/356037
+Molex connector screws:  Qty:2 https://www.digikey.com/product-detail/en/b-f-fastener-supply/MPMS-003-0008-PH/H743-ND/274954
+LED:                           https://www.digikey.com/product-detail/en/cree-inc/C503B-BCN-CV0Z0461/C503B-BCN-CV0Z0461-ND/1922945
+Reset button:                  https://www.digikey.com/product-detail/en/e-switch/TL1105LF250Q/EG2506-ND/378972
+Jumpers 0.10 pitch:      Qty:2 https://www.digikey.com/product-detail/en/te-connectivity-amp-connectors/2-382811-0/2-382811-0-ND/1864296
+Male conn. headers:  3x2       https://www.digikey.com/product-detail/en/molex-llc/0010897060/WM9874-ND/3068084
+                    18x2       https://www.digikey.com/product-detail/en/3m/961236-6404-AR/3M9466-36-ND/2071927
+                    22x1 Qty:2 https://www.digikey.com/product-detail/en/3m/961122-6404-AR/3M9457-22-ND/2071905
+                    10x1       https://www.digikey.com/product-detail/en/3m/961110-6404-AR/3M9457-10-ND/2071896
+                     8x1 Qty:2 https://www.digikey.com/product-detail/en/3m/961108-6404-AR/3M9457-08-ND/7104637
+Fem. conn. headers  22x1 Qty:2 https://www.digikey.com/product-detail/en/3m/929850-01-22-RA/929850E-01-22-ND/1094203
+Ceramic Capacitor asst:        https://www.amazon.com/gp/product/B071VVTC7Z/ref=oh_aui_detailpage_o04_s00
+10k ohm resistors:       Qty:9 https://www.amazon.com/gp/product/B0185FIOTA/ref=oh_aui_detailpage_o02_s00
+100 ohm resistor:              https://www.digikey.com/product-detail/en/stackpole-electronics-inc/CF18JT100R/CF18JT100RCT-ND/2022718

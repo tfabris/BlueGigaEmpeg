@@ -144,8 +144,8 @@ boolean outputMillis=true;
 // data on the serial port when it is not needed.
 boolean displayTracksOnSerial=false;
 
-// Strings to define which codecs to use for A2DP audio transmission.
-// To remove a codec from the capability list, use its command with no
+// Strings to define which codecs to use for A2DP audio transmission. To
+// remove a codec from the capability list, use its command with no
 // parameters. For example:
 //       SET CONTROL CODEC AAC
 // Will remove the AAC codec from the capability list. This is NOT in the
@@ -224,8 +224,7 @@ const String codecString="SET CONTROL CODEC SBC JOINT_STEREO 44100 0\r\n        
 // seems to fix issue #60.
 //
 // Set it to this to use BlueGiga iWrap6 auto reconnect feature and control
-// its reconnect speed. This string will not be used if the Monkey Reconnect 
-// feature is enabled.
+// its reconnect speed.
 const String autoReconnectString = "SET CONTROL RECONNECT 2888 0 0 1f 19 A2DP";
 //
 // Set it to this (blank string) if you want to turn off the BlueGiga iWrap6
@@ -235,10 +234,8 @@ const String autoReconnectString = "SET CONTROL RECONNECT 2888 0 0 1f 19 A2DP";
 // Keeping this for future reference: Intermittently buggy one caused issue #60:
 //    const String autoReconnectString = "SET CONTROL RECONNECT 4800 0 0 7 0 A2DP A2DP AVRCP\r\n            STORECONFIG";
 //
-// Note: To repro the "Bad PDU registration bug" frequently instead of
-// intermittently, uncomment this line and disable the Monkey Reconnect
-// feature. A short reconnect interval repros the Bad PDU registration issue
-// frequently:
+// Note: To repro the "Bad PDU registration bug", uncomment this line. A short
+// reconnect interval repros the Bad PDU registration issue frequently:
 //    const String autoReconnectString = "SET CONTROL RECONNECT 800 0 0 7 0 A2DP A2DP AVRCP\r\n            STORECONFIG";
 //
 // Version 2: "SET CONTROL AUTOCALL". This seems to work well, when it works.
@@ -250,12 +247,10 @@ const String autoReconnectString = "SET CONTROL RECONNECT 2888 0 0 1f 19 A2DP";
 //     const String autoReconnectString = "SET CONTROL AUTOCALL 19 501 A2DP";
 //
 // Version 3: Monkey reconnect. A reconnect by my monkey code instead of the
-// built-in reconnect. Attempt my own personal reconnect feature just by
-// looping in my code. See if that's any better and if it solves any problems
-// that occur during the built-in reconnect. Don't make this value too small
-// or you will overrun the module's ability to respond to its own failed
-// connection attempts. Each connection attempt has a response and it
-// shouldn't overload those.
+// built-in reconnect. This is my own personal reconnect feature which
+// reconnects just by looping in my code. This was a failed attempt to fix
+// issue #60. Keeping the code here, disabled, for posterity, but do not
+// enable this feature, it causes more problems than it solves.
 const unsigned long monkeyReconnectInterval = 3600L;
 boolean monkeyReconnectEnabled = false;
 
@@ -306,14 +301,12 @@ String scFixMessageMatrix[9][2] =
   // pmMessageMatrix for details.
   { "SSP CONFIRM ",                                 "SSP CONFIRM {0} OK"},
 
-  // We issue a "Streaming start" command in certain situations, because that
-  // fixes a whole bunch of issues with various cases where the audio stream
-  // isn't connected when music is playing. However, don't do the
-  // corresponding thing for "streaming stop", because it causes a problem
-  // where, when you unpause a song, there is a slight delay while streaming
-  // starts up again, so, if you unpause at the 00:00 mark of a song, then the
-  // beginning of the song is cut off. I am leaving this line in here,
-  // commented out, to remind myself not to ever try to do this.
+  // We issue a "Streaming start" command in certain situations. However,
+  // don't do the corresponding thing for "streaming stop", because it causes
+  // a problem where, when you unpause a song, there is a slight delay while
+  // streaming starts up again, so, if you unpause at the 00:00 mark of a
+  // song, then the beginning of the song is cut off. I am leaving this line
+  // in here, commented out, to remind myself not to ever try to do this.
   //        { "AVRCP PAUSE PRESS",                  "A2DP STREAMING STOP"},
 
   // Get Capbailities 2 is asking for manufacturer ID. According to the
@@ -382,46 +375,23 @@ String scFixMessageMatrix[9][2] =
   // does not contain a command for "Repeat".
   { "GET_APPLICATION_SETTING_VALUE",      "AVRCP RSP 1"},
 
-  // Respond to "RING 1" with a streaming start command seems to help a lot of
-  // initial device connection situations when host stereos first connect to
-  // our bluetooth module. Some initiate streaming automatically, and some do
-  // not.
-  // 
-  // NOTE: I attempted to remove this one to see if depending entirely on the
-  // host headunit to start streaming would work. It only worked
-  // intermittently. Some of the time I would get a full connection with full
-  // AVRCP functionality but there would be silence because both sides were
-  // too afraid to send a streaming start command. So I don't think you can do
-  // away with this one.
-  //
-  // EXPERIMENT:  Attempt to fix issue #45/60 "Initial boot and connect
-  // problem on Honda" by changing the way this line behaves. Try making it
-  // "RING 2" instead of "RING 1" and see if that helps. UPDATE: nope. Trying
-  // RING 0. This doesn't seem to make any difference setting it to "0" but it
-  // doesn't seem to hurt anything either, so leaving it at 0 for now. UPDATE:
-  // Nope. Got other problems with Bluetooth headset where it would get an
-  // A2DP connection but not an AVRCP connection. So putting it back to RING
-  // 1. UPDATE: I got a situation where sometimes the stereo says RING 0, 2,
-  // and 3 but not RING 1 so perhaps I need others here. Trying more than one.
-  // Specifically, having this be all of RING 1, 2, and 3 is an attempt to
-  // fix the issue where sometimes I would get crackling audio when using the
-  // monkey reconnect method. However, this didn't fix it though it also
-  // didn't seem to make it worse. Trying it for a while.
-  // UPDATE: Experiment to see if this is no longer needed since I finally
-  // fixed issue #60 in a different way. UPDATE: Nope, we still need these.
-  // Without these the empeg plays silently until it receives this message.
+  // Fix issue #45/60 "Initial boot and connect problem on Honda" by carefully
+  // selecting in which situations we issue a "streaming start" command. Note:
+  // do not issue it on the "RING 0" message, only do it for higher numbers.
+  // Otherwise you're trying to start streaming when its still in the process
+  // of setting up the second A2DP channel and/or the AVRCP channel, and that
+  // sometimes confuses the head unit. Also note: You might think you don't
+  // need these at all (the host and client should negotiate this by
+  // themselves) but it doesn't work to remove these. If you don't do this
+  // then in some cases your empeg plays silently to a headunit that makes
+  // no sound. So these are required.
   { "RING 1",                              "A2DP STREAMING START"},
   { "RING 2",                              "A2DP STREAMING START"},
   { "RING 3",                              "A2DP STREAMING START"},
 
-  // Trying to add some streaming starts here where to try to fix some of the
-  // silent/crackling playback issues at initial connect in issue #60.
-  // UPDATE: Remove these because I fixed issue #60 in a different way. See
-  // if removing these fixes issue #61, "screen says no device connected".
-  // UPDATE: Removing these does not fix either the "connect time" part of
-  // issue #61 nor the "pair time" part of #61. But removing them also does
-  // not seem to hurt anything, I still get pairing and good audio, so leaving
-  // these out of the stew for now. 
+  // Note that these are NOT needed. You only need to issue streaming start
+  // from a RING coming in from the headunit. It does not help to do it when
+  // seeing a CONNECT message.
   // { "CONNECT 1 A2DP 19",                   "A2DP STREAMING START"},
   // { "CONNECT 2 A2DP 19",                   "A2DP STREAMING START"},
   // { "CONNECT 3 A2DP 19",                   "A2DP STREAMING START"},
@@ -432,14 +402,14 @@ String scFixMessageMatrix[9][2] =
 // reject any attempts to register any notifications that we won't be able to
 // respond to. The host stereo should never ask us for anything other than
 // messages 1 and 2 (TRACK_CHANGED and PLAYBACK_STATUS_CHANGED) but my Honda
-// sometimes asks for messages 3 and above (in the table below) when it
-// shouldn't be. In those  cases, a disco/reco of the bluetooth module fixes
-// the problem. This flag controls whether or not that disco/reco occurs. It's
-// here to protect against a possible infinite reboot loop which might occur
-// on someone else's stereo. Though if this trigger is hit at all, it means
-// they've got bigger problems where the host stereo will hang anyway because
-// it isn't getting responses to its registration requests. But that's a
-// different issue than a reboot loop.
+// sometimes asks for messages 3 and above when it shouldn't be. In those
+// cases, a disco/reco of the bluetooth module fixes the problem. This flag
+// controls whether or not that disco/reco occurs. It's here to protect
+// against a possible infinite reboot loop which might occur on someone else's
+// stereo. Though if this trigger is hit at all, it means they've got bigger
+// problems where the host stereo will hang anyway because it isn't getting
+// responses to its registration requests. But that's a different issue than a
+// reboot loop.
 boolean reconnectIfBadRegistrationReceived=true;
 
 // Reserve variable space for the transaction status labels used to hold a
@@ -501,8 +471,8 @@ String pmMessageMatrix[5][2] =
   //
   // NOTE BUGFIX: Don't do an AVRCP call while the host is in the middle of
   // pairing its second A2DP channel. In other words, don't do an AVRCP call
-  // on the first ("0") connect from the host stereo, only  do it on the
-  // second ("1") one. So comment out this line:
+  // on the first ("0") connect from the host stereo, only do it on the second
+  // ("1") one and later. So comment out this line:
   //       { "CONNECT 0 A2DP 19",        "CALL {0} 17 AVRCP"},
   // But subsequent ones are OK to do, and in fact are required for AVRCP to
   // work on the paired system.
@@ -1637,13 +1607,17 @@ char MainInputOutput()
     }
   }
 
-  // Monkey Reconnect is an attempt to work around issues I encountered with
-  // the existing reconnect features found in the iWrap6 language which had
-  // interesting problems. Instead of using either of the automatic reconnect
-  // features in the iWrap6 language, since both of them gave me troubles on
-  // my Honda stereo, attempt to control my own reconnects by doing it myself
-  // in my main input loop and see if that solves any of the troubles I was
-  // having. This is one some different possible attempts to fix issue #60.
+  // Monkey Reconnect is a failed attempt to work around issue #60, which was
+  // problems with the existing reconnect features found in the iWrap6
+  // language which had interesting problems. Instead of using either of the
+  // automatic reconnect features in the iWrap6 language, since both of them
+  // gave me troubles on my Honda stereo, I attempted to control my own
+  // reconnects by doing it myself in my main input loop to see if that solves
+  // any of the troubles I was having. In the end, this caused more problems
+  // than it solved, and the fix to issue #60 turned out to be something
+  // completely different (it was actually caused by bad parameters to the
+  // built-in auto reconnect command). Keeping the code here for posterity,
+  // but disabled with monkeyReconnectEnabled=false at the top of the code.
   if (monkeyReconnectEnabled)
   {
     // First, check to see if it's been x seconds of elapsed time since bootup
@@ -1693,13 +1667,6 @@ char MainInputOutput()
           // We have a pairing buddy address, so try to connect to that buddy.
           Log(F("Trying to connect now to our current pairing buddy."));
           SendBlueGigaCommand("CALL " + pairAddressString + " 19 A2DP");
-
-          // DO NOT DO THIS IN THIS SPOT: Attempted fix for issue #60 or issue
-          // #21 but it caused other problems where AVRCP connected first but
-          // then A2DP did not connect and therefore the cell phone won the
-          // race. I think that the correct place to CALL for AVRCP is only
-          // after getting a CONNECT message for A2DP. Not sure.
-          //      SendBlueGigaCommand("CALL " + pairAddressString + " 17 AVRCP");
 
           // Prevent this code from firing twice in the same millisecond if
           // the loop happens to execute extra fast. Same caveats as above.
@@ -1990,7 +1957,9 @@ void HandleString(String &theString)
   // removed from there and placed in here as a "by hand" check because the
   // reconnection string code is now only done if we're not doing the other
   // reconnect method (the monkey reconnect). So it needs a special if
-  // statement here.
+  // statement here. Even though monkey reconnect is permanently disabled,
+  // leaving the code down here  instead of in the scFixMessageMatrix because
+  // it helps keep memory usage down a bit.
   if (!monkeyReconnectEnabled)
   { 
     if (theString.indexOf(F("AUDIO ROUTE 0 A2DP LEFT RIGHT")) > (-1))
@@ -2502,7 +2471,8 @@ void RespondToQueries(String &queryString)
     // only wanted to register messages 1 and 2 (TRACK_CHANGED and
     // PLAYBACK_STATUS_CHANGED) so why is it sending me registrations for
     // these other types of codes? It must be a bug, the only question is
-    // whose bug.
+    // whose bug. (Turns out it was mine for using the wrong parameters to
+    // the auto reconnect command.)
     //
     // Initially I tried to respond to each of these, but there is a problem
     // where they are not all correctly documented in the BlueGiga
@@ -3643,8 +3613,8 @@ void HandleEmpegString(String &theString)
     // Do not allow empeg to play silently if there is no Bluetooth connected.
     // If we get an empeg startup message, indicating that its boot sequence
     // is done and the player app has started, then send a pause command to
-    // the player as an attempt to help prevent too much lost time in songs at
-    // the startup of your car. Without this feature, in situations where the
+    // the player. This helps prevent too much lost time in songs at the
+    // startup of your car. Without this feature, in situations where the
     // Bluetooth was not connected/paired/streaming yet, then the empeg would
     // sit there silently playing all your tunes to nobody.
     //
