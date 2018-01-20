@@ -1958,11 +1958,17 @@ void HandleString(String &theString)
   // reconnection string code is now only done if we're not doing the other
   // reconnect method (the monkey reconnect). So it needs a special if
   // statement here. Even though monkey reconnect is permanently disabled,
-  // leaving the code down here  instead of in the scFixMessageMatrix because
+  // leaving the code down here instead of in the scFixMessageMatrix because
   // it helps keep memory usage down a bit.
   if (!monkeyReconnectEnabled)
   { 
-    if (theString.indexOf(F("AUDIO ROUTE 0 A2DP LEFT RIGHT")) > (-1))
+    // Attempt to fix bug #63 where the reconnect didn't seem to occur in all
+    // case. Remove the check for the "0" part of this string so that it does
+    // not matter which Link ID is the one that is connected in order to
+    // trigger the reconnect enabler. Original check was for the full string
+    // "AUDIO ROUTE 0 A2DP LEFT RIGHT" but now checking for the two halves of
+    // it on either side of the zero independently.
+    if ( (theString.indexOf(F("AUDIO ROUTE ")) > (-1)) && (theString.indexOf(F(" A2DP LEFT RIGHT")) > (-1)) )
     {
       SendBlueGigaCommand(autoReconnectString);
     }
