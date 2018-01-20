@@ -1007,6 +1007,7 @@ TI MAX232E:                    https://www.digikey.com/product-detail/en/texas-i
 RS-232 connector:              https://www.digikey.com/product-detail/en/assmann-wsw-components/A-DS-09-A-KG-T2S/AE10968-ND/1241804
 Molex tuner connector:         https://www.digikey.com/product-detail/en/molex-llc/0039295083/WM3923-ND/356037
 Molex connector screws:  Qty:2 https://www.digikey.com/product-detail/en/b-f-fastener-supply/MPMS-003-0008-PH/H743-ND/274954
+M3 hex bolts (for case): Qty:4 https://www.amazon.com/gp/product/B00SN36C6M
 LED:                           https://www.digikey.com/product-detail/en/cree-inc/C503B-BCN-CV0Z0461/C503B-BCN-CV0Z0461-ND/1922945
 Reset button:                  https://www.digikey.com/product-detail/en/e-switch/TL1105LF250Q/EG2506-ND/378972
 Jumpers 0.10 pitch:      Qty:2 https://www.digikey.com/product-detail/en/te-connectivity-amp-connectors/2-382811-0/2-382811-0-ND/1864296
