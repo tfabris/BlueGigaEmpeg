@@ -1296,6 +1296,24 @@ void PairBluetooth()
   // Set up the device for use with the empeg car.
   SetGlobalChipDefaults();
 
+  // Experimental attempt to fix issue #63. If you have more than one device
+  // paired, then the auto reconnect feature is funky and does not always
+  // succesfully beat the iPhone to the punch when you start the car. We want
+  // the empeg to win that race every time. My suspicion is that if you pair
+  // with something like a bluetooth headset (reset/pair buttonpress needed)
+  // and then subsequently pair with the Honda (no press of reset/pair button
+  // needed) then you now have two paired items in the pairing buddy table.
+  // Then when it comes time to do auto reconnect, it has to round robin
+  // through the list of pairing buddies, meaning sometimes it loses the
+  // reconnection race to the iPhone. Attempt to fix the issue by limiting the
+  // number of paired devices to 1 so that the automatic reconnect, when it
+  // gets enabled, is always only ever trying to reconnect to a single stereo
+  // instead of potentiallly multiple stereos, and thus always does it
+  // quicker. Note: Must do this after the factory reset or else it will go
+  // away immediately.
+  SendBlueGigaCommand(F("SET BT PAIRCOUNT 1")); 
+  DisplayAndSwallowResponses(1, 100);
+
   // The reset statement (which was originally in the SetGlobalChipDefaults
   // statement) is no longer part of SetGlobalChipDefaults, so we must do it
   // here as part of the pre-pairing procedure. IMPORTANT NOTE: I discovered
