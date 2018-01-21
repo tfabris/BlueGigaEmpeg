@@ -7,17 +7,17 @@ A project to use a Silicon Labs BlueGiga WT32i Bluetooth chip, combined with
 an Arduino Mega board, to act as an interface between an empeg Car Mk2 (or
 Rio Car) MP3 player and a modern Bluetooth-equipped car.
 
-The empeg Car (small "e") player, also sold as the Rio Car, is an amazing
-in-dash MP3 player made from 1999-2001 whose features are still, to this day,
-better than any other in-car MP3 solution available. However, the empeg Car
-didn't have Bluetooth since it wasn't in common use yet at the time.
+The empeg Car (small "e") player, also sold as the Rio Car, is an amazing in-
+dash MP3 player made from 1999-2001 whose features are still, nearly 20 years
+later, better than any other in-car MP3 solution available. However, the empeg
+Car didn't have Bluetooth since it wasn't in common use yet at the time.
 
 The purpose of this BlueGigaEmpeg interface is twofold:
 
 1. Bluetooth A2DP connection allows high quality stereo audio from the empeg
-   to play on the modern car stereo speakers without needing an AUX input on
-   the modern car stereo. The Bluetooth connection is useful because many cars
-   no longer have an AUX input available, yet most modern cars now have
+   Car player to play on the modern car stereo speakers without needing an AUX
+   input on the car stereo. The Bluetooth connection is useful because many
+   cars no longer have an AUX input available, yet most modern cars now have
    Bluetooth available.
 
 2. Allow empeg Car to receive Bluetooth AVRCP commands such as "next",
@@ -25,38 +25,14 @@ The purpose of this BlueGigaEmpeg interface is twofold:
    car stereo's touchscreen and steering wheel controls to be able to change
    tracks on the empeg. In addition, the same AVRCP channel allows track title
    and artist information to be displayed on the car stereo's touchscreen.
-   It's all accomplished by this code running on the Arduino.
 
 Some modification of the empeg Car is required in order for this to work. Make
-sure to perform all modifications listed in this document for this code to
-work correctly. Follow the "Checklist" section of this document to make sure
-all steps are performed.
+sure to perform all modifications listed in this document for this to work
+correctly. Follow the "Checklist" section of this document to make sure all
+steps are performed.
 
-The audio connection works like this:
- Empeg Car ->
- I2S digital outputs from empeg Car ->
- I2S digital inputs on Bluetooth chip ->
- Bluetooth chip paired with factory car stereo via Bluetooth A2DP ->
- Sound from empeg comes out the car speakers.
-
-The data connection for playback controls works like this:
- User presses touchscreen or steering wheel playback controls in car ->
- Control commands are sent from car stereo via Bluetooth AVRCP ->
- Bluetooth chip echoes the AVRCP commands on its serial output ->
- Arduino board receives these serial commands on its serial port ->
- Arduino runs code which interprets these AVRCP commands ->
- Arduino outputs empeg Car serial commands to its attached RS232 ->
- Empeg Car receives the serial commands and performs the action.
-
-The data connection for track title/artist information works like this:
- Empeg Car outputs track metadata messages on its serial port ->
- Arduino board receives track data from the empeg serial port ->
- Arduino sends track data to the Bluetooth chip via its serial port ->
- Bluetooth chip sends track data to the car stereo ->
- Track data such as Title and Artist appear on the car stereo's display.
-
-NOTE: At the time of this writing, I only tested this on a very limited
-set of Bluetooth gear. I have tested it on:
+NOTE: At the time of this writing, I only tested this on a very limited set of
+Bluetooth gear. I have tested it on:
    My Honda Accord 2017 factory stereo.
    Kenwood Bluetooth-equipped car stereo in my roommate's car.
    Plantronics Voyager Edge Bluetooth headset.
@@ -95,13 +71,14 @@ step in this checklist. Each step is detailed in its own section, below.
 
 - Prerequisites
 - Bluetooth Chip Firmware Upgrade
+- Set jumpers and switches, and modify Bluetooth board
+- Assemble the BlueGigaEmpeg module
 - Modify your Arduino compiler for larger buffer size
 - Compile and upload the latest version of BlueGigaEmpeg.ino to the Arduino
 - Disconnect all tuner modules from all sleds you own
 - Modify Empeg Car interior for I2S digital audio connection
 - Upgrade the empeg Car's hijack kernel and set "Serial Port Assignment"
 - Empeg Car configuration changes
-- Set jumpers and switches, and modify bluetooth board
 - Connect external hardware connections
 - Set Bluetooth PIN code if needed (most likely not needed)
 - Apply power and pair Bluetooth
@@ -117,54 +94,54 @@ Make sure you have all of these things before working with the BlueGigaEmpeg:
 Purchase:
 
  Empeg Mk2 or Rio Car player: http://empegbbs.com/ubbthreads.php/forums/11/1/For_Sale
+ BlueGigaEmpeg Interface:     http://www.empegbbs.com or direct email to tfabris@gmail.com
+
+Either purchased separately or included with the BlueGigaEmpeg Interface:
+
  Arduino MEGA 2560 R3 Board:  https://www.amazon.com/gp/product/B01H4ZLZLQ       
  BetzTechnik WT32i Breakout:  http://www.betztechnik.ca/store/p3/WT32i_breakout_board.html
- BlueGigaEmpeg Interface:     http://www.empegbbs.com or direct email to tfabris@gmail.com
 
 Download software (Windows PC or Windows VM required for some of these items):
 
  Arduino IDE:                 https://www.arduino.cc/en/Main/Software
+                                   Note: Must use the standalone Arduino IDE,
+                                   not the Arduino web editor.
  BlueGigaEmpeg sketch:        https://github.com/tfabris/BlueGigaEmpeg
  Hijack Kernel for empeg:     http://empeg-hijack.sourceforge.net/
  Tony's Empeg Logo Editor:    http://empegbbs.com/ubbthreads.php/ubb/download/Number/7067/filename/logoedit17.zip
  WT32i Firmware Upgrade:      https://www.silabs.com/documents/login/software/iWRAP-Firmware-Releases.zip
- FTDI USB driver:             http://www.ftdichip.com/FTDrivers.htm
+ Windows FTDI USB driver:     http://www.ftdichip.com/FTDrivers.htm
 
 Be sure you are capable of safely making the internal modification to the
 empeg Car player as described in the section of this document titled "Modify
-Empeg Car interior for I2S digital audio connection". Here is a picture of the
-mod:
-
- https://github.com/tfabris/BlueGigaEmpeg/blob/master/I2S%20Wiring%20Modification%20Photo.jpg
+Empeg Car interior for I2S digital audio connection". 
 
 You must already be comfortable with safely dismantling and repairing your
 empeg Car in order to safely make this modification. I take no responsibility
 for damage incurred while you are dismantling your empeg Car player.
 
+
 ------------------------------------------------------------------------------
 Bluetooth Chip Firmware Upgrade
 ------------------------------------------------------------------------------
-Make sure the Bluetooth WT32i chip+board is updated to the latest firmware.
 Note: If you obtained the BetzTechnik board from Tony Fabris, then this step
-has already been done for you. If you obtained the BetzTechnik board directly
-from BetzTechnik, then you will need to do these steps.
+has already been done for you. If you obtained the BetzTechnik WT32i breakout
+board directly from BetzTechnik, then you will need to do these steps.
 
 Steps:
 
  - Make sure the Bluetooth breakout board is fully separated and disconnected
-   from the BlueGigaEmpeg board, the Arduino, and all of its related
-   electronics modules which are part of this assembly. Upgrade will not work
-   if it is connected to Arduino serial port.
+   from the BlueGigaEmpeg board.
 
  - Make sure that 470uF capacitor C16 is soldered onto the BetzTechnik WT32i
    Bluetooth board. It needs to be connected any time you do firmware updates.
-   It is soldered in place by default and then we desolder it after upgrading
-   the firmware. 
+   It is soldered in place by default, and then we desolder it after upgrading
+   the firmware.
 
  - Make sure that jumper JP4 on the BetzTechnik WT32i Bluetooth board is
-   connected. It comes connected by default and then we cut it after upgrading
-   the firmware. It needs to be connected any time you do firmware updates to
-   the WT32i chip.
+   connected. It comes connected by default, and then we cut it after
+   upgrading the firmware. It needs to be connected any time you do firmware
+   updates to the WT32i chip.
 
  - Download and unzip the "iWRAP-Firmware-Releases.zip" file linked in the
    "Prerequisites" section of this document.
@@ -174,22 +151,31 @@ Steps:
    example, I was successful with doing this in Parallels on a Mac computer.
 
  - Connect your Windows computer to the Bluetooth board via a USB micro cable
-   connected to the "UART" port.
+   connected to the "UART" port on the BetzTechnik WT32i breakout board. (If
+   you are running a Windows VM, you may need to assign this device to the
+   USB of the virtual machine. For example, if running Parallels on Mac, it
+   will prompt you when you plug it in.)
 
- - Look in Windows Device Manager to see if the USB cable has made a serial
-   port appear as a device.
+ - Run Windows Device Manager. This can be found in the Windows control panel,
+   by searching from the Start menu, or by running the program "DEVMGMT.MSC".
 
- - If it has a little yellow boo boo icon instead of a serial port, then...
+-  Look in Windows Device Manager to see if the USB connection has made a new
+   serial port appear as a device under the heading "Ports (COM & LPT)".
 
- - Install the necessary FTDI drivers for the USB-serial connection to the dev
+ - If there is no new serial port there, look for a little yellow boo boo icon
+   in the USB section instead. If there is a little yellow boo boo icon
+   instead of a serial port, then...
+
+ - Install the necessary FTDI drivers for the USB-serial connection to the
    board. Links to these drivers are in the "Prerequisites" section of this
    document.
 
- - Now, plugging in the dev board into the PC with the USB cable makes a
+ - Now, plugging in the breakout board into the PC with the USB cable makes a
    serial port appear in the Windows Device Manager.
 
- - In Windows Device Manager, set the speed of the serial port to 115200 bps
-   with 8 data bits, no parity, 1 stop bit, no flow control (aka "8N1").
+ - In Windows Device Manager, right click on the serial port and select
+   "Properties". Set the speed of the serial port to 115200 bps with 8 data
+   bits, no parity, 1 stop bit, no flow control (aka "8N1").
 
  - Once that's sorted, run the "SerialDFU.exe" tool found in one of the
    folders of the unzipped "iWRAP-Firmware-Releases.zip" file. Details of
@@ -201,7 +187,7 @@ Steps:
    will say "8N1". This is OK and must remain that way for the upgrade
    process to work. 
 
- - Make sure the "Get Device Type" button works and shows your device
+ - Make sure the "Get Device Type" button works, and shows your device
    information for your WT32i chip.
 
  - Have it upgrade your chip with the most recent WT32i file among the
@@ -218,16 +204,143 @@ Steps:
    SerialDFU.exe utility which says "Factory Restore All". Make sure to CHECK
    that checkbox when doing the firmware upgrade.
 
- - After the upgrade is successful, disconnect everything and cut the trace
-   JP4 on the BetzTechnik WT32i Bluetooth board. IMPORTANT: Use extreme care
-   when cutting JP4. Make sure not to peel up the pads. There are two traces
-   running to the USB side of the JP4 pad and if you peel up that trace, your
-   board will no longer be able to power up.
+ - Make sure the upgrade completes successfully.
 
- - With everything still disconnected, desolder the 470uF capacitor at C16.
-   IMPORTANT: Use extreme care so that you save the capacitor and the pads to
-   which it is connected. Remember the capacitor direction, and save the
-   capacitor in case you need to do a firmware update later.
+ - Unplug the USB cable from the board and computer, and close the upgrade
+   software.
+
+ - Make sure to cut JP4 and remove the 470uf capacitor as described in the
+   next step.
+
+
+------------------------------------------------------------------------------
+Set jumpers and switches, and modify Bluetooth board
+------------------------------------------------------------------------------
+On the BetzTechnik WT32i Breakout board:
+
+Cut the jumper at "JP4 FTDI_+5v" on the BetzTechnik board, but only do this
+AFTER successfully updating the chip's firmware to the latest version. Cutting
+the jumper shuts off power to the the BetzTechnik onboard UART, which prevents
+the UART and the Arduino pin-to-pin serial connection from arguing with each
+other. This prevents errors on the serial port which would cause the chip to
+reboot randomly.
+
+JP4 is made of two exposed solder pads, plus a very tiny bridge trace between
+them. Cut this tiny bridge trace with a sharp X-acto knife. Magnification will
+be required to see this properly.
+
+IMPORTANT: Use extreme care when cutting JP4. Make sure not to peel up the
+pads. There are two traces running to the USB side of the JP4 pad and if you
+peel up the pad or the traces, your board will no longer work correctly.
+
+On the BetzTechnik board, carefully desolder the 470uF capacitor at C16, but
+only do this AFTER successfully updating the chip's firmware to the latest
+version. Remember the capacitor's direction, and save the capacitor for later,
+in case you need to do a firmware update later.
+
+IMPORTANT: Use extreme care when desoldering C16. Make sure not to peel up the
+pads.
+
+On the BetzTechnik board, set the Smd_2_pole_switch to the down or right
+position (depending on how you're looking at the board) which is the "off"
+position for this switch, to disconnect the BATT voltage from the 2.5v linear
+voltage regulator on the board. The BlueGigaEmpeg assembly will be supplying
+power directly to the chip at 3v and will not use the BATT power from that
+regulator.
+
+On the BlueGigaEmpeg board:
+
+Set the RS-232 Crossover jumper block as needed. There are two possible
+configurations, illustrated on the board. This might require trial and error.
+These jumpers exist because I have seen empeg sleds with different wiring on
+the RS-232 plug. Some are wired straight, some are wired crossover. The jumper
+block allows you to wire the BlueGigaEmpeg board as straight or crossover to
+compensate for this. If the Bluetooth pairs successfully and streams music,
+but you are unable to play/pause the empeg via the car's stereo's controls,
+try changing this jumper block to the opposite setting.
+
+
+------------------------------------------------------------------------------
+Assemble the BlueGigaEmpeg module
+------------------------------------------------------------------------------
+Note: If you obtained the BlueGigaEmpeg module fully pre-assembled from Tony
+Fabris, then this step is already done for you. This step is only needed if
+you purchased the Arduino and the BetzTechnik Bluetooth Breakout board
+separately.
+
+Press fit the Arduino Mega board onto the BlueGigaEmpeg circuit board by
+turning it upside down and aligning all of the pins. Not all pins on the
+Arduino are used. It should be clear which pins connect to which headers,
+based on the silkscreen printing on the BlueGigaEmpeg circuit board. Make sure
+the pins go all the way in correctly, and that no pins are bent and that there
+are no fitting problems.
+
+If you purchased the BetzTechnik WT32i Bluetooth Breakout board separately,
+you will need to solder the 22-pin female headers onto it so that it can press
+fit onto the BlueGigaEmpeg circuit board. These 22-pin female headers should
+have been included with the BlueGigaEmpeg board.
+
+IMPORTANT: The 22-pin female headers plug into the BOTTOM SIDE of the
+BetzTechnik WT32i Bluetooth Breakout board, and the soldering happens on the
+top side of the Betz board.
+
+Best procedure for soldering the headers to make sure they fit:
+
+- Plug the 22-pin female headers onto the 22-pin male headers on the
+  BlueGigaEmpeg board.
+
+- Place the BetzTechnik board onto the pin headers.
+
+- Double check that the labeled connections all match up: check the silkscreen
+  printing on the BlueGigaEmpeg board with the BetzTechnik board and make sure
+  everything matches up.
+
+- Make sure the BetzTechnik board is fully pressed down flat against the
+  headers and that there are no gaps.
+
+- With the board fitted in its final position, solder the end header pins in
+  place, i.e., the four end pins, one on each end of each header on each side
+  of the board. You're "tacking down" the ends of the headers to the Betz
+  board to make sure they are in the correct position.
+
+- Double check that the Betz board is still fully down flat onto the headers
+  and that everything is still fully fitted and flat, and that there are no
+  gaps.
+
+- With the header end pins tacked down and everything verified, then solder
+  the next pins in from the ends. Now you should have eight pins total
+  soldered, two on each end of the header rows. This should be enough to hold
+  the headers in their final positions temporarily.
+
+- Now carefully pull apart the Betz board from the BlueGigaEmpeg board,
+  separating the male headers from the female headers. Female headers should
+  still be held in place well against the Betz board.
+
+- Now fully solder all 44 header pins on the Betz board.
+
+- Press fit the Betz board back onto the BlueGigaEmpeg board fully.
+
+Now you should have the BlueGigaEmpeg board, the BetzTechnik WT32i Breakout
+board, and the Arduino Mega board, all sandwiched together and fully fitted.
+
+Place the assmebly into the BlueGigaEmpeg enclosure so that the RESET/PAIR
+button and the LED fit into the holes on the enclosure. If the LED leads got
+bent in shipping and handling, straighten them carefully so the LED fits into
+the hole.
+
+Place the lid atop the BlueGigaEmpeg enclosure with the screw holes aligned.
+
+IMPORTANT: On the lid of the BlueGigaEmpeg enclosure, there is a small notch
+on one end. Make sure to align that notch with the molex tuner connector on
+the board. The notch is there to make room for the release tab on the tuner
+connector.
+
+Screw the four supplied screws into place using a 2.5mm hex tool. The four
+screws are the same kind of M3 hex bolts that hold the empeg fascia in place
+(I thought that would be a nice tribute), so you should already have this tool
+on hand. The screws may be a tight fit at first, if the enclosure is freshly
+printed. Tighten them down far enough to hold the lid snugly in place but do
+not try to overtighten, which would strip the plastic threads.
 
 
 ------------------------------------------------------------------------------
@@ -241,18 +354,18 @@ to the software running on the Arduino board.
 First, you must download and install the standalone Arduino IDE from the link
 in the "Prerequisites" section of this document.
 
-For BlueGigaEmpeg to work you must increase the size of the serial port
-buffers in the Arduino compiler, otherwise some of the track titles will not
-work. The symptom will be that you switch songs on the empeg, and the track
-title on the car stereo screen does not change to the new song title every
-time.
+For BlueGigaEmpeg to work, you must increase the size of the serial port
+buffers in the Arduino compiler, otherwise there will be intermittent errors
+such as the track titles will sometimes not work. The symptom will be that you
+switch songs on the empeg, and the track title on the car stereo screen does
+not correctly change to the new song title every time.
 
 To fix the issue, you must edit one of the header files in the Arduino
 compiler libraries, and then you must compile and upload your sketch from your
-local PC using the standalone version of the Arduino IDE. Arduino offers an
+local PC using the standalone version of the Arduino IDE. (Arduino offers an
 online web editor for uploading code sketches, but the web editor won't work
 for this project because it doesn't have the capability of changing the header
-code to increase the size of the serial port buffer.
+code to increase the size of the serial port buffer.)
 
 The file that you need to edit will be the same on all operating systems, but
 the location of the file will be different depending on which OS you're using.
@@ -285,14 +398,14 @@ HardwareSerial.h open, locate the following code section:
          #if ((RAMEND - RAMSTART) < 1023)
          #define SERIAL_TX_BUFFER_SIZE 16
          #else
-         #define SERIAL_TX_BUFFER_SIZE 64
+-->      #define SERIAL_TX_BUFFER_SIZE 64
          #endif
          #endif
          #if !defined(SERIAL_RX_BUFFER_SIZE)
          #if ((RAMEND - RAMSTART) < 1023)
          #define SERIAL_RX_BUFFER_SIZE 16
          #else
-         #define SERIAL_RX_BUFFER_SIZE 64
+-->      #define SERIAL_RX_BUFFER_SIZE 64
          #endif
          #endif
 
@@ -321,23 +434,34 @@ has already been done for you. If you obtained the Arduino board directly
 yourself, then you will need to do the prior step of modifying the Arduino
 compiler, and then you can upload this software to the Arduino.
 
-Obtain the BlueGigaEmpeg firmware from GitHub, linked in the "Prerequisites"
-section of this document. Unzip it onto a folder named "BlueGigaEmpeg" on
-your computer's hard disk.
+This step may be done with the BlueGigaEmpeg module fully assembled.
 
-Using the Arduino IDE, open the BlueGigaEmpeg project and compile and upload
-it to the Arduino Mega board. Use the Arduino Serial Monitor feature, set to
-115200 BPS, to observe the serial port output from the Arduino. It should list
-the RX and TX buffer sizes near the beginning of the output and indicate
-whether they are good or not.
+Obtain the BlueGigaEmpeg Arduino sketch from GitHub, linked in the
+"Prerequisites" section of this document. Unzip it onto a folder named
+"BlueGigaEmpeg" on your computer's hard disk.
+
+Make sure that the power is off to the BlueGigaEmpeg assembly. For instance,
+if the BlueGigaEmpeg assembly is connected to the empeg, then make sure that
+the empeg is powered off fully.
+
+With the power off, connect the USB cable from the computer to the Arduino USB
+connector. This is the USB connector on the end of the BlueGigaEmpeg case.
+
+Using the Arduino IDE, open the BlueGigaEmpeg.ino project and compile and
+upload it to the Arduino Mega board.
+
+Use the Arduino Serial Monitor feature, set to 115200 BPS, to observe the
+serial port output from the Arduino. It should list the RX and TX buffer sizes
+near the beginning of the output and indicate whether they are good or not.
 
 
 ------------------------------------------------------------------------------
 Disconnect all tuner modules from all sleds you own
 ------------------------------------------------------------------------------
-The BlueGigaEmpeg repurposes the tuner module connector on the empeg Car
+The BlueGigaEmpeg re-purposes the tuner module connector on the empeg Car
 docking sled for a special digital audio interface. Damage may occur if you
 connect a tuner module once the digital audio interface modification is made.
+
 To prevent problems, make sure to disconnect any tuner modules from any
 docking sleds that you own. After making the I2S wiring modification to the
 empeg, do not use a tuner module any more.
@@ -346,6 +470,12 @@ empeg, do not use a tuner module any more.
 ------------------------------------------------------------------------------
 Modify Empeg Car interior for I2S digital audio connection
 ------------------------------------------------------------------------------
+To perform this step, you must be comfortable with disassembling the empeg Car
+player and removing the disk drive tray in such a way as to not cause damage
+to the player. In particular there is risk to the components on the back side
+of the display board, and to the IDE header connector on the empeg
+motherboard. Refer to the empeg FAQ for more information.
+
 You will be modifying the interior of your empeg Car so that there can be
 three wires coming out the docking connector which carry digital audio data
 ("I2S" aka "IIS") and can connect to the BlueGigaEmpeg unit. This is done by
@@ -367,7 +497,7 @@ if you do. You should not need to remove the display board as long as you are
 careful not to break any of the components sticking off the back of the
 display board.
 
-Refer to the annotated phototgraph in this repository named "I2S Wiring
+Refer to the annotated photograph in this repository named "I2S Wiring
 Modification Photo.jpg" to help understand the wiring instructions below. Here
 is a direct link to download the photo:
 
@@ -389,8 +519,8 @@ empeg. The pinouts of these five pads are:
     4 = IISD1 aka  SD      aka "serial data" (1 of 2)
     5 = IISD2 aka  SD      aka "serial data" (2 of 2)
 
-Carefully solder some jumper wires to pads 1,2, and 4, and you must keep track
-of which wires are soldered to which pads.
+Carefully solder three supplied jumper wires to pads 1,2, and 4, and you must
+keep track of which wires are soldered to which pads.
 
 When soldering, make sure the jumper wires and the solder joints are flat to
 the board instead of sticking upwards. The disk drive tray gets close to that
@@ -411,11 +541,12 @@ which connect two groups of small colored wires to the docking connector
 assembly. Locate the rightmost of the two connectors nearest the Ethernet port
 on the back of the empeg. Unplug this connector, and using a tiny flat tool
 such as the tip of a jeweler's screwdriver, lift up the small white tabs and
-gently disengage and pull out the rightmost three pins nearest the Ethernet
-connector to free up those wires. These wires are colored, going from left to
-right, yellow+green, red, and brown. The brown wire is the one on the right
-end closest to the Ethernet connector, the red wire is the second from the
-end, and the yellow+green wire is the third from the end.
+gently disengage and pull out the pins. Pull out only the rightmost three pins
+nearest the Ethernet connector to free up those three wires. These wires are
+colored, going from left to right, yellow+green, red, and brown. The brown
+wire is the one on the right end closest to the Ethernet connector, the red
+wire is the second from the end, and the yellow+green wire is the third from
+the end.
 
 With the three wires disconnected from the white connector, plug the white
 connector back into place with the remainder of its wires still connected.
@@ -435,24 +566,29 @@ interior wires in this order:
 
 Make sure that your jumper wires are carefully tucked down around the left
 side of the empeg and out of the way of the disk drive tray assembly as shown
-in the photo. Then carefully reassemble the player.
+in the photo linked above. Then carefully reassemble the player.
 
 Final wiring positions and colors:
 
-Empeg IIS pads   Int. Empeg wires*    Int. wht Conn pos**    Sled Tuner Plug   BlueGigaEmpeg Tuner Plug    Bluetooth Chip   Usage on BlueGigaEmpeg Assembly
-1 IISC            Yellow+Green         Third from end         7 Purple          7  SCK                      30  PCM_CLK      Serial Clock
-2 IISW            Brown wire           Right end              2 Grey            2  WS                       29  PCM_SYNC     Word Select
-4 IISD1           Red wire             Second from end        1 Pink            1  SDIN                     27  PCM_IN       Serial Data
-                                                              4 Black           4  GND                          GND          Universal Ground
-                                                              8 Blue            8  12vPower                                  Power to voltage regulator
+Empeg IIS pads   Int. Empeg wires *   Int. wht Conn pos **   Sled Tuner Plug   
+1 IISC            Yellow+Green         Third from end         7 Purple         
+2 IISW            Brown wire           Right end              2 Grey           
+4 IISD1           Red wire             Second from end        1 Pink           
+                                                              4 Black          
+                                                              8 Blue           
 
-*(These are the interior wires connecting the docking sled connector to the motherboard.)
-**(Original positions of these wires on the white connector near the Ethernet plug, now disconnected from that connector.)
+BlueGigaEmpeg Tuner Plug    Bluetooth Chip   Usage
+ 7  SCK                      30  PCM_CLK      Serial Clock
+ 2  WS                       29  PCM_SYNC     Word Select aka Sync 
+ 1  SDIN                     27  PCM_IN       Serial Data aka PCM Audio Data
+ 4  GND                          GND          Universal Ground
+ 8  12vPower                                  Power to voltage regulator
 
-Finally, make sure that the variable "digitalAudio", which is a boolean flag
-in the Arduino code sketch in this project, is set to "true" so that the
-digital audio input on the WT32i chip is used, instead of the default analog
-input.
+*  (These are the interior wires connecting the docking sled connector to the
+   motherboard.)
+
+** (Original positions of these wires on the white connector near the Ethernet
+   plug, now disconnected from that connector.)
 
 
 ------------------------------------------------------------------------------
@@ -462,15 +598,17 @@ Install the latest Hijack Kernel onto the empeg Car player if it is not
 already installed. Link to the Hijack kernel is found in the "Prerequisites"
 section of this document. Make sure it is Hijack version 524 or later.
 
-To install the Hijack kernel, run Tony's Empeg Logo Editor, with the empeg
-connected to your Windows computer's RS-232 serial port (or an RS-232 adapter)
-and use the "Kernel Flash Utility" on its menu. Link to the Tony's Empeg Logo
-Editor program is in the "Prerequisites" section of this document. Make sure
-to read the Tony's Empeg Logo Editor documentation.
+To install the Hijack kernel, run Tony's Empeg Logo Editor. Link to the Logo
+Editor program is found in the "Prerequisites" section of this document.
+The empeg Car player must be connected to your Windows computer's RS-232
+serial port (or a USB-to-RS-232 adapter if your computer does not have an
+RS-232 serial port). On the File menu of the logo editor program, select
+"Kernel Flash Utility" and follow the instructions.
 
 Once hijack is installed, open up the Hijack kernel settings on the player via
-a longpress on the rotary encoder dial. Change "Serial port assignment" to
-"Player uses serial port" and follow the instructions to reboot the player.
+a long-press on the rotary encoder dial. Change "Serial port assignment" to
+"Player uses serial port" and follow the on-screen instructions to reboot the
+player.
 
 
 ------------------------------------------------------------------------------
@@ -478,8 +616,9 @@ Empeg Car configuration changes
 ------------------------------------------------------------------------------
 For best results, empeg Car player software version should be 2.00 final or
 2.00 Beta 13. I have tested this with version 2.00 Beta 13. I do not know if
-it will work the same on 3.0 Alpha version of empeg Car software. See the
-empeg Car FAQ for more information on upgrading the empeg Car player software.
+it will work the same on 3.0 Alpha version of empeg Car software, but
+theoretically it might work. See the empeg Car FAQ for more information on
+upgrading the empeg Car player software.
 
 Using the Emplode or Jemplode software, edit the empeg Car's config.ini as
 follows.
@@ -519,55 +658,8 @@ after changing the config.ini settings.
 
 
 ------------------------------------------------------------------------------
-Set jumpers and switches, and modify bluetooth board
-------------------------------------------------------------------------------
-On the BetzTechnik WT32i Breakout board:
-
-Cut the jumper at "JP4 FTDI_+5v" on the BetzTechnik board, but only do this
-AFTER successfully updating the chip's firmware to the latest version. Cutting
-the jumper shuts off power to the the BetzTechnik onboard UART, which prevents
-the UART and the Arduino pin-to-pin serial connection from arguing with each
-other. This prevents errors on the serial port which would cause the chip to
-reboot randomly.
-
-IMPORTANT: Use extreme care when cutting JP4. Make sure not to peel up the
-pads. There are two traces running to the USB side of the JP4 pad and if you
-peel up that trace, your board may no longer be able to power up.
-
-On the BetzTechnik board, carefully desolder the 470uF capacitor at C16, but
-only do this AFTER successfully updating the chip's firmware to the latest
-version. Remember the capacitor's direction, and save the capacitor for later,
-in case you need to do a firmware update later.
-
-IMPORTANT: Use extreme care when desoldering C16. Make sure not to peel up the
-pads.
-
-On the BetzTechnik board, set the Smd_2_pole_switch to the down or right
-position (depending on how you're looking at the board) which is the "off"
-position for this switch, to disconnect the BATT voltage from the 2.5v linear
-voltage regulator on the board. The BlueGigaEmpeg assembly will be supplying
-power directly to the chip at 3v and will not use the BATT power from that
-regulator.
-
-On the BlueGigaEmpeg board:
-
-Set the RS-232 Crossover jumper block as needed. There are two possible
-configurations, illustrated on the board. This might require trial and error.
-These jumpers exist because I have seen empeg sleds with different wiring on
-the RS-232 plug. Some are wired straight, some are wired crossover. The jumper
-block allows you to wire the BlueGigaEmpeg board as straight or crossover to
-compensate for this. If the Bluetooth pairs successfully and streams music,
-but you are unable to play/pause the empeg, try changing this jumper block to
-the opposite setting.
-
-
-------------------------------------------------------------------------------
 Connect external hardware connections
 ------------------------------------------------------------------------------
-BetzTechnik WT32i Breakout board V2, plug into BlueGigaEmpeg circuit board.
-
-Arduino Mega board, plug into BlueGigaEmpeg circuit board.
-
 RS-232 serial port from the empeg Car player docking sled, connect to the
 serial port on the BlueGigaEmpeg module.
 
@@ -576,16 +668,16 @@ tuner connector on the BlueGigaEmpeg module. This plug carries 12v power to
 the BlueGigaEmpeg module and also carries I2S audio data.
 
 Power the empeg using 12 volts DC through its car docking sled. During bench
-testing in the house, you can use the 12v AC adapter power supply that comes
-with the empeg. The BlueGigaEmpeg module will get its power from the empeg's
-tuner module connector, and it should work equally well with either sled
-power or AC adapter power.
+testing in the house, you can connect the empeg's 12v AC adapter power supply
+to the empeg. The BlueGigaEmpeg module will get its power from the empeg's
+tuner module connector, and it should work equally well with either sled power
+or AC adapter power.
 
-Debugging console to Arduino - Only used for uploading the latest Arduino code
-to the BlueGigaEmpeg module, or for monitoring the serial output and/or
-debugging the connection. Use a standard USB cable connected from a computer
-to the Arduino USB port if you need to do this.
-
+Arduino USB connector on BlueGigaEmpeg module - Normally disconnected. Only
+used for uploading the latest Arduino code to the BlueGigaEmpeg module, or for
+monitoring the serial output and/or debugging the connection. Use a standard
+USB cable connected from a computer to the Arduino USB port if you need to do
+this.
 
 Notes:
 
@@ -605,8 +697,7 @@ specs might say. Car 12v power can briefly fluctuate much higher than 12v, and
 also there is a lot of heat generated by the Arduino when you apply that much
 voltage to its regulators. Instead, apply 12v power to the empeg and let the
 empeg supply 12 volts to the BlueGigaEmpeg module through the tuner connector,
-which will go into a Pololu step-down power regulator located on the
-BlueGigaEmpeg module.
+which will go into a voltage regulator located on the BlueGigaEmpeg module.
 
 
 ------------------------------------------------------------------------------
@@ -621,7 +712,7 @@ the same thing as a PIN code. In those cases, the BlueGigaEmpeg will try to
 automatically answer this prompt with a "yes" answer so not user interaction
 will be needed.
 
-In rare cases where a special code is is needed, there is a place in the
+In rare cases where a special PIN code is is needed, there is a place in the
 "BlueGigaEmpeg.ino" source code file where you can modify the PIN to something
 other than "0000". Find the line in the code that defines the variable
 "btPinCodeString". That line contains the "0000" default PIN code. Change it
@@ -633,12 +724,47 @@ Arduino. It can accept PIN codes up to 16 digits long.
 Apply power and pair Bluetooth
 ------------------------------------------------------------------------------
 Apply power to the empeg, and the BlueGigaEmpeg module will receive power. 
+Make sure the Empeg is not in "sleep" mode, power to the tuner module
+connector is disabled in sleep mode.
 
 The first time you use the BlueGigaEmpeg, you will need to pair it with your
-Bluetooth car stereo. The BlueGigaEmpeg has a RESET/PAIR button for this
-purpose. After you have successfully paired with your car stereo, you should
-not need to pair it again, it should automatically reconnect each time you
-start your car.
+Bluetooth car stereo. You might also wish to re-pair again after editing the
+BlueGigaEmpeg firmware or the WT32i firmware. The BlueGigaEmpeg has a
+RESET/PAIR button for this purpose.
+
+Procedure:
+
+- If your car stereo contains a feature that lists existing Bluetooth
+  pairings, and if there is an existing entry for "empeg Car" from an earlier
+  pairing, make sure to delete that earlier pairing because its security key
+  will be different.
+
+- Press the RESET/PAIR button on the BlueGigaEmpeg. Its LED should light up
+  blue for about 30 seconds or so.
+
+- On the car stereo, initiate pairing mode. Look for the device "empeg Car".
+
+- If the pairing doesn't work the first time, try initiating pairing from the
+  car stereo AFTER the blue LED on the BlueGigaEmpeg module goes out.
+
+Car and empeg should be playing nicely together now, assuming everything else
+is working correctly. Audio from the empeg comes out of your car stereo's
+speakers, the stereo's track change controls will change tracks on the empeg,
+and the track titles will appear on the car stereo's screen.
+
+After you have successfully paired with your car stereo, you should not need
+to pair it again each time you get in the car. It should automatically
+reconnect each time you start your car.
+
+Some car stereos will let you pair your phone and the BlueGigaEmpeg at the
+same time. My Honda allows me to do this. When pairing, the touch screen lets
+me choose whether the paired device is a "phone" device or a "music" device. I
+choose to pair my phone as a phone, and the empeg Car as a music device. Then,
+each time I start my car, they both pair up correctly. I can use the steering
+wheel controls to initiate a speakerphone call which automatically mutes and
+pauses the music from the empeg.
+
+Technical details and notes:
 
 When you press the RESET/PAIR button on the BlueGigaEmpeg, it does the
 following:
@@ -647,27 +773,25 @@ following:
  
  - Resets the module to default settings as defined in the Arduino code.
 
- - Looks for Bluetooth devices to pair with for about 30 seconds and pairs
-   with the first one that it sees.
+ - Looks for Bluetooth devices to pair with for about 30 seconds, and pairs
+   automatically with the first one that it sees.
 
  - The blue RESET/PAIR LED is lit during this pairing mode, and will turn
-   off once pairing is complete or once the 30 seconds has run out.
+   off once either pairing is complete or once the 30 seconds has run out.
 
-NOTE: Though this is counterintuitive: Sometimes you don't press that
-RESET/PAIR button at all. Sometimes, instead, you do the pairing when the
-RESET/PAIR LED is *not* lit.
+Though this is counterintuitive: Sometimes you don't press that RESET/PAIR
+button at all. Sometimes, instead, you do the pairing when the RESET/PAIR LED
+is not lit. There are some stereos which need you to initiate pairing solely
+on the car stereo's touch screen. Mine is one of these types of stereos. In my
+case, for initial pairing with my car stereo the first time, I don't press the
+RESET/PAIR button at all except for the purpose of erasing previous pairings.
+I just go to my car's touch screen, tell it to pair with the Bluetooth device
+named "empeg Car", and it works. After that, it reconnects automatically each
+time I get in the car and start it up (though it takes a moment to connect).
 
-There are some stereos which need you to initiate pairing solely on the car
-stereo's touch screen. Mine is one of these types of stereos. In my case, for
-initial pairing with my car stereo the first time, I don't press the
-RESET/PAIR button at all. I just go to my car's touch screen, tell it to pair
-with the Bluetooth device named "empeg Car", and it works. After that, it
-reconnects automatically each time I get in the car and start it up (though it
-takes a moment to connect).
-
-Some Bluetooth stereos *do* need you to press that RESET/PAIR button on the
-BlueGigaEmpeg, which should light the LED for ~30 seconds, during which time
-you should also put your stereo into pair mode.
+Some Bluetooth stereos DO need you to press that RESET/PAIR button on the
+BlueGigaEmpeg, which should light the LED for about 30 seconds, during which
+time you should also put your stereo into pair mode.
 
 If one method doesn't work for you, try the other method. For example this
 sequence will work for many stereos and headsets:
@@ -679,10 +803,12 @@ sequence will work for many stereos and headsets:
    BlueGigaEmpeg to go dark, and then, without touching the RESET/PAIR
    button, initiate pairing from your stereo via its pairing feature.
 
-Car and empeg should be playing nicely together now, assuming everything else
-is working correctly. Audio from the empeg comes out of your car stereo's
-speakers, the stereo's track change controls will change tracks on the empeg,
-and the track titles will appear on the car stereo's screen.
+One final note about the pairing process: Paired devices share a set of
+security keys with each other. Pressing the RESET/PAIR button erases the
+security from the WT32i chip. If your car stereo has the option to remember a
+list of multiple different bluetooth devices (my Honda has this) then you must
+remember to delete the empeg Car from the list if you are re-pairing a second
+time.
 
 
 ------------------------------------------------------------------------------
@@ -710,7 +836,7 @@ If this happens to you, then I recommend connecting power to the empeg like
 this instead:
 
 - Yellow "memory" wire on Empeg: Connect to car power 12v accessory power.
-- Orange "ignition" wire on Empeg: Connect that same 12v accessory power.
+- Orange "ignition" wire on Empeg: Connect to that same 12v accessory power.
 - Do not connect your car's constant 12v power to any part of the empeg.
 - Connect your car's illumination wire to the empeg's "lights on" wire.
 - Connect ground to ground of course.
@@ -728,16 +854,16 @@ headunit, and nothing will get confused. You might lose the clock/date/time
 information on the empeg sometimes, but your modern car likely has a perfectly
 functional clock of its own.
 
-Finally, you'll notice that the empeg sled connector only supplies power if
-the empeg is awake. If you put the empeg into Sleep mode via a long press on
-the top button, it will go to sleep but that also means the Arduino+Bluetooth
-assembly stops receiving power. This is actually good: you want to be able to
-turn the Bluetooth on and off and reboot it sometimes, and it's easy to do
-that just by sleeping and waking the player by hand. In my case I leave the
-player awake all of the time, so that when I shut off the car ignition, the
-player fully shuts down, and then when I start my car again, the empeg starts
-up in Awake mode and immediately supplies power to the Bluetooth assembly
-which then autoconnects to the car stereo head unit.
+You'll notice that the empeg sled connector only supplies power if the empeg
+is awake. If you put the empeg into sleep mode via a long press on the top
+button, it will go to sleep but that also means the Arduino+Bluetooth assembly
+stops receiving power. This is actually good: you want to be able to turn the
+Bluetooth on and off and reboot it sometimes, and it's easy to do that just by
+sleeping and waking the player by hand. Most of the time I leave the player
+awake, so that when I shut off the car ignition, the player fully shuts down,
+and then when I start my car again, the empeg starts up in "awake" mode and
+immediately supplies power to the Bluetooth assembly which then autoconnects
+to the car stereo head unit.
 
 
 ------------------------------------------------------------------------------
@@ -749,9 +875,6 @@ code because this was not tested with a wide range of Bluetooth gear.
 If you need to debug the connection, here are some helpful tips.
 
 Power up sequence for Arduino debugging:
-
-Your mileage may vary, but on my system there is an interesting trick with
-debugging via the Arduino USB cable and the Arduino Serial Monitor.
 
 When everything is connected together (empeg, Arduino, Bluetooth), the
 assembly and all devices which are part of the assembly will get their power
@@ -765,16 +888,33 @@ unable to connect to the debug port.
 
 So to successfully debug via the Arduino USB debug cable and use the Arduino
 Serial Monitor program, I must connect the USB cable FIRST, before applying
-power to the empeg. Meaning if I am debugging in the car, I should connect the
-USB cable first and then turn on the ignition, that way the Serial Monitor
-program can find a port to connect to. If I am debugging on the test bench,
-I should connect the USB cable first, then connect the AC adapter to the
-empeg.
+power to the empeg (or before waking the empeg from sleep). Meaning if I am
+debugging in the car, I should connect the USB cable first and then turn on
+the ignition or wake the empeg from sleep. That way the Serial Monitor program
+can find a port to connect to. If I am debugging on the test bench, I should
+connect the USB cable first, then connect the AC adapter to the empeg or wake
+the empeg from sleep.
 
 When using the Arduino Serial Monitor program, set it to 115200 baud, with
 either "Newline" or "Both NL and CR" as line endings. If you are using a
 different serial terminal program, set it to 115200 8n1 and turn on local
 echo.
+
+Sending a bug report:
+
+- Use the Arduino Serial Monitor program as described above.
+
+- Reproduce the issue so that the communication shows up on the serial monitor
+  while the issue is occurring.
+
+- After the issue is reproduced, pause the empeg player so that additional
+  timestamp reports no longer show up (screen stops scrolling constantly).
+
+- Type the "set" and "list" commands into the serial monitor so that their
+  results show up on the screen.
+
+- Select all in the serial monitor main window and copy and paste the contents
+  into a text document and attach it to the bug report.
 
 Variables in the Arduino sketch:
 
@@ -788,11 +928,9 @@ Bluetooth communication to miss things.
 Refer to the code comments accompanying these flags to understand them:
   EmpegSendCommandDebug
   displayEmpegSerial
-  logLineByLine
-  outputMillis
   displayTracksOnSerial
 
-Useful debugging commands on BlueGiga module:
+Useful debugging commands in the BlueGiga WT32i iWrap command language:
 
 Typing any of these into the Arduino Serial Monitor should send these commands
 to the Bluetooth module directly. Many will echo a response. Module will say
@@ -865,8 +1003,8 @@ MAX232 are as follows:
   MAX232 Pin 6 aka V- - Connect to GND via a 2.2uf ceramic capacitor
   MAX232 Pin 11 aka TTL-I1 - Connect to Arduino Mega Board 18 aka Tx1 
   MAX232 Pin 12 aka TTL-O1 - Connect to Arduino Mega Board 19 axa Rx1
-  MAX232 Pin 13 aka 232-I1 - Connect to RS-232 plug pin 3 aka Tx
-  MAX232 Pin 14 aka 232-O1 - Connect to RS-232 plug pin 2 aka Rx
+  MAX232 Pin 13 aka 232-I1 - Connect to RS-232 plug pin 3 aka Tx via jumpers
+  MAX232 Pin 14 aka 232-O1 - Connect to RS-232 plug pin 2 aka Rx via jumpers
   MAX232 Pin 15 aka GND - Connect directly to GND
   MAX232 Pin 16 aka VCC - Connect directly Arduino +5v output.
   MAX232 Pin 16 aka VCC - Also connect to 0.1uf ceramic capacitor which
@@ -911,8 +1049,8 @@ firmware update.
 
 Bluetooth chip+board "5v" power pin NOT connected to anything.
 
-Bluetooth chip+board "3v3" or "VDD_IO" pin connected to the 3v output pin
-coming from the Arduino.
+Bluetooth chip+board "3v3" or "VDD_IO" pin connected to the 3v output coming
+from the Arduino.
 
 Bluetooth chip+board "ENA" or "VREG_ENA" pin connected to the 3v output coming
 from the Arduino.
@@ -927,7 +1065,7 @@ Bluetooth chip+board serial port "RX/TX" pins connected to the "TX2/RX2" pins
 from the Arduino is connected to TX on the Bluetooth chip and vice-versa.
 Since this is at TTL level, you don't need to go through a MAX232 circuit.
 However, the Arduino is running at 5v TTL, and the BlueGiga chip runs at 3.3v.
-So you must voltage match them. Decrease the  voltage for the Arduino TX2
+So you must voltage match them. Decrease the voltage for the Arduino TX2
 output, by running it through a simple 50% voltage divider to step 5v TTL from
 Arduino down to 2.5v for the BlueGiga chip. The BlueGiga chip's transmit pin
 can stay at 3.3v and the Arduino will still read it just fine, so no changes
