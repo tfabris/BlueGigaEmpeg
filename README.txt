@@ -183,7 +183,7 @@ Steps:
    "Properties". Set the speed of the serial port to 115200 bps with 8 data
    bits, no parity, 1 stop bit, no flow control (aka "8N1").
 
- - Once that's sorted, run the "SerialDFU.s" tool found in one of the
+ - Once that's sorted, run the "SerialDFU.exe" tool found in one of the
    folders of the unzipped "iWRAP-Firmware-Releases.zip" file. In the folder
    of unzipped files, the full path is:
       iWRAP_Firmware_Releases
