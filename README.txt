@@ -107,7 +107,7 @@ Download software (Windows PC or Windows VM required for some of these items):
 
  Arduino IDE:                 https://www.arduino.cc/en/Main/Software
                                    Note: Must use the standalone Arduino IDE,
-                                   not the Arduino web editor.
+                                   not the Arduino web editor.s
  BlueGigaEmpeg sketch:        https://github.com/tfabris/BlueGigaEmpeg
  Hijack Kernel for empeg:     http://empeg-hijack.sourceforge.net/
  Tony's Empeg Logo Editor:    http://empegbbs.com/ubbthreads.php/ubb/download/Number/7067/filename/logoedit17.zip
@@ -130,9 +130,11 @@ Note: If you obtained the BetzTechnik WT32i breakout board from Tony Fabris,
 then this step has already been done for you. If you obtained it directly from
 BetzTechnik, then you will need to do these steps.
 
-The firmware upgrade is done with a USB-A-to-micro-USB cable. You must supply
-the cable yourself, since none are supplied with the BetzTechnik board. You
-probably already have a few of these cables kicking around.
+The firmware upgrade is done with a USB-A-to-micro-USB cable. This is a
+different kind of cable than the one that was supplied with the Arduino board.
+You must supply the micro cable yourself, since none are supplied with the
+BetzTechnik board. You probably already have a few of these cables kicking
+around.
 
 Steps:
 
@@ -147,7 +149,7 @@ Steps:
  - Make sure that jumper JP4 on the BetzTechnik WT32i Bluetooth board is
    connected. It comes connected by default, and then we cut it after
    upgrading the firmware. It needs to be connected any time you do firmware
-   updates to the WT32i chip.
+   updates to the WT32i chip.s
 
  - The firmware upgrade must be performed from a Windows computer since the
    upgrading software is Windows software. Virtualized Windows works, too, for
@@ -170,20 +172,18 @@ Steps:
 
  - If there is no new serial port there, look for a little yellow boo boo icon
    in the USB section instead. If there is a little yellow boo boo icon
-   instead of a serial port, then...
+   instead of a serial port, then you must install the necessary FTDI drivers
+   for the USB-serial connection to the board. Links to these drivers are in
+   the "Prerequisites" section of this document.
 
- - Install the necessary FTDI drivers for the USB-serial connection to the
-   board. Links to these drivers are in the "Prerequisites" section of this
-   document.
-
- - Now, plugging in the breakout board into the PC with the USB cable makes a
-   serial port appear in the Windows Device Manager.
+ - Now, plugging in the Bluetooth breakout board into the PC with the USB
+   cable makes a serial port appear in the Windows Device Manager.
 
  - In Windows Device Manager, right click on the serial port and select
    "Properties". Set the speed of the serial port to 115200 bps with 8 data
    bits, no parity, 1 stop bit, no flow control (aka "8N1").
 
- - Once that's sorted, run the "SerialDFU.exe" tool found in one of the
+ - Once that's sorted, run the "SerialDFU.s" tool found in one of the
    folders of the unzipped "iWRAP-Firmware-Releases.zip" file. In the folder
    of unzipped files, the full path is:
       iWRAP_Firmware_Releases
@@ -240,7 +240,7 @@ other. This prevents errors on the serial port which would cause the chip to
 reboot randomly.
 
 JP4 is made of two exposed solder pads, plus a very tiny bridge trace between
-them. Cut this tiny bridge trace with a sharp X-acto knife. Magnification will
+them. Cut this tiny bridge trace with a sharp X-Acto knife. Magnification will
 be required to see this properly.
 
 IMPORTANT: Use extreme care when cutting JP4. Make sure not to peel up the
@@ -275,14 +275,16 @@ BlueGigaEmpeg board.
 
 IMPORTANT: The 22-pin female headers are inserted onto the BOTTOM SIDE of the
 BetzTechnik WT32i Bluetooth Breakout board, and they are through-hole
-components, so the soldering happens on the top side of the board.
+components, so the soldering happens on the top side of the board. If you do
+this backwards then the pinouts will be backwards and you will damage the
+connected components.
 
 Best procedure for soldering the headers to make sure they fit:
 
-- Plug the 22-pin female headers onto the 22-pin male headers already existing
-  on the BlueGigaEmpeg board.
+- Plug the loose 22-pin female headers onto the 22-pin male headers already
+  existing on the BlueGigaEmpeg board.
 
-- Place the BetzTechnik board onto the pin headers so that their soldering
+- Place the BetzTechnik board onto the 22-pin headers so that their soldering
   pins protrude through the holes in the BetzTechnik board.
 
 - Double check that the labeled connections all match up: check the silkscreen
@@ -352,7 +354,7 @@ screws are the same kind of M3 hex bolts that hold the empeg fascia in place
 (I thought that would be a nice tribute), so you should already have a 2.5mm
 hex tool on hand. The screws may be a tight fit at first, if the enclosure is
 freshly printed. Tighten them down far enough to hold the lid snugly in place
-but do not try to overtighten, which would strip the plastic threads.
+but do not overtighten, which would strip the plastic threads.
 
 Do not attach the BlueGigaEmpeg assembly to the empeg Car sled yet. Wait until
 after the I2S modifications are complete before attaching. The I2S
@@ -368,7 +370,10 @@ Arduino board yourself, or if you are making additional custom modifications
 to the software running on the Arduino board.
 
 First, you must download and install the standalone Arduino IDE from the link
-in the "Prerequisites" section of this document.
+in the "Prerequisites" section of this document. Make sure to download the
+standalone Arduino IDE; do not use the Arduino web editor. The web editor
+won't work for this project because it doesn't have the capability of changing
+the header code to increase the size of the serial port buffer.
 
 For BlueGigaEmpeg to work, you must increase the size of the serial port
 buffers in the Arduino compiler, otherwise there will be intermittent errors
@@ -378,10 +383,7 @@ not correctly change to the new song title every time.
 
 To fix the issue, you must edit one of the header files in the Arduino
 compiler libraries, and then you must compile and upload your sketch from your
-local PC using the standalone version of the Arduino IDE. (Arduino offers an
-online web editor for uploading code sketches, but the web editor won't work
-for this project because it doesn't have the capability of changing the header
-code to increase the size of the serial port buffer.)
+local PC using the standalone version of the Arduino IDE.
 
 The file that you need to edit will be the same on all operating systems, but
 the location of the file will be different depending on which OS you're using.
@@ -861,8 +863,8 @@ the opposite setting, and then reassemble.
 
 When reassembling the BlueGigaEmpeg enclosure, make sure to align the small
 notch in one end of the lid with the tuner module connector. The notch is
-there to make room for the keeper tab on the tuner module connector. And be
-careful not to over-tighten the screws.
+there to make room for the release tab on the tuner module connector. And be
+careful not to overtighten the screws.
 
 
 ------------------------------------------------------------------------------
@@ -1111,7 +1113,7 @@ https://www.arduino.cc/en/Tutorial/Button
 
 BlueGiga Bluetooth WT32i chip+board, critical connections:
 
-BetzTechnik board JP4 FTDI Uart Enable jumper is cut after applying firmware
+BetzTechnik board JP4 FTDI UART Enable jumper is cut after applying firmware
 update.
 
 BetzTechnik board 470uF capacitor C16 desoldered and saved after applying
