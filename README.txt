@@ -4,8 +4,8 @@ by Tony Fabris
 https://github.com/tfabris/BlueGigaEmpeg
 ------------------------------------------------------------------------------
 A project to use a Silicon Labs BlueGiga WT32i Bluetooth chip, combined with
-an Arduino Mega board, to act as an interface between an empeg Car Mk2 (or
-Rio Car) MP3 player and a modern Bluetooth-equipped car.
+an Arduino Mega board, to act as an interface between an empeg Car Mk2/2a MP3
+player and a modern Bluetooth-equipped car.
 
 The empeg Car (small "e") player, also sold as the Rio Car, is an amazing in-
 dash MP3 player made from 1999-2001 whose features are still, nearly 20 years
@@ -105,9 +105,7 @@ Either purchased separately or included with the BlueGigaEmpeg Interface:
 
 Download software (Windows PC or Windows VM required for some of these items):
 
- Arduino IDE:                 https://www.arduino.cc/en/Main/Software
-                                   Note: Must use the standalone Arduino IDE,
-                                   not the Arduino web editor.s
+ Arduino standalone IDE:      https://www.arduino.cc/en/Main/Software
  BlueGigaEmpeg sketch:        https://github.com/tfabris/BlueGigaEmpeg
  Hijack Kernel for empeg:     http://empeg-hijack.sourceforge.net/
  Tony's Empeg Logo Editor:    http://empegbbs.com/ubbthreads.php/ubb/download/Number/7067/filename/logoedit17.zip
@@ -127,8 +125,9 @@ Empeg Car interior for I2S digital audio connection".
 Bluetooth Chip Firmware Upgrade
 ------------------------------------------------------------------------------
 Note: If you obtained the BetzTechnik WT32i breakout board from Tony Fabris,
-then this step has already been done for you. If you obtained it directly from
-BetzTechnik, then you will need to do these steps.
+then this step has already been done for you, and you can skip to the next
+step. If you obtained it directly from BetzTechnik, then you will need to do
+these steps.
 
 The firmware upgrade is done with a USB-A-to-micro-USB cable. This is a
 different kind of cable than the one that was supplied with the Arduino board.
@@ -141,7 +140,7 @@ Steps:
  - Make sure the Bluetooth breakout board is fully separated and disconnected
    from the BlueGigaEmpeg board.
 
- - Make sure that 470uF capacitor C16 is soldered onto the BetzTechnik WT32i
+ - Make sure that capacitor C16, 470uF, is soldered onto the BetzTechnik WT32i
    Bluetooth board. It needs to be connected any time you do firmware updates.
    It is soldered in place by default, and then we desolder it after upgrading
    the firmware.
@@ -149,9 +148,9 @@ Steps:
  - Make sure that jumper JP4 on the BetzTechnik WT32i Bluetooth board is
    connected. It comes connected by default, and then we cut it after
    upgrading the firmware. It needs to be connected any time you do firmware
-   updates to the WT32i chip.s
+   updates to the WT32i chip.
 
- - The firmware upgrade must be performed from a Windows computer since the
+ - The firmware upgrade must be performed from a Windows computer, since the
    upgrading software is Windows software. Virtualized Windows works, too, for
    example, I was successful with doing this in Parallels on a Mac computer.
 
@@ -162,7 +161,7 @@ Steps:
    connected to the "UART" port on the BetzTechnik WT32i breakout board. (If
    you are running a Windows VM, you may need to assign this device to the
    USB of the virtual machine. For example, if running Parallels on Mac, it
-   will prompt you when you plug it in.)
+   will prompt you to do so when you plug it in while Parallels is running.)
 
  - Run Windows Device Manager. This can be found in the Windows control panel,
    by searching from the Start menu, or by running the program "DEVMGMT.MSC".
@@ -177,7 +176,7 @@ Steps:
    the "Prerequisites" section of this document.
 
  - Now, plugging in the Bluetooth breakout board into the PC with the USB
-   cable makes a serial port appear in the Windows Device Manager.
+   micro cable makes a serial port appear in the Windows Device Manager.
 
  - In Windows Device Manager, right click on the serial port and select
    "Properties". Set the speed of the serial port to 115200 bps with 8 data
@@ -324,11 +323,13 @@ you purchased the Arduino and the BetzTechnik Bluetooth Breakout board
 separately.
 
 Press fit the Arduino Mega board onto the BlueGigaEmpeg circuit board by
-turning it face down and aligning all of the pins. Not all pins on the Arduino
-are used. It should be clear which pins connect to which headers, based on the
-silkscreen printing on the BlueGigaEmpeg circuit board. Make sure the pins go
-all the way in correctly, and that no pins are bent and that there are no
-fitting problems.
+turning it face down and aligning all of the pins. You will notice that not
+all pins on the Arduino are used, some of the headers are left unconnected on
+purpose. Still, it should be clear which pins connect to which headers, based
+on the silkscreen printing on the BlueGigaEmpeg circuit board and the pin
+positions. The arduino should fit only one way. Make sure the pins go all the
+way in correctly, and that no pins are bent and that there are no fitting
+problems.
 
 Press fit the BetzTechnik board onto the BlueGigaEmpeg board fully, making
 sure the corresponding pins are all lined up correctly according to the
@@ -369,12 +370,6 @@ already programmed correctly. This step is only needed if you purchased the
 Arduino board yourself, or if you are making additional custom modifications
 to the software running on the Arduino board.
 
-First, you must download and install the standalone Arduino IDE from the link
-in the "Prerequisites" section of this document. Make sure to download the
-standalone Arduino IDE; do not use the Arduino web editor. The web editor
-won't work for this project because it doesn't have the capability of changing
-the header code to increase the size of the serial port buffer.
-
 For BlueGigaEmpeg to work, you must increase the size of the serial port
 buffers in the Arduino compiler, otherwise there will be intermittent errors
 such as the track titles will sometimes not work. The symptom will be that you
@@ -383,7 +378,12 @@ not correctly change to the new song title every time.
 
 To fix the issue, you must edit one of the header files in the Arduino
 compiler libraries, and then you must compile and upload your sketch from your
-local PC using the standalone version of the Arduino IDE.
+local PC to the Arduino board using the standalone version of the Arduino IDE.
+The link to the standalone Arduino IDE is in the "Prerequisites" section of
+this document. Make sure to download the standalone Arduino IDE; do not use
+the Arduino web editor. The web editor won't work for this project because it
+doesn't have the capability of changing the header code to increase the size
+of the serial port buffer.
 
 The file that you need to edit will be the same on all operating systems, but
 the location of the file will be different depending on which OS you're using.
@@ -410,7 +410,7 @@ Ctrl-click on the file "HardwareSerial.h" and select "Open With", and choose
 your favorite quick text editor program to edit the file with it.
 
 Regardless of which operating system you are doing this with, once you have
-HardwareSerial.h open, locate the following code section:
+HardwareSerial.h open, locate the following code lines:
 
          #if !defined(SERIAL_TX_BUFFER_SIZE)
          #if ((RAMEND - RAMSTART) < 1023)
@@ -427,8 +427,7 @@ HardwareSerial.h open, locate the following code section:
          #endif
          #endif
 
-Now edit the lines "#define SERIAL_TX_BUFFER_SIZE 64" and "#define
-SERIAL_RX_BUFFER_SIZE 64" and change them to this instead:
+Now edit the lines indicated above, and change them to this instead:
 
    #define SERIAL_TX_BUFFER_SIZE 128
 
@@ -471,9 +470,10 @@ Bluetooth chip's firmware. This one is the old style A-to-B connector.
 Using the Arduino IDE, open the BlueGigaEmpeg.ino project and compile and
 upload it to the Arduino Mega board.
 
-Use the Arduino Serial Monitor feature, set to 115200 BPS, and observe the
-serial port output from the Arduino. It should list the RX and TX buffer sizes
-near the beginning of the output and indicate whether they are good or not.
+Use the Arduino Serial Monitor feature (built into the Arduino IDE), set to
+115200 BPS, and observe the serial port output from the Arduino. It should
+list the RX and TX buffer sizes near the beginning of the output and indicate
+whether they are good or not.
 
 
 ------------------------------------------------------------------------------
@@ -490,6 +490,7 @@ empeg, do not use a tuner module any more.
 Do not connect the BlueGigaEmpeg module to the empeg Car sled until the I2S
 modifications have been completed. Those modifications are described in the
 next step, below.
+
 
 ------------------------------------------------------------------------------
 Modify Empeg Car interior for I2S digital audio connection
@@ -553,13 +554,7 @@ location when mounted, so make sure they don't have a chance to contact the
 tray. After soldering, cover the solder points with tape or some other
 insulator to prevent them from shorting out on the drive tray.
 
-Glue down the wires near the I2S pads so that they do not wiggle and rip away
-the I2S pads. Some empeg Car units will have a chip at that location that you
-can glue onto, others will have a blank area of the PCB in that location that
-you can glue onto. Use RTV silicone or cyanoacrylate superglue to glue them
-down. Use a small amount and make sure the blob of glue does not "stick up"
-since the disk drive tray gets very close to that location. Make sure to let
-the glue dry before reassembling.
+
 
 Locate the two white connectors on the back part of the empeg motherboard
 which connect two groups of small colored wires to the docking connector
@@ -591,7 +586,16 @@ interior wires in this order:
 
 Make sure that your jumper wires are carefully tucked down around the left
 side of the empeg and out of the way of the disk drive tray assembly as shown
-in the photo linked above. Then carefully reassemble the player.
+in the photo linked above.
+
+Glue down your jumper wires near the I2S pads so that they do not wiggle and
+rip away the I2S pads. Some empeg Car units will have a chip at that location
+that you can glue onto, others will have a blank area of the PCB in that
+location that you can glue onto. Use RTV silicone or cyanoacrylate superglue
+to glue them down. Use a small amount and make sure the blob of glue does not
+"stick up" since the disk drive tray gets very close to that location.
+
+After the glue is fully dry, carefully reassemble the player.
 
 Final wiring positions and colors:
 
@@ -638,10 +642,10 @@ REGEDIT.EXE in windows and locate the following key:
          emplode
            2.0
              Settings
-Inside the "Settings" key, create a new DWORD value named
-               allow_edit_config
-with a value of
-                 1              
+                (Inside the "Settings" key, create a new DWORD value named:)
+                  allow_edit_config
+                    (with a value of)
+                      1              
 
 ... then restart the Emplode software. Emplode will now have a menu option
 which allows you to edit the config.ini on the player.
@@ -738,7 +742,7 @@ Procedure:
 - If your car stereo contains a feature that lists existing Bluetooth
   pairings, and if there is an existing entry for "empeg Car" from an earlier
   pairing, make sure to delete that earlier pairing because its security key
-  will be different.
+  will be different when you press the RESET/PAIR button in the next step.
 
 - Press the RESET/PAIR button on the BlueGigaEmpeg. Its LED should light up
   blue for about 30 seconds or so.
@@ -1212,6 +1216,7 @@ Prolific PL2303 USB driver: http://www.prolific.com.tw/US/ShowProduct.aspx?p_id=
 FTDI USB driver:            http://www.ftdichip.com/FTDrivers.htm
 
 Parts list used in BlueGigaEmpeg interface board:
+BlueGigaEmpeg PCB:             tfabris@gmail.com
 Pololu 7.5v V.Reg #2853:       https://www.pololu.com/product/2853
 TI MAX232E:                    https://www.digikey.com/product-detail/en/texas-instruments/MAX232EIN/296-27963-5-ND/1511027
 RS-232 connector:              https://www.digikey.com/product-detail/en/assmann-wsw-components/A-DS-09-A-KG-T2S/AE10968-ND/1241804
@@ -1227,6 +1232,9 @@ Male conn. headers:  3x2       https://www.digikey.com/product-detail/en/molex-l
                     10x1       https://www.digikey.com/product-detail/en/3m/961110-6404-AR/3M9457-10-ND/2071896
                      8x1 Qty:2 https://www.digikey.com/product-detail/en/3m/961108-6404-AR/3M9457-08-ND/7104637
 Fem. conn. headers  22x1 Qty:2 https://www.digikey.com/product-detail/en/3m/929850-01-22-RA/929850E-01-22-ND/1094203
-Ceramic Capacitor asst:        https://www.amazon.com/gp/product/B071VVTC7Z/ref=oh_aui_detailpage_o04_s00
+2.2uf Ceramic Capacitor: Qty:4 https://www.amazon.com/gp/product/B071VVTC7Z/ref=oh_aui_detailpage_o04_s00
+0.1uf Ceramic Capacitor        https://www.amazon.com/gp/product/B071VVTC7Z/ref=oh_aui_detailpage_o04_s00
 10k ohm resistors:       Qty:9 https://www.amazon.com/gp/product/B0185FIOTA/ref=oh_aui_detailpage_o02_s00
 100 ohm resistor:              https://www.digikey.com/product-detail/en/stackpole-electronics-inc/CF18JT100R/CF18JT100RCT-ND/2022718
+Jumper Wires:            Qty:3 (lying around)
+
