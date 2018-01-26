@@ -633,9 +633,11 @@ const String analogAudioRoutingControlString = "SET CONTROL AUDIO INTERNAL INTER
 // modifying inside of empeg Car player) aka "digitalAudio = true".
 const String digitalAudioRoutingControlString = "SET CONTROL AUDIO INTERNAL I2S_SLAVE EVENT KEEPALIVE 16";
 
-// Strings to set the gain level of the empeg. See bluetooth chip docs for
-// gain level table. Uncomment this line if your player will be used in
-// AC/Home mode, (1v outputs):
+// Strings to set the gain level of the empeg, but only when BlueGigaEmpeg is
+// configured for analog audio. Normally it's not used; BlueGigaEmpeg runs on
+// digital audio so this gain setting usually does nothing. See bluetooth chip
+// docs for gain level table. Uncomment this line if your player will be used
+// in AC/Home mode, (1v outputs):
 //     const String empegGainSettingString = "SET CONTROL GAIN E 0";
 // Uncomment this line if your player will be used in DC/Car mode, such as in
 // a sled (4v outputs):
@@ -2486,9 +2488,8 @@ void RespondToQueries(String &queryString)
     // Special case to work around bug which hung the headunit stereo
     // intermittently. Sometimes the stereo would attempt to do
     // PDU_REGISTER_NOTIFICATION for certain types of events which we are not
-    // going to be using. The table of these events and their ID codes is
-    // defined in global variables at the top of this program. Example request
-    // comes in from the host stereo like this:    
+    // going to be using. Example request comes in from the host stereo like
+    // this:    
     //   AVRCP 0 PDU_REGISTER_NOTIFICATION 4 TRACK_REACHED_END 0
     // We should not have gotten a registration for that because I had already
     // earlier responded to "GET_CAPABILITIES 3" with a response indicating I
@@ -2520,34 +2521,29 @@ void RespondToQueries(String &queryString)
     //    --^ AVRCP NFY INTERIM d 10
     //    SYNTAX ERROR
     //
-    // Working on the theory that this may be occurring in situations where my
-    // code is not getting the opportunity to correctly respond to the
-    // GET_CAPABILITIES 3 message correctly, though I have seen this repro
-    // when I had in fact just responded to it. However there is a chance that
-    // the chip might have gotten reset after the response, thus the problem.
     // Silicon Labs tech support ticket is here:
     //       https://siliconlabs.force.com/5001M000017Jb5W
     //
+    // For now: Don't respond: Simply reset the chip when it hits one of
+    // these things. This works around the problem on my Honda stereo
+    // because it stops asking for these messages to be registered on the
+    // SECOND connection after startup (it only asks on the first connection
+    // after the startup). It shouldn't ever be asking for these messages at
+    // all because my response to "GET_CAPABILITIES 3" should have told it
+    // that I only want registrations for messages 1 and 2.
+    //
+    // WARNING: This crazy messed up workaround has the potential to put
+    // this whole thing into an infinite reboot loop, but it's the best I've
+    // got at the moment. Hopefully it will only reboot the one time and
+    // then work correctly the second time. If you get an infinite reboot
+    // loop, set the variable reconnectIfBadRegistrationReceived at the top
+    // of the program to "false", though that means you have bigger problems
+    // because your host stereo is not paying attention to you when you told
+    // it only register for messages 1 and 2. Your host stereo will likely
+    // hang and not get track titles or be able to send steering wheel
+    // control commands to the player.
     if (reconnectIfBadRegistrationReceived)
     {
-      // For now: Don't respond: Simply reset the chip when it hits one of
-      // these things. This works around the problem on my Honda stereo
-      // because it stops asking for these messages to be registered on the
-      // SECOND connection after startup (it only asks on the first connection
-      // after the startup). It shouldn't ever be asking for these messages at
-      // all because my response to "GET_CAPABILITIES 3" should have told it
-      // that I only want registrations for messages 1 and 2.
-      //
-      // WARNING: This crazy messed up workaround has the potential to put
-      // this whole thing into an infinite reboot loop, but it's the best I've
-      // got at the moment. Hopefully it will only reboot the one time and
-      // then work correctly the second time. If you get an infinite reboot
-      // loop, set the variable reconnectIfBadRegistrationReceived at the top
-      // of the program to "false", though that means you have bigger problems
-      // because your host stereo is not paying attention to you when you told
-      // it only register for messages 1 and 2. Your host stereo will likely
-      // hang and not get track titles or be able to send steering wheel
-      // control commands to the player.
       if (queryString.indexOf(F("TRACK_REACHED_END"))                  > (-1)) { Log(F("WARNING: Bad registration message received.")); ForceQuickReconnect(); return;}
       if (queryString.indexOf(F("TRACK_REACHED_START"))                > (-1)) { Log(F("WARNING: Bad registration message received.")); ForceQuickReconnect(); return;}
       if (queryString.indexOf(F("PLAYBACK_POSITION_CHANGED"))          > (-1)) { Log(F("WARNING: Bad registration message received.")); ForceQuickReconnect(); return;}
@@ -2846,7 +2842,7 @@ void RespondToQueries(String &queryString)
 
     // This turns out to be a very useful debugging message, don't delete it.
     // It helped me discover an important bug at one point. If this message
-    // appears it  means I did something wrong, or perhaps there is a new
+    // appears it means I did something wrong, or perhaps there is a new
     // Bluetooth message I don't know how to handle.
     Log(F("Dropping out of the bottom of the RespondToQueries function without responding."));
 }
