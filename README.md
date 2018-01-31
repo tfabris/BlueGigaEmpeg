@@ -1,7 +1,6 @@
 BlueGigaEmpeg
 ==============================================================================
 by Tony Fabris
-------------------------------------------------------------------------------
 https://github.com/tfabris/BlueGigaEmpeg
 
 A project to use a Silicon Labs BlueGiga WT32i Bluetooth chip, combined with
@@ -47,7 +46,7 @@ with other brands of Bluetooth gear.
 
 
 Acknowledgments
-------------------------------------------------------------------------------
+==============================================================================
 Many thanks to the members of the empegBBS who helped with this so much. The
 initial chip suggestion was by BBS member Elperepat, and even though I ended
 up not using the particular chip that he suggested (I had trouble with that
@@ -65,7 +64,7 @@ with it, nearly 20 years later.
 
 
 Checklist
-------------------------------------------------------------------------------
+==============================================================================
 Implementing this requires some manual labor. Make sure to go through each
 step in this checklist. Each step is detailed in its own section, below.
 
@@ -124,7 +123,7 @@ Empeg Car interior for I2S digital audio connection".
 
 
 Modify your Arduino compiler for larger buffer size
-------------------------------------------------------------------------------
+==============================================================================
 To update to the latest BlueGigaEmpeg firmware on the Arduino, you must
 increase the size of the serial port buffers in the Arduino compiler,
 otherwise there will be intermittent errors such as the track titles will
@@ -200,7 +199,7 @@ Save the file.
 
 
 Compile and upload the latest version of BlueGigaEmpeg.ino to the Arduino
-------------------------------------------------------------------------------
+==============================================================================
 Uploading code to the Arduino may be done with the BlueGigaEmpeg module fully
 assembled. However do not plug the BlueGigaEmpeg module into the empeg Car
 tuner connector until after the I2S modification has been completed, as
@@ -225,7 +224,7 @@ whether they are good or not.
 
 
 Disconnect all tuner modules from all sleds you own
-------------------------------------------------------------------------------
+==============================================================================
 The BlueGigaEmpeg re-purposes the tuner module connector on the empeg Car
 docking sled for a special digital audio interface. Damage may occur if you
 connect a tuner module once the digital audio interface modification is made.
@@ -240,7 +239,7 @@ next step, below.
 
 
 Modify empeg Car interior for I2S digital audio connection
-------------------------------------------------------------------------------
+==============================================================================
 To perform this step, you must be comfortable with disassembling the empeg Car
 player and removing the disk drive tray in such a way as to not cause damage
 to the player. In particular there is risk to the components on the back side
@@ -367,7 +366,7 @@ Final wiring positions and colors:
 
 
 Empeg Car configuration changes
-------------------------------------------------------------------------------
+==============================================================================
 For best results, empeg Car player software version should be 2.00 final or
 2.00 Beta 13. I have tested this with version 2.00 Beta 13. I do not know if
 it will work on 3.0 Alpha version of empeg Car software, but theoretically it
@@ -412,7 +411,7 @@ after changing the config.ini settings.
 
 
 Upgrade the empeg Car's Hijack kernel and set "Serial Port Assignment"
-------------------------------------------------------------------------------
+==============================================================================
 Install the latest Hijack Kernel onto the empeg Car player if it is not
 already installed. Link to the Hijack kernel is found in the "Prerequisites"
 section of this document. Make sure it is Hijack version 524 or later.
@@ -435,7 +434,7 @@ to reboot the player.
 
 
 Connect external hardware connections
-------------------------------------------------------------------------------
+==============================================================================
 Do not connect the BlueGigaEmpeg module to the empeg car's tuner connector
 unless the I2S wiring modification, described elsewhere in this document, has
 been completed.
@@ -470,7 +469,7 @@ from the tuner plug via the empeg itself.
 
 
 Apply power and pair Bluetooth
-------------------------------------------------------------------------------
+==============================================================================
 Apply power to the empeg, and the BlueGigaEmpeg module will receive power. 
 Make sure the empeg is not in "sleep" mode, power to the tuner module
 connector is turned off in sleep mode.
@@ -564,7 +563,7 @@ RESET/PAIR button and are re-pairing a second time.
 
 
 Set Bluetooth PIN code if needed (most likely not needed)
-------------------------------------------------------------------------------
+==============================================================================
 BlueGigaEmpeg does not usually require a PIN code to successfully pair. Before
 trying to modify the PIN code, simply try pairing first.
 
@@ -583,7 +582,7 @@ Arduino. It can accept PIN codes up to 16 digits long.
 
 
 Test AVRCP behavior and set serial port crossover jumpers if needed
-------------------------------------------------------------------------------
+==============================================================================
 If you are lucky, the empeg will respond to commands from your car stereo's
 controls for play, pause, next track, etc., and will display track titles on
 its screen. This is done via the Bluetooth Audio Video Remote Control Profile
@@ -617,7 +616,7 @@ careful not to overtighten the screws.
 
 
 Modify empeg's power connection to car if needed
-------------------------------------------------------------------------------
+==============================================================================
 I might recommend that, for this installation, you wire up the empeg to your
 car differently than it would otherwise would be.
 
@@ -671,7 +670,7 @@ autoconnects to the car stereo head unit.
 
 
 Debug Bluetooth connection if needed
-------------------------------------------------------------------------------
+==============================================================================
 Everything hopefully will work perfectly, but there may be bugs in the Arduino
 code because this was not tested with a wide range of Bluetooth gear.
 
@@ -791,7 +790,7 @@ next to each other on the debug console screen.
 
 
 Hardware interface information and notes (internal board connections)
-------------------------------------------------------------------------------
+==============================================================================
 The BlueGigaEmpeg interface board implements everything described below. The
 information below is just for my personal reference and you should not need to
 do any of the connections below yourself, unless you are developing your own
@@ -921,7 +920,7 @@ times, one for each of the I2S connections):
 
 
 Bluetooth Chip Firmware Upgrade
-------------------------------------------------------------------------------
+==============================================================================
 Note: This is only for my personal reference. This should only be needed if
 you are getting a replacement board directly from BetzTechnik, or you are
 performing some type of maintenance or debugging.
@@ -1019,7 +1018,7 @@ Steps:
 
 
 Set jumpers and switches, and modify Bluetooth board
-------------------------------------------------------------------------------
+==============================================================================
 Note: This is only for my personal reference. This is only needed if you have
 received a replacement board from BetzTechnik or you are doing other
 maintenance work.
@@ -1056,7 +1055,7 @@ power from that regulator.
 
 
 Solder headers onto the Bluetooth board
-------------------------------------------------------------------------------
+==============================================================================
 Note: This is only for my personal reference. This is only needed if you have
 received a replacement board from BetzTechnik or you are doing other
 maintenance work.
@@ -1108,7 +1107,7 @@ Best procedure for soldering the headers to make sure they fit:
 
 
 Assemble the BlueGigaEmpeg module
-------------------------------------------------------------------------------
+==============================================================================
 Note: This is only for my personal reference. This is only needed if you have
 received a replacement board from BetzTechnik or you are doing other
 maintenance work.
@@ -1154,7 +1153,7 @@ are described elsewhere in this document.
 
 
 Resources
-------------------------------------------------------------------------------
+==============================================================================
 ```
 Purchase:
 Empeg Car player:           http://empegbbs.com/ubbthreads.php/forums/11/1/For_Sale
