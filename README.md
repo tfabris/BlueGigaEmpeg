@@ -70,21 +70,20 @@ Implementing this requires some manual labor. Make sure to go through each
 step in this checklist. Each step is detailed in its own section, below.
 
 - [Prerequisites](#prerequisites)
-- [Modify your Arduino compiler for larger buffer size](#modify your arduino compiler for larger buffer size)
-- Compile and upload the latest version of BlueGigaEmpeg.ino to the Arduino
-- Disconnect all tuner modules from all sleds you own
-- Modify Empeg Car interior for I2S digital audio connection
-- Empeg Car configuration changes
-- Upgrade the empeg Car's Hijack kernel and set "Serial Port Assignment"
-- Connect external hardware connections
-- Apply power and pair Bluetooth
-- Set Bluetooth PIN code if needed (most likely not needed)
-- Test AVRCP behavior and set serial port crossover jumpers if needed
-- Modify empeg's power connection to car if needed
-- Debug Bluetooth connection if needed
+- [Modify your Arduino compiler for larger buffer size](#modify-your-arduino-compiler-for-larger-buffer-size)
+- [Compile and upload the latest version of BlueGigaEmpeg.ino to the Arduino](#compile-and-upload-the-latest-version-of-bluegigaempegino-to-the-arduino)
+- [Disconnect all tuner modules from all sleds you own](#disconnect-all-tuner-modules-from-all-sleds-you-own)
+- [Modify Empeg Car interior for I2S digital audio connection](#modify-empeg-car-interior-for-i2s-digital-audio-connection)
+- [Empeg Car configuration changes](#empeg-car-configuration-changes)
+- [Upgrade the empeg Car's Hijack kernel and set "Serial Port Assignment"](#upgrade-the-empeg-cars-hijack-kernel-and-set-serial-port-assignment)
+- [Connect external hardware connections](#connect-external-hardware-connections)
+- [Apply power and pair Bluetooth](#apply-power-and-pair-bluetooth)
+- [Set Bluetooth PIN code if needed (most likely not needed)](#set-bluetooth-pin-code-if-needed-most-likely-not-needed)
+- [Test AVRCP behavior and set serial port crossover jumpers if needed](#test-avrcp-behavior-and-set-serial-port-crossover-jumpers-if-needed)
+- [Modify empeg's power connection to car if needed](#modify-empegs-power-connection-to-car-if-needed)
+- [Debug Bluetooth connection if needed](#debug-bluetooth-connection-if-needed)
 
 
-------------------------------------------------------------------------------
 Prerequisites
 ------------------------------------------------------------------------------
 
