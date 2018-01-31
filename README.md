@@ -91,22 +91,22 @@ Make sure you have all of these things before working with the BlueGigaEmpeg:
 
 Purchase:
 
-    Empeg Mk2 or Rio Car player http://empegbbs.com/ubbthreads.php/forums/11/1/For_Sale
-    BlueGigaEmpeg Interface     tfabris@gmail.com
+    Empeg Mk2 or Rio Car player   http://empegbbs.com/ubbthreads.php/forums/11/1/For_Sale
+    BlueGigaEmpeg Interface       tfabris@gmail.com
 
 Included with the BlueGigaEmpeg Interface:
 
-    Arduino MEGA 2560 R3 Board  https://www.amazon.com/gp/product/B01H4ZLZLQ
-    BetzTechnik WT32i Breakout  http://www.betztechnik.ca/store/p3/WT32i_breakout_board.html
+    Arduino MEGA 2560 R3 Board    https://www.amazon.com/gp/product/B01H4ZLZLQ
+    BetzTechnik WT32i Breakout    http://www.betztechnik.ca/store/p3/WT32i_breakout_board.html
 
 Download software (Windows PC or Windows VM required for some of these items):
 
-    Arduino standalone IDE      https://www.arduino.cc/en/Main/Software
-    BlueGigaEmpeg sketch        https://github.com/tfabris/BlueGigaEmpeg
-    Hijack Kernel for empeg     http://empeg-hijack.sourceforge.net
-    Tony's Empeg Logo Editor    http://empegbbs.com/ubbthreads.php/ubb/download/Number/7067/filename/logoedit17.zip
-    WT32i Firmware Upgrade      https://www.silabs.com/documents/login/software/iWRAP-Firmware-Releases.zip
-    Windows FTDI USB driver     http://www.ftdichip.com/FTDrivers.htm
+    Arduino standalone IDE        https://www.arduino.cc/en/Main/Software
+    BlueGigaEmpeg sketch          https://github.com/tfabris/BlueGigaEmpeg
+    Hijack Kernel for empeg       http://empeg-hijack.sourceforge.net
+    Tony's Empeg Logo Editor      http://empegbbs.com/ubbthreads.php/ubb/download/Number/7067/filename/logoedit17.zip
+    WT32i Firmware Upgrade        https://www.silabs.com/documents/login/software/iWRAP-Firmware-Releases.zip
+    Windows FTDI USB driver       http://www.ftdichip.com/FTDrivers.htm
 
 You must already be comfortable with safely dismantling and repairing your
 empeg Car in order to safely make this modification. I take no responsibility
@@ -514,10 +514,10 @@ careful not to break any of the components sticking off the back of the
 display board.
 
 Refer to the annotated photograph in this repository named "I2S Wiring
-Modification Photo.jpg" to help understand the wiring instructions below. Here
-is a direct link to download the photo:
+Modification Photo.jpg" to help understand the wiring instructions below.
 
-  https://github.com/tfabris/BlueGigaEmpeg/blob/master/I2S%20Wiring%20Modification%20Photo.jpg
+Photo:
+  !(https://github.com/tfabris/BlueGigaEmpeg/blob/master/I2S%20Wiring%20Modification%20Photo.jpg)
 
 Locate 5 blank IIS pads on the front left side of the empeg motherboard.
 Pads are outlined in a white silkscreen rectangle with the letters "IIS" next
