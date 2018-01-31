@@ -1,11 +1,14 @@
 BlueGigaEmpeg
 ==============================================================================
-### by Tony Fabris     https://github.com/tfabris/BlueGigaEmpeg
+by Tony Fabris
+------------------------------------------------------------------------------
+https://github.com/tfabris/BlueGigaEmpeg
 
 A project to use a Silicon Labs BlueGiga WT32i Bluetooth chip, combined with
 an Arduino Mega board, to act as an interface between an empeg Car Mk2/2a MP3
 player and a modern Bluetooth-equipped car.
 
+------------------------------------------------------------------------------
 The empeg Car (small "e") player, also sold as the Rio Car, is an amazing in-
 dash MP3 player made from 1999-2001 whose features are still, nearly 20 years
 later, better than any other in-car MP3 solution available. However, the empeg
@@ -66,8 +69,8 @@ Checklist
 Implementing this requires some manual labor. Make sure to go through each
 step in this checklist. Each step is detailed in its own section, below.
 
-- Prerequisites
-- Modify your Arduino compiler for larger buffer size
+- [Prerequisites](#Prerequisites)
+- (#Modify your Arduino compiler for larger buffer size)
 - Compile and upload the latest version of BlueGigaEmpeg.ino to the Arduino
 - Disconnect all tuner modules from all sleds you own
 - Modify Empeg Car interior for I2S digital audio connection
@@ -1183,6 +1186,7 @@ TI MAX232E datasheet:       http://www.ti.com/lit/ds/symlink/max232e.pdf
 BlueGiga Forum:             https://www.silabs.com/community/wireless/bluetooth
 Empeg BBS thread:           http://empegbbs.com/ubbthreads.php/topics/370217
 GitHub Markdown:            https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet
+                            https://guides.github.com/features/mastering-markdown/
 
 Upgrade firmware on the WT32i:
 Firmware Update Guide:      https://www.silabs.com/documents/login/user-guides/UG216.pdf
