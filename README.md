@@ -84,7 +84,8 @@ step in this checklist. Each step is detailed in its own section, below.
 - Debug Bluetooth connection if needed
 
 
-Prerequisites
+------------------------------------------------------------------------------
+## Prerequisites
 ------------------------------------------------------------------------------
 Make sure you have all of these things before working with the BlueGigaEmpeg:
 
