@@ -32,10 +32,10 @@ steps are performed.
 
 NOTE: At the time of this writing, I only tested this on a very limited set of
 Bluetooth gear. I have tested it on:
-   My Honda Accord 2017 factory stereo.
-   Kenwood Bluetooth-equipped car stereo in my roommate's car.
-   Plantronics Voyager Edge Bluetooth headset.
-   Onkyo home stereo with Bluetooth input.
+- My Honda Accord 2017 factory stereo.
+- Kenwood Bluetooth-equipped car stereo in my roommate's car.
+- Plantronics Voyager Edge Bluetooth headset.
+- Onkyo home stereo with Bluetooth input.
 
 There may be differences in Bluetooth implementation on other audio gear, and
 so there might be bugs using this on your car stereo. This project is open
@@ -91,22 +91,22 @@ Make sure you have all of these things before working with the BlueGigaEmpeg:
 
 Purchase:
 
- Empeg Mk2 or Rio Car player: http://empegbbs.com/ubbthreads.php/forums/11/1/For_Sale
- BlueGigaEmpeg Interface:     tfabris@gmail.com
+[Empeg Mk2 or Rio Car player] (http://empegbbs.com/ubbthreads.php/forums/11/1/For_Sale)
+[BlueGigaEmpeg Interface]     (tfabris@gmail.com)
 
 Included with the BlueGigaEmpeg Interface:
 
- Arduino MEGA 2560 R3 Board:  https://www.amazon.com/gp/product/B01H4ZLZLQ       
- BetzTechnik WT32i Breakout:  http://www.betztechnik.ca/store/p3/WT32i_breakout_board.html
+[Arduino MEGA 2560 R3 Board]  (https://www.amazon.com/gp/product/B01H4ZLZLQ)
+[BetzTechnik WT32i Breakout]  (http://www.betztechnik.ca/store/p3/WT32i_breakout_board.html)
 
 Download software (Windows PC or Windows VM required for some of these items):
 
- Arduino standalone IDE:      https://www.arduino.cc/en/Main/Software
- BlueGigaEmpeg sketch:        https://github.com/tfabris/BlueGigaEmpeg
- Hijack Kernel for empeg:     http://empeg-hijack.sourceforge.net/
- Tony's Empeg Logo Editor:    http://empegbbs.com/ubbthreads.php/ubb/download/Number/7067/filename/logoedit17.zip
- WT32i Firmware Upgrade:      https://www.silabs.com/documents/login/software/iWRAP-Firmware-Releases.zip
- Windows FTDI USB driver:     http://www.ftdichip.com/FTDrivers.htm
+[Arduino standalone IDE]      (https://www.arduino.cc/en/Main/Software)
+[BlueGigaEmpeg sketch]        (https://github.com/tfabris/BlueGigaEmpeg)
+[Hijack Kernel for empeg]     (http://empeg-hijack.sourceforge.net)
+[Tony's Empeg Logo Editor]    (http://empegbbs.com/ubbthreads.php/ubb/download/Number/7067/filename/logoedit17.zip)
+[WT32i Firmware Upgrade]      (https://www.silabs.com/documents/login/software/iWRAP-Firmware-Releases.zip)
+[Windows FTDI USB driver]     (http://www.ftdichip.com/FTDrivers.htm)
 
 You must already be comfortable with safely dismantling and repairing your
 empeg Car in order to safely make this modification. I take no responsibility
@@ -180,6 +180,7 @@ Steps:
  - Once that's sorted, run the "SerialDFU.exe" tool found in one of the
    folders of the unzipped "iWRAP-Firmware-Releases.zip" file. In the folder
    of unzipped files, the full path is:
+   
       iWRAP_Firmware_Releases
         Firmware
          DFU
@@ -197,13 +198,14 @@ Steps:
 
  - Select the options to upgrade your chip with the most recent WT32i file
    among the unzipped files. The full path is:
-      iWRAP_Firmware_Releases
-        Firmware
-         DFU
-          SerialDFU     (SerialDFU.exe is the upgrader tool in this folder)
-           DFU_Images
-             WT32i
-               ai-6.2.0-1122_aptxll.bc5.dfu        (firmware file)
+   
+       iWRAP_Firmware_Releases
+         Firmware
+          DFU
+           SerialDFU     (SerialDFU.exe is the upgrader tool in this folder)
+            DFU_Images
+              WT32i
+                ai-6.2.0-1122_aptxll.bc5.dfu        (firmware file)
 
  - Note: When upgrading, there is a checkbox on the screen in the
    SerialDFU.exe utility which says "Factory Restore All". Make sure to CHECK
@@ -381,21 +383,21 @@ the location of the file will be different depending on which OS you're using.
 The approximate location will be somewhere around this location, but the
 install location will vary:
 
-  (install location)/hardware/arduino/avr/cores/arduino/HardwareSerial.h
+    (install location)/hardware/arduino/avr/cores/arduino/HardwareSerial.h
 
 On a Macintosh computer, the file is harder to find. It is located in the
 following place on a Macintosh:
 
-  /Applications/Arduino.app/Contents/Java/hardware/arduino/avr/cores/arduino/HardwareSerial.h
+    /Applications/Arduino.app/Contents/Java/hardware/arduino/avr/cores/arduino/HardwareSerial.h
 
 Or, more specifically, in the Macintosh Finder, navigate to:
 
-  Macintosh HD -> /Applications/Arduino
+    Macintosh HD -> /Applications/Arduino
 
 Ctrl-click on the application file "Arduino" and select "Show Package
 Contents". Then navigate to:
 
-  Contents/Java/hardware/arduino/avr/cores/arduino/HardwareSerial.h
+    Contents/Java/hardware/arduino/avr/cores/arduino/HardwareSerial.h
 
 Ctrl-click on the file "HardwareSerial.h" and select "Open With", and choose
 your favorite quick text editor program to edit the file with it.
@@ -566,9 +568,9 @@ docked, now be carried out the back of the empeg, via the docking sled, into
 the tuner module Molex connector. Solder your jumper wires to the empeg
 interior wires in this order:
 
- IIS Pad 1 (IISC)  jumpered to Yellow+Green wire, originally third from end.
- IIS Pad 2 (IISW)  jumpered to Brown wire, originally the end wire.
- IIS Pad 4 (IISD1) jumpered to Red wire, originally second from end.
+    IIS Pad 1 (IISC)  jumpered to Yellow+Green wire, originally third from end.
+    IIS Pad 2 (IISW)  jumpered to Brown wire, originally the end wire.
+    IIS Pad 4 (IISD1) jumpered to Red wire, originally second from end.
 
 Make sure that your jumper wires are carefully tucked down around the left
 side of the empeg and out of the way of the disk drive tray assembly as shown
@@ -719,7 +721,7 @@ Bluetooth car stereo. You might also wish to re-pair again after editing the
 BlueGigaEmpeg firmware or the WT32i firmware. The BlueGigaEmpeg has a
 RESET/PAIR button for this purpose.
 
-Procedure:
+###  Procedure:
 
 - If your car stereo contains a feature that lists existing Bluetooth
   pairings, and if there is an existing entry for "empeg Car" from an earlier
@@ -755,7 +757,7 @@ each time I start my car, they both pair up correctly. I can use the steering
 wheel controls to initiate a speakerphone call which automatically mutes and
 pauses the music from the empeg.
 
-Technical details and troubleshooting:
+###  Technical details and troubleshooting:
 
 When you press the RESET/PAIR button on the BlueGigaEmpeg, it does the
 following:
@@ -971,9 +973,10 @@ some of them can slow down the responses on the BlueGigaEmpeg and cause the
 Bluetooth communication to miss things.
 
 Refer to the code comments accompanying these flags to understand them:
-  EmpegSendCommandDebug
-  displayEmpegSerial
-  displayTracksOnSerial
+
+      EmpegSendCommandDebug
+      displayEmpegSerial
+      displayTracksOnSerial
 
 Useful debugging commands in the BlueGiga WT32i iWrap command language:
 
@@ -981,29 +984,29 @@ Typing any of these into the Arduino Serial Monitor should send these commands
 to the Bluetooth module directly. Many will echo a response. Module will say
 SYNTAX ERROR if there is a problem with any command.
 
-  SET
-  Displays Bluetooth module's current settings.
+      SET
+      Displays Bluetooth module's current settings.
 
-  SET BT PAIR
-  Displays Bluetooth module's current list of paired devices.
+      SET BT PAIR
+      Displays Bluetooth module's current list of paired devices.
 
-  SET BT PAIR *
-  Deletes all saved Bluetooth pairings on the Bluetooth module. The asterisk
-  is important, it's the part that does the deleting.
+      SET BT PAIR *
+      Deletes all saved Bluetooth pairings on the Bluetooth module. The asterisk
+      is important, it's the part that does the deleting.
 
-  SET CONTROL RECONNECT *
-  Turns off automatic reconnection attempts on the Bluetooth module until the
-  next time it pairs up with something.
+      SET CONTROL RECONNECT *
+      Turns off automatic reconnection attempts on the Bluetooth module until the
+      next time it pairs up with something.
 
-  RESET
-  Reboots the Bluetooth module, saving current settings. Does not erase any
-  existing saved Bluetooth pairings nor change any settings.
+      RESET
+      Reboots the Bluetooth module, saving current settings. Does not erase any
+      existing saved Bluetooth pairings nor change any settings.
 
-  SET RESET
-  Resets the Bluetooth chip itself to its factory defaults. Does not remove
-  existing pairings, those are still kept. Note: you should restart the
-  Arduino after using "SET RESET" in order to have it apply its customized
-  default settings to the Bluetooth chip again.
+      SET RESET
+      Resets the Bluetooth chip itself to its factory defaults. Does not remove
+      existing pairings, those are still kept. Note: you should restart the
+      Arduino after using "SET RESET" in order to have it apply its customized
+      default settings to the Bluetooth chip again.
 
 See the iWrap 6.x command reference and the AVRCP command reference documents,
 linked in "Resources" elsewhere in this document, for more details on the
@@ -1032,7 +1035,7 @@ tried it with an "Uno" model using software serial ports, and it had problems
 where characters sometimes got dropped, and it could not keep up with the data
 rates that I wanted.
 
-Arduino and RS-232 port, critical connections:
+###  Arduino and RS-232 port, critical connections:
 
 Arduino serial port 1 (Tx1/Rx1) connects to the empeg's RS-232 port, but it
 must go through an RS-232 converter circuit based on a MAX232 chip. This is
@@ -1092,7 +1095,7 @@ button connects to +5v coming from the Arduino 5v pin. Follow examples on the
 Internet of how to implement a simple temporary pushbutton on an Arduino:
 https://www.arduino.cc/en/Tutorial/Button
 
-BlueGiga Bluetooth WT32i chip+board, critical connections:
+###  BlueGiga Bluetooth WT32i chip+board, critical connections:
 
 BetzTechnik board JP4 FTDI UART Enable jumper is cut after applying firmware
 update.
@@ -1151,6 +1154,7 @@ times, one for each of the I2S connections):
 
 Resources
 ------------------------------------------------------------------------------
+```
 Purchase:
 Empeg Car player:           http://empegbbs.com/ubbthreads.php/forums/11/1/For_Sale
 Arduino MEGA 2560 R3 Board: https://www.amazon.com/gp/product/B01H4ZLZLQ       
@@ -1178,7 +1182,7 @@ Pololu V.Reg #2853 Pinout:  https://a.pololu-files.com/picture/0J5850.1200.jpg
 Arduino Mega Pin Map:       https://www.arduino.cc/en/uploads/Hacking/Atmega168PinMap2.png
 Arduino Mega Standalone:    https://www.arduino.cc/en/Main/Standalone
 ClassOfDevice generators:   http://bluetooth-pentest.narod.ru/software/bluetooth_class_of_device-service_generator.html
-                            http://www.ampedrftech.com/cod.htm
+                           http://www.ampedrftech.com/cod.htm
 MAX232 circuit for Arduino: https://www.avrprogrammers.com/articles/max232-arduino
 TI MAX232E datasheet:       http://www.ti.com/lit/ds/symlink/max232e.pdf
 BlueGiga Forum:             https://www.silabs.com/community/wireless/bluetooth
@@ -1214,4 +1218,4 @@ Fem. conn. headers  22x1 Qty:2 https://www.digikey.com/product-detail/en/3m/9298
 10k ohm resistors:       Qty:9 https://www.amazon.com/gp/product/B0185FIOTA/ref=oh_aui_detailpage_o02_s00
 100 ohm resistor:              https://www.digikey.com/product-detail/en/stackpole-electronics-inc/CF18JT100R/CF18JT100RCT-ND/2022718
 Jumper Wires:            Qty:3 (lying around)
-
+```
