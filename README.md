@@ -69,8 +69,8 @@ Checklist
 Implementing this requires some manual labor. Make sure to go through each
 step in this checklist. Each step is detailed in its own section, below.
 
-- [Prerequisites](#Prerequisites)
-- Modify your Arduino compiler for larger buffer size
+- [Prerequisites](#prerequisites)
+- [Modify your Arduino compiler for larger buffer size](#modify your arduino compiler for larger buffer size)
 - Compile and upload the latest version of BlueGigaEmpeg.ino to the Arduino
 - Disconnect all tuner modules from all sleds you own
 - Modify Empeg Car interior for I2S digital audio connection
@@ -85,7 +85,8 @@ step in this checklist. Each step is detailed in its own section, below.
 
 
 ------------------------------------------------------------------------------
-## Prerequisites
+Prerequisites
+------------------------------------------------------------------------------
 
 Make sure you have all of these things before working with the BlueGigaEmpeg:
 
