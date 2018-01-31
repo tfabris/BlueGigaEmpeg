@@ -1,7 +1,7 @@
 BlueGigaEmpeg
 ==============================================================================
-by Tony Fabris                        https://github.com/tfabris/BlueGigaEmpeg
-------------------------------------------------------------------------------
+### by Tony Fabris     https://github.com/tfabris/BlueGigaEmpeg
+
 A project to use a Silicon Labs BlueGiga WT32i Bluetooth chip, combined with
 an Arduino Mega board, to act as an interface between an empeg Car Mk2/2a MP3
 player and a modern Bluetooth-equipped car.
@@ -91,22 +91,22 @@ Make sure you have all of these things before working with the BlueGigaEmpeg:
 
 Purchase:
 
-[Empeg Mk2 or Rio Car player] (http://empegbbs.com/ubbthreads.php/forums/11/1/For_Sale)
-[BlueGigaEmpeg Interface]     (tfabris@gmail.com)
+    Empeg Mk2 or Rio Car player http://empegbbs.com/ubbthreads.php/forums/11/1/For_Sale
+    BlueGigaEmpeg Interface     tfabris@gmail.com
 
 Included with the BlueGigaEmpeg Interface:
 
-[Arduino MEGA 2560 R3 Board]  (https://www.amazon.com/gp/product/B01H4ZLZLQ)
-[BetzTechnik WT32i Breakout]  (http://www.betztechnik.ca/store/p3/WT32i_breakout_board.html)
+    Arduino MEGA 2560 R3 Board  https://www.amazon.com/gp/product/B01H4ZLZLQ
+    BetzTechnik WT32i Breakout  http://www.betztechnik.ca/store/p3/WT32i_breakout_board.html
 
 Download software (Windows PC or Windows VM required for some of these items):
 
-[Arduino standalone IDE]      (https://www.arduino.cc/en/Main/Software)
-[BlueGigaEmpeg sketch]        (https://github.com/tfabris/BlueGigaEmpeg)
-[Hijack Kernel for empeg]     (http://empeg-hijack.sourceforge.net)
-[Tony's Empeg Logo Editor]    (http://empegbbs.com/ubbthreads.php/ubb/download/Number/7067/filename/logoedit17.zip)
-[WT32i Firmware Upgrade]      (https://www.silabs.com/documents/login/software/iWRAP-Firmware-Releases.zip)
-[Windows FTDI USB driver]     (http://www.ftdichip.com/FTDrivers.htm)
+    Arduino standalone IDE      https://www.arduino.cc/en/Main/Software
+    BlueGigaEmpeg sketch        https://github.com/tfabris/BlueGigaEmpeg
+    Hijack Kernel for empeg     http://empeg-hijack.sourceforge.net
+    Tony's Empeg Logo Editor    http://empegbbs.com/ubbthreads.php/ubb/download/Number/7067/filename/logoedit17.zip
+    WT32i Firmware Upgrade      https://www.silabs.com/documents/login/software/iWRAP-Firmware-Releases.zip
+    Windows FTDI USB driver     http://www.ftdichip.com/FTDrivers.htm
 
 You must already be comfortable with safely dismantling and repairing your
 empeg Car in order to safely make this modification. I take no responsibility
@@ -181,11 +181,11 @@ Steps:
    folders of the unzipped "iWRAP-Firmware-Releases.zip" file. In the folder
    of unzipped files, the full path is:
    
-      iWRAP_Firmware_Releases
-        Firmware
-         DFU
-          SerialDFU
-           SerialDFU.exe
+       iWRAP_Firmware_Releases
+         Firmware
+          DFU
+           SerialDFU
+            SerialDFU.exe
 
  - Note: The serial port settings in the SerialDFU tool will show "8E1" for
    its BCSP settings instead of "8N1". There will be two sets of serial port
@@ -1182,7 +1182,7 @@ Pololu V.Reg #2853 Pinout:  https://a.pololu-files.com/picture/0J5850.1200.jpg
 Arduino Mega Pin Map:       https://www.arduino.cc/en/uploads/Hacking/Atmega168PinMap2.png
 Arduino Mega Standalone:    https://www.arduino.cc/en/Main/Standalone
 ClassOfDevice generators:   http://bluetooth-pentest.narod.ru/software/bluetooth_class_of_device-service_generator.html
-                           http://www.ampedrftech.com/cod.htm
+                            http://www.ampedrftech.com/cod.htm
 MAX232 circuit for Arduino: https://www.avrprogrammers.com/articles/max232-arduino
 TI MAX232E datasheet:       http://www.ti.com/lit/ds/symlink/max232e.pdf
 BlueGiga Forum:             https://www.silabs.com/community/wireless/bluetooth
