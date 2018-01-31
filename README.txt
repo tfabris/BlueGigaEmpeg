@@ -1,7 +1,6 @@
-------------------------------------------------------------------------------
 BlueGigaEmpeg
-by Tony Fabris
-https://github.com/tfabris/BlueGigaEmpeg
+==============================================================================
+by Tony Fabris                        https://github.com/tfabris/BlueGigaEmpeg
 ------------------------------------------------------------------------------
 A project to use a Silicon Labs BlueGiga WT32i Bluetooth chip, combined with
 an Arduino Mega board, to act as an interface between an empeg Car Mk2/2a MP3
@@ -44,7 +43,6 @@ source on GitHub so that I can accept bug reports and code fixes from people
 with other brands of Bluetooth gear.
 
 
-------------------------------------------------------------------------------
 Acknowledgments
 ------------------------------------------------------------------------------
 Many thanks to the members of the empegBBS who helped with this so much. The
@@ -63,7 +61,6 @@ such a fantastic car MP3 player that we are still doing interesting things
 with it, nearly 20 years later.
 
 
-------------------------------------------------------------------------------
 Checklist
 ------------------------------------------------------------------------------
 Implementing this requires some manual labor. Make sure to go through each
@@ -88,7 +85,6 @@ step in this checklist. Each step is detailed in its own section, below.
 - Debug Bluetooth connection if needed
 
 
-------------------------------------------------------------------------------
 Prerequisites
 ------------------------------------------------------------------------------
 Make sure you have all of these things before working with the BlueGigaEmpeg:
@@ -98,7 +94,7 @@ Purchase:
  Empeg Mk2 or Rio Car player: http://empegbbs.com/ubbthreads.php/forums/11/1/For_Sale
  BlueGigaEmpeg Interface:     tfabris@gmail.com
 
-Either purchased separately or included with the BlueGigaEmpeg Interface:
+Included with the BlueGigaEmpeg Interface:
 
  Arduino MEGA 2560 R3 Board:  https://www.amazon.com/gp/product/B01H4ZLZLQ       
  BetzTechnik WT32i Breakout:  http://www.betztechnik.ca/store/p3/WT32i_breakout_board.html
@@ -121,7 +117,6 @@ empeg Car player as described in the section of this document titled "Modify
 Empeg Car interior for I2S digital audio connection". 
 
 
-------------------------------------------------------------------------------
 Bluetooth Chip Firmware Upgrade
 ------------------------------------------------------------------------------
 Note: If you obtained the BetzTechnik WT32i breakout board from Tony Fabris,
@@ -223,7 +218,6 @@ Steps:
    next step.
 
 
-------------------------------------------------------------------------------
 Set jumpers and switches, and modify Bluetooth board
 ------------------------------------------------------------------------------
 If you purchased the BetzTechnic WT32i breakout board from Tony Fabris, then
@@ -260,7 +254,6 @@ will be supplying power directly to the chip at 3v and will not use the BATT
 power from that regulator.
 
 
-------------------------------------------------------------------------------
 Solder headers onto the Bluetooth board
 ------------------------------------------------------------------------------
 If you purchased the BetzTechnik WT32i Bluetooth Breakout from Tony Fabris, as
@@ -314,7 +307,6 @@ Best procedure for soldering the headers to make sure they fit:
 - Now fully solder all 44 header pins on the Betz board.
 
 
-------------------------------------------------------------------------------
 Assemble the BlueGigaEmpeg module
 ------------------------------------------------------------------------------
 Note: If you obtained the BlueGigaEmpeg module fully pre-assembled from Tony
@@ -362,7 +354,6 @@ after the I2S modifications are complete before attaching. The I2S
 modifications are described elsewhere in this document.
 
 
-------------------------------------------------------------------------------
 Modify your Arduino compiler for larger buffer size
 ------------------------------------------------------------------------------
 Note: If you obtained the Arduino board from Tony Fabris, then the Arduino is
@@ -412,26 +403,26 @@ your favorite quick text editor program to edit the file with it.
 Regardless of which operating system you are doing this with, once you have
 HardwareSerial.h open, locate the following code lines:
 
-         #if !defined(SERIAL_TX_BUFFER_SIZE)
-         #if ((RAMEND - RAMSTART) < 1023)
-         #define SERIAL_TX_BUFFER_SIZE 16
-         #else
--->      #define SERIAL_TX_BUFFER_SIZE 64
-         #endif
-         #endif
-         #if !defined(SERIAL_RX_BUFFER_SIZE)
-         #if ((RAMEND - RAMSTART) < 1023)
-         #define SERIAL_RX_BUFFER_SIZE 16
-         #else
--->      #define SERIAL_RX_BUFFER_SIZE 64
-         #endif
-         #endif
+             #if !defined(SERIAL_TX_BUFFER_SIZE)
+             #if ((RAMEND - RAMSTART) < 1023)
+             #define SERIAL_TX_BUFFER_SIZE 16
+             #else
+    -->      #define SERIAL_TX_BUFFER_SIZE 64
+             #endif
+             #endif
+             #if !defined(SERIAL_RX_BUFFER_SIZE)
+             #if ((RAMEND - RAMSTART) < 1023)
+             #define SERIAL_RX_BUFFER_SIZE 16
+             #else
+    -->      #define SERIAL_RX_BUFFER_SIZE 64
+             #endif
+             #endif
 
 Now edit the lines indicated above, and change them to this instead:
 
-   #define SERIAL_TX_BUFFER_SIZE 128
-
-   #define SERIAL_RX_BUFFER_SIZE 256
+       #define SERIAL_TX_BUFFER_SIZE 128
+       
+       #define SERIAL_RX_BUFFER_SIZE 256
 
 In other words, you are making the larger of the two possible transmit buffer
 sizes even larger (changing 64 to 128) and the larger of the two possible
@@ -443,7 +434,6 @@ that were originally set to "64" and increase them as described above.
 Save the file.
 
 
-------------------------------------------------------------------------------
 Compile and upload the latest version of BlueGigaEmpeg.ino to the Arduino
 ------------------------------------------------------------------------------
 Note: If you obtained the Arduino board from Tony Fabris, then this step has
@@ -476,7 +466,6 @@ list the RX and TX buffer sizes near the beginning of the output and indicate
 whether they are good or not.
 
 
-------------------------------------------------------------------------------
 Disconnect all tuner modules from all sleds you own
 ------------------------------------------------------------------------------
 The BlueGigaEmpeg re-purposes the tuner module connector on the empeg Car
@@ -492,7 +481,6 @@ modifications have been completed. Those modifications are described in the
 next step, below.
 
 
-------------------------------------------------------------------------------
 Modify Empeg Car interior for I2S digital audio connection
 ------------------------------------------------------------------------------
 To perform this step, you must be comfortable with disassembling the empeg Car
@@ -539,11 +527,11 @@ individually labeled with numbers, but understand that they are logically
 numbered 1 2 3 4 5 starting from the back and going towards the front of the
 empeg. The pinouts of these five pads are:
 
-    1 = IISC  aka  SCK     aka "serial clock"
-    2 = IISW  aka  WS      aka "word select"
-    3 = GND   aka  Ground  same as chassis ground of empeg
-    4 = IISD1 aka  SD      aka "serial data" (1 of 2)
-    5 = IISD2 aka  SD      aka "serial data" (2 of 2)
+      1 = IISC  aka  SCK     aka "serial clock"
+      2 = IISW  aka  WS      aka "word select"
+      3 = GND   aka  Ground  same as chassis ground of empeg
+      4 = IISD1 aka  SD      aka "serial data" (1 of 2)
+      5 = IISD2 aka  SD      aka "serial data" (2 of 2)
 
 Carefully solder three supplied jumper wires to pads 1,2, and 4, and you must
 keep track of which wires are soldered to which pads.
@@ -553,8 +541,6 @@ the board instead of sticking upwards. The disk drive tray gets close to that
 location when mounted, so make sure they don't have a chance to contact the
 tray. After soldering, cover the solder points with tape or some other
 insulator to prevent them from shorting out on the drive tray.
-
-
 
 Locate the two white connectors on the back part of the empeg motherboard
 which connect two groups of small colored wires to the docking connector
@@ -599,28 +585,27 @@ After the glue is fully dry, carefully reassemble the player.
 
 Final wiring positions and colors:
 
-Empeg IIS pads   Int. Empeg wires *   Int. wht Conn pos **   Sled Tuner Plug   
-1 IISC            Yellow+Green         Third from end         7 Purple         
-2 IISW            Brown wire           Right end              2 Grey           
-4 IISD1           Red wire             Second from end        1 Pink           
+    Empeg IIS pads   Int. Empeg wires *   Int. wht Conn pos **   Sled Tuner Plug   
+    1 IISC            Yellow+Green         Third from end         7 Purple         
+    2 IISW            Brown wire           Right end              2 Grey           
+    4 IISD1           Red wire             Second from end        1 Pink           
                                                               4 Black          
                                                               8 Blue           
+    
+    BlueGigaEmpeg Tuner Plug    Bluetooth Chip   Usage
+     7  SCK                      30  PCM_CLK      Serial Clock
+     2  WS                       29  PCM_SYNC     Word Select aka Sync 
+     1  SDIN                     27  PCM_IN       Serial Data aka PCM Audio Data
+     4  GND                          GND          Universal Ground
+     8  12vPower                                  Power to voltage regulator
 
-BlueGigaEmpeg Tuner Plug    Bluetooth Chip   Usage
- 7  SCK                      30  PCM_CLK      Serial Clock
- 2  WS                       29  PCM_SYNC     Word Select aka Sync 
- 1  SDIN                     27  PCM_IN       Serial Data aka PCM Audio Data
- 4  GND                          GND          Universal Ground
- 8  12vPower                                  Power to voltage regulator
+    *  (These are the interior wires connecting the docking sled connector to the
+       motherboard.)
 
-*  (These are the interior wires connecting the docking sled connector to the
-   motherboard.)
-
-** (Original positions of these wires on the white connector near the Ethernet
-   plug, now disconnected from that connector.)
+    ** (Original positions of these wires on the white connector near the Ethernet
+       plug, now disconnected from that connector.)
 
 
-------------------------------------------------------------------------------
 Empeg Car configuration changes
 ------------------------------------------------------------------------------
 For best results, empeg Car player software version should be 2.00 final or
@@ -636,37 +621,36 @@ If you are using Emplode on Windows, you must first edit the Microsoft Windows
 registry before it will allow you to alter the config.ini. First, run
 REGEDIT.EXE in windows and locate the following key:
 
-   HKEY_CURRENT_USER
-     Software
-       SONICblue
-         emplode
-           2.0
-             Settings
-                (Inside the "Settings" key, create a new DWORD value named:)
-                  allow_edit_config
-                    (with a value of)
-                      1              
+     HKEY_CURRENT_USER
+       Software
+         SONICblue
+           emplode
+             2.0
+               Settings
+                  (Inside the "Settings" key, create a new DWORD value named:)
+                    allow_edit_config
+                      (with a value of)
+                        1              
 
-... then restart the Emplode software. Emplode will now have a menu option
+Then restart the Emplode software. Emplode will now have a menu option
 which allows you to edit the config.ini on the player.
 
 Change the settings in config,ini as follows (adding new section headers such
 as [Hijack] only if that section does not already exist):
 
-[hijack]
-suppress_notify=2
-
-[output]
-notify=1
-
-[serial]
-car_rate=115200
+    [hijack]
+    suppress_notify=2
+    
+    [output]
+    notify=1
+    
+    [serial]
+    car_rate=115200
 
 These settings are case-sensitive. Make sure to synchronize with the player
 after changing the config.ini settings.
 
 
-------------------------------------------------------------------------------
 Upgrade the empeg Car's Hijack kernel and set "Serial Port Assignment"
 ------------------------------------------------------------------------------
 Install the latest Hijack Kernel onto the empeg Car player if it is not
@@ -690,7 +674,6 @@ assignment" to "Player uses serial port" and follow the on-screen instructions
 to reboot the player.
 
 
-------------------------------------------------------------------------------
 Connect external hardware connections
 ------------------------------------------------------------------------------
 Do not connect the BlueGigaEmpeg module to the empeg car's tuner connector
@@ -725,7 +708,6 @@ power. Do not use this connector. Power the BlueGigaEmpeg module only from the
 tuner plug via the empeg itself.
 
 
-------------------------------------------------------------------------------
 Apply power and pair Bluetooth
 ------------------------------------------------------------------------------
 Apply power to the empeg, and the BlueGigaEmpeg module will receive power. 
@@ -820,7 +802,6 @@ remember to delete the empeg Car from the list if you have pressed the
 RESET/PAIR button and are re-pairing a second time.
 
 
-------------------------------------------------------------------------------
 Set Bluetooth PIN code if needed (most likely not needed)
 ------------------------------------------------------------------------------
 BlueGigaEmpeg does not usually require a PIN code to successfully pair. Before
@@ -840,7 +821,6 @@ to your correct PIN code for your stereo and re-upload the sketch to the
 Arduino. It can accept PIN codes up to 16 digits long.
 
 
-------------------------------------------------------------------------------
 Test AVRCP behavior and set serial port crossover jumpers if needed
 ------------------------------------------------------------------------------
 If you are lucky, the empeg will respond to commands from your car stereo's
@@ -871,7 +851,6 @@ there to make room for the release tab on the tuner module connector. And be
 careful not to overtighten the screws.
 
 
-------------------------------------------------------------------------------
 Modify empeg's power connection to car if needed
 ------------------------------------------------------------------------------
 I might recommend that, for this installation, you wire up the empeg to your
@@ -926,7 +905,6 @@ mode and immediately supplies power to the Bluetooth assembly which then
 autoconnects to the car stereo head unit.
 
 
-------------------------------------------------------------------------------
 Debug Bluetooth connection if needed
 ------------------------------------------------------------------------------
 Everything hopefully will work perfectly, but there may be bugs in the Arduino
@@ -1042,7 +1020,6 @@ two command/response pairs are absolutely connected just because they appear
 next to each other on the debug console screen.
 
 
-------------------------------------------------------------------------------
 Hardware interface information and notes (internal board connections)
 ------------------------------------------------------------------------------
 The BlueGigaEmpeg interface board implements everything described below. The
@@ -1073,21 +1050,21 @@ serial port as needed.
 I am using a TI MAX232E for this implementation. The connections for the
 MAX232 are as follows:
 
-  MAX232 Pin 1 and 3 aka C1+/C1- - Bridge with a 2.2uf ceramic capacitor
-  MAX232 Pin 4 and 5 aka C2+/C2- - Bridge with a 2.2uf ceramic capacitor
-  MAX232 Pin 2 aka V+ - Connect to Arduino +5v via a 2.2uf ceramic capacitor
-  MAX232 Pin 6 aka V- - Connect to GND via a 2.2uf ceramic capacitor
-  MAX232 Pin 11 aka TTL-I1 - Connect to Arduino Mega Board 18 aka Tx1 
-  MAX232 Pin 12 aka TTL-O1 - Connect to Arduino Mega Board 19 axa Rx1
-  MAX232 Pin 13 aka 232-I1 - Connect to RS-232 plug pin 3 aka Tx via jumpers
-  MAX232 Pin 14 aka 232-O1 - Connect to RS-232 plug pin 2 aka Rx via jumpers
-  MAX232 Pin 15 aka GND - Connect directly to GND
-  MAX232 Pin 16 aka VCC - Connect directly Arduino +5v output.
-  MAX232 Pin 16 aka VCC - Also connect to 0.1uf ceramic capacitor which
-                          then connects to GND. (Pin 16 is two connections,
-                          one to Arduino +5v and then also to the smoothing
-                          capacitor which bridges across 5v and GND. Place
-                          this cap as close to pin 16 as possible.)
+    MAX232 Pin 1 and 3 aka C1+/C1- - Bridge with a 2.2uf ceramic capacitor
+    MAX232 Pin 4 and 5 aka C2+/C2- - Bridge with a 2.2uf ceramic capacitor
+    MAX232 Pin 2 aka V+ - Connect to Arduino +5v via a 2.2uf ceramic capacitor
+    MAX232 Pin 6 aka V- - Connect to GND via a 2.2uf ceramic capacitor
+    MAX232 Pin 11 aka TTL-I1 - Connect to Arduino Mega Board 18 aka Tx1 
+    MAX232 Pin 12 aka TTL-O1 - Connect to Arduino Mega Board 19 axa Rx1
+    MAX232 Pin 13 aka 232-I1 - Connect to RS-232 plug pin 3 aka Tx via jumpers
+    MAX232 Pin 14 aka 232-O1 - Connect to RS-232 plug pin 2 aka Rx via jumpers
+    MAX232 Pin 15 aka GND - Connect directly to GND
+    MAX232 Pin 16 aka VCC - Connect directly Arduino +5v output.
+    MAX232 Pin 16 aka VCC - Also connect to 0.1uf ceramic capacitor which
+                            then connects to GND. (Pin 16 is two connections,
+                            one to Arduino +5v and then also to the smoothing
+                            capacitor which bridges across 5v and GND. Place
+                            this cap as close to pin 16 as possible.)
 
 Empeg tuner connector is used to supply power to the Pololu step-down
 transformer power supply, and from there, on to the rest of the assembly. Blue
@@ -1172,7 +1149,6 @@ times, one for each of the I2S connections):
                             +--------------WT32i PCM_CLK
 
 
-------------------------------------------------------------------------------
 Resources
 ------------------------------------------------------------------------------
 Purchase:
@@ -1207,6 +1183,7 @@ MAX232 circuit for Arduino: https://www.avrprogrammers.com/articles/max232-ardui
 TI MAX232E datasheet:       http://www.ti.com/lit/ds/symlink/max232e.pdf
 BlueGiga Forum:             https://www.silabs.com/community/wireless/bluetooth
 Empeg BBS thread:           http://empegbbs.com/ubbthreads.php/topics/370217
+GitHub Markdown:            https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet
 
 Upgrade firmware on the WT32i:
 Firmware Update Guide:      https://www.silabs.com/documents/login/user-guides/UG216.pdf
