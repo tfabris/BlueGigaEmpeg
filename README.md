@@ -108,10 +108,11 @@ May be needed later if debugging the WT32i chip directly:
 
 ###  Important:
 
-Do not connect the BlueGigaEmpeg module to the Empeg until after the I2S
-wiring modification has been completed. Also, once the wiring modification
-has been completed, do not connect the Empeg to any tuner module. Damage may
-occur if these instructions are not followed.
+Do not connect the BlueGigaEmpeg module to the Empeg until after completing
+the step in this document titled "Modify Empeg Car interior for I2S digital
+audio connection". Also, once the I2S modification has been completed, do
+not connect the Empeg to any tuner module. Damage may occur if these
+instructions are not followed.
 
 You must already be comfortable with safely dismantling and repairing your
 empeg Car in order to safely make this modification. I take no responsibility
@@ -124,11 +125,12 @@ Empeg Car interior for I2S digital audio connection".
 
 Modify your Arduino compiler for larger buffer size
 ------------------------------------------------------------------------------
-To update to the latest BlueGigaEmpeg software, you must increase the size of
-the serial port buffers in the Arduino compiler, otherwise there will be
-intermittent errors such as the track titles will sometimes not work. The
-symptom will be that you switch songs on the empeg, and the track title on the
-car stereo screen does not correctly change to the new song title every time.
+To update to the latest BlueGigaEmpeg firmware on the Arduino, you must
+increase the size of the serial port buffers in the Arduino compiler,
+otherwise there will be intermittent errors such as the track titles will
+sometimes not work. The symptom will be that you switch songs on the empeg,
+and the track title on the car stereo screen does not correctly change to the
+new song title every time.
 
 To fix the issue, you must edit one of the header files in the Arduino
 compiler libraries, and then you must compile and upload your sketch from your
