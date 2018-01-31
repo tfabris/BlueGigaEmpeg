@@ -73,7 +73,7 @@ step in this checklist. Each step is detailed in its own section, below.
 - [Modify your Arduino compiler for larger buffer size](#modify-your-arduino-compiler-for-larger-buffer-size)
 - [Compile and upload the latest version of BlueGigaEmpeg.ino to the Arduino](#compile-and-upload-the-latest-version-of-bluegigaempegino-to-the-arduino)
 - [Disconnect all tuner modules from all sleds you own](#disconnect-all-tuner-modules-from-all-sleds-you-own)
-- [Modify Empeg Car interior for I2S digital audio connection](#modify-empeg-car-interior-for-i2s-digital-audio-connection)
+- [Modify empeg Car interior for I2S digital audio connection](#modify-empeg-car-interior-for-i2s-digital-audio-connection)
 - [Empeg Car configuration changes](#empeg-car-configuration-changes)
 - [Upgrade the empeg Car's Hijack kernel and set "Serial Port Assignment"](#upgrade-the-empeg-cars-hijack-kernel-and-set-serial-port-assignment)
 - [Connect external hardware connections](#connect-external-hardware-connections)
@@ -239,7 +239,7 @@ modifications have been completed. Those modifications are described in the
 next step, below.
 
 
-Modify Empeg Car interior for I2S digital audio connection
+Modify empeg Car interior for I2S digital audio connection
 ------------------------------------------------------------------------------
 To perform this step, you must be comfortable with disassembling the empeg Car
 player and removing the disk drive tray in such a way as to not cause damage
