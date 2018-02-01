@@ -1152,7 +1152,7 @@ are described elsewhere in this document.
 
 Resources
 ==============================================================================
-``
+```
 Purchase:
 Empeg Car player:           http://empegbbs.com/ubbthreads.php/forums/11/1/For_Sale
 Arduino MEGA 2560 R3 Board: https://www.amazon.com/gp/product/B01H4ZLZLQ       
@@ -1217,4 +1217,4 @@ Fem. conn. headers  22x1 Qty:2 https://www.digikey.com/product-detail/en/3m/9298
 10k ohm resistors:       Qty:9 https://www.amazon.com/gp/product/B0185FIOTA/ref=oh_aui_detailpage_o02_s00
 100 ohm resistor:              https://www.digikey.com/product-detail/en/stackpole-electronics-inc/CF18JT100R/CF18JT100RCT-ND/2022718
 Jumper Wires:            Qty:3 (lying around)
-``
+```
