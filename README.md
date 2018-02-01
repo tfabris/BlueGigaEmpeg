@@ -1,6 +1,7 @@
 BlueGigaEmpeg
 ==============================================================================
 by Tony Fabris
+
 https://github.com/tfabris/BlueGigaEmpeg
 
 A project to use a Silicon Labs BlueGiga WT32i Bluetooth chip, combined with
