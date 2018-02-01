@@ -90,21 +90,18 @@ Prerequisites
 Make sure you have all of these things before working with the BlueGigaEmpeg:
 
 Purchase:
-
-    Empeg Mk2 or Rio Car player   http://empegbbs.com/ubbthreads.php/forums/11/1/For_Sale
-    BlueGigaEmpeg Interface       tfabris@gmail.com
+ - Empeg Mk2 or Rio Car player   http://empegbbs.com/ubbthreads.php/forums/11/1/For_Sale
+ - BlueGigaEmpeg Interface       tfabris@gmail.com
 
 Download software (Windows PC or Windows VM required for some of these items):
-
-    Hijack Kernel for empeg       http://empeg-hijack.sourceforge.net
-    Tony's Empeg Logo Editor      http://empegbbs.com/ubbthreads.php/ubb/download/Number/7067/filename/logoedit17.zip
-    Arduino standalone IDE        https://www.arduino.cc/en/Main/Software
-    BlueGigaEmpeg sketch          https://github.com/tfabris/BlueGigaEmpeg
+ - Hijack Kernel for empeg       http://empeg-hijack.sourceforge.net
+ - Tony's Empeg Logo Editor      http://empegbbs.com/ubbthreads.php/ubb/download/Number/7067/filename/logoedit17.zip
+ - Arduino standalone IDE        https://www.arduino.cc/en/Main/Software
+ - BlueGigaEmpeg sketch          https://github.com/tfabris/BlueGigaEmpeg
 
 May be needed later if debugging the WT32i chip directly:
-
-    Windows FTDI USB driver       http://www.ftdichip.com/FTDrivers.htm
-    WT32i Firmware Upgrade        https://www.silabs.com/documents/login/software/iWRAP-Firmware-Releases.zip
+ - Windows FTDI USB driver       http://www.ftdichip.com/FTDrivers.htm
+ - WT32i Firmware Upgrade        https://www.silabs.com/documents/login/software/iWRAP-Firmware-Releases.zip
 
 ###  Important:
 
