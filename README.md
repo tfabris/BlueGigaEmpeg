@@ -992,7 +992,8 @@ Steps:
    information for your WT32i chip.
 
  - Select the options to upgrade your chip with the most recent WT32i file
-   among the unzipped files. The full path is:
+   among the unzipped files. Do this by pressing the "Browse" button on the
+   "Select DFU file" field and browsing to the correct ".dfu" file found here:
    
        iWRAP_Firmware_Releases
          Firmware
@@ -1006,10 +1007,12 @@ Steps:
    SerialDFU.exe utility which says "Factory Restore All". Make sure to CHECK
    that checkbox when doing the firmware upgrade.
 
- - Make sure the upgrade completes successfully.
+ - Make sure the upgrade completes successfully. Note that you might need to
+   press the reset button or change the position of the power switch on the
+   board to succeed.
 
- - Unplug the USB cable from the board and computer, and close the upgrade
-   software.
+ - After the upgrade is successful, unplug the USB cable from the board and
+   computer, and close the Serial DFU Tool software.
 
  - Make sure to cut JP4 and remove the 470uf capacitor as described in the
    next step.
