@@ -4,11 +4,11 @@
 // by Tony Fabris
 // --------------------------------------------------------------------------
 
-// A project to use a Silicon Labs BlueGiga WT32i bluetooth chip, combined
+// A project to use a Silicon Labs BlueGiga WT32i Bluetooth chip, combined
 // with an Arduino Mega board with an added RS232 port, to act as an
 // intermediary between the empeg Car stereo and a modern car.
 //
-// Please refer to the accompanying README.txt file for details about the
+// Please refer to the accompanying README file for details about the
 // electronics interface, and how to modify and configure your empeg Car to
 // work with this code.
 
@@ -16,7 +16,7 @@
 // Global variables and definitions
 // ------------------------------------
 
-// String to control the type of bluetooth authentication that you want to
+// String to control the type of Bluetooth authentication that you want to
 // use.
 //
 // Uncomment this line for "just works" pairing with no PIN code, with a
@@ -44,24 +44,24 @@ boolean digitalAudio = true;
 
 // Debugging tool for the part of the code that sends commands to the empeg.
 // Normally, typing commands into the Arduino debug console will send those
-// same characters to the bluetooth chip, so that you can try out commands on
-// the bluetooth chip. The "EmpegSendCommandDebug" flag, below, expands on
+// same characters to the Bluetooth chip, so that you can try out commands on
+// the Bluetooth chip. The "EmpegSendCommandDebug" flag, below, expands on
 // this when the flag is enabled (set to "true") in the following way: When in
 // this mode, typing any of the empeg command characters (N P C W) into the
 // Arduino debug console will trigger the code to send that command to the
-// empeg. Since all of your typing gets sent to the bluetooth chip, as well,
+// empeg. Since all of your typing gets sent to the Bluetooth chip, as well,
 // it's possible that typing one of these empeg commands by itself will cause
-// "SYNTAX ERROR" to be echoed back by the bluetooth chip. That's OK, no
+// "SYNTAX ERROR" to be echoed back by the Bluetooth chip. That's OK, no
 // worries, you probably didn't hurt it. This is only needed for software
 // development, not needed for final build runtime.
 //   Setting true:
 //    - Typing N, P, C, or W into the Arduino main serial port debug console,
 //      even if they are included as part of another command such as a command
-//      sent to the bluetooth, will result in the N, P, C, or W command being
-//      sent to the empeg (as well as being sent to the bluetooth chip).
+//      sent to the Bluetooth, will result in the N, P, C, or W command being
+//      sent to the empeg (as well as being sent to the Bluetooth chip).
 //   Setting false:
 //   - Commands typed in the Arduino main serial port debug console will go
-//     solely to the bluetooth chip and will not be echoed to the empeg.
+//     solely to the Bluetooth chip and will not be echoed to the empeg.
 // This should be set to false most of the time, and only set to true during
 // debugging sessions
 boolean EmpegSendCommandDebug=false;
@@ -69,6 +69,12 @@ boolean EmpegSendCommandDebug=false;
 // Special case debugging feature - If you type Z on the Arduino debugging
 // console, enter pairing mode as if you'd pressed the RESET/PAIR button on
 // the BlueGigaEmpeg assembly. Use with caution and enable at your own risk.
+//   Setting true:
+//    - Typing Z into the Arduino main serial port debug console will
+//      initiate pairing mode on the BlueGigaEmpeg module, the same as if
+//      you had pressed the RESET/PAIR button on the module.
+//   Setting false:
+//    - Typing Z will not do anything special.
 boolean TypeZtoPair=false;
 
 // Choose whether or not to display the empeg Serial Port outputs (for
@@ -77,8 +83,8 @@ boolean TypeZtoPair=false;
 //   Setting true:
 //   - Characters received from the empeg Car serial cable are displayed
 //     on the Arduino main serial port debugging console terminal screen.
-//     It is mixed in with all the other serial output from the bluetooth
-//     chip all at the same time, so it might be messy if the bluetooth
+//     It is mixed in with all the other serial output from the Bluetooth
+//     chip all at the same time, so it might be messy if the Bluetooth
 //     chip and the empeg are saying things at the same time.
 //   Setting false:
 //   - No echoing of the empeg Car serial cable output occurs on the debug
@@ -89,9 +95,9 @@ boolean TypeZtoPair=false;
 // on the serial port when it is not needed.
 boolean displayEmpegSerial=false;
 
-// Variable to control whether output from the empeg and bluetooth serial
+// Variable to control whether output from the empeg and Bluetooth serial
 // ports are logged to the debug console character-by-character or line-by-
-// line. Here's the tradeoff: If you log character-by-character you have a
+// line. Here's the trade-off: If you log character-by-character you have a
 // clearer picture of exactly when various messages were received from each of
 // those devices in relation to each other, but the debug console gets hard to
 // read. For instance, if logging character-by-character, the output will look
@@ -108,10 +114,10 @@ boolean displayEmpegSerial=false;
 // his transmission last so he gets logged last. This usually isn't a big
 // deal. Usage:
 //    Setting true:
-//      - Output from the empeg and the bluetooth are logged a line
+//      - Output from the empeg and the Bluetooth are logged a line
 //        at a time, for additional readability, but order may be wrong.
 //    Setting false:
-//      - Output from the empeg and the bluetooth are logged a character
+//      - Output from the empeg and the Bluetooth are logged a character
 //        at a time, which is less readable but slightly better timing.
 // Special note: This isn't fully implemented for every single possible line
 // of output on the debug port. There are still a couple places in the code
@@ -170,21 +176,24 @@ const String codecString="SET CONTROL CODEC SBC JOINT_STEREO 44100 0\r\n        
 // String to tell the unit to automatically try reconnecting every few seconds
 // when and if it ever becomes disconnected from its main pairing buddy.
 // Trying to make it grab hold of the car stereo as soon as the car turns on,
-// instead of connecting to my cellphone every time. Tried two possible
+// instead of connecting to my cellphone every time. Tried multiple possible
 // versions of this, only one of which produced decent results.
 //
 // Version 1: "SET CONTROL RECONNECT". 
 //
-// The string may include a baked-in second additional STORECONFIG command to
+// The string may, in some cases, include a baked-in second additional
+// STORECONFIG command in some cases. If the command is preset, it is there to
 // store the configuration of the connection. The docs say that this
 // STORECONFIG command is merely to store the reconnect functionality but it's
 // not made clear if it stores all configuration information or just that one.
+// There are also some other places in the docs which say that the STORECONFIG
+// might not be needed depending on the bitmask value of the third parameter.
 //
 // First parameter is retry interval in milliseconds. The docs say that the
 // reconnect timer should be longer than 500ms.
 //
-// Second and third parameters (0 0) are max attempts and total timeout, which
-// are set to zero to indicate infinite retry.
+// Second and third parameters are max attempts and total timeout, which are
+// set to zero to indicate infinite retry.
 //
 // Third parameter is a 16 bit bitmask. See section 6.89 in the "iWRAP 6.1.1
 // USER GUIDE AND API REFERENCE" document for details. It must be typed in as
@@ -238,19 +247,23 @@ const String autoReconnectString = "SET CONTROL RECONNECT 2888 0 0 1f 19 A2DP";
 // reconnect interval repros the Bad PDU registration issue frequently:
 //    const String autoReconnectString = "SET CONTROL RECONNECT 800 0 0 7 0 A2DP A2DP AVRCP\r\n            STORECONFIG";
 //
-// Version 2: "SET CONTROL AUTOCALL". This seems to work well, when it works.
-// But some of its other issues are not livable. For example sometimes it does
-// a good job of reconnecting after power on, but then other times it
+// Version 2: "SET CONTROL AUTOCALL".
+//
+// Abandoned version of reconnect feature. This seems to work well, when it
+// works. But some of its other issues are not livable. For example sometimes
+// it does a good job of reconnecting after power on, but then other times it
 // completely fails to even attempt any kind of reconnection whatsoever after
 // power on. Without rhyme or reason.  Note: "19" is the secret code for
 // "A2DP" (it is the "L2CAP PSM" code for A2DP).
 //     const String autoReconnectString = "SET CONTROL AUTOCALL 19 501 A2DP";
 //
-// Version 3: Monkey reconnect. A reconnect by my monkey code instead of the
-// built-in reconnect. This is my own personal reconnect feature which
-// reconnects just by looping in my code. This was a failed attempt to fix
-// issue #60. Keeping the code here, disabled, for posterity, but do not
-// enable this feature, it causes more problems than it solves.
+// Version 3: Monkey reconnect.
+//
+// Abandoned version of reconnect feature. A reconnect by my monkey code
+// instead of the built-in reconnect. This is my own personal reconnect
+// feature which reconnects just by looping in my code. This was a failed
+// attempt to fix issue #60. Keeping the code here, disabled, for posterity,
+// but do not enable this feature, it causes more problems than it solves.
 const unsigned long monkeyReconnectInterval = 3600L;
 boolean monkeyReconnectEnabled = false;
 
@@ -274,18 +287,18 @@ boolean monkeyReconnectEnabled = false;
 //        from the empeg to the car stereo without any changes.
 boolean PerformUtf8Conversion = true;
 
-// Arduino serial port 2 is connected to Bluetooth chip
+// Arduino serial port 2 is connected to Bluetooth chip.
 #define BlueGigaSerial Serial2 
 
-// Arduino serial port 1 is connected to empeg's RS-232 port via MAX232
+// Arduino serial port 1 is connected to empeg's RS-232 port via MAX232.
 // circuit.
 #define EmpegSerial Serial1
 
 // Matrix of special case fix strings and their output timings. When a
-// bluetooth statement is received from the bluetooth module, this code will
-// respond back to the bluetooth module with the specified text. These are
+// Bluetooth statement is received from the Bluetooth module, this code will
+// respond back to the Bluetooth module with the specified text. These are
 // "plain" response strings without any detailed parsing, they are just
-// input->output pairs for answering certain pieces of text on the bluetooth
+// input->output pairs for answering certain pieces of text on the Bluetooth
 // module's serial port. There is other code elsewhere to handle input/output
 // that requires more detailed handling and parsing.
 int scFixMatrixSize = 9;
@@ -309,7 +322,7 @@ String scFixMessageMatrix[9][2] =
   // in here, commented out, to remind myself not to ever try to do this.
   //        { "AVRCP PAUSE PRESS",                  "A2DP STREAMING STOP"},
 
-  // Get Capbailities 2 is asking for manufacturer ID. According to the
+  // Get Capabilities 2 is asking for manufacturer ID. According to the
   // BlueGiga documentation the chip will fill in the response details for
   // manufacturer ID automatically if you give it a blank response. (By "blank
   // response" I mean, responding with "AVRCP RSP" with no further parameters
@@ -329,13 +342,13 @@ String scFixMessageMatrix[9][2] =
   // Labs which is 02FF or decimal 767. This neither hurts nor helps it seems.
   { "GET_CAPABILITIES 2",                 "AVRCP RSP 02FF"},
 
-  // Get Capabilities 3 is asking for which status notifications my bluetooth
+  // Get Capabilities 3 is asking for which status notifications my Bluetooth
   // chip wants to receive. In this case track/status changes (codes 1 and 2,
   // those codes were obtained from the BlueGiga documentation).
   { "GET_CAPABILITIES 3",                 "AVRCP RSP 1 2"},
 
   // "LIST_APPLICATION_SETTING_ATTRIBUTES" is how the host stereo queries the
-  // bluetooth module to find out if your device supports things like turning
+  // Bluetooth module to find out if your device supports things like turning
   // on the EQ, turning shuffle on and off, and turning repeat on and off. This
   // is the generalized query to find out what attributes are supported by your
   // playback device at all, it is not asking for individual setting values.
@@ -345,7 +358,7 @@ String scFixMessageMatrix[9][2] =
   { "LIST_APPLICATION_SETTING_ATTRIBUTES",  "AVRCP RSP 3"},
 
   // "LIST_APPLICATION_SETTING_VALUES" is the way that the host stereo queries
-  // your bluetooth module for the range of supported indvidual setting values
+  // your Bluetooth module for the range of supported individual setting values
   // for a given settings group. Not generally whether a particular settings
   // group is supported at all, but rather, looking for the list of possible
   // setting values of of this particular thing it's querying. In this case,
@@ -353,12 +366,12 @@ String scFixMessageMatrix[9][2] =
   // since in the original query above, we have responded only with saying that
   // shuffle ("3") is available. So we respond with "1 2" indicating that the
   // setting for "shuffle" can have two possible values: 1 for "off" and 2 for
-  // "all tracks". Note: Cannot add "Repeat" in here because the emepg car serial
+  // "all tracks". Note: Cannot add "Repeat" in here because the empeg car serial
   // command set does not contain a command for "Repeat".
   { "LIST_APPLICATION_SETTING_VALUES",      "AVRCP RSP 1 2"},
 
   // "GET_APPLICATION_SETTING_VALUE" is the way that the host stereo queries your
-  // bluetooth module for the current state of the setting. For instance, it is
+  // Bluetooth module for the current state of the setting. For instance, it is
   // asking whether Shuffle is currently on or off. The host stereo is not expected
   // to ask for anything but the shuffle value, since in the original query above,
   // we have responded only with saying that shuffle ("3") is available. So we
@@ -371,7 +384,7 @@ String scFixMessageMatrix[9][2] =
   // at this point. It turns out that this blind response works well on the one
   // host headunit that I've got to test it against (Vixy and Fishy's Kenwood).
   // Pressing the  shuffle button on their stereo works fine and toggles shuffle.
-  // Note: Cannot add "Repeat" in here because the emepg car serial command set
+  // Note: Cannot add "Repeat" in here because the empeg car serial command set
   // does not contain a command for "Repeat".
   { "GET_APPLICATION_SETTING_VALUE",      "AVRCP RSP 1"},
 
@@ -397,13 +410,13 @@ String scFixMessageMatrix[9][2] =
   // { "CONNECT 3 A2DP 19",                   "A2DP STREAMING START"},
 };
 
-// Variable to control whether or not we reconnect the bluetooth module
+// Variable to control whether or not we reconnect the Bluetooth module
 // whenever we see a bad PDU_REGISTER_NOTIFICATION message. Ideally we want to
 // reject any attempts to register any notifications that we won't be able to
 // respond to. The host stereo should never ask us for anything other than
 // messages 1 and 2 (TRACK_CHANGED and PLAYBACK_STATUS_CHANGED) but my Honda
 // sometimes asks for messages 3 and above when it shouldn't be. In those
-// cases, a disco/reco of the bluetooth module fixes the problem. This flag
+// cases, a disco/reco of the Bluetooth module fixes the problem. This flag
 // controls whether or not that disco/reco occurs. It's here to protect
 // against a possible infinite reboot loop which might occur on someone else's
 // stereo. Though if this trigger is hit at all, it means they've got bigger
@@ -430,10 +443,10 @@ static String transactionLabelTrackChanged = "";
 // currently on, for example, the LIST command might look like:
 //
 // list
-// 0001758 LIST 3
-// 0000047 LIST 0 CONNECTED A2DP 672 0 0 374 0 0 ...
-// 0000039 LIST 1 CONNECTED A2DP 672 0 0 374 0 0 ...
-// 0000038 LIST 2 CONNECTED AVRCP 672 0 0 1 0 0  ...
+// LIST 3
+// LIST 0 CONNECTED A2DP 672 0 0 374 0 0 ...
+// LIST 1 CONNECTED A2DP 672 0 0 374 0 0 ...
+// LIST 2 CONNECTED AVRCP 672 0 0 1 0 0  ...
 //
 // The numbers after the word LIST are the channel that each of those things
 // is set to run upon. Mostly I don't care or need to know those but there is
@@ -442,9 +455,9 @@ static String transactionLabelTrackChanged = "";
 static String avrcpChannel = "";
 
 // Matrix of messages and responses which are needed when in special pairing
-// mode. These also include some special casing for the bluetooth device
+// mode. These also include some special casing for the Bluetooth device
 // address. The "{0}" in these strings are a special cased token indicating
-// that we should insert the bluetooth device address into that location of
+// that we should insert the Bluetooth device address into that location of
 // the response string. The "{0}" is also defined in another variable below.
 // NOTE: Update the matrix size and the array size both, if you are changing
 // these.
@@ -486,15 +499,15 @@ String pmMessageMatrix[5][2] =
 // string).
 const String tokenSubstitutionString = "{0}";
 
-// "Get Bluetooth Address" strings (GBA). Set of strings which are the trigger
-// phrases to be used for identifying strings from the bluetooth module that can
-// be used for getting the address of our main pairing buddy at any generic time
-// as opposed to just during the pairing process. This allows us to figure out
-// who our pairing buddy is even when they are the ones initiating the connection
-// as opposed to us inititaiting it during the pairing process. This complexity
-// is needed because ForceQuickReconnect needs to know who our current pairing
-// buddy is all the time as opposed to just when we recently pressed the pair
-// button.
+// Get Bluetooth Address strings aka GBA. Set of strings which are the trigger
+// phrases to be used for identifying strings from the Bluetooth module that
+// can be used for getting the address of our main pairing buddy at any
+// generic time as opposed to just during the pairing process. This allows us
+// to figure out who our pairing buddy is even when they are the ones
+// initiating the connection as opposed to us initiating it during the pairing
+// process. This complexity is needed because ForceQuickReconnect needs to
+// know who our current pairing buddy is all the time as opposed to just when
+// we recently pressed the pair button.
 int gbaMatrixSize=2;
 String gbaMessageMatrix[2] =
 {
@@ -508,15 +521,15 @@ String gbaMessageMatrix[2] =
 // seconds).
 int pairTimeMilliseconds = 30000;
 
-// String to send to the bluetooth chip when we begin pairing mode by pressing
-// the reset/pair button on this electronic assembly. This is just a command
-// to scan the air for other bluetooth devices for xx seconds (number should
+// String to send to the Bluetooth chip when we begin pairing mode by pressing
+// the RESET/PAIR button on this electronic assembly. This is just a command
+// to scan the air for other Bluetooth devices for xx seconds (number should
 // match milliseconds above). Then the program code below will listen for
 // responses to this device inquiry and will respond appropriately in the
-// appropriate pairing section of the code. The reset/pair LED will be lit up
+// appropriate pairing section of the code. The RESET/PAIR LED will be lit up
 // blue during this time. NOTE: This pairing feature has only been useful to
 // me for pairing up with devices which do NOT have a user interface. For
-// example, I have to use this pairing feature with a bluetooth headset. But
+// example, I have to use this pairing feature with a Bluetooth headset. But
 // on my car stereo, (which has a detailed touchscreen user interface for
 // pairing) I can't actually pair with the device when I'm in this pairing
 // mode. I have to wait until this is done (or don't trigger it at all to
@@ -526,21 +539,21 @@ const String pairBeginString = "INQUIRY 30";
 
 // String that I am using to detect that the pairing process has completed and
 // to stop responding to pairing-related messages coming on the serial port
-// from the bluetooth chip. And to turn off the blue pair/reset LED.
+// from the Bluetooth chip. And to turn off the blue pair/reset LED.
 const String pairDetectionString = "AUDIO ROUTE ";
 
 // Global string which will be used for storing special values from parsed
-// responses (most likely bluetooth device addresses from the pmMessageMatrix
+// responses (most likely Bluetooth device addresses from the pmMessageMatrix
 // above) which will then be saved in this global variable and then re-used
-// elsewhere, for example, receiving the inquiry bluetooth address and then
-// sending the Pair command back with the bluetooth address in the response.
+// elsewhere, for example, receiving the inquiry Bluetooth address and then
+// sending the Pair command back with the Bluetooth address in the response.
 // The address will be saved in this string.
 static String pairAddressString = "";
 int pairAddressStringMaxLength = 25;
 
 // The translation table of AVRCP messages to empeg serial commands. This is
 // the commands that we must send to the empeg serial port if certain messages
-// come in from the bluetooth module.
+// come in from the Bluetooth module.
 // NOTE: Update the matrix size and the array size both, if you are changing
 // these.
 int empegCommandMatrixSize = 14;
@@ -582,16 +595,16 @@ bool connected = false;
 
 // Global variables to hold the track metadata information for the currently-
 // playing track on the empeg Car, so that they can be in the responses to the
-// queries from the host stereo to the bluetooth chip. The numbers in the
+// queries from the host stereo to the Bluetooth chip. The numbers in the
 // variable names (for example the "01" in "trackTitelString01" is a reminder
-// to myself of which element attribute code in the bluetooths spec reprsents
-// which metadata. For instance attribute code "1" is "Track Title", atrribute
+// to myself of which element attribute code in the Bluetooth spec represents
+// which metadata. For instance attribute code "1" is "Track Title", attribute
 // code "2" is "Artist", etc. Note that these are all strings because the docs
 // and specification say that they must be sent up the stream as strings
 // specifically. Depending on which response that you're responding to,
 // sometimes some of these strings must be quote-enclosed. Documentation says
 // that the maximum length for each one is 255 bytes. I'll use two string
-// length limiters to save memory on the arduino: A long one for the track
+// length limiters to save memory on the Arduino: A long one for the track
 // metadata strings, and a short one for things like track number and playback
 // position. Thing is... This is taking up too much memory and the input
 // strings need to be shorter. Current status: Shortened metadata max length
@@ -624,18 +637,20 @@ static String priorPlaybackPositionString07 = "00";
 
 // Strings to control the audio routing on the chip. Choose which string to
 // use by setting the boolean variable "digitalAudio" in the code above. This
-// string is used if you are using the Line In jacks on the bluetooth device
+// string is used if you are using the Line In jacks on the Bluetooth device
 // for audio (analog), aka "digitalAudio = false".
 const String analogAudioRoutingControlString = "SET CONTROL AUDIO INTERNAL INTERNAL EVENT KEEPALIVE";  
 
 // This string is used if you are using the I2S aka IIS connection on the
-// bluetooth device (this is a special digital connection which requires
+// Bluetooth device (this is a special digital connection which requires
 // modifying inside of empeg Car player) aka "digitalAudio = true".
+// The "16" means "16 bits in master mode". It might not be needed (docs
+// are not clear on this point).
 const String digitalAudioRoutingControlString = "SET CONTROL AUDIO INTERNAL I2S_SLAVE EVENT KEEPALIVE 16";
 
 // Strings to set the gain level of the empeg, but only when BlueGigaEmpeg is
 // configured for analog audio. Normally it's not used; BlueGigaEmpeg runs on
-// digital audio so this gain setting usually does nothing. See bluetooth chip
+// digital audio so this gain setting usually does nothing. See Bluetooth chip
 // docs for gain level table. Uncomment this line if your player will be used
 // in AC/Home mode, (1v outputs):
 //     const String empegGainSettingString = "SET CONTROL GAIN E 0";
@@ -643,8 +658,8 @@ const String digitalAudioRoutingControlString = "SET CONTROL AUDIO INTERNAL I2S_
 // a sled (4v outputs):
 const String empegGainSettingString = "SET CONTROL GAIN 9 0";
 
-// Strings to hold an incoming line of serial characters from bluetooth module
-// or empeg. Will be reset each time an entire message from the bluetooth
+// Strings to hold an incoming line of serial characters from Bluetooth module
+// or empeg. Will be reset each time an entire message from the Bluetooth
 // module or empeg is processed.
 static String btInputString = "";
 int btInputStringMaxLength = 275;
@@ -657,20 +672,20 @@ int empegInputStringMaxLength = 275;
 int btSwallowInputStringMaxLength = 150;
 
 // Global variables used in main "Loop" function to detect when an entire
-// complete message string has been received from the bluetooth module or
+// complete message string has been received from the Bluetooth module or
 // empeg. Will be set to true when a line termination character is received
 // indicating that the string is complete.
 boolean btStringComplete = false;
 boolean empegStringComplete = false;
 
 // Variable to keep track of what the current empeg Playing state is reported
-// to be. This is used when responding to the bluetooth module's queries for
+// to be. This is used when responding to the Bluetooth module's queries for
 // playback state. The empeg is always either playing or paused, so this is
 // either true or false.
 boolean empegIsPlaying = false; 
 
 // Variable to keep track of what the last playing state we sent up to the
-// bluetooth was, so that if it hasn't changed then we don't need to waste the
+// Bluetooth was, so that if it hasn't changed then we don't need to waste the
 // serial bandwidth to send it information that it already knows. "0" is the
 // original startup state so that it knows whether it's sent something at all
 // to begin with. At runtime after having sent one of the states up the
@@ -707,14 +722,14 @@ boolean empegFirstTimestampSinceBootup = true;
 
 // Variables for the state of the "Reset/Pair" button that I am implementing
 // on this assembly. The button, when pressed, will clear out the module's
-// bluetooth pairings, do a factory reset, and then do a pairing process where
+// Bluetooth pairings, do a factory reset, and then do a pairing process where
 // it attempts to pair with the first device that it sees. Note: For pairing
 // with a car stereo with a touchscreen, this button is not be needed and in
 // fact might interfere with the process. For some car stereos, the correct
 // pairing process will be to NOT touch this button and instead do everything
 // from the car stereo's touchscreen interface. Use this button for resetting
 // the module and for pairing with things that don't have user interfaces,
-// such as bluetooth headsets.
+// such as Bluetooth headsets.
 const int pairButtonPin = 52;
 const unsigned long pairButtonDebounceTimeMs = 50;
 unsigned long pairButtonLastPressedMs = 0;
@@ -735,7 +750,7 @@ bool forceQuickReconnectMode = false;
 bool bounceAvrcpMode = false;
 
 // Variable to globally keep track of whether we are in the middle of a fast
-// forward or rewind operation that was initiated from the bluetooth. This is
+// forward or rewind operation that was initiated from the Bluetooth. This is
 // part of the fix to issue #32, "Fast forward can run away from you and get
 // stuck."
 bool blueToothFastForward = false;
@@ -825,10 +840,11 @@ void setup()
   // Set the data rate for the serial port connected to the empeg Car's serial
   // port, via the RS-232 and MAX232 circuit connected to the Arduino. The
   // empeg Car defaults to 115200 BPS in home/AC mode, and has configurable
-  // BPS when sled-docked in car/DC mode. Refer to the accompanying README.txt
-  // for more details about the RS-232 connection to the empeg. Note that you
-  // will experience problems controlling the empeg if it is set to anything
-  // other than 115200 in car mode, so make sure you have done that step.
+  // BPS when sled-docked in car/DC mode. Refer to the accompanying README
+  // file for more details about the RS-232 connection to the empeg. Note that
+  // you will experience problems controlling the empeg if it is set to
+  // anything other than 115200 in car mode, so make sure you have done that
+  // step.
   EmpegSerial.begin(115200);
   Log(F("Empeg Serial has been started."));
 
@@ -964,7 +980,7 @@ void verifySerialBuffer()
     Log(F(" "));
     Log(F("  Increase SERIAL_RX_BUFFER_SIZE to 256 and SERIAL_TX_BUFFER_SIZE to 128,     "));
     Log(F("  recompile, and reupload your sketch to the Arduino module.                  "));
-    Log(F("  Please refer to the README.txt file accompanying this sketch for details.   "));
+    Log(F("  Please refer to the README file accompanying this sketch for details.       "));
     Log(F(" "));
     Log(F("------------------------------------------------------------------------------"));
   }
