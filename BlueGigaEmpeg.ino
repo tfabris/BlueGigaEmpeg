@@ -64,7 +64,7 @@ boolean digitalAudio = true;
 //     solely to the Bluetooth chip and will not be echoed to the empeg.
 // This should be set to false most of the time, and only set to true during
 // debugging sessions
-boolean EmpegSendCommandDebug=true;
+boolean EmpegSendCommandDebug=false;
 
 // Special case debugging feature - If you type Z on the Arduino debugging
 // console, enter pairing mode as if you'd pressed the RESET/PAIR button on
@@ -75,7 +75,7 @@ boolean EmpegSendCommandDebug=true;
 //      you had pressed the RESET/PAIR button on the module.
 //   Setting false:
 //    - Typing Z will not do anything special.
-boolean TypeZtoPair=true;
+boolean TypeZtoPair=false;
 
 // Choose whether or not to display the empeg Serial Port outputs (for
 // instance the empeg boot up messages) on the serial debug console of the
@@ -148,7 +148,7 @@ boolean outputMillis=true;
 // This should be set to false most of the time, and only set to true during
 // debugging sessions, since it slows down processing to put out too much
 // data on the serial port when it is not needed.
-boolean displayTracksOnSerial=true;
+boolean displayTracksOnSerial=false;
 
 // Strings to define which codecs to use for A2DP audio transmission. To
 // remove a codec from the capability list, use its command with no
