@@ -64,7 +64,7 @@ boolean digitalAudio = true;
 //     solely to the Bluetooth chip and will not be echoed to the empeg.
 // This should be set to false most of the time, and only set to true during
 // debugging sessions
-boolean EmpegSendCommandDebug=false;
+boolean EmpegSendCommandDebug=true;
 
 // Special case debugging feature - If you type Z on the Arduino debugging
 // console, enter pairing mode as if you'd pressed the RESET/PAIR button on
@@ -75,7 +75,7 @@ boolean EmpegSendCommandDebug=false;
 //      you had pressed the RESET/PAIR button on the module.
 //   Setting false:
 //    - Typing Z will not do anything special.
-boolean TypeZtoPair=false;
+boolean TypeZtoPair=true;
 
 // Choose whether or not to display the empeg Serial Port outputs (for
 // instance the empeg boot up messages) on the serial debug console of the
@@ -148,7 +148,7 @@ boolean outputMillis=true;
 // This should be set to false most of the time, and only set to true during
 // debugging sessions, since it slows down processing to put out too much
 // data on the serial port when it is not needed.
-boolean displayTracksOnSerial=false;
+boolean displayTracksOnSerial=true;
 
 // Strings to define which codecs to use for A2DP audio transmission. To
 // remove a codec from the capability list, use its command with no
@@ -556,8 +556,8 @@ int pairAddressStringMaxLength = 25;
 // come in from the Bluetooth module.
 // NOTE: Update the matrix size and the array size both, if you are changing
 // these.
-int empegCommandMatrixSize = 14;
-String empegCommandMessageMatrix[14][2] =
+int empegCommandMatrixSize = 16;
+String empegCommandMessageMatrix[16][2] =
 {
   // Bluetooth Module reports     // Send command to empeg
   { "AVRCP PLAY PRESS",           "C"},
@@ -573,6 +573,8 @@ String empegCommandMessageMatrix[14][2] =
   { "AVRCP FAST_FORWARD RELEASE", "A"},  
   { "AVRCP REWIND PRESS",         "B"},  
   { "AVRCP REWIND RELEASE",       "A"},
+  { "Debug Value Vol Up",         "+"},  // In this list only for console debugging of Vol up
+  { "Debug Value Vol Dn",         "-"},  // In this list only for console debugging of Vol dn
 
   // Special case here for "Shuffle". Shuffle is is considered a "setting" in
   // the Bluetooth specification, meaning that the head unit queries for what
