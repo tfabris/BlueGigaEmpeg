@@ -9,10 +9,10 @@ an Arduino Mega board, to act as an interface between an empeg Car Mk2/2a MP3
 player and a modern Bluetooth-equipped car.
 
 ------------------------------------------------------------------------------
-The empeg Car (small "e") player, also sold as the Rio Car, is an amazing in-
-dash MP3 player made from 1999-2001 whose features are still, nearly 20 years
-later, better than any other in-car MP3 solution available. However, the empeg
-Car didn't have Bluetooth since it wasn't in common use yet at the time.
+The empeg Car (small "e") player, also sold as the Rio Car, is an amazing
+in-dash MP3 player made from 1999-2001 whose features are still, nearly 20
+years later, better than any other in-car MP3 solution available. However, the
+empeg Car didn't have Bluetooth since it wasn't in common use yet at the time.
 
 The purpose of this BlueGigaEmpeg interface is twofold:
 
