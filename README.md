@@ -1173,6 +1173,7 @@ MAX232 circuit for Arduino: https://www.avrprogrammers.com/articles/max232-ardui
 TI MAX232E datasheet:       http://www.ti.com/lit/ds/symlink/max232e.pdf
 BlueGiga Forum:             https://www.silabs.com/community/wireless/bluetooth
 Empeg BBS thread:           http://empegbbs.com/ubbthreads.php/topics/370217
+Designing low noise PCBs:   http://www.ti.com/lit/an/szza009/szza009.pdf
 GitHub Markdown:            https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet
                             https://guides.github.com/features/mastering-markdown/
 
