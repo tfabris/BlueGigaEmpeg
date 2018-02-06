@@ -864,9 +864,6 @@ https://www.arduino.cc/en/Tutorial/Button
 BetzTechnik board JP4 FTDI UART Enable jumper is cut after applying firmware
 update.
 
-BetzTechnik board 470uF capacitor C16 desoldered and saved after applying
-firmware update.
-
 Bluetooth chip+board "5v" power pin NOT connected to anything.
 
 Bluetooth chip+board "3v3" or "VDD_IO" pin connected to the 3v output coming
@@ -929,11 +926,6 @@ Steps:
 
  - Make sure the Bluetooth breakout board is fully separated and disconnected
    from the BlueGigaEmpeg board.
-
- - Make sure that capacitor C16, 470uF, is soldered onto the BetzTechnik WT32i
-   Bluetooth board. It needs to be connected any time you do firmware updates.
-   It is soldered in place by default, and then we desolder it after upgrading
-   the firmware.
 
  - Make sure that jumper JP4 on the BetzTechnik WT32i Bluetooth board is
    connected. It comes connected by default, and then we cut it after
@@ -1014,8 +1006,7 @@ Steps:
  - After the upgrade is successful, unplug the USB cable from the board and
    computer, and close the Serial DFU Tool software.
 
- - Make sure to cut JP4 and remove the 470uf capacitor as described in the
-   next step.
+ - Make sure to cut JP4 as described in the next step.
 
 
 Set jumpers and switches, and modify Bluetooth board
@@ -1040,12 +1031,6 @@ be required to see this properly.
 IMPORTANT: Use extreme care when cutting JP4. Make sure not to peel up the
 pads. There are two traces running to the USB side of the JP4 pad and if you
 peel up the pad or the traces, your board will no longer work correctly.
-
-On the BetzTechnik board, carefully desolder the 470uF capacitor at C16, but
-only do this AFTER successfully updating the chip's firmware to the latest
-version. Remember the capacitor's direction, and save the capacitor for later,
-in case you need to do a firmware update later. Use extreme care when
-desoldering C16. Make sure not to peel up the pads.
 
 On the BetzTechnik board, set the "Smd_2_pole_switch" to the "down" position
 (looking at the board so that the board's silkscreen name is readable) which
