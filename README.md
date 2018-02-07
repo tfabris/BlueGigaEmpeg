@@ -221,9 +221,15 @@ Obtain the BlueGigaEmpeg Arduino sketch from GitHub, linked in the
 "Prerequisites" section of this document. Unzip it onto a folder named
 "BlueGigaEmpeg" on your computer's hard disk.
 
+Before connecting the USB cable between the computer and the Arduino, make
+sure that the empeg is either not connected to the BlueGigaEmpeg module or it
+is not powered up. In some conditions, the computer will not "see" the USB
+connection to the Arduino if you plug it into the computer when the Arduino is
+already receiving power from another power source.
+
 Connect the USB cable from the computer to the Arduino USB connector. This is
 the USB connector exposed on the end of the BlueGigaEmpeg enclosure. The
-correct USB cable was supplied with the BlueGigaEmpeg, it is an old style
+correct USB cable is supplied with the BlueGigaEmpeg, it is an old style
 A-to-B connector.
 
 Using the Arduino IDE, open the BlueGigaEmpeg.ino project and compile and
