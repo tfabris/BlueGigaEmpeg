@@ -69,7 +69,7 @@ Checklist
 Implementing this requires some manual labor. Make sure to go through each
 step in this checklist. Each step is detailed in its own section, below.
 
-- [Prerequisites]     (#prerequisites)
+- [Prerequisites                         ](#prerequisites)
 - [Modify your Arduino compiler for larger buffer size](#modify-your-arduino-compiler-for-larger-buffer-size)
 - [Compile and upload the latest version of BlueGigaEmpeg.ino to the Arduino](#compile-and-upload-the-latest-version-of-bluegigaempegino-to-the-arduino)
 - [Disconnect all tuner modules from all sleds you own](#disconnect-all-tuner-modules-from-all-sleds-you-own)
