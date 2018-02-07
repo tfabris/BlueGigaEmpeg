@@ -69,7 +69,7 @@ Checklist
 Implementing this requires some manual labor. Make sure to go through each
 step in this checklist. Each step is detailed in its own section, below.
 
-- [Prerequisites](#prerequisites)
+- [Prerequisites]     (#prerequisites)
 - [Modify your Arduino compiler for larger buffer size](#modify-your-arduino-compiler-for-larger-buffer-size)
 - [Compile and upload the latest version of BlueGigaEmpeg.ino to the Arduino](#compile-and-upload-the-latest-version-of-bluegigaempegino-to-the-arduino)
 - [Disconnect all tuner modules from all sleds you own](#disconnect-all-tuner-modules-from-all-sleds-you-own)
@@ -787,131 +787,10 @@ two command/response pairs are absolutely connected just because they appear
 next to each other on the debug console screen.
 
 
-Hardware interface information and notes (internal board connections)
+Technical data (developers only)
 ==============================================================================
-The BlueGigaEmpeg interface board implements everything described below. The
-information below is just for my personal reference and you should not need to
-do any of the connections below yourself, unless you are developing your own
-interface board.
-
-Arduino must be the "Mega" model with three hardware serial ports built in. I
-tried it with an "Uno" model using software serial ports, and it had problems
-where characters sometimes got dropped, and it could not keep up with the data
-rates that I wanted.
-
-###  Arduino and RS-232 port, critical connections:
-
-Arduino serial port 1 (Tx1/Rx1) connects to the empeg's RS-232 port, but it
-must go through an RS-232 converter circuit based on a MAX232 chip. This is
-necessary because you can't connect an actual RS-232 cable directly to an
-Arduino, the voltage and signaling are different. So it must go through the
-MAX232. The full schematic for this circuit is linked in the "Resources"
-section of this document, and the pinouts are also listed below.
-
-The RX/TX crossover configurations for the MAX232 and the RS-232 plug on the
-BlueGigaEmpeg can be confusing. The empeg Car sled serial port may or may not
-be already wired into a crossover configuration. I have seen both cases. There
-are jumpers on the BlueGigaEmpeg PCB to swap the RX/TX configuration to the
-serial port as needed.
-
-I am using a TI MAX232E for this implementation. The connections for the
-MAX232 are as follows:
-
-    MAX232 Pin 1 and 3 aka C1+/C1- - Bridge with a 2.2uf ceramic capacitor
-    MAX232 Pin 4 and 5 aka C2+/C2- - Bridge with a 2.2uf ceramic capacitor
-    MAX232 Pin 2 aka V+ - Connect to Arduino +5v via a 2.2uf ceramic capacitor
-    MAX232 Pin 6 aka V- - Connect to GND via a 2.2uf ceramic capacitor
-    MAX232 Pin 11 aka TTL-I1 - Connect to Arduino Mega Board 18 aka Tx1 
-    MAX232 Pin 12 aka TTL-O1 - Connect to Arduino Mega Board 19 axa Rx1
-    MAX232 Pin 13 aka 232-I1 - Connect to RS-232 plug pin 3 aka Tx via jumpers
-    MAX232 Pin 14 aka 232-O1 - Connect to RS-232 plug pin 2 aka Rx via jumpers
-    MAX232 Pin 15 aka GND - Connect directly to GND
-    MAX232 Pin 16 aka VCC - Connect directly Arduino +5v output.
-    MAX232 Pin 16 aka VCC - Also connect to 0.1uf ceramic capacitor which
-                            then connects to GND. (Pin 16 is two connections,
-                            one to Arduino +5v and then also to the smoothing
-                            capacitor which bridges across 5v and GND. Place
-                            this cap as close to pin 16 as possible.)
-
-Empeg tuner connector is used to supply power to the Pololu step-down
-transformer power supply, and from there, on to the rest of the assembly. Blue
-wire on tuner connector connects to the voltage input pin on Pololu, and the
-black wire on the tuner connector connects to the Pololu ground input pin.
-
-Arduino "Vin" pin is connected to the 7.5v output rail from the Pololu step-
-down transformer power supply circuit.
-
-Grounding: Multiple Arduino GND pins connected to the output ground rail of
-the Pololu power supply.
-
-Arduino and Pair mode indicator LED: Arduino pin 50 digital I/O pin, connected
-to +LED through resistor. Current of resistor determined by online LED
-resistor calculator and LED values. Then -LED connect to GND. Example: If
-using a blue LED with a 3.2v forward voltage and 20ma current, and the Arduino
-analog power supply from the analog pins will be 5 volts, then use a 100 ohm
-resistor for this value. Online resistor current calculator:
-http://led.linear1.org/1led.wiz
-
-Arduino and Button: Arduino pin 52 digital I/O pin, connected to one of the
-ground legs of button. This same line (or the other ground leg of the button)
-also goes through 10k pulldown resistor to ground. One of the + legs of the
-button connects to +5v coming from the Arduino 5v pin. Follow examples on the
-Internet of how to implement a simple temporary pushbutton on an Arduino:
-https://www.arduino.cc/en/Tutorial/Button
-
-###  BlueGiga Bluetooth WT32i chip+board, critical connections:
-
-BetzTechnik board JP4 FTDI UART Enable jumper is cut after applying firmware
-update.
-
-Bluetooth chip+board "5v" power pin NOT connected to anything.
-
-Bluetooth chip+board "3v3" or "VDD_IO" pin connected to the 3v output coming
-from the Arduino.
-
-Bluetooth chip+board "ENA" or "VREG_ENA" pin connected to the 3v output coming
-from the Arduino.
-
-Bluetooth chip+board "BATT" pin connected to the 3v output coming from the
-Arduino.
-
-Bluetooth chip+Board "Gnd" pin connected to the ground rail.
-
-Bluetooth chip+board serial port "RX/TX" pins connected to the "TX2/RX2" pins
-(serial port 2) of Arduino. Note: This is a crossover connection, i.e., RX
-from the Arduino is connected to TX on the Bluetooth chip and vice-versa.
-Since this is at TTL level, you don't need to go through a MAX232 circuit.
-However, the Arduino is running at 5v TTL, and the BlueGiga chip runs at 3.3v.
-So you must voltage match them. Decrease the voltage for the Arduino TX2
-output, by running it through a simple 50% voltage divider to step 5v TTL from
-Arduino down to 2.5v for the BlueGiga chip. The BlueGiga chip's transmit pin
-can stay at 3.3v and the Arduino will still read it just fine, so no changes
-are needed for that line. Schematic:
-
-    ARDUINO TX2-----VVVVV----+----VVVVV-----GND
-                   10Kohm    |    10Kohm
-                             |
-                             +--------------WT32i Rx
-
-
-    ARDUINO RX2-----------------------------WT32i Tx
-
-
-Bluetooth chip+Board three I2S pins PCM_CLK, PCM_SYNC, PCM_IN connected to
-empeg IISC, IISW, IISD1 via a special modification to the empeg tuner module
-connector, as described in the section of this document titled "Modify Empeg
-Car interior for I2S digital audio connection".
-
-Each one of the three I2S pins will need to be coming in through a set of
-resistors arranged in a voltage divider configuration, two 10k resistors for
-each one of the three lines. Example of one line (repeat a total of three
-times, one for each of the I2S connections):
-
-    EMPEG IISC-----VVVVV----+----VVVVV-----GND
-                  10Kohm    |    10Kohm                    (3x) 
-                            |
-                            +--------------WT32i PCM_CLK
-
+All sections below are for reference, and should not be needed by end-users of
+the BlueGigaEmpeg module unless performing repairs or other maintenance.
 
 
 Bluetooth Chip Firmware Upgrade
@@ -1136,6 +1015,132 @@ but do not overtighten, which would strip the plastic threads.
 Do not attach the BlueGigaEmpeg assembly to the empeg Car sled until after
 the I2S modifications are complete before attaching. The I2S modifications
 are described elsewhere in this document.
+
+
+Hardware interface information and notes (internal board connections)
+==============================================================================
+The BlueGigaEmpeg interface board implements everything described below. The
+information below is just for my personal reference and you should not need to
+do any of the connections below yourself, unless you are developing your own
+interface board.
+
+Arduino must be the "Mega" model with three hardware serial ports built in. I
+tried it with an "Uno" model using software serial ports, and it had problems
+where characters sometimes got dropped, and it could not keep up with the data
+rates that I wanted.
+
+###  Arduino and RS-232 port, critical connections:
+
+Arduino serial port 1 (Tx1/Rx1) connects to the empeg's RS-232 port, but it
+must go through an RS-232 converter circuit based on a MAX232 chip. This is
+necessary because you can't connect an actual RS-232 cable directly to an
+Arduino, the voltage and signaling are different. So it must go through the
+MAX232. The full schematic for this circuit is linked in the "Resources"
+section of this document, and the pinouts are also listed below.
+
+The RX/TX crossover configurations for the MAX232 and the RS-232 plug on the
+BlueGigaEmpeg can be confusing. The empeg Car sled serial port may or may not
+be already wired into a crossover configuration. I have seen both cases. There
+are jumpers on the BlueGigaEmpeg PCB to swap the RX/TX configuration to the
+serial port as needed.
+
+I am using a TI MAX232E for this implementation. The connections for the
+MAX232 are as follows:
+
+    MAX232 Pin 1 and 3 aka C1+/C1- - Bridge with a 2.2uf ceramic capacitor
+    MAX232 Pin 4 and 5 aka C2+/C2- - Bridge with a 2.2uf ceramic capacitor
+    MAX232 Pin 2 aka V+ - Connect to Arduino +5v via a 2.2uf ceramic capacitor
+    MAX232 Pin 6 aka V- - Connect to GND via a 2.2uf ceramic capacitor
+    MAX232 Pin 11 aka TTL-I1 - Connect to Arduino Mega Board 18 aka Tx1 
+    MAX232 Pin 12 aka TTL-O1 - Connect to Arduino Mega Board 19 axa Rx1
+    MAX232 Pin 13 aka 232-I1 - Connect to RS-232 plug pin 3 aka Tx via jumpers
+    MAX232 Pin 14 aka 232-O1 - Connect to RS-232 plug pin 2 aka Rx via jumpers
+    MAX232 Pin 15 aka GND - Connect directly to GND
+    MAX232 Pin 16 aka VCC - Connect directly Arduino +5v output.
+    MAX232 Pin 16 aka VCC - Also connect to 0.1uf ceramic capacitor which
+                            then connects to GND. (Pin 16 is two connections,
+                            one to Arduino +5v and then also to the smoothing
+                            capacitor which bridges across 5v and GND. Place
+                            this cap as close to pin 16 as possible.)
+
+Empeg tuner connector is used to supply power to the Pololu step-down
+transformer power supply, and from there, on to the rest of the assembly. Blue
+wire on tuner connector connects to the voltage input pin on Pololu, and the
+black wire on the tuner connector connects to the Pololu ground input pin.
+
+Arduino "Vin" pin is connected to the 7.5v output rail from the Pololu step-
+down transformer power supply circuit.
+
+Grounding: Multiple Arduino GND pins connected to the output ground rail of
+the Pololu power supply.
+
+Arduino and Pair mode indicator LED: Arduino pin 50 digital I/O pin, connected
+to +LED through resistor. Current of resistor determined by online LED
+resistor calculator and LED values. Then -LED connect to GND. Example: If
+using a blue LED with a 3.2v forward voltage and 20ma current, and the Arduino
+analog power supply from the analog pins will be 5 volts, then use a 100 ohm
+resistor for this value. Online resistor current calculator:
+http://led.linear1.org/1led.wiz
+
+Arduino and Button: Arduino pin 52 digital I/O pin, connected to one of the
+ground legs of button. This same line (or the other ground leg of the button)
+also goes through 10k pulldown resistor to ground. One of the + legs of the
+button connects to +5v coming from the Arduino 5v pin. Follow examples on the
+Internet of how to implement a simple temporary pushbutton on an Arduino:
+https://www.arduino.cc/en/Tutorial/Button
+
+###  BlueGiga Bluetooth WT32i chip+board, critical connections:
+
+BetzTechnik board JP4 FTDI UART Enable jumper is cut after applying firmware
+update.
+
+Bluetooth chip+board "5v" power pin NOT connected to anything.
+
+Bluetooth chip+board "3v3" or "VDD_IO" pin connected to the 3v output coming
+from the Arduino.
+
+Bluetooth chip+board "ENA" or "VREG_ENA" pin connected to the 3v output coming
+from the Arduino.
+
+Bluetooth chip+board "BATT" pin connected to the 3v output coming from the
+Arduino.
+
+Bluetooth chip+Board "Gnd" pin connected to the ground rail.
+
+Bluetooth chip+board serial port "RX/TX" pins connected to the "TX2/RX2" pins
+(serial port 2) of Arduino. Note: This is a crossover connection, i.e., RX
+from the Arduino is connected to TX on the Bluetooth chip and vice-versa.
+Since this is at TTL level, you don't need to go through a MAX232 circuit.
+However, the Arduino is running at 5v TTL, and the BlueGiga chip runs at 3.3v.
+So you must voltage match them. Decrease the voltage for the Arduino TX2
+output, by running it through a simple 50% voltage divider to step 5v TTL from
+Arduino down to 2.5v for the BlueGiga chip. The BlueGiga chip's transmit pin
+can stay at 3.3v and the Arduino will still read it just fine, so no changes
+are needed for that line. Schematic:
+
+    ARDUINO TX2-----VVVVV----+----VVVVV-----GND
+                   10Kohm    |    10Kohm
+                             |
+                             +--------------WT32i Rx
+
+
+    ARDUINO RX2-----------------------------WT32i Tx
+
+
+Bluetooth chip+Board three I2S pins PCM_CLK, PCM_SYNC, PCM_IN connected to
+empeg IISC, IISW, IISD1 via a special modification to the empeg tuner module
+connector, as described in the section of this document titled "Modify Empeg
+Car interior for I2S digital audio connection".
+
+Each one of the three I2S pins will need to be coming in through a set of
+resistors arranged in a voltage divider configuration, two 10k resistors for
+each one of the three lines. Example of one line (repeat a total of three
+times, one for each of the I2S connections):
+
+    EMPEG IISC-----VVVVV----+----VVVVV-----GND
+                  10Kohm    |    10Kohm                    (3x) 
+                            |
+                            +--------------WT32i PCM_CLK
 
 
 Resources
