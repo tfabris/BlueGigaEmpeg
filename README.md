@@ -1230,7 +1230,8 @@ Male conn. headers:  3x2       https://www.digikey.com/product-detail/en/molex-l
                     10x1       https://www.digikey.com/product-detail/en/3m/961110-6404-AR/3M9457-10-ND/2071896
                      8x1 Qty:2 https://www.digikey.com/product-detail/en/3m/961108-6404-AR/3M9457-08-ND/7104637
 Fem. conn. headers  22x1 Qty:2 https://www.digikey.com/product-detail/en/3m/929850-01-22-RA/929850E-01-22-ND/1094203
-2.2uf Ceramic Capacitor: Qty:4 https://www.amazon.com/gp/product/B071VVTC7Z/ref=oh_aui_detailpage_o04_s00
+2.2uf Ceramic Capacitor: Qty:4 https://www.digikey.com/product-detail/en/murata-electronics-north-america/RCER71H225K2K1H03B/490-11889-ND/4277808
+                               https://www.amazon.com/gp/product/B071VVTC7Z/ref=oh_aui_detailpage_o04_s00
 0.1uf Ceramic Capacitor        https://www.amazon.com/gp/product/B071VVTC7Z/ref=oh_aui_detailpage_o04_s00
 1.5k ohm resistors:      Qty:6 https://www.amazon.com/gp/product/B077FMSR86/ref=oh_aui_detailpage_o00_s00
 10k ohm resistors:       Qty:3 https://www.amazon.com/gp/product/B0185FIOTA/ref=oh_aui_detailpage_o02_s00
