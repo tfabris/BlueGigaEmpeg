@@ -1152,13 +1152,17 @@ empeg IISC, IISW, IISD1 via a special modification to the empeg tuner module
 connector, as described in the section of this document titled "Modify Empeg
 Car interior for I2S digital audio connection".
 
-Each one of the three I2S pins will need to be coming in through a set of
-resistors arranged in a voltage divider configuration, two 10k resistors for
-each one of the three lines. Example of one line (repeat a total of three
-times, one for each of the I2S connections):
+Each one of the three I2S lines will need to be reduced from 5v to 2.5v, to
+prevent frying the WT32i chip (I fried two chips this way until we figured
+this out). The I2S lines need to come in through a set of resistors arranged
+in a 50% voltage divider configuration, two 1.5k resistors for each one of the
+three lines. 1.5k is used instead of 10k to improve the S/N ratio on the I2S
+lines at the expense of more current draw from the SA7705H DSP chip on the
+empeg Car. This fixes GitHub issue #69. Example of one line (repeat a total of
+three times, one for each of the I2S connections):
 
     EMPEG IISC-----VVVVV----+----VVVVV-----GND
-                  10Kohm    |    10Kohm                    (3x) 
+                  1.5Kohm   |   1.5Kohm                    (3x) 
                             |
                             +--------------WT32i PCM_CLK
 
@@ -1228,7 +1232,8 @@ Male conn. headers:  3x2       https://www.digikey.com/product-detail/en/molex-l
 Fem. conn. headers  22x1 Qty:2 https://www.digikey.com/product-detail/en/3m/929850-01-22-RA/929850E-01-22-ND/1094203
 2.2uf Ceramic Capacitor: Qty:4 https://www.amazon.com/gp/product/B071VVTC7Z/ref=oh_aui_detailpage_o04_s00
 0.1uf Ceramic Capacitor        https://www.amazon.com/gp/product/B071VVTC7Z/ref=oh_aui_detailpage_o04_s00
-10k ohm resistors:       Qty:9 https://www.amazon.com/gp/product/B0185FIOTA/ref=oh_aui_detailpage_o02_s00
+1.5k ohm resistors:      Qty:6 https://www.amazon.com/gp/product/B077FMSR86/ref=oh_aui_detailpage_o00_s00
+10k ohm resistors:       Qty:3 https://www.amazon.com/gp/product/B0185FIOTA/ref=oh_aui_detailpage_o02_s00
 100 ohm resistor:              https://www.digikey.com/product-detail/en/stackpole-electronics-inc/CF18JT100R/CF18JT100RCT-ND/2022718
 Jumper Wires:            Qty:3 (lying around)
 ```
