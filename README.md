@@ -106,25 +106,25 @@ Make sure you have all of these things before working with the BlueGigaEmpeg:
 
 ###  Purchase:
 
- - Empeg Mk2 or Rio Car player
+ - Empeg Mk2 or Rio Car player:
    - http://empegbbs.com/ubbthreads.php/forums/11/1/For_Sale
 
- - BlueGigaEmpeg Interface
+ - BlueGigaEmpeg Interface:
    - tfabris@gmail.com
 
 
 ###  Download software (Windows PC or Windows VM required for some of these items):
 
- - Hijack Kernel for empeg
+ - Hijack Kernel for empeg:
    - http://empeg-hijack.sourceforge.net
 
- - Tony's Empeg Logo Editor
+ - Tony's Empeg Logo Editor:
    - http://empegbbs.com/ubbthreads.php/ubb/download/Number/7067/filename/logoedit17.zip
  
- - Arduino standalone IDE
+ - Arduino standalone IDE:
    - https://www.arduino.cc/en/Main/Software
 
- - BlueGigaEmpeg GitHub project
+ - BlueGigaEmpeg GitHub project:
    - https://github.com/tfabris/BlueGigaEmpeg
 
  - BlueGigaEmpeg.ino Arduino sketch, direct download from GitHub project
