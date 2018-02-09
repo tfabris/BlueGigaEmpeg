@@ -266,6 +266,11 @@ the USB connector exposed on the end of the BlueGigaEmpeg enclosure. The
 correct USB cable is supplied with the BlueGigaEmpeg, it is an old style
 A-to-B connector.
 
+When first plugging the Arduino into the computer, it may need to install
+device driver files for the USB/serial connection to the Arduino. See the
+Arduino documentation for instructions regarding the installation of these
+device driver files.
+
 Using the Arduino IDE, open the BlueGigaEmpeg.ino project and compile and
 upload it to the Arduino Mega board.
 
