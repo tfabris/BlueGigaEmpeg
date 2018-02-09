@@ -113,7 +113,7 @@ Make sure you have all of these things before working with the BlueGigaEmpeg:
    - tfabris@gmail.com
 
 
-### Download software (Windows PC or Windows VM required for some of these items):
+###  Download software (Windows PC or Windows VM required for some of these items):
 
  - Hijack Kernel for empeg
    - http://empeg-hijack.sourceforge.net
@@ -128,7 +128,7 @@ Make sure you have all of these things before working with the BlueGigaEmpeg:
    - https://github.com/tfabris/BlueGigaEmpeg
 
  - BlueGigaEmpeg.ino Arduino sketch, direct download from GitHub project
-  - https://github.com/tfabris/BlueGigaEmpeg/archive/master.zip
+   - https://github.com/tfabris/BlueGigaEmpeg/archive/master.zip
 
 
 ###  Important:
