@@ -241,7 +241,7 @@ disk. Rename the folder to "BlueGigaEmpeg" if needed.
 ### Important:
 
 The folder in which the BlueGigaEmpeg.ino file resides must be named
-"BlueGigaEmpeg" and not, for example "BlueGigaEmpeg-Master", because the
+"BlueGigaEmpeg" and not, for example, "BlueGigaEmpeg-Master", because the
 Arduino IDE won't recognize it as a Arduino project file unless the parent
 folder name is the same as the ".ino" file name. I don't know why this is a
 requirement, but it seems to be the case. You will likely have to rename the
