@@ -1130,8 +1130,8 @@ transformer power supply, and from there, on to the rest of the assembly. Blue
 wire on tuner connector connects to the voltage input pin on Pololu, and the
 black wire on the tuner connector connects to the Pololu ground input pin.
 
-Arduino "Vin" pin is connected to the 7.5v output rail from the Pololu step-
-down transformer power supply circuit.
+Arduino "Vin" pin is connected to the 7.5v output rail from the Pololu
+step-down transformer power supply circuit.
 
 Grounding: Multiple Arduino GND pins connected to the output ground rail of
 the Pololu power supply.
