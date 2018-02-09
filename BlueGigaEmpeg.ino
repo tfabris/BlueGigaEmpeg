@@ -12,6 +12,7 @@
 // electronics interface, and how to modify and configure your empeg Car to
 // work with this code.
 
+
 // ------------------------------------
 // Global variables and definitions
 // ------------------------------------
@@ -271,7 +272,7 @@ boolean monkeyReconnectEnabled = false;
 // High ASCII to UTF-8 in the code. For instance, on the empeg, you might have
 // a track by "Blue Öyster Cult", with the "Ö" being represented by a High
 // ASCII character (a single ASCII byte with a value greater than 127). In
-// that situation, you might see the the car stereo's LCD toucscreen display
+// that situation, you might see the the car stereo's LCD touchscreen display
 // say "Blue ?yster Cult". With this variable set to "true" it will instead
 // convert that to UTF-8, which should be readable by your car stereo touch
 // screen. If you encounter problems with some track titles which might
@@ -281,7 +282,7 @@ boolean monkeyReconnectEnabled = false;
 //   Setting true:
 //      - Character values between ASCII 128 and ASCII 255 in the track metadata
 //        on the empeg will be converted to their UTF-8 equivalents before being
-//        sent up the bluetooth chain to the car stereo.
+//        sent up the Bluetooth chain to the car stereo.
 //   Setting false:
 //      - No UTF-8 conversion will be performed and the track metadata is sent
 //        from the empeg to the car stereo without any changes.
@@ -764,9 +765,11 @@ unsigned long priorOutputLineMillis = 0;
 // Include the version number file.
 #include "Version.h"
 
+
 // ------------------------------------
 // Program code functions
 // ------------------------------------
+
 
 // ---------------------------------------------------------------------------
 // Setup
@@ -795,8 +798,8 @@ void setup()
   pinMode(pairButtonPin, INPUT);
 
   // Reserve bytes for the input strings, which are the strings we check to
-  // see, for example, if there is a valid processable bluetooth AVRCP command
-  // incoming from the bluetooth chip arriving from its serial port.
+  // see, for example, if there is a valid processable Bluetooth AVRCP command
+  // incoming from the Bluetooth chip arriving from its serial port.
   btInputString.reserve(btInputStringMaxLength);
   empegInputString.reserve(empegInputStringMaxLength);
 
@@ -833,7 +836,7 @@ void setup()
   Log(F("Built in Arduino Serial has been started."));
 
   // Set the data rate for the Arduino Mega hardware serial port connected to
-  // the bluetooth module's serial port. This is the one that is directly
+  // the Bluetooth module's serial port. This is the one that is directly
   // connected because it is UART-to-UART, pin-to-pin, it doesn't have to go
   // through a MAX232 chip.
   BlueGigaSerial.begin(115200);
@@ -869,22 +872,23 @@ void setup()
   // Log("Size of pmMessageMatrix is:           " + String(sizeof(pmMessageMatrix)));
   // Log("Size of empegCommandMessageMatrix is: " + String(sizeof(empegCommandMessageMatrix)));
 
-  // Configre the Bluetooth device at startup, call my routine which sets all
+  // Configure the Bluetooth device at startup, call my routine which sets all
   // data to the desired overall system defaults. This does not erase any
   // pairing information, that is left untouched.
   SetGlobalChipDefaults();
 
-  // Reset the bluetooth chip every time the Arduino chip is started up and
+  // Reset the Bluetooth chip every time the Arduino chip is started up and
   // after we have set all of its defaults (which will still be saved after
   // the reset; this is a soft reset). Resetting it here prevents bugs where
-  // the bluetooth state is desynchronized from the Arduino state.
+  // the Bluetooth state is desynchronized from the Arduino state.
   QuickResetBluetooth(0);      
 }
+
 
 // ---------------------------------------------------------------------------
 // Loop
 //
-// "Loop" function is a built in Ardunio function, it is the main runtime
+// "Loop" function is a built in Arduino function, it is the main runtime
 // program loop in Arduino. This function repeatedly loops while the Arduino
 // is powered up. It will loop as quickly as we allow it to loop. Any code
 // that executes as a sub-function of this code will be the thing that slows
@@ -900,7 +904,7 @@ void loop()
   // use it elsewhere so it's just a placeholder here.
   static char mainLoopChar = 0;
 
-  // Read and handle all main input/ouptut functions on all serial ports, one
+  // Read and handle all main input/output functions on all serial ports, one
   // character at a time. This runs as quickly as we let it run, since it
   // simply happens each time we go through the main Arduino "loop" function.
   mainLoopChar = MainInputOutput();
@@ -909,6 +913,7 @@ void loop()
   // button.
   MainPushbuttonHandler();
 }
+
 
 // ---------------------------------------------------------------------------
 // Report Chip Type
@@ -949,7 +954,7 @@ void reportChipType()
 //
 // Report a problem if the serial buffer is not large enough. The Arduino
 // header libraries must be edited in order for this program to work, and this
-// code prechecks to make sure that this program was compiled with correctly
+// code pre-checks to make sure that this program was compiled with correctly
 // modified header libraries to make sure there is enough buffer space.
 // ---------------------------------------------------------------------------
 void verifySerialBuffer()
@@ -960,7 +965,7 @@ void verifySerialBuffer()
   String myRxBufferSizeString;
   int myRxBufferSizeInt;
 
-  // Retrieve variable which was defind in compiler header file.
+  // Retrieve variable which was defined in compiler header file.
   myRxBufferSizeString = (String)SERIAL_RX_BUFFER_SIZE;
   myTxBufferSizeString = (String)SERIAL_TX_BUFFER_SIZE;
   myRxBufferSizeInt = myRxBufferSizeString.toInt();
@@ -994,7 +999,6 @@ void verifySerialBuffer()
 }
 
 
-
 // ---------------------------------------------------------------------------
 // MainPushbuttonHandler
 //
@@ -1006,7 +1010,7 @@ void verifySerialBuffer()
 void MainPushbuttonHandler()
 {
   // Record the timestamp of the moment in time that we started this function.
-  // This timestamp counts up from the moment the ardunio is powered up. The
+  // This timestamp counts up from the moment the Arduino is powered up. The
   // unsigned long can be up to 4,294,967,295, which in milliseconds is over
   // 1100 hours. So if this value wraps around, I don't know what will happen,
   // but I hope you're not running your car for 1100 hours without turning it
@@ -1058,16 +1062,17 @@ void MainPushbuttonHandler()
   lastPairButtonState = pairButtonCurrentReading;
 }
 
+
 // ---------------------------------------------------------------------------
 // SetGlobalChipDefaults
 //
-// Initializes the settings we want for this particular bluetooth chipset.
+// Initializes the settings we want for this particular Bluetooth chipset.
 // ---------------------------------------------------------------------------
 void SetGlobalChipDefaults()
 {
   // For convenience, every time we reset or start up our chip, we also send
   // empeg a pause command, setting the empeg to a paused state. Then, if
-  // bluetooth reconnects after the reset, then the unpause will happen
+  // Bluetooth reconnects after the reset, then the unpause will happen
   // automatically later, when it receives the stream start command from the
   // car stereo.
   Log(F("Pausing empeg for convenience while setting global chip defaults."));
@@ -1090,7 +1095,7 @@ void SetGlobalChipDefaults()
   SendBlueGigaCommand(F("SET CONTROL ECHO 5"));
 
   // Configure the system so that it does not send battery warnings nor
-  // attempt to shut down when encountering low voltage situtations, since
+  // attempt to shut down when encountering low voltage situations, since
   // this device will only be running when the car ignition is on, and will be
   // getting the voltage (indirectly) from the car power.
   SendBlueGigaCommand(F("SET CONTROL BATTERY 0 0 0 0"));
@@ -1126,7 +1131,7 @@ void SetGlobalChipDefaults()
   // Development board which contains the external codec.
   //  SendBlueGigaCommand(F("SET CONTROL EXTCODEC PRE"));
 
-  // Set bluetooth Class of Device - Docs say this is needed.
+  // Set Bluetooth Class of Device - Docs say this is needed.
   // CoD generator form:   http://bluetooth-pentest.narod.ru/software/bluetooth_class_of_device-service_generator.html
   // Alternate generator:  http://www.ampedrftech.com/cod.htm
   //  0x200420 = 
@@ -1172,7 +1177,7 @@ void SetGlobalChipDefaults()
   // "SYNTAX ERROR" if you precede it with the 0x.
   SendBlueGigaCommand(F("SET BT CLASS 280428"));  
 
-  // Turn off "Serial Port Profile" on the bluetooth chip, we don't need it
+  // Turn off "Serial Port Profile" on the Bluetooth chip, we don't need it
   // for A2DP.
   SendBlueGigaCommand(F("SET PROFILE SPP"));
 
@@ -1181,8 +1186,8 @@ void SetGlobalChipDefaults()
   // called "A2DP Sink").
   SendBlueGigaCommand(F("SET PROFILE A2DP SOURCE"));
 
-  // Set chip to recieve AVRCP commands with specific categories - See
-  // bluetooth chip's PDF documetation for descriptions of the AVRCP
+  // Set chip to receive AVRCP commands with specific categories - See
+  // Bluetooth chip's PDF documentation for descriptions of the AVRCP
   // categories, section 3.2 of the A2DP/AVRCP profile document.
   // - Bit Value 0001 - Category 1: Player/Recorder - must support PLAY and PAUSE
   // - Bit Value 0002 - Category 2: Monitor/Amplifier - must support VOLUP and VOLDN (volume up and down)
@@ -1199,7 +1204,7 @@ void SetGlobalChipDefaults()
   // the most.
   SendBlueGigaCommand(F("SET BT NAME empeg Car"));
 
-  // Set bluetooth pairing security authorization types (defined at top of
+  // Set Bluetooth pairing security authorization types (defined at top of
   // program).
   SendBlueGigaCommand(btAuthTypeString);
   SendBlueGigaCommand(btPinCodeString);
@@ -1222,7 +1227,7 @@ void SetGlobalChipDefaults()
   // Turn off the mic bias voltage (well, set it to as low as possible).
   SendBlueGigaCommand(F("SET CONTROL MICBIAS 0 0"));    
   
-  // Set line level input gain on the bluetooth chip, value is set in global
+  // Set line level input gain on the Bluetooth chip, value is set in global
   // constant at top of program. This is for situations where the line level
   // inputs might be used.
   SendBlueGigaCommand(empegGainSettingString);    
@@ -1235,14 +1240,15 @@ void SetGlobalChipDefaults()
 // PairBluetooth
 //
 // This is the function that gets executed when you press the Reset/Pair
-// button. Resets the pairing table on the bluetooth chip, erasing all
+// button. Resets the pairing table on the Bluetooth chip, erasing all
 // previous paired devices, so that the device can freshly pair anew with a
 // new device. Also runs a program that tries to pair with discovered devices
 // for a short amount of time. Note: For connection to a car stereo, you might
 // not need to issue this command, pairing might work fine without touching
-// this function. I have found it is necessary with things like bluetooth
+// this function. I have found it is necessary with things like Bluetooth
 // headsets, but not always necessary for pairing with car stereos. For car
-// stereos, you handle all pairing steps from the stereo's touch screen.
+// stereos, sometimes you handle all pairing steps from the stereo's touch
+// screen.
 //
 // This function doubles as a way to reset the device to factory defaults and
 // restart it, in cases where that is needed.
@@ -1269,7 +1275,7 @@ void PairBluetooth()
   Log (F("--------------------------------------"));
   Log (F(" "));
 
-  // Close current bluetooth pairings so that we can erase them. Turns out
+  // Close current Bluetooth pairings so that we can erase them. Turns out
   // that the command to erase Bluetooth pairings (used below) will get a
   // SYNTAX ERROR if you issue the command while it's connected.
   SendBlueGigaCommand(F("CLOSE 0"));
@@ -1318,9 +1324,9 @@ void PairBluetooth()
 
   // Experimental attempt to fix issue #63. If you have more than one device
   // paired, then the auto reconnect feature is funky and does not always
-  // succesfully beat the iPhone to the punch when you start the car. We want
+  // successfully beat the iPhone to the punch when you start the car. We want
   // the empeg to win that race every time. My suspicion is that if you pair
-  // with something like a bluetooth headset (reset/pair buttonpress needed)
+  // with something like a Bluetooth headset (reset/pair buttonpress needed)
   // and then subsequently pair with the Honda (no press of reset/pair button
   // needed) then you now have two paired items in the pairing buddy table.
   // Then when it comes time to do auto reconnect, it has to round robin
@@ -1328,7 +1334,7 @@ void PairBluetooth()
   // reconnection race to the iPhone. Attempt to fix the issue by limiting the
   // number of paired devices to 1 so that the automatic reconnect, when it
   // gets enabled, is always only ever trying to reconnect to a single stereo
-  // instead of potentiallly multiple stereos, and thus always does it
+  // instead of potentially multiple stereos, and thus always does it
   // quicker. Note: Must do this after the factory reset or else it will go
   // away immediately.
   SendBlueGigaCommand(F("SET BT PAIRCOUNT 1")); 
@@ -1378,21 +1384,21 @@ void PairBluetooth()
   btInputString = "";
   
   // Initiate the process of pairing, which is merely a command to query for
-  // available bluetooth devices in the air nearby. Then we will respond to
+  // available Bluetooth devices in the air nearby. Then we will respond to
   // any responses that we see on the serial port for a number of seconds,
   // handled in the loop below.
   SendBlueGigaCommand(pairBeginString);
 
   // Process pairing commands for x milliseconds before quitting. The main
   // loop for processing serial input/output will automatically detect the
-  // necessary responses from bluetooth devices in the air nearby and answer
+  // necessary responses from Bluetooth devices in the air nearby and answer
   // appropriately at the appropriate times. At regular intervals, check to
   // see if the pairing process was completed and bail out of the loop if it
-  // was. Note, the hardcoded "30" here is arbitrary, it's the number of times
-  // during this loop that we check for loop completion. For instance, if
-  // pairTimeMilliseconds is 30, then this will check for loop completion once
-  // per second. If pairTimeMilliseconds is 15, then this will check for loop
-  // completion once every half second, etc.
+  // was. Note, the hard coded "30" here is arbitrary, it's the number of
+  // times during this loop that we check for loop completion. For instance,
+  // if pairTimeMilliseconds is 30, then this will check for loop completion
+  // once per second. If pairTimeMilliseconds is 15, then this will check for
+  // loop completion once every half second, etc.
   for (int i=0; i<=30; i++)
   {
     // Process commands for a portion of the time as we wait for pairing to
@@ -1432,11 +1438,12 @@ void PairBluetooth()
   Log (F(" "));      
 }
 
+
 // ---------------------------------------------------------------------------
 // MainInputOutput
 // 
 // Main workhorse to handle the main loop character input output and logging
-// to serial port. Detetcs if the character strings are any of the special
+// to serial port. Detects if the character strings are any of the special
 // commands that we are waiting for. Must call this repeatedly (for instance
 // in the main loop) for it to be useful, since it only processes one
 // character at a time. This function will receive serial port data, log it to
@@ -1445,7 +1452,7 @@ void PairBluetooth()
 // empeg-car if appropriate.
 //
 // Returns:
-//    (char) The character it processed that it received from the bluetooth
+//    (char) The character it processed that it received from the Bluetooth
 //    serial port, if any. If no character was received it will return a zero
 //    value character. Note that if a zero value character was received it
 //    will also return that. So don't use zero as the test to see whether or
@@ -1455,10 +1462,10 @@ char MainInputOutput()
 {
   // Initialize the characters that will be retrieved in this loop.
 
-  // From the bluetooth module.
+  // From the Bluetooth module.
   char inChar = 0; 
 
-  // From the debug serial port (so you can type commands to the bluetooth)
+  // From the debug serial port (so you can type commands to the Bluetooth)
   char userChar = 0;
 
   // From the empeg car serial port
@@ -1524,8 +1531,8 @@ char MainInputOutput()
     empegInputString = "";
   }  
   
-  // Check to see if any characters are available on the bluetooth serial port
-  // from the bluetooth module, display them on the debugging console, and
+  // Check to see if any characters are available on the Bluetooth serial port
+  // from the Bluetooth module, display them on the debugging console, and
   // process them into individual lines for later parsing and
   // command/response.
   if(BlueGigaSerial)
@@ -1535,10 +1542,10 @@ char MainInputOutput()
       // Begin blinking the LED to indicate activity.
       BlinkBlue(true);
 
-      // Read one character (byte) from the bluetooth serial port.
+      // Read one character (byte) from the Bluetooth serial port.
       inChar = BlueGigaSerial.read();
       
-      // Log to the Arduino debugging console what we saw on the bluetooth
+      // Log to the Arduino debugging console what we saw on the Bluetooth
       // serial port but only if we are in character-by-character mode
       if (!logLineByLine)
       {
@@ -1573,7 +1580,7 @@ char MainInputOutput()
     }
   }
 
-  // Check to see if we have received a completed string from the bluetooth
+  // Check to see if we have received a completed string from the Bluetooth
   // and therefore need to start processing the contents of that string.
   if (btStringComplete)
   {
@@ -1588,7 +1595,7 @@ char MainInputOutput()
     
   // If I type something on the debug console (the Arduino main USB serial
   // debug port) assume that this is intended as a command to send to the
-  // bluetooth module, and forward it there.
+  // Bluetooth module, and forward it there.
   if (Serial)
   {
     if (Serial.available())
@@ -1596,7 +1603,7 @@ char MainInputOutput()
       // Read the character from the serial port.
       userChar = Serial.read();
   
-      // Write that character to the bluetooth Board.
+      // Write that character to the Bluetooth Board.
       BlueGigaSerial.write(userChar);
   
       // Local echo the character back to the debug console.
@@ -1617,10 +1624,10 @@ char MainInputOutput()
       // port commands if we are in the special empeg debugging mode. To use
       // this feature, enable EmpegSendCommandDebug flag at the top of the
       // code. Then, send one of the empeg command keys (N P C W - Case
-      // inensitive) to the Arduino serial console to trigger the effect.
+      // insensitive) to the Arduino serial console to trigger the effect.
       if (EmpegSendCommandDebug)
       {
-        // Iterate through our matrix of incoming avrcp commands looking for a
+        // Iterate through our matrix of incoming AVRCP commands looking for a
         // match.
         for (int i=0; i<empegCommandMatrixSize; i++)
         {
@@ -1660,7 +1667,7 @@ char MainInputOutput()
   {
     // First, check to see if it's been x seconds of elapsed time since bootup
     // (where x is the monkey reconnect interval specified at the top of this
-    // code) by using the modulo artithmetic operator. For instance if you
+    // code) by using the modulo arithmetic operator. For instance if you
     // divide the current timestamp milliseconds by 5000 then the remainder
     // value (the result of the modulo % operation) will come out as zero only
     // once every five seconds. This is a simple way to do a one-line repeat
@@ -1673,7 +1680,7 @@ char MainInputOutput()
       {
         // If we don't have a pairing buddy yet, then we need to try to find
         // out who that pairing buddy is/was. To do this, we issue a command
-        // to the bluetooth chip to report who its pairing buddies are. The
+        // to the Bluetooth chip to report who its pairing buddies are. The
         // command which asks for a list of pairing buddies is "SET BT PAIR".
         // Then, there is code elsewhere, in the string handler routines,
         // which automatically detects the resulting response of the list of
@@ -1687,7 +1694,7 @@ char MainInputOutput()
         // over again in a loop.
         if (pairAddressString == "")
         {
-          // Check to see if the bluetooth chip has a pairing buddy already.
+          // Check to see if the Bluetooth chip has a pairing buddy already.
           Log(F("Trying to find out if we have a pairing buddy yet."));
           SendBlueGigaCommand(F("SET BT PAIR"));
 
@@ -1714,7 +1721,7 @@ char MainInputOutput()
     }
   }
    
-  // Return from this function, return the bluetooth character we processed in
+  // Return from this function, return the Bluetooth character we processed in
   // this loop.
   return inChar;
 }
@@ -1768,20 +1775,21 @@ void DisplayAndProcessCommands(unsigned long idleTimeMs, bool waitForLineEnding)
   // see if our time is up.
 }
 
+
 // ---------------------------------------------------------------------------
 // HandleString
 // 
-// Function to process the string data received from the bluetooth chip.
+// Function to process the string data received from the Bluetooth chip.
 // When a complete string is received, call this function to look up and
 // see if the contents of the sting match something in our table of
 // commands (defined at the top of the program), If there is a match,
 // send the corresponding empeg command to the empeg serial port to command
-// the empeg to do the same behavior that the bluetooth chip had just been
+// the empeg to do the same behavior that the Bluetooth chip had just been
 // commanded to do.
 //
 // This also handles other cases where perhaps we need to respond to some
-// command that was issued to the bluetooth chip from the host stereo, and now
-// we have to respond to that command directly on the bluetooth.
+// command that was issued to the Bluetooth chip from the host stereo, and now
+// we have to respond to that command directly on the Bluetooth.
 // ---------------------------------------------------------------------------
 void HandleString(String &theString)
 {
@@ -1790,19 +1798,19 @@ void HandleString(String &theString)
   commandToSend = "";
   static char empegCommandToSend = 0;
 
-  // Bugfix - If we get a "NO CARRIER" message from the bluetooth chip then we
+  // Bugfix - If we get a "NO CARRIER" message from the Bluetooth chip then we
   // need to set our globally stored transaction labels to blanks. This is
-  // because, upon disconnection from a bluetooth device, the transaction
+  // because, upon disconnection from a Bluetooth device, the transaction
   // labels become invalid and now we should not be using them any more. They
   // should be reset so that upon the next reconnection that we can receive
   // new transaction labels. This will hopefully fix an issue where if you
-  // turn off the head device (the stereo, the bluetooth headset, whatever),
+  // turn off the head device (the stereo, the Bluetooth headset, whatever),
   // and then turn it back on again without rebooting the BlueGiga and the
   // Arduino, then it will not start sending bogus transaction labels to the
   // head device causing it to glitch or disconnect.
   //
   // UPDATE: Reverting this supposed bugfix. This caused problems with the
-  // bluetooth headset where it would sometimes say NO CARRIER 3 for the a2DP
+  // Bluetooth headset where it would sometimes say NO CARRIER 3 for the a2DP
   // connection and then wouldn't get it play/pause notifications. By
   // disabling this it could get its play/pause notifications despite the NO
   // CARRIER signal. See Github issue #22 for more details on this issue.
@@ -1812,9 +1820,9 @@ void HandleString(String &theString)
   //    }
 
   // Bugfix - If we see the boot message from the BT chip, reset out globals.
-  // I have seen situations where the bluetooth chip has reset itself and we
+  // I have seen situations where the Bluetooth chip has reset itself and we
   // see its initial boot message on the debug console again. If we see it we
-  // need to clear out our variables because that means the bluetooth chip
+  // need to clear out our variables because that means the Bluetooth chip
   // just got reset and now our global variables aren't valid any more.
   if (theString.indexOf(F("WRAP THOR AI")) > (-1))
   {
@@ -1833,7 +1841,6 @@ void HandleString(String &theString)
   if (theString.indexOf(F("PLAYBACK_STATUS_CHANGED"))   > (-1)) {connected = true;}
   if (theString.indexOf(F("PDU_REGISTER_NOTIFICATION")) > (-1)) {connected = true;}
 
-
   // If the string indicates that we are disconnected from the Bluetooth, then
   // set the corresponding global variable that indicates we are disconnected
   // from the Bluetooth.
@@ -1842,7 +1849,7 @@ void HandleString(String &theString)
   if (theString.indexOf(F("NO CARRIER 0 ERROR"))   > (-1)) {connected = false;}
   if (theString.indexOf(F("NO CARRIER 1 ERROR"))   > (-1)) {connected = false;}
  
-  // Handle "get bluetooth address" strings - these are strings that are
+  // Handle "get Bluetooth address" strings - these are strings that are
   // intended to tell me who my current pairing buddy is. This must come early
   // in the process so that if the GBA strings are found in the list, they
   // obtain the necessary address prior to any responses which might use that
@@ -1860,7 +1867,7 @@ void HandleString(String &theString)
   }
 
   // Handle "grab channel number" strings - These are strings that represent
-  // which channel a given Bluetooth connection is using on the bluetooth
+  // which channel a given Bluetooth connection is using on the Bluetooth
   // chip. The things after the word LIST are the channel numbers. 
   // list
   // 0001758 LIST 3
@@ -1874,7 +1881,6 @@ void HandleString(String &theString)
     // pairing buddy's address in it.
     GrabChannelNumber(theString);
   }
-
 
   // Handle query/response strings for things like the track metadata and the
   // playback status information. Make sure our program responds to these
@@ -1923,17 +1929,17 @@ void HandleString(String &theString)
 
       // Special case code, part of fixing issue #32 "Fast forward can run
       // away from you and get stuck." Find out if the message we just got
-      // from the bluetooth was the beginning start inititation of a fast
+      // from the Bluetooth was the beginning start initiation of a fast
       // forward or a rewind command, and if it was, set a flag to indicate
-      // that we are now in the middle of doing a bluetooth-initiated FF/REW
+      // that we are now in the middle of doing a Bluetooth-initiated FF/REW
       // where we want protection from runaway situations. The flag being set
       // here will prevent us from canceling FF/REW when the user is doing the
       // FF/REW from the front panel in situations where it can't run away.
-      // The only time that runaway protection is needed is if the bluetooth
-      // initiated it, not if the empeg front panel inititated it.
+      // The only time that runaway protection is needed is if the Bluetooth
+      // initiated it, not if the empeg front panel initiated it.
       if ( (theString.indexOf(F("AVRCP FAST_FORWARD PRESS")) > (-1)) || (theString.indexOf(F("AVRCP REWIND PRESS")) > (-1)) )
       {
-        // If we have detected that bluetooth initiated a FF or a REW, then
+        // If we have detected that Bluetooth initiated a FF or a REW, then
         // set the flag saying so, so that our protection code can trigger if
         // needed.
         blueToothFastForward = true;
@@ -1943,7 +1949,7 @@ void HandleString(String &theString)
       // when user has released the FF or REW button
       if ( (theString.indexOf(F("AVRCP FAST_FORWARD RELEASE")) > (-1)) || (theString.indexOf(F("AVRCP REWIND RELEASE")) > (-1)) )
       {
-        // If we have detected the bluetooth successfully sent a message which
+        // If we have detected the Bluetooth successfully sent a message which
         // cancels the FF or REW operation, then also cancel our runaway
         // protection code trigger.
         blueToothFastForward = false;
@@ -1952,8 +1958,8 @@ void HandleString(String &theString)
   }
 
   // Handle special case fix strings which are responses to certain strings we
-  // receive on the bluetooth chip that we must respond back to on the
-  // bluetooth chip. First iterate through our matrix of special case commands
+  // receive on the Bluetooth chip that we must respond back to on the
+  // Bluetooth chip. First iterate through our matrix of special case commands
   // looking for a match.
   for (int i=0; i<scFixMatrixSize; i++)
   {
@@ -1966,7 +1972,7 @@ void HandleString(String &theString)
       commandToSend = "";
       commandToSend += scFixMessageMatrix[i][1];
 
-      // Substitute the bluetooth pairing buddy string in the response
+      // Substitute the Bluetooth pairing buddy string in the response
       // command, if we have it and if the command contains the token for the
       // replacement.
       if (pairAddressString != "")
@@ -1983,7 +1989,7 @@ void HandleString(String &theString)
   }
 
   // Respond to this particular AVRCP connection success message with a
-  // command that is supposed to force the bluetooth to repeatedly retry
+  // command that is supposed to force the Bluetooth to repeatedly retry
   // connections if it ever becomes disconnected. Hopefully this will increase
   // the chances that the empeg connects to the car stereo when you start the
   // car, instead of connecting to your phone in your pocket. On my stereo,
@@ -2027,7 +2033,7 @@ void HandleString(String &theString)
       {
         // A match has been found, process the pairing command. Process the
         // pullout of the address of our pairing buddy. This is a super
-        // special case for one particular string. It retrieves the bluetooth
+        // special case for one particular string. It retrieves the Bluetooth
         // device address of the host stereo that we are pairing to, and
         // places it into a global variable for later use in the response
         // string.
@@ -2037,7 +2043,7 @@ void HandleString(String &theString)
         commandToSend = "";
         commandToSend += pmMessageMatrix[i][1];
 
-        // Substitute the bluetooth pairing buddy string in the response
+        // Substitute the Bluetooth pairing buddy string in the response
         // command, if we have it and if the command contains the token for
         // the replacement.
         if (pairAddressString != "")
@@ -2048,7 +2054,7 @@ void HandleString(String &theString)
           }
         }
 
-        // Send the final assembled pairing response string to the bluetooth
+        // Send the final assembled pairing response string to the Bluetooth
         // chip.
         SendBlueGigaCommand(commandToSend);
       }
@@ -2060,15 +2066,15 @@ void HandleString(String &theString)
 // ---------------------------------------------------------------------------
 // GrabPairAddressString
 //
-// Grabs the bluetooth address from a string that looks like this:
+// Grabs the Bluetooth address from a string that looks like this:
 // "INQUIRY_PARTIAL 0a:ea:ea:6a:7a:6a 240404" or perhaps a string that looks
 // like this: SET BT PAIR 0a:ea:ea:6a:7a:6a ad11da9ed235df50e86eeef1e3ba8b and
 // puts it into the global variable "pairAddressString". Only does the first
 // one it finds since the runstart of the program or since the user has
 // pressed the "reset/pair" button on the assembly. Does not save the variable
 // in permanent storage so if you need this variable after bootup you have to
-// re-retrieve it with special code. We leave it up to the bluetooth chip to
-// store the pair addresses, and the bluetooth chip automatically reconnects
+// re-retrieve it with special code. We leave it up to the Bluetooth chip to
+// store the pair addresses, and the Bluetooth chip automatically reconnects
 // to paired devices when it is powered back on, so our code only needs to
 // remember this pairing address during runtime of the program.
 // 
@@ -2077,7 +2083,7 @@ void HandleString(String &theString)
 //                    address such as: 
 //                           INQUIRY_PARTIAL 0a:ea:ea:6a:7a:6a 240404
 //     triggerString: The portion of the string which is the trigger string
-//                    which falls just before the bluetooth address. In the
+//                    which falls just before the Bluetooth address. In the
 //                    string above the trigger string would be
 //                    "INQUIRY_PARTIAL " including the trailing space.
 // ---------------------------------------------------------------------------
@@ -2099,7 +2105,7 @@ void GrabPairAddressString(String stringToParse, String triggerString)
   // Debug logging
   // Log(F("=== Trying to grab pair buddy's address. ==="));
 
-  // Get our bluetooth address out of the string if it's the one exact special
+  // Get our Bluetooth address out of the string if it's the one exact special
   // case string that we expect to see at this particular moment
   if ( stringToParse.indexOf(triggerString) > (-1)  )
   {
@@ -2113,7 +2119,7 @@ void GrabPairAddressString(String stringToParse, String triggerString)
     // thing we're trying to fix is the bad PDU registrations then the strings
     // coming in can get mangled because I think my stereo head unit has a bug
     // or perhaps it overflows the string buffer or something. In any case I
-    // got a bad string from the bluetooth that looked like this:
+    // got a bad string from the Bluetooth that looked like this:
     //    AVRCP 0 PDU_REGISTER_NOTIFICATION 0 TRACK_REACHED_END 0SET BT PAIR 4e:fe:7e:5e:1e:2e 10e0f6999e06f4
     // The data I really wanted was the address out of that string but
     // initially this code  had assumed that the SET BT PAIR would be at the
@@ -2132,7 +2138,7 @@ void GrabPairAddressString(String stringToParse, String triggerString)
 
     // Find out if the thing we got was an address. It should contain some
     // colon characters at the very least. Throw it away if it's not a  proper
-    // bluetooth address (we will merely check for a colon).
+    // Bluetooth address (we will merely check for a colon).
     if (pairAddressString.indexOf(F(":")) < 1) // First colon should be at least at char position 2, but never at 0
     {
       // Clear it out, it wasn't what we wanted, set it to nothing.
@@ -2149,10 +2155,11 @@ void GrabPairAddressString(String stringToParse, String triggerString)
   }
 }
 
+
 // ---------------------------------------------------------------------------
 // GrabChannelNumber
 //
-// Grabs the bluetooth channel number from a string that looks like this:
+// Grabs the Bluetooth channel number from a string that looks like this:
 // "LIST 2 CONNECTED AVRCP 672 0 0 235 ..."  and puts it into one of my global
 // variables for keeping track of channel numbers such as "avrcpChannel".
 // Parameters:
@@ -2202,7 +2209,7 @@ void GrabChannelNumber(String stringToParse)
     // Trim the string of any possible whitespace
     avrcpChannel.trim();
 
-    // Find out if the thing we got was an address. It should contain a low single digit numbner
+    // Find out if the thing we got was an address. It should contain a low single digit number
     // at the very least. Throw it away if it's not.
     if ( (avrcpChannel != "0") && (avrcpChannel != "1") && (avrcpChannel != "2") && (avrcpChannel != "3") && (avrcpChannel != "4") ) 
     {
@@ -2219,6 +2226,7 @@ void GrabChannelNumber(String stringToParse)
     }
   }
 }
+
 
 // ---------------------------------------------------------------------------
 // Log
@@ -2267,7 +2275,7 @@ void BaseLog(const String &logMessage)
       Serial.print(String(timestring) + " " + logMessage);
 
       // Set the prior one to be the current one, ready for the next
-      // calcualtion.
+      // calculation.
       priorOutputLineMillis = currentOutputLineMillis;
     }
     else
@@ -2282,6 +2290,7 @@ void BaseLog(const String &logMessage)
     Serial.print(F("\r\n"));
   }       
 }
+
 
 // ---------------------------------------------------------------------------
 // LogChar
@@ -2298,10 +2307,11 @@ void LogChar(char logChar)
   }       
 }
 
+
 // ---------------------------------------------------------------------------
 // SendBlueGigaCommand
 //
-// Send a command to the bluetooth chip. Automatically append the required
+// Send a command to the Bluetooth chip. Automatically append the required
 // line ending character. Some chips require a carriage return, some chips
 // require a linefeed or CRLF.
 // ---------------------------------------------------------------------------
@@ -2331,15 +2341,15 @@ void SendBlueGigaCommand(String commandString)
   // Debugging Only:
   // "Immediate Response Display" feature.
   //
-  // A single line of code below does a special thing: Show repsonses from the
+  // A single line of code below does a special thing: Show responses from the
   // chip on the debug console immediately after sending a command instead of
   // waiting for the next normal run of the main interpreter loop.
   //
-  // This works and it is helpful to see things like the  chip immediately
+  // This works and it is helpful to see things like the chip immediately
   // responding with "SYNTAX ERROR" for the exact command line that we sent,
   // as opposed to seeing it appear in the console much later. For example, in
   // normal operation, at the first startup of this Arduino code, there are
-  // several chip-setup commands which get sent to the bluetooth chip at
+  // several chip-setup commands which get sent to the Bluetooth chip at
   // startup. They are all sent quickly in sequence one after the other, and
   // normally, the code doesn't get around to displaying the chip's responses
   // to the commands until after the entire group of commands is sent. So, for
@@ -2368,7 +2378,7 @@ void SendBlueGigaCommand(String commandString)
   // to one of those SET commands above, but the problem is that now you don't
   // know which one it was in response to. By enabling the line of code below,
   // it gives the code a chance to immediately display the response from the
-  // bluetooth chip so you can tell which command got the syntax error.
+  // Bluetooth chip so you can tell which command got the syntax error.
   //
   // The risk here is a possibility for reentrant code that might get out of
   // control. So don't leave the line enabled in final production, just enable
@@ -2380,7 +2390,7 @@ void SendBlueGigaCommand(String commandString)
   //   DisplayAndProcessCommands(50, true);
   //
   // Re-enable the line above if you are debugging an immediate send/response
-  // issue where you have issued a bunch of commands to the bluetooth chip in
+  // issue where you have issued a bunch of commands to the Bluetooth chip in
   // sequence and you're having trouble figuring out which of the commands is
   // the one that produced the "SYNTAX ERROR" message. Make sure to disable it
   // again when you're done debugging.
@@ -2390,7 +2400,7 @@ void SendBlueGigaCommand(String commandString)
 // ---------------------------------------------------------------------------
 // RespondToQueries
 //
-// Command the bluetooth chipset to respond to certain queries made by the
+// Command the Bluetooth chipset to respond to certain queries made by the
 // host stereo, such as queries for playback status and track titles.
 // ---------------------------------------------------------------------------
 void RespondToQueries(String &queryString)
@@ -2461,8 +2471,8 @@ void RespondToQueries(String &queryString)
   // response in the query/response handler code. Size of string can get big
   // because it may contain long track titles as well as the preamble. In
   // fact, the string could potentially be this long if the stereo happens to
-  // query the bluetooth chip for all track metadata elements all at once and
-  // each element is the maxiumum length that each possible element can be:
+  // query the Bluetooth chip for all track metadata elements all at once and
+  // each element is the maximum length that each possible element can be:
   // "AVRCP RSP 7 "                       = 12 characters, the response preamble and the number of elements.
   // "4 "9999" 5 "9999" "                 = 18 characters, the track number and total number of tracks.
   // "7 "4294967295" "                    = 15 characters, the current playback position in MS in Decimal.
@@ -2487,7 +2497,7 @@ void RespondToQueries(String &queryString)
 
     // Special case where we save off some possible global variables
     // which are the specific transaction labels for two specific
-    // types of query/response strings we might be deailing with.
+    // types of query/response strings we might be dealing with.
     if (queryString.indexOf(F("PLAYBACK_STATUS_CHANGED")) > (-1))
     {
       // If we got a "REGISTER_NOTIFICATION" for "PLAYBACK_STATUS_CHANGED"
@@ -2721,7 +2731,7 @@ void RespondToQueries(String &queryString)
     //    2. A single query for multiple combinations of the metadata, such as
     //       querying for all of them, or a subset of them, all at once with a
     //       single query statement.
-    // There is support in the bluetooth command set for both of those
+    // There is support in the Bluetooth command set for both of those
     // methods, the code below will respond successfully to both of them.
     //
     // Note: The attribute parameters need to be surrounded by quote
@@ -2865,6 +2875,7 @@ void RespondToQueries(String &queryString)
     Log(F("Dropping out of the bottom of the RespondToQueries function without responding."));
 }
 
+
 // ---------------------------------------------------------------------------
 // BounceAvrcpChannel
 //
@@ -2950,6 +2961,7 @@ void BounceAvrcpChannel()
   bounceAvrcpMode = false;
 }
 
+
 // ---------------------------------------------------------------------------
 // ForceQuickReconnect
 //
@@ -2964,7 +2976,7 @@ void BounceAvrcpChannel()
 // connection after powerup, and that if I disconnect and reconnect then after
 // that I stop being asked for these registrations.
 //
-// Note 1: This routine assumes that the blueooth chip is connected to the
+// Note 1: This routine assumes that the Bluetooth chip is connected to the
 // host stereo at the time that this function is called.
 //
 // Note 2: This workaround has the potential to put the unit into an infinite
@@ -2987,7 +2999,7 @@ void ForceQuickReconnect()
   // Set the flag indicating we are about to try a forced reconnect.
   forceQuickReconnectMode = true;
 
-  // Make sure bluetooth chip configured and ready to immediately reconnect as
+  // Make sure Bluetooth chip configured and ready to immediately reconnect as
   // soon as it disconnects. But only if we are not doing the "manual" monkey
   // reconnect feature.
   if (!monkeyReconnectEnabled)
@@ -3003,10 +3015,10 @@ void ForceQuickReconnect()
   // successful quick reconnect, it comes up in a mode where all of the AVRCP
   // commands have stopped working altogether and there are no more track
   // title updates or steering wheel control commands. So we have to just go
-  // back to our original plan of forcing a full reset of the bluetooth module
+  // back to our original plan of forcing a full reset of the Bluetooth module
   // in this case.
   //
-  Log(F("ForceQuickReconnect: Resetting/rebooting bluetooth module."));
+  Log(F("ForceQuickReconnect: Resetting/rebooting Bluetooth module."));
   QuickResetBluetooth(0);
 
   // Indented below is all of the code from the speedy version of the
@@ -3015,12 +3027,12 @@ void ForceQuickReconnect()
 
                 // // First, let us obtain the address of the current pairing buddy. This
                 // // point in the code assumes we HAVE a current pairing buddy. Send
-                // // the command to the bluetooth to have it report back our current
+                // // the command to the Bluetooth to have it report back our current
                 // // pairing buddy's address.
                 // SendBlueGigaCommand(F("SET BT PAIR"));
 
-                // // Allow unit to freewheel a bit to give it a chance to retreive
-                // // the pairing buddy response from the bluetooth chip.
+                // // Allow unit to freewheel a bit to give it a chance to retrieve
+                // // the pairing buddy response from the Bluetooth chip.
                 // // It must be a pretty long freewheel because, when the bad PDU
                 // // issue occurs, it's usually in the middle of a whole bunch of
                 // // other stuff happening and many messages are going back and
@@ -3045,10 +3057,10 @@ void ForceQuickReconnect()
 
                 //   // If we have a pairing buddy known, then issue the commands to
                 //   // force a quick reconnect which is quicker than fully resetting
-                //   // the bluetooth chip.
+                //   // the Bluetooth chip.
                 //   SendBlueGigaCommand(F("CLOSE 0"));
 
-                //   // Must have a short freehweel between the close and call commands
+                //   // Must have a short freewheel between the close and call commands
                 //   // in order for it to work efficiently. This is counterintuitive
                 //   // but the reconnect can fail or work too slowly if you issue the
                 //   // call command instantaneously after you issue the close command.
@@ -3069,7 +3081,7 @@ void ForceQuickReconnect()
                 // {
                 //   // If we don't have a pairing buddy (or if the routine to obtain
                 //   // our pairing buddy's address failed) then we have no choice but
-                //   // an actual reset of our bluetooth chip. Disconnect the bluetooth
+                //   // an actual reset of our Bluetooth chip. Disconnect the Bluetooth
                 //   // and count on the reconnect configuration to do its job and
                 //   // reconnect automatically. This is not the greatest because the
                 //   // reconnect after the reset is longer than I'd like it to be.
@@ -3086,11 +3098,12 @@ void ForceQuickReconnect()
   Log(F("End: ForceQuickReconnect routine."));
 }
 
+
 // ---------------------------------------------------------------------------
 // DisplayAndSwallowResponses
 //
 // For either a set amount of time, and/or a set amount of response messages,
-// whichever occurs first, display all responses received from the bluetooth
+// whichever occurs first, display all responses received from the Bluetooth
 // chip onto the Arduino debug port and then do nothing about them: do not try
 // to process the strings or execute any commands for that period of time.
 //
@@ -3100,7 +3113,7 @@ void ForceQuickReconnect()
 // 
 // Note:
 // The max total wait time will be the first parameter times the second
-// parameter, if no messsages are received. If any message is received, then
+// parameter, if no messages are received. If any message is received, then
 // the wait shortens by that portion of the wait loop.
 // ---------------------------------------------------------------------------
 void DisplayAndSwallowResponses(int numResponsesToSwallow, unsigned long waitTimePerResponseMs)
@@ -3126,10 +3139,10 @@ void DisplayAndSwallowResponses(int numResponsesToSwallow, unsigned long waitTim
     // swallow responses.
     startingDnsMillis = millis();
 
-    // Loop and retreive characters as long as the clock hasn't run out
+    // Loop and retrieve characters as long as the clock hasn't run out
     do
     {
-      // Clear out the character that we will be retreiving.
+      // Clear out the character that we will be retrieving.
       swallowChar = 0;
 
       // Check to see if a character is available on the serial port and then
@@ -3205,7 +3218,7 @@ void DisplayAndSwallowResponses(int numResponsesToSwallow, unsigned long waitTim
 //                or "ARush" or "GProgressive Rock".
 //
 // empegMessageCode: The single character of the message code from the
-//                   empeg which preceded the string to pars such as "G" or
+//                   empeg which preceded the string to parse such as "G" or
 //                   "T" or whatever.
 //
 // Track data coming from the empeg will look something like this by the time
@@ -3227,11 +3240,11 @@ void SetTrackMetaData(char empegMessageCode, String &stringToParse)  // Pass by 
   // Log(F(":stringToParse"));
 
   // Pre-strip doublequote characters out of the track data because our
-  // messages to the bluetooth chip need doublequote characters as delimiters
+  // messages to the Bluetooth chip need doublequote characters as delimiters
   // when we send metadata up to the host stereo. Silicon Labs support says
-  // there is no more elegant way to do this: Repacing doublequote with two
+  // there is no more elegant way to do this: Replacing doublequote with two
   // single quotes is the best way so far. It actually looks really good on my
-  // car stereo touchscreen display so I am sticking with this for now.
+  // car stereo touchscreen display, so I am sticking with this for now.
   stringToParse.replace(F("\""), F("''"));
 
   // Pre-strip single quote characters too, I believe I ran into a problem
@@ -3290,7 +3303,7 @@ void SetTrackMetaData(char empegMessageCode, String &stringToParse)  // Pass by 
   // Track Duration in milliseconds, but presented to us as a string. Added by
   // Mark Lord in a recent version of Hijack. We don't need to do math on
   // this, we just need to turn it around and send it right back up the
-  // bluetooth as a string as-is.
+  // Bluetooth as a string as-is.
   if (empegMessageCode == 'D')
   {
     trackPlaybackLengthString = stringToParse;
@@ -3349,13 +3362,14 @@ void SetTrackMetaData(char empegMessageCode, String &stringToParse)  // Pass by 
   //  Log(F("WARNING: DROPPED OUT OF BOTTOM OF SetTrackMetaData ROUTINE UNEXPECTEDLY."));
 }
 
+
 // ---------------------------------------------------------------------------
 // ReplaceHighAsciiWithUtf8
 // 
 // Fix track metadata strings which contain High ASCII characters and replace
 // them with UTF-8 characters.
 // 
-// My empeg's track/artist/album fields contained High Ascii characters such
+// My empeg's track/artist/album fields contained High ASCII characters such
 // as the "Ö" in "Blue Öyster Cult". These appear as a "unrecognized symbol"
 // on my car stereo's LCD touchscreen UI. This function translates those
 // symbols into UTF-8 characters, which are then accepted and displayed
@@ -3450,6 +3464,7 @@ String ReplaceHighAsciiWithUtf8(String &stringToMakeUtf8Char)
   return utf8ReturnString;
 }
 
+
 // ---------------------------------------------------------------------------
 // SendEmpegCommand
 //
@@ -3458,7 +3473,7 @@ String ReplaceHighAsciiWithUtf8(String &stringToMakeUtf8Char)
 // etc.
 //
 // Parameters:
-// - The command string to send, without the linefeed. Linefeed will be added.
+// - The command char to send, without the linefeed. Linefeed will be added.
 // ---------------------------------------------------------------------------
 void SendEmpegCommand(char empegCommandToSend)
 {
@@ -3505,7 +3520,7 @@ void SendEmpegCommand(char empegCommandToSend)
     }
   }
 
-  // Only bother to send commads if we believe the empeg has finished booting
+  // Only bother to send commands if we believe the empeg has finished booting
   // up and we think we will be successful at sending the command. If not, log
   // the failure.
   if (!empegPlayerIsRunning)
@@ -3531,7 +3546,7 @@ void SendEmpegCommand(char empegCommandToSend)
     // Bugfix: Actually don't this merely because we told the player to change
     // tracks. Instead only trigger a state change notification when the
     // player responds with new/changed information about its state, i.e.,
-    // handle the empeg state change elswhere. Merely telling the empeg state
+    // handle the empeg state change elsewhere. Merely telling the empeg state
     // to change by sending it a command doesn't mean that it actually changed
     // yet. Notifying the host stereo that a change occurred at this moment is
     // actually too early, and it will query for and receive false data at
@@ -3549,7 +3564,7 @@ void SendEmpegCommand(char empegCommandToSend)
 // 
 // Function to process the string data received from the empeg car serial
 // port. Locate strings which look like notifications of track data and turn
-// those into variables for later sending up the bluetooth.
+// those into variables for later sending up the Bluetooth.
 // ---------------------------------------------------------------------------
 void HandleEmpegString(String &theString)
 {
@@ -3764,7 +3779,7 @@ void HandleEmpegString(String &theString)
 
     // And then now that we're done getting a good message code, let's shorten
     // the detail string even more by stripping out the message code and
-    // leaving just the paramter data after the message code. The "substring"
+    // leaving just the parameter data after the message code. The "substring"
     // function has a zero-based index, so setting the start parameter of 1
     // means starting at the second character. And leaving the ending
     // parameter blank means go to the end of the string. So in this case, if
@@ -3789,16 +3804,16 @@ void HandleEmpegString(String &theString)
       SetTrackMetaData(empegMessageCode, empegDetailString);
 
       // NOTE: The next line is super important. Every time the empeg changes
-      // its track metadata, we need to send a command to the bluetooth to
+      // its track metadata, we need to send a command to the Bluetooth to
       // make it re-query us for the track information. In this way, if the
       // track changes on the empeg due to a state change then it will ask us
       // for the new track data. This will need to happen each time the empeg
       // changes track number, metadata, playback length, etc (though not
-      // playback position). This will need to happen both when the bluetooth
+      // playback position). This will need to happen both when the Bluetooth
       // initiates the change (ie the user presses NEXT on his steering wheel)
       // and also when the empeg moves on to the next track naturally itself
       // (i.e. you're just letting the empeg run and it goes to the next track
-      // and now new track data has appered on its serial port output).
+      // and now new track data has appeared on its serial port output).
       // However, we should call out to the this function only when the empeg
       // itself has told us that the data has changed, not merely because we
       // sent an "n" or "p" command to the empeg. There is a serial data
@@ -3818,21 +3833,21 @@ void HandleEmpegString(String &theString)
 
       // Bugfix for issue #32 "Fast forward can run away from you and get
       // stuck". If we are in the middle of a fast forward or rewind operation
-      // that was inititated from the bluetooth, prevent a "runaway fast
+      // that was initiated from the Bluetooth, prevent a "runaway fast
       // forward" situation by canceling the operation and resetting it here
       // and now. Only do this if the fast forward or rewind operation was
-      // initiated by the bluetooth, not if it was initiated from the player's
-      // front panel. This is important, so that we prevent runaway bluetooth
+      // initiated by the Bluetooth, not if it was initiated from the player's
+      // front panel. This is important, so that we prevent runaway Bluetooth
       // situations by stopping at track boundaries but still allow the user
       // to ff/rew across track boundaries from the player front panel. First,
-      // check to see if we were in the middle of a bluetooth-initiated FF or
+      // check to see if we were in the middle of a Bluetooth-initiated FF or
       // REW operation and thus need to be doing protection at all.
       if (blueToothFastForward)
       {
         // We are now in a situation where a new track boundary has been
         // crossed (because we got new track data just now) and now we know we
         // were also in the middle of a FF/REW operation initiate by the
-        // bluetooth, so begin implementing the protection code now. Start by
+        // Bluetooth, so begin implementing the protection code now. Start by
         // turning off the flag variable since we're handling the situation
         // now.
         blueToothFastForward = false;
@@ -3851,7 +3866,7 @@ void HandleEmpegString(String &theString)
     }
   }
 
-  // If we received the information from the emepg serial port indicating that
+  // If we received the information from the empeg serial port indicating that
   // it is now playing, then do the needful
   if ((empegMessageCode == 'S') && (empegDetailString == "1"))
   {
@@ -3860,7 +3875,7 @@ void HandleEmpegString(String &theString)
     return;
   }
   
-  // If we received the information from the emepg serial port indicating that
+  // If we received the information from the empeg serial port indicating that
   // it is now paused, then do the needful
   if ((empegMessageCode == 'S') && (empegDetailString == "0"))
   {
@@ -3905,7 +3920,7 @@ void HandleEmpegString(String &theString)
   // If we received information from the empeg serial port that our playback
   // position has changed, then do the needful. The playback position is
   // tricky because the line includes the FID number that we have to strip out
-  // and also it's in ascii HH:MM:SS format whereas the bluetooth chip wants
+  // and also it's in ascii HH:MM:SS format whereas the Bluetooth chip wants
   // it in milliseconds, so we'll have to do some work here.  
   // Example of full string: "  serial_notify_thread.cpp: 180:@@ #f4f0  0:00:12"
   // By the time it reaches this code it will be:               "#f4f0  0:00:12"
@@ -3962,7 +3977,7 @@ void HandleEmpegString(String &theString)
     // String should now look like "12" - it's now just the seconds left.
     empegTimecodeString = empegTimecodeString.substring(empegTimecodeString.indexOf(F(":")) +1);
 
-    // Get the decmial value of the remaining section, the seconds.
+    // Get the decimal value of the remaining section, the seconds.
     empegSeconds = empegTimecodeString.toInt();
 
     // Sanity check that there are good values inside all of these. These
@@ -3978,7 +3993,7 @@ void HandleEmpegString(String &theString)
 
     // Calculate the timestamp in milliseconds.
     // Note: must append an "L" to the constant values so that they calculate
-    // as longs in the final calcuation instead of ints.
+    // as longs in the final calculation instead of ints.
     empegMs = (empegHours * 1000L * 60L * 60L) + (empegMinutes * 1000L * 60L) + (empegSeconds * 1000L);
 
     // Fix Github issue #26 "empegStartPause feature does not work as
@@ -4014,7 +4029,7 @@ void HandleEmpegString(String &theString)
     // The next section of code must only be done if it was NOT the first
     // timestamp message we ever received from the empeg since either boot up
     // or since sending a command to pause, unpause, or change tracks. Because
-    // the first  timestamp we receive will almost always be different from
+    // the first timestamp we receive will almost always be different from
     // the timestamp in global memory, the very first one will frequently be
     // flagged as having made a pause/play-state change even if there really
     // wasn't one. So instead only do this in cases where it wasn't the first
@@ -4055,7 +4070,7 @@ void HandleEmpegString(String &theString)
       // the incorrectly-displayed playback state during normal playback.
       // Though there is the possibility to respond with a particular playback
       // state to the headunit of "fast forwarding" or "rewinding", but this
-      // is not implented in my code yet. So for now, we have two possible
+      // is not implemented in my code yet. So for now, we have two possible
       // states, playing and paused, and if we detect that the empeg has
       // changing track timestamps then we will update that state.
       if (empegMs != trackPlaybackPositionMs)
@@ -4098,7 +4113,7 @@ void HandleEmpegString(String &theString)
     trackPlaybackPositionMs = empegMs;
 
     // Convert milliseconds to a string and assign it to our global playback
-    // position string as a string value that can be sent to the bluetooth
+    // position string as a string value that can be sent to the Bluetooth
     // chip.
     trackPlaybackPositionString07 = String(empegMs);
 
@@ -4110,14 +4125,15 @@ void HandleEmpegString(String &theString)
   }
 }
 
+
 // ---------------------------------------------------------------------------
 // HandleEmpegStateChange
 //
 // When the empeg's playing state changes (playing or paused), there are a few
 // things that need to be done, some commands than need to be sent to the
-// bluetooth chip to let it know that the state has changed. For instance this
+// Bluetooth chip to let it know that the state has changed. For instance this
 // function will send the AVRCP NFY CHANGED message to the head unit. This
-// routine handles doing whatver is necessary when the empeg state changes.
+// routine handles doing whatever is necessary when the empeg state changes.
 //
 // Parameter:   Supply 1 for "playback status changed" (i.e., play/pause).
 //              Supply 2 for "track changed" (i.e., title/artist/etc.)
@@ -4132,7 +4148,7 @@ void HandleEmpegString(String &theString)
 // PAUSE message during HandleEmpegStateChange. It does not help to indicate
 // to the host stereo that we have started playing by sending a play command.
 // Since we are in A2DP Source Mode, the host stereo doesn't respond to PLAY
-// or PAUSE commands. I tried to do it to fix issue #22 where the bluetooth
+// or PAUSE commands. I tried to do it to fix issue #22 where the Bluetooth
 // headset would get the wrong idea and it would have a desynchronization with
 // the play/pause state, but it did not make it better. The real source of the
 // desynchronization was a completely different thing. So don't do that here
@@ -4184,7 +4200,7 @@ void HandleEmpegStateChange(int typeOfStateChange)
           // sending PLAYBACK_STATUS_CHANGED up the Bluetooth did.
           priorIsPlaying = F("1");
 
-          // Report to our arduino console debug log what the current state of
+          // Report to our Arduino console debug log what the current state of
           // playback on the empeg is.
           ReportEmpegPlayingState();                 
         }
@@ -4208,7 +4224,7 @@ void HandleEmpegStateChange(int typeOfStateChange)
           // sending PLAYBACK_STATUS_CHANGED up the Bluetooth did.
           priorIsPlaying = F("2");
 
-          // Report to our arduino console debug log what the current state of
+          // Report to our Arduino console debug log what the current state of
           // playback on the empeg is.
           ReportEmpegPlayingState();          
         }
@@ -4257,7 +4273,7 @@ void HandleEmpegStateChange(int typeOfStateChange)
       {
         // If some/any of the data has changed, send it up the Bluetooth. We
         // don't get to control which pieces of data go up the Bluetooth. The
-        // bluetooth host head unit queries for the data it wants after we
+        // Bluetooth host head unit queries for the data it wants after we
         // notify that the track data changed.
         SendBlueGigaCommand("AVRCP NFY CHANGED " + transactionLabelTrackChanged + " 2 1"); 
 
@@ -4280,12 +4296,13 @@ void HandleEmpegStateChange(int typeOfStateChange)
   }
 }
 
+
 // ---------------------------------------------------------------------------
 // ReportEmpegPlayingState
 //
 // Log to the console session the current believed state of the empeg whether
 // it is playing or paused. Used only for logging, there is  a different place
-// in the code that responds to bluetooth queries asking for the playback
+// in the code that responds to Bluetooth queries asking for the playback
 // state.
 // ---------------------------------------------------------------------------
 void ReportEmpegPlayingState()
@@ -4299,6 +4316,7 @@ void ReportEmpegPlayingState()
     Log(F("Empeg state..................................PAUSED   ||"));
   }
 }
+
 
 // ---------------------------------------------------------------------------
 // BlinkBlue
@@ -4328,7 +4346,7 @@ void BlinkBlue(boolean startBlink)
   if (startBlink)
   {
     // Blink on the reset/pair LED briefly during times that we are processing
-    // bluetooth data from the bluetooth chip. However if we are in pairing
+    // Bluetooth data from the Bluetooth chip. However if we are in pairing
     // mode, it's opposite; blink it off briefly instead, because the LED is
     // already "on" and yet we also want to indicate activity during pairing
     // mode.
@@ -4344,7 +4362,7 @@ void BlinkBlue(boolean startBlink)
   else
   {
     // Blink off the reset/pair LED at the end of the period where we were
-    // processing bluetooth data from the bluetooth chip. However if we are in
+    // processing Bluetooth data from the Bluetooth chip. However if we are in
     // pairing mode, it's opposite; blink it back on instead, because the LED
     // was originally already "on" and yet we also want to indicate activity
     // during pairing mode.
@@ -4359,14 +4377,15 @@ void BlinkBlue(boolean startBlink)
   }
 }
 
+
 // ---------------------------------------------------------------------------
 // QuickResetBluetooth
 //
-// Quickly reset the bluetooth module and also clean out any global variables
+// Quickly reset the Bluetooth module and also clean out any global variables
 // which we should not be trying to save any more thanks to the module getting
 // reset. This is an attempt to avoid a bug where desynchronization between
-// the bluetooth initialization state and the Arduino initialization state
-// make things go a little wonky in the software. When issuing bluetooth
+// the Bluetooth initialization state and the Arduino initialization state
+// make things go a little wonky in the software. When issuing Bluetooth
 // commands to reset the player, do not simply call "RESET" or "BOOT 0" by
 // itself. Should call this routine instead.
 // 
@@ -4376,16 +4395,16 @@ void BlinkBlue(boolean startBlink)
 //                 2 = Use the "SET RESET" command (factory defaults)
 //
 // Note that "SET RESET" (factory defaults) is different from "RESET" (which
-// is just a reboot). Note that this does not erase bluetooth pairings. Also,
+// is just a reboot). Note that this does not erase Bluetooth pairings. Also,
 // I don't know if "RESET" is any different from "BOOT 0" for my purposes, but
 // it's being included here just in case.
 // ---------------------------------------------------------------------------
 void QuickResetBluetooth(int resetType)
 {
   // Convenience feature to help with issue #26. Pause the player if we do
-  // any kind of reset on the bluetooth module because all of the reset types
-  // below will disconnect the bluetooth module. Music should always be paused
-  // any time that the bluetooth module is disconnected to prevent the tracks
+  // any kind of reset on the Bluetooth module because all of the reset types
+  // below will disconnect the Bluetooth module. Music should always be paused
+  // any time that the Bluetooth module is disconnected to prevent the tracks
   // from spooling out silently to no audience.
   SendEmpegCommand('W');
 
@@ -4393,7 +4412,7 @@ void QuickResetBluetooth(int resetType)
   switch (resetType)
   {
     case 0:
-      Log(F("Performing soft reset of bluetooth module."));
+      Log(F("Performing soft reset of Bluetooth module."));
       SendBlueGigaCommand(F("RESET"));
       ClearGlobalVariables();
       DisplayAndSwallowResponses(4, 500);
@@ -4418,11 +4437,12 @@ void QuickResetBluetooth(int resetType)
   }
 }
 
+
 // ---------------------------------------------------------------------------
 // ClearGlobalVariables
 //
 // Clear out any global variables which we should not be remembering or
-// re-using if the bluetooth chip happened to have gotten reset, either
+// re-using if the Bluetooth chip happened to have gotten reset, either
 // accidentally or deliberately.
 // ---------------------------------------------------------------------------
 void ClearGlobalVariables()
@@ -4446,6 +4466,6 @@ void ClearGlobalVariables()
   priorTotalNumberString05      =  "" ;
   priorGenreString06            =  "" ;
   priorPlaybackPositionString07 =  "" ; 
-  priorIsPlaying = "0";
+  priorIsPlaying                =  "0";
 }
 

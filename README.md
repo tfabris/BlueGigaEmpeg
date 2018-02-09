@@ -218,8 +218,9 @@ tuner connector until after the I2S modification has been completed, as
 described elsewhere in this document.
 
 Obtain the BlueGigaEmpeg Arduino sketch from GitHub, linked in the
-"Prerequisites" section of this document. Unzip it onto a folder named
-"BlueGigaEmpeg" on your computer's hard disk.
+"Prerequisites" section of this document. Find the button titled "Clone or
+download" and select "Download Zip" to download the zip file. Unzip it onto a
+folder named "BlueGigaEmpeg" on your computer's hard disk.
 
 Before connecting the USB cable between the computer and the Arduino, make
 sure that the empeg is either not connected to the BlueGigaEmpeg module or it
