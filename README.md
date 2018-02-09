@@ -671,7 +671,8 @@ straighten it carefully so the LED fits into the hole.
 When reassembling the BlueGigaEmpeg enclosure, make sure to align the small
 notch in one end of the lid with the tuner module connector. The notch is
 there to make room for the release tab on the tuner module connector. And be
-careful not to overtighten the screws.
+careful not to overtighten the screws, if you tighten them too tight, you'll
+strip the plastic they're screwed into, and then they won't work any more.
 
 
 Modify empeg's power connection to car if needed
