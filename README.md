@@ -104,18 +104,19 @@ Prerequisites
 Make sure you have all of these things before working with the BlueGigaEmpeg:
 
 Purchase:
- - Empeg Mk2 or Rio Car player   http://empegbbs.com/ubbthreads.php/forums/11/1/For_Sale
- - BlueGigaEmpeg Interface       tfabris@gmail.com
+ - ` Empeg Mk2 or Rio Car player               ` http://empegbbs.com/ubbthreads.php/forums/11/1/For_Sale
+ - ` BlueGigaEmpeg Interface                   ` tfabris@gmail.com
 
 Download software (Windows PC or Windows VM required for some of these items):
- - Hijack Kernel for empeg       http://empeg-hijack.sourceforge.net
- - Tony's Empeg Logo Editor      http://empegbbs.com/ubbthreads.php/ubb/download/Number/7067/filename/logoedit17.zip
- - Arduino standalone IDE        https://www.arduino.cc/en/Main/Software
- - BlueGigaEmpeg sketch          https://github.com/tfabris/BlueGigaEmpeg
+ - ` Hijack Kernel for empeg                   ` http://empeg-hijack.sourceforge.net
+ - ` Tony's Empeg Logo Editor                  ` http://empegbbs.com/ubbthreads.php/ubb/download/Number/7067/filename/logoedit17.zip
+ - ` Arduino standalone IDE                    ` https://www.arduino.cc/en/Main/Software
+ - ` BlueGigaEmpeg GitHub Project              ` https://github.com/tfabris/BlueGigaEmpeg
+ - ` BlueGigaEmpeg.ino sketch direct download  ` https://github.com/tfabris/BlueGigaEmpeg/archive/master.zip
 
-May be needed later if debugging the WT32i chip directly:
- - Windows FTDI USB driver       http://www.ftdichip.com/FTDrivers.htm
- - WT32i Firmware Upgrade        https://www.silabs.com/documents/login/software/iWRAP-Firmware-Releases.zip
+May be needed later if debugging or updating the WT32i chip directly:
+ - ` Windows FTDI USB driver                   ` http://www.ftdichip.com/FTDrivers.htm
+ - ` WT32i Firmware Upgrade                    ` https://www.silabs.com/documents/login/software/iWRAP-Firmware-Releases.zip
 
 ###  Important:
 
@@ -217,13 +218,15 @@ assembled. However do not plug the BlueGigaEmpeg module into the empeg Car
 tuner connector until after the I2S modification has been completed, as
 described elsewhere in this document.
 
-Obtain the BlueGigaEmpeg Arduino sketch from GitHub, linked in the
-"Prerequisites" section of this document. Find the button titled "Clone or
-download" and select "Download Zip" to download the zip file. Unzip it onto a
-folder named "BlueGigaEmpeg" on your computer's hard disk.
+Obtain the BlueGigaEmpeg.ino Arduino sketch file (included in the project zip
+file) from GitHub, linked in the "Prerequisites" section of this document. In
+the GitHub project web site for BlueGigaEmpeg, find the button titled "Clone
+or download" and select "Download Zip" to download the zip file. Unzip the
+entire project into a folder named "BlueGigaEmpeg" on your computer's hard
+disk.
 
 Before connecting the USB cable between the computer and the Arduino, make
-sure that the empeg is either not connected to the BlueGigaEmpeg module or it
+sure that the empeg is either not connected to the BlueGigaEmpeg module, or it
 is not powered up. In some conditions, the computer will not "see" the USB
 connection to the Arduino if you plug it into the computer when the Arduino is
 already receiving power from another power source.
@@ -239,7 +242,7 @@ upload it to the Arduino Mega board.
 Use the Arduino Serial Monitor feature (built into the Arduino IDE), set to
 115200 BPS, and observe the serial port output from the Arduino. It should
 list the RX and TX buffer sizes near the beginning of the output and indicate
-whether they are good or not.
+that they are good.
 
 
 Disconnect all tuner modules from all sleds you own
