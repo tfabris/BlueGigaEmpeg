@@ -104,7 +104,7 @@ Prerequisites
 Make sure you have all of these things before working with the BlueGigaEmpeg:
 
 
-Purchase:
+###  Purchase:
 
  - Empeg Mk2 or Rio Car player
    - http://empegbbs.com/ubbthreads.php/forums/11/1/For_Sale
@@ -113,7 +113,7 @@ Purchase:
    - tfabris@gmail.com
 
 
-Download software (Windows PC or Windows VM required for some of these items):
+### Download software (Windows PC or Windows VM required for some of these items):
 
  - Hijack Kernel for empeg
    - http://empeg-hijack.sourceforge.net
