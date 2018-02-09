@@ -103,20 +103,33 @@ Prerequisites
 
 Make sure you have all of these things before working with the BlueGigaEmpeg:
 
+
 Purchase:
- - ` Empeg Mk2 or Rio Car player               ` http://empegbbs.com/ubbthreads.php/forums/11/1/For_Sale
- - ` BlueGigaEmpeg Interface                   ` tfabris@gmail.com
+
+ - Empeg Mk2 or Rio Car player
+ -- http://empegbbs.com/ubbthreads.php/forums/11/1/For_Sale
+
+ - BlueGigaEmpeg Interface
+ -- tfabris@gmail.com
+
 
 Download software (Windows PC or Windows VM required for some of these items):
- - ` Hijack Kernel for empeg                   ` http://empeg-hijack.sourceforge.net
- - ` Tony's Empeg Logo Editor                  ` http://empegbbs.com/ubbthreads.php/ubb/download/Number/7067/filename/logoedit17.zip
- - ` Arduino standalone IDE                    ` https://www.arduino.cc/en/Main/Software
- - ` BlueGigaEmpeg GitHub Project              ` https://github.com/tfabris/BlueGigaEmpeg
- - ` BlueGigaEmpeg.ino sketch direct download  ` https://github.com/tfabris/BlueGigaEmpeg/archive/master.zip
 
-May be needed later if debugging or updating the WT32i chip directly:
- - ` Windows FTDI USB driver                   ` http://www.ftdichip.com/FTDrivers.htm
- - ` WT32i Firmware Upgrade                    ` https://www.silabs.com/documents/login/software/iWRAP-Firmware-Releases.zip
+ - Hijack Kernel for empeg
+ -- http://empeg-hijack.sourceforge.net
+
+ - Tony's Empeg Logo Editor
+ -- http://empegbbs.com/ubbthreads.php/ubb/download/Number/7067/filename/logoedit17.zip
+ 
+ - Arduino standalone IDE
+ -- https://www.arduino.cc/en/Main/Software
+
+ - BlueGigaEmpeg GitHub Project
+ -- https://github.com/tfabris/BlueGigaEmpeg
+
+ - BlueGigaEmpeg.ino Arduino sketch, direct download
+ -- https://github.com/tfabris/BlueGigaEmpeg/archive/master.zip
+
 
 ###  Important:
 
@@ -218,18 +231,35 @@ assembled. However do not plug the BlueGigaEmpeg module into the empeg Car
 tuner connector until after the I2S modification has been completed, as
 described elsewhere in this document.
 
-Obtain the BlueGigaEmpeg.ino Arduino sketch file (included in the project zip
+Obtain the BlueGigaEmpeg.ino Arduino sketch file (located in the project zip
 file) from GitHub, linked in the "Prerequisites" section of this document. In
 the GitHub project web site for BlueGigaEmpeg, find the button titled "Clone
 or download" and select "Download Zip" to download the zip file. Unzip the
 entire project into a folder named "BlueGigaEmpeg" on your computer's hard
-disk.
+disk. Rename the folder to "BlueGigaEmpeg" if needed.
+
+### Important:
+
+The folder in which the BlueGigaEmpeg.ino file resides must be named
+"BlueGigaEmpeg" and not, for example "BlueGigaEmpeg-Master", because the
+Arduino IDE won't recognize it as a Arduino project file unless the parent
+folder name is the same as the ".ino" file name. I don't know why this is a
+requirement, but it seems to be the case. You will likely have to rename the
+folder after downloading and unzipping the project from GitHub.
+
+### Connection order special instructions:
 
 Before connecting the USB cable between the computer and the Arduino, make
 sure that the empeg is either not connected to the BlueGigaEmpeg module, or it
 is not powered up. In some conditions, the computer will not "see" the USB
 connection to the Arduino if you plug it into the computer when the Arduino is
-already receiving power from another power source.
+already receiving power from another power source such as the empeg itself.
+
+In addition, do not connect the BlueGigaEmpeg module to the Empeg until after
+completing the step in this document titled "Modify Empeg Car interior for I2S
+digital audio connection". Also, once the I2S modification has been completed,
+do not connect the Empeg to any tuner module. Damage may occur if these
+instructions are not followed.
 
 Connect the USB cable from the computer to the Arduino USB connector. This is
 the USB connector exposed on the end of the BlueGigaEmpeg enclosure. The
@@ -840,7 +870,7 @@ Steps:
    example, I was successful with doing this in Parallels on a Mac computer.
 
  - Download and unzip the "iWRAP-Firmware-Releases.zip" file linked in the
-   "Prerequisites" section of this document.
+   "Resources" section of this document.
 
  - Connect your Windows computer to the Bluetooth device via a USB micro cable
    connected to the "UART" port on the BetzTechnik WT32i breakout board. (If
@@ -858,7 +888,7 @@ Steps:
    in the USB section instead. If there is a little yellow boo boo icon
    instead of a serial port, then you must install the necessary FTDI drivers
    for the USB-serial connection to the board. Links to these drivers are in
-   the "Prerequisites" section of this document.
+   the "Resources" section of this document.
 
  - Now, plugging in the Bluetooth breakout board into the PC with the USB
    micro cable makes a serial port appear in the Windows Device Manager.
