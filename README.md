@@ -238,7 +238,7 @@ or download" and select "Download Zip" to download the zip file. Unzip the
 entire project into a folder named "BlueGigaEmpeg" on your computer's hard
 disk. Rename the folder to "BlueGigaEmpeg" if needed.
 
-### Important:
+###  Important:
 
 The folder in which the BlueGigaEmpeg.ino file resides must be named
 "BlueGigaEmpeg" and not, for example, "BlueGigaEmpeg-Master", because the
@@ -247,7 +247,7 @@ folder name is the same as the ".ino" file name. I don't know why this is a
 requirement, but it seems to be the case. You will likely have to rename the
 folder after downloading and unzipping the project from GitHub.
 
-### Connection order special instructions:
+###  Connection order special instructions:
 
 Before connecting the USB cable between the computer and the Arduino, make
 sure that the empeg is either not connected to the BlueGigaEmpeg module, or it
@@ -260,6 +260,8 @@ completing the step in this document titled "Modify Empeg Car interior for I2S
 digital audio connection". Also, once the I2S modification has been completed,
 do not connect the Empeg to any tuner module. Damage may occur if these
 instructions are not followed.
+
+###  Upload the sketch:
 
 Connect the USB cable from the computer to the Arduino USB connector. This is
 the USB connector exposed on the end of the BlueGigaEmpeg enclosure. The
