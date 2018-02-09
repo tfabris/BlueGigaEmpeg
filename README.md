@@ -649,7 +649,7 @@ its screen. This is done via the Bluetooth Audio Video Remote Control Profile
 working fine, then skip this step and go on to the next step.
 
 However, if the Bluetooth pairs successfully and streams music, but you are
-unable to play/pause/next the empeg via the car's stereo's controls, and the
+unable to play/pause/next the empeg via the car stereo's controls, and the
 track titles don't show up on the car stereo's screen, then try changing the
 crossover jumper block on the BlueGigaEmpeg module as described below.
 
