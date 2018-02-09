@@ -400,22 +400,14 @@ to glue them down. Use a small amount and make sure the blob of glue does not
 After the glue is fully dry, carefully reassemble the player.
 
 Final wiring positions and colors:
-
-| Empeg IIS pads |  Int. Empeg wires * |  Int. wht Conn pos **  | Sled Tuner Plug   |
-|----------------|---------------------|------------------------|-------------------|
-|    1 IISC      |      Yellow+Green   |      Third from end    |     7 Purple      |
-|    2 IISW      |      Brown wire     |      Right end         |     2 Grey        |
-|    4 IISD1     |      Red wire       |      Second from end   |     1 Pink        |
-|                |                     |                        |     4 Black       |
-|                |                     |                        |     8 Blue        |
-    
-|   BlueGigaEmpeg Tuner Plug |   Bluetooth Chip |  Usage                            |
-|----------------------------|------------------|-----------------------------------|
-|    7  SCK                  |    30  PCM_CLK   |   Serial Clock                    |
-|    2  WS                   |    29  PCM_SYNC  |   Word Select aka Sync            |
-|    1  SDIN                 |    27  PCM_IN    |   Serial Data aka PCM Audio Data  |
-|    4  GND                  |        GND       |   Universal Ground                |
-|    8  12vPower             |                  |   Power to voltage regulator      |
+                                                                                                                                                                
+| Empeg IIS pads | Int. Empeg wires * | Int. wht Conn pos **  | Sled Tuner Plug | BlueGigaEmpeg Tuner Plug | Bluetooth Chip | Usage                            |
+|----------------|--------------------|-----------------------|-----------------|--------------------------|----------------|----------------------------------|
+|  1 IISC        |  Yellow+Green      |  Third from end       |  7 Purple       |  7  SCK                  |  30  PCM_CLK   |  Serial Clock                    |
+|  2 IISW        |  Brown wire        |  Right end            |  2 Grey         |  2  WS                   |  29  PCM_SYNC  |  Word Select aka Sync            |
+|  4 IISD1       |  Red wire          |  Second from end      |  1 Pink         |  1  SDIN                 |  27  PCM_IN    |  Serial Data aka PCM Audio Data  |
+|                |                    |                       |  4 Black        |  4  GND                  |      GND       |  Universal Ground                |
+|                |                    |                       |  8 Blue         |  8  12vPower             |                |  Power to voltage regulator      |
 
     *  (These are the interior wires connecting the docking sled connector to the
        motherboard.)
