@@ -39,11 +39,21 @@ Bluetooth gear. I have tested it on:
 - Kenwood Bluetooth-equipped car stereo in my roommate's car.
 - Plantronics Voyager Edge Bluetooth headset.
 - Onkyo home stereo with Bluetooth input.
+- Etekcity standalone Bluetooth receiver.
+- iHome brand toy Stardestroyer with a Bluetooth speaker.
 
-There may be differences in Bluetooth implementation on other audio gear, and
-so there might be bugs using this on your car stereo. This project is open
-source on GitHub so that I can accept bug reports and code fixes from people
-with other brands of Bluetooth gear.
+Some of the devices listed above do not have full functionality. For instance,
+I cannot get track titles working on the Onkyo, and the Honda does not have
+controls for Shuffle, Fast Forward, or Rewind. As far as I can tell, these are
+limitations of the devices themselves.
+
+There are differences in Bluetooth implementation on various audio gear, and
+so there still might be bugs using this on your particular car stereo. This
+project is open source on GitHub, so that I can accept bug reports and code
+fixes from people with other brands of Bluetooth gear. If you encounter
+problems, get a debug log and file a report on GitHub, using the debug
+procedure described in the section of this document titled "Debug Bluetooth
+connection if needed".
 
 
 Acknowledgments
@@ -301,10 +311,9 @@ Modify empeg Car interior for I2S digital audio connection
 ==============================================================================
 To perform this step, you must be comfortable with disassembling the empeg Car
 player and removing the disk drive tray in such a way as to not cause damage
-to the player. In particular there is risk to the components on the back side
+to the player. In particular, there is risk to the components on the back side
 of the display board, and to the IDE header connector on the empeg
-motherboard. Refer to the empeg FAQ for details on how to disassemble the
-player.
+motherboard. Use extreme caution when disassembling the empeg player.
 
 You will be modifying the interior of your empeg Car so that there can be
 three wires coming out the docking connector which carry digital audio data
@@ -320,12 +329,50 @@ own. Damage may occur to your empeg and your tuner module if you dock your
 modified empeg to any tuner module after you make this modification.
 
 Disassemble your empeg player by carefully removing the fascia, lid and drive
-tray. Refer to the empeg FAQ for disassembly instructions. You must do the
-disassembly carefully so as not to damage the empeg. You should theoretically
-be able to do this without disconnecting the IDE cable, but it might be easier
-if you do. You should not need to remove the display board as long as you are
-careful not to break any of the components sticking off the back of the
-display board.
+tray. You must do the disassembly carefully so as not to damage the empeg. You
+should theoretically be able to do this without disconnecting the IDE cable and
+without removing the display board. Be very careful not to break any of the
+components sticking off the back of the display board.
+
+###  Disassembly of empeg Car:
+
+- Use a 2.5mm hex tool to carefully remove four hex bolts from the fascia.
+
+- Gently remove fascia, buttons, rotary control, and colored lens.
+
+- Extend the hinged pullout handle during the next step. This lowers the
+  keeper hooks on the top of the player, which keep it hooked into the sled
+  and which will also interfere with the lid removal if they aren't lowered.
+  If you have trouble removing the lid in the next step, first double check
+  that the handle is in the extended position.
+
+- Remove lid by sliding it forward and upward over the tabs. This may be
+  tricky on some players, requiring some gentle levering against the tabs with
+  a screwdriver. You shouldn't need to bend or force anything, but it may be a
+  bit of a tight fit as you remove it. Use caution not to slip and damage the
+  components on the display board.
+
+- Do not remove the display board.
+
+- Remove four Phillips screws on the outside sides of the player which are
+  holding the disk drive tray in place. Careful not to strip the screw heads
+  by using the wrong size of screwdriver. They might be Posidrive screws, I'm
+  not actually sure. I'm not sure of the correct bit size; I go through my bit
+  selection until I find a bit that fits good and tight.
+
+- Gently and carefully lift out the drive tray. Make sure not to bump any of
+  the components on the back of the display board. There are some particularly
+  fragile components there, and it's really important that you don't bump
+  them, or your empeg display will stop working entirely. They are really easy
+  to hit, too, so be super careful.
+
+- When lifting out the drive tray, take note of how the IDE cable is folded
+  and routed so that you can put it back exactly as you found it. 
+
+- Do not disconnect the IDE cable. You should be able to set the drive tray
+  aside carefully, without disconnecting the cable.
+
+###  Jumper the I2S pads to the docking connector wires:
 
 Refer to the annotated photograph in this repository named "I2S Wiring
 Modification Photo.jpg" to help understand the wiring instructions below.
@@ -355,8 +402,10 @@ keep track of which wires are soldered to which pads.
 When soldering, make sure the jumper wires and the solder joints are flat to
 the board instead of sticking upwards. The disk drive tray gets close to that
 location when mounted, so make sure they don't have a chance to contact the
-tray. After soldering, cover the solder points with tape or some other
-insulator to prevent them from shorting out on the drive tray.
+tray.
+
+After soldering, cover the solder points with tape or some other insulator to
+prevent them from shorting out on the drive tray.
 
 Locate the two white connectors on the back part of the empeg motherboard
 which connect two groups of small colored wires to the docking connector
@@ -394,10 +443,17 @@ Glue down your jumper wires near the I2S pads so that they do not wiggle and
 rip away the I2S pads. Some empeg Car units will have a chip at that location
 that you can glue onto, others will have a blank area of the PCB in that
 location that you can glue onto. Use RTV silicone or cyanoacrylate superglue
-to glue them down. Use a small amount and make sure the blob of glue does not
-"stick up" since the disk drive tray gets very close to that location.
+to glue them down. Use a small amount of glue, and make sure the blob of glue
+does not "stick up", since the disk drive tray gets very close to that
+location.
 
-After the glue is fully dry, carefully reassemble the player.
+After the glue is fully dry, carefully reassemble the player. Reassemble in
+the reverse order of disassembly. Make sure to put everything back where you
+found it, in particular, make sure the IDE cable is folded and routed the same
+way as it was when you disassembled the player. Be careful not to overtighten
+the hex bolts which hold the fascia in place, they should only be
+finger-tight. If you overtighten them, you may crack the fascia and/or prevent
+the buttons from working correctly.
 
 Final wiring positions and colors:
                                                                                                                                                                 
@@ -418,11 +474,11 @@ Final wiring positions and colors:
 
 Empeg Car configuration changes
 ==============================================================================
-For best results, empeg Car player software version should be 2.00 final or
-2.00 Beta 13. I have tested this with version 2.00 Beta 13. I do not know if
-it will work on 3.0 Alpha version of empeg Car software, but theoretically it
-should work. See the empeg Car FAQ for more information on upgrading the empeg
-Car player software.
+I have tested the BlueGigaEmpeg with version 2.00 of the empeg Car software.
+It is designed to work with version 2.00 Beta 13 or version 2.00 Final. I have
+not tested it with the 3.0 Alpha version of the empeg Car software, but
+theoretically it should work. See the empeg Car FAQ for more information on
+upgrading the empeg Car player software if needed.
 
 Using the Emplode or Jemplode software, edit the empeg Car's config.ini as
 follows.
@@ -532,6 +588,9 @@ RESET/PAIR button for this purpose.
 
 ###  Procedure:
 
+- Turn the volume level on your car stereo down to a low level so that you're
+  not blasted when the pairing process is complete.
+
 - If your car stereo contains a feature that lists existing Bluetooth
   pairings, and if there is an existing entry for "empeg Car" from an earlier
   pairing, make sure to delete that earlier pairing because its security key
@@ -546,25 +605,29 @@ RESET/PAIR button for this purpose.
 - If the pairing doesn't work the first time, also try initiating pairing from
   the car stereo AFTER the blue LED on the BlueGigaEmpeg module goes out.
 
+- When the pairing is completed, turn the volume all the way up to 0.0 db on
+  the empeg front panel, and from now on, you control the the volume level
+  from the car stereo controls.
+
 Car and empeg should be playing nicely together now, assuming everything else
 is working correctly. Audio from the empeg comes out of your car stereo's
 speakers, the stereo's track change controls will change tracks on the empeg,
-and the track titles will appear on the car stereo's screen. If there is audio
-but the track change controls and track titles do not work, see the section
-titled "Test AVRCP behavior and set serial port crossover jumpers if needed",
-located elsewhere in this document.
+and the track titles will appear on the car stereo's screen. If there is good
+audio, but the track change controls and track titles do not work, see the
+section titled "Test AVRCP behavior and set serial port crossover jumpers if
+needed", located elsewhere in this document.
 
 After you have successfully paired with your car stereo, you should not need
 to pair it again each time you get in the car. It should automatically
 reconnect each time you start your car.
 
-Some car stereos will let you pair your phone and the BlueGigaEmpeg at the
-same time. My Honda allows me to do this. When pairing, the touch screen lets
-me choose whether the paired device is a "phone" device or a "music" device. I
-choose to pair my phone as a phone, and the empeg Car as a music device. Then,
-each time I start my car, they both pair up correctly. I can use the steering
-wheel controls to initiate a speakerphone call which automatically mutes and
-pauses the music from the empeg.
+Some car stereos will let you pair your phone and the empeg at the same time.
+My Honda allows me to do this. When pairing, the touch screen lets me choose
+whether the paired device is a "phone" device or a "music" device. I choose to
+pair my phone as a phone, and the empeg Car as a music device. Then, each time
+I start my car, they both pair up correctly. I can use the steering wheel
+controls to initiate a speakerphone call which automatically mutes and pauses
+the music from the empeg.
 
 ###  Technical details and troubleshooting:
 
@@ -648,7 +711,9 @@ crossover jumper block on the BlueGigaEmpeg module as described below.
 These jumpers exist because I have seen empeg sleds with different wiring on
 the RS-232 plug. Some are wired straight, some are wired crossover. The jumper
 block allows you to wire the BlueGigaEmpeg board as straight or crossover to
-compensate for this. 
+compensate for this. The BlueGigaEmpeg ships with its jumpers in the crossover
+configuration by default, in order to compensate for the situation where the
+empeg sled serial plug is wired as straight through.
 
 To change this, open the BlueGigaEmpeg enclosure with a 2.5mm hex tool and
 lift out the board assembly. Look near the button and LED, and you'll see the
@@ -1096,7 +1161,8 @@ The RX/TX crossover configurations for the MAX232 and the RS-232 plug on the
 BlueGigaEmpeg can be confusing. The empeg Car sled serial port may or may not
 be already wired into a crossover configuration. I have seen both cases. There
 are jumpers on the BlueGigaEmpeg PCB to swap the RX/TX configuration to the
-serial port as needed.
+serial port as needed. Default shipping configuration is "Crossed" to
+compensate for a straight connection coming out of the sled.
 
 I am using a TI MAX232E for this implementation. The connections for the
 MAX232 are as follows:
@@ -1128,6 +1194,13 @@ step-down transformer power supply circuit.
 Grounding: Multiple Arduino GND pins connected to the output ground rail of
 the Pololu power supply.
 
+Arduino and Button: Arduino pin 52 digital I/O pin, connected to one of the
+ground legs of button. This same line (or the other ground leg of the button)
+also goes through 10k pulldown resistor to ground. One of the + legs of the
+button connects to +5v coming from the Arduino 5v pin. Follow examples on the
+Internet of how to implement a simple temporary pushbutton on an Arduino:
+https://www.arduino.cc/en/Tutorial/Button
+
 Arduino and Pair mode indicator LED: Arduino pin 50 digital I/O pin, connected
 to +LED through resistor. Current of resistor determined by online LED
 resistor calculator and LED values. Then -LED connect to GND. Example: If
@@ -1136,12 +1209,18 @@ analog power supply from the analog pins will be 5 volts, then use a 100 ohm
 resistor for this value. Online resistor current calculator:
 http://led.linear1.org/1led.wiz
 
-Arduino and Button: Arduino pin 52 digital I/O pin, connected to one of the
-ground legs of button. This same line (or the other ground leg of the button)
-also goes through 10k pulldown resistor to ground. One of the + legs of the
-button connects to +5v coming from the Arduino 5v pin. Follow examples on the
-Internet of how to implement a simple temporary pushbutton on an Arduino:
-https://www.arduino.cc/en/Tutorial/Button
+LED soldering height: To fit into the hole in the casing well, the top of the
+diode assembly itself inside the LED lens (the metal part) should top out at
+the same height as the top of the button plastic. Lens will protrude higher
+than the button by vaguely 2mm or so.
+
+LED anode: The positive/anode pin is the long lead. The positive pin is the
+side with the smaller metal bit visible inside the lens. The positive pin goes
+into the round hole on the PCB. The negative/cathode pin goes into the square
+hole on the PCB. The triangle/bar symbol on the PCB silkscreen is this:
+
+       positive  >|  negative
+
 
 ###  BlueGiga Bluetooth WT32i chip+board, critical connections:
 
