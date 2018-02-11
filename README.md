@@ -68,10 +68,11 @@ Also particular thanks to Stuart Euans of Eutronix who created the empeg
 Display Extender board which was also critical to me being able to implement
 this at all. And massive thanks to Mark Lord who assisted me in countless ways
 with the design and implementation, taught me a ton of important things, found
-my bugs, fixed issues with the Arduino compiler, and pointed out all of my EE
-design flaws. And last but not least, thanks to the entire empeg team who made
-such a fantastic car MP3 player that we are still doing interesting things
-with it, nearly 20 years later.
+my bugs, fixed issues with the Arduino compiler, modified his Hijack kernel to
+support this project, and pointed out all of my EE design flaws. And last but
+not least, thanks to the entire empeg team who made such a fantastic car MP3
+player that we are still doing interesting things with it, nearly 20 years
+later.
 
 
 Checklist
