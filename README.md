@@ -180,11 +180,11 @@ new song title every time.
 To fix the issue, you must edit one of the header files in the Arduino
 compiler libraries, and then you must compile and upload your sketch from your
 local PC to the Arduino board using the standalone version of the Arduino IDE.
-The link to the standalone Arduino IDE is in the "Prerequisites" section of
-this document. Make sure to download the standalone Arduino IDE; do not use
-the Arduino web editor. The web editor won't work for this project because it
-doesn't have the capability of changing the header code to increase the size
-of the serial port buffer.
+The link to the standalone Arduino IDE is in the [Prerequisites](#prerequisites)
+section of this document. Make sure to download the standalone Arduino IDE; do
+not use the Arduino web editor. The web editor won't work for this project
+because it doesn't have the capability of changing the header code to increase
+the size of the serial port buffer.
 
 The file that you need to edit will be the same on all operating systems, but
 the location of the file will be different depending on which OS you're using.
@@ -247,11 +247,11 @@ Save the file.
 Compile and upload the latest version of BlueGigaEmpeg.ino to the Arduino
 ==============================================================================
 Obtain the BlueGigaEmpeg.ino Arduino sketch file (located in the project zip
-file) from GitHub, linked in the "Prerequisites" section of this document. In
-the GitHub project web site for BlueGigaEmpeg, find the button titled "Clone
-or download" and select "Download Zip" to download the zip file. Unzip the
-entire project into a folder named "BlueGigaEmpeg" on your computer's hard
-disk. Rename the folder to "BlueGigaEmpeg" if needed.
+file) from GitHub, linked in the [Prerequisites](#prerequisites) section of
+this document. In the GitHub project web site for BlueGigaEmpeg, find the
+button titled "Clone or download" and select "Download Zip" to download the
+zip file. Unzip the entire project into a folder named "BlueGigaEmpeg" on your
+computer's hard disk. Rename the folder to "BlueGigaEmpeg" if needed.
 
 ###  Important:
 
@@ -534,8 +534,9 @@ after changing the config.ini settings.
 Upgrade the empeg Car's Hijack kernel and set "Serial Port Assignment"
 ==============================================================================
 Install the latest Hijack Kernel onto the empeg Car player if it is not
-already installed. Link to the Hijack kernel is found in the "Prerequisites"
-section of this document. Make sure it is Hijack version 524 or later.
+already installed. Link to the Hijack kernel is found in the
+[Prerequisites](#prerequisites) section of this document. Make sure it is
+Hijack version 524 or later.
 
 In order to install the latest Hijack Kernel onto the empeg Car, you must
 connect the empeg car directly to your Windows computer's RS-232 serial port,
@@ -544,9 +545,9 @@ serial port. Make sure the serial port drivers are installed and that you can
 see the empeg bootup messages correctly through a serial terminal program.
 
 To install the Hijack kernel, run Tony's Empeg Logo Editor. Link to the Logo
-Editor program is found in the "Prerequisites" section of this document. On
-the File menu of the logo editor program, select "Kernel Flash Utility" and
-follow the instructions.
+Editor program is found in the [Prerequisites](#prerequisites) section of this
+document. On the File menu of the logo editor program, select "Kernel Flash
+Utility" and follow the instructions.
 
 Once Hijack is installed, open up the Hijack kernel settings on the player via
 a long-press on the player's rotary encoder dial. Change "Serial port
@@ -581,8 +582,9 @@ equally well with either sled power or AC adapter power.
 The USB connector on the Arduino, which is accessible from the outside of the
 BlueGigaEmpeg module enclosure, is normally left disconnected. It is only used
 for debugging, and for uploading the latest Arduino code to the BlueGigaEmpeg
-module. See the section titled "Debug Bluetooth Connection if needed" for more
-details on how to use the connector for debugging.
+module. See the section titled [Debug Bluetooth Connection if
+needed](#debug-bluetooth-connection-if-needed) for more details on how to use
+the connector for debugging.
 
 
 Apply power and pair Bluetooth
@@ -948,7 +950,7 @@ Steps:
    example, I was successful with doing this in Parallels on a Mac computer.
 
  - Download and unzip the "iWRAP-Firmware-Releases.zip" file linked in the
-   "Resources" section of this document.
+   [Resources](#resources) section of this document.
 
  - Connect your Windows computer to the Bluetooth device via a USB micro cable
    connected to the "UART" port on the BetzTechnik WT32i breakout board. (If
@@ -966,7 +968,7 @@ Steps:
    in the USB section instead. If there is a little yellow boo boo icon
    instead of a serial port, then you must install the necessary FTDI drivers
    for the USB-serial connection to the board. Links to these drivers are in
-   the "Resources" section of this document.
+   the [Resources](#resources) section of this document.
 
  - Now, plugging in the Bluetooth breakout board into the PC with the USB
    micro cable makes a serial port appear in the Windows Device Manager.
@@ -1134,8 +1136,9 @@ Arduino serial port 1 (Tx1/Rx1) connects to the empeg's RS-232 port, but it
 must go through an RS-232 converter circuit based on a MAX232 chip. This is
 necessary because you can't connect an actual RS-232 cable directly to an
 Arduino, the voltage and signaling are different. So it must go through the
-MAX232. The full schematic for this circuit is linked in the "Resources"
-section of this document, and the pinouts are also listed below.
+MAX232. The full schematic for this circuit is linked in the
+[Resources](#resources) section of this document, and the pinouts are also
+listed below.
 
 The RX/TX crossover configurations for the MAX232 and the RS-232 plug on the
 BlueGigaEmpeg can be confusing. The empeg Car sled serial port may or may not
@@ -1246,8 +1249,8 @@ are needed for that line. Schematic:
 
 Bluetooth chip+Board three I2S pins PCM_CLK, PCM_SYNC, PCM_IN connected to
 empeg IISC, IISW, IISD1 via a special modification to the empeg tuner module
-connector, as described in the section of this document titled "Modify empeg
-Car interior for I2S digital audio connection".
+connector, as described in the section of this document titled [Modify empeg
+Car interior for I2S digital audio connection](#i2s).
 
 Each one of the three I2S lines will need to be reduced from 5v to 2.5v, to
 prevent frying the WT32i chip (I fried two chips this way until we figured
