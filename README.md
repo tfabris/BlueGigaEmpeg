@@ -918,8 +918,9 @@ next to each other on the debug console screen.
 
 Technical data (developers only)
 ==============================================================================
-All sections below are for reference, and should not be needed by end-users of
-the BlueGigaEmpeg module unless performing repairs or other maintenance.
+All sections below are for developer reference, and should not be needed by
+end-users of the BlueGigaEmpeg module unless performing repairs or other
+maintenance.
 
 
 Bluetooth Chip Firmware Upgrade
