@@ -1199,78 +1199,77 @@ three times, one for each of the I2S connections):
 
 Resources
 ==============================================================================
-| Purchase:         |                                                         |
-|-------------------|---------------------------------------------------------|
-| Empeg Car player: | http://empegbbs.com/ubbthreads.php/forums/11/1/For_Sale |
+| Purchase:                   |                                                                     |
+|-----------------------------|---------------------------------------------------------------------|
+| Empeg Car player:           | http://empegbbs.com/ubbthreads.php/forums/11/1/For_Sale             |
+| Arduino MEGA 2560 R3 Board: | https://www.amazon.com/gp/product/B01H4ZLZLQ                        |
+| BetzTechnik WT32i Breakout: | http://www.betztechnik.ca/store/p3/WT32i_breakout_board.html        |
+| BlueGigaEmpeg Interface:    | tfabris@gmail.com                                                   |
+
+| Download software:          |                                                                                       |
+|-----------------------------|---------------------------------------------------------------------------------------|
+| Arduino IDE:                | https://www.arduino.cc/en/Main/Software                                               |
+| BlueGigaEmpeg sketch:       | https://github.com/tfabris/BlueGigaEmpeg                                              |
+| Hijack Kernel for empeg:    | http://empeg-hijack.sourceforge.net/                                                  |
+| Tony's Empeg Logo Editor:   | http://empegbbs.com/ubbthreads.php/ubb/download/Number/7067/filename/logoedit17.zip   |
+| WT32i Firmware Upgrade:     | https://www.silabs.com/documents/login/software/iWRAP-Firmware-Releases.zip           |
+| FTDI USB driver:            | http://www.ftdichip.com/FTDrivers.htm                                                 |
+
+| Bluetooth information, schematics, and command references: |                                                                                               |
+|------------------------------------------------------------|-----------------------------------------------------------------------------------------------|
+| Bluetooth AVRCP specs:                                     | https://www.bluetooth.org/docman/handlers/DownloadDoc.ashx?doc_id=292286                      |
+| Command reference:                                         | https://www.silabs.com/documents/login/reference-manuals/iWRAP6-API-RM.pdf                    |
+| AVRCP command reference:                                   | https://www.silabs.com/documents/login/application-notes/AN986.pdf                            |
+| Dev Board User Guide:                                      | https://www.silabs.com/documents/login/user-guides/UG215.pdf                                  |
+| Dev Board Data Sheet:                                      | https://www.silabs.com/documents/login/data-sheets/WT32i-DataSheet.pdf                        |
+| Dev Board Reference Design:                                | https://www.silabs.com/documents/login/reference-designs/Reference-Design-DKWT32i.pdf         |
+| Dev Board Full Schematic:                                  | https://www.silabs.com/documents/login/reference-designs/DKWT32i-v2.2.zip                     |
+| BetzTechnik Schematic:                                     | http://www.betztechnik.ca/uploads/2/5/6/7/25674051/wt32i.pdf                                  |
+| Pololu V.Reg #2853 Pinout:                                 | https://a.pololu-files.com/picture/0J5850.1200.jpg                                            |
+| Arduino Mega Pin Map:                                      | https://www.arduino.cc/en/uploads/Hacking/Atmega168PinMap2.png                                |
+| Arduino Mega Standalone:                                   | https://www.arduino.cc/en/Main/Standalone                                                     |
+| ClassOfDevice generators:                                  | http://bluetooth-pentest.narod.ru/software/bluetooth_class_of_device-service_generator.html   |
+|                                                            | http://www.ampedrftech.com/cod.htm                                                            |
+| MAX232 circuit for Arduino:                                | https://www.avrprogrammers.com/articles/max232-arduino                                        |
+| TI MAX232E datasheet:                                      | http://www.ti.com/lit/ds/symlink/max232e.pdf                                                  |
+| BlueGiga Forum:                                            | https://www.silabs.com/community/wireless/bluetooth                                           |
+| Empeg BBS thread:                                          | http://empegbbs.com/ubbthreads.php/topics/370217                                              |
+| Designing low noise PCBs:                                  | http://www.ti.com/lit/an/szza009/szza009.pdf                                                  |
+| GitHub Markdown:                                           | https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet                              |
+|                                                            | https://guides.github.com/features/mastering-markdown/                                        |
+
+| Upgrade firmware on the WT32i: |                                                                             |
+|--------------------------------|-----------------------------------------------------------------------------|
+| Firmware Update Guide:         | https://www.silabs.com/documents/login/user-guides/UG216.pdf                |
+| Page containing firmware:      | https://www.silabs.com/documents/login/data-sheets/WT32i-DataSheet.pdf      |
+| Link to firmware zip file:     | https://www.silabs.com/documents/login/software/iWRAP-Firmware-Releases.zip |
+| Prolific PL2303 USB driver:    | http://www.prolific.com.tw/US/ShowProduct.aspx?p_id=225&pcid=41             |
+| FTDI USB driver:               | http://www.ftdichip.com/FTDrivers.htm                                       |
+
+| Parts list used in BlueGigaEmpeg interface board: |       |                                                                                                                          |
+|---------------------------------------------------|-------|--------------------------------------------------------------------------------------------------------------------------|
+| BlueGigaEmpeg PCB:                                |       | tfabris@gmail.com                                                                                                        |
+| Pololu 7.5v V.Reg #2853:                          |       | https://www.pololu.com/product/2853                                                                                      |
+| TI MAX232E:                                       |       | https://www.digikey.com/product-detail/en/texas-instruments/MAX232EIN/296-27963-5-ND/1511027                             |
+| RS-232 connector:                                 |       | https://www.digikey.com/product-detail/en/assmann-wsw-components/A-DS-09-A-KG-T2S/AE10968-ND/1241804                     |
+| Molex tuner connector:                            |       | https://www.digikey.com/product-detail/en/molex-llc/0039295083/WM3923-ND/356037                                          |
+| Molex connector screws:                           | Qty:2 | https://www.digikey.com/product-detail/en/b-f-fastener-supply/MPMS-003-0008-PH/H743-ND/274954                            |
+| M3 hex bolts (for case):                          | Qty:4 | https://www.amazon.com/gp/product/B00SN36C6M                                                                             |
+| LED:                                              |       | https://www.digikey.com/product-detail/en/cree-inc/C503B-BCN-CV0Z0461/C503B-BCN-CV0Z0461-ND/1922945                      |
+| Reset button:                                     |       | https://www.digikey.com/product-detail/en/e-switch/TL1105LF250Q/EG2506-ND/378972                                         |
+| Jumpers 0.10 pitch:                               | Qty:2 | https://www.digikey.com/product-detail/en/te-connectivity-amp-connectors/2-382811-0/2-382811-0-ND/1864296                |
+| Male conn. headers:  3x2                          |       | https://www.digikey.com/product-detail/en/molex-llc/0010897060/WM9874-ND/3068084                                         |
+|                     18x2                          |       | https://www.digikey.com/product-detail/en/3m/961236-6404-AR/3M9466-36-ND/2071927                                         |
+|                     22x1                          | Qty:2 | https://www.digikey.com/product-detail/en/3m/961122-6404-AR/3M9457-22-ND/2071905                                         |
+|                     10x1                          |       | https://www.digikey.com/product-detail/en/3m/961110-6404-AR/3M9457-10-ND/2071896                                         |
+|                      8x1                          | Qty:2 | https://www.digikey.com/product-detail/en/3m/961108-6404-AR/3M9457-08-ND/7104637                                         |
+| Fem. conn. headers  22x1                          | Qty:2 | https://www.digikey.com/product-detail/en/3m/929850-01-22-RA/929850E-01-22-ND/1094203                                    |
+| 2.2uf Ceramic Capacitor:                          | Qty:4 | https://www.digikey.com/product-detail/en/murata-electronics-north-america/RCER71H225K2K1H03B/490-11889-ND/4277808       |
+|                                                   |       | https://www.amazon.com/gp/product/B071VVTC7Z/ref=oh_aui_detailpage_o04_s00                                               |
+| 0.1uf Ceramic Capacitor                           |       | https://www.amazon.com/gp/product/B071VVTC7Z/ref=oh_aui_detailpage_o04_s00                                               |
+| 1.5k ohm resistors:                               | Qty:6 | https://www.amazon.com/gp/product/B077FMSR86/ref=oh_aui_detailpage_o00_s00                                               |
+| 10k ohm resistors:                                | Qty:3 | https://www.amazon.com/gp/product/B0185FIOTA/ref=oh_aui_detailpage_o02_s00                                               |
+| 100 ohm resistor:                                 |       | https://www.digikey.com/product-detail/en/stackpole-electronics-inc/CF18JT100R/CF18JT100RCT-ND/2022718                   |
+| Jumper Wires:                                     | Qty:3 | (lying around)                                                                                                           |
 
 
-
-```
-Purchase:
-Empeg Car player:           http://empegbbs.com/ubbthreads.php/forums/11/1/For_Sale
-Arduino MEGA 2560 R3 Board: https://www.amazon.com/gp/product/B01H4ZLZLQ       
-BetzTechnik WT32i Breakout: http://www.betztechnik.ca/store/p3/WT32i_breakout_board.html
-BlueGigaEmpeg Interface:    http://www.empegbbs.com or direct email to tfabris@gmail.com
-
-Download software:
-Arduino IDE:                https://www.arduino.cc/en/Main/Software
-BlueGigaEmpeg sketch:       https://github.com/tfabris/BlueGigaEmpeg
-Hijack Kernel for empeg:    http://empeg-hijack.sourceforge.net/
-Tony's Empeg Logo Editor:   http://empegbbs.com/ubbthreads.php/ubb/download/Number/7067/filename/logoedit17.zip
-WT32i Firmware Upgrade:     https://www.silabs.com/documents/login/software/iWRAP-Firmware-Releases.zip
-FTDI USB driver:            http://www.ftdichip.com/FTDrivers.htm
-
-Bluetooth information, schematics, and command references:
-Bluetooth AVRCP specs:      https://www.bluetooth.org/docman/handlers/DownloadDoc.ashx?doc_id=292286
-Command reference:          https://www.silabs.com/documents/login/reference-manuals/iWRAP6-API-RM.pdf
-AVRCP command reference:    https://www.silabs.com/documents/login/application-notes/AN986.pdf
-Dev Board User Guide:       https://www.silabs.com/documents/login/user-guides/UG215.pdf
-Dev Board Data Sheet:       https://www.silabs.com/documents/login/data-sheets/WT32i-DataSheet.pdf
-Dev Board Reference Design: https://www.silabs.com/documents/login/reference-designs/Reference-Design-DKWT32i.pdf
-Dev Board Full Schematic:   https://www.silabs.com/documents/login/reference-designs/DKWT32i-v2.2.zip
-BetzTechnik Schematic:      http://www.betztechnik.ca/uploads/2/5/6/7/25674051/wt32i.pdf
-Pololu V.Reg #2853 Pinout:  https://a.pololu-files.com/picture/0J5850.1200.jpg
-Arduino Mega Pin Map:       https://www.arduino.cc/en/uploads/Hacking/Atmega168PinMap2.png
-Arduino Mega Standalone:    https://www.arduino.cc/en/Main/Standalone
-ClassOfDevice generators:   http://bluetooth-pentest.narod.ru/software/bluetooth_class_of_device-service_generator.html
-                            http://www.ampedrftech.com/cod.htm
-MAX232 circuit for Arduino: https://www.avrprogrammers.com/articles/max232-arduino
-TI MAX232E datasheet:       http://www.ti.com/lit/ds/symlink/max232e.pdf
-BlueGiga Forum:             https://www.silabs.com/community/wireless/bluetooth
-Empeg BBS thread:           http://empegbbs.com/ubbthreads.php/topics/370217
-Designing low noise PCBs:   http://www.ti.com/lit/an/szza009/szza009.pdf
-GitHub Markdown:            https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet
-                            https://guides.github.com/features/mastering-markdown/
-
-Upgrade firmware on the WT32i:
-Firmware Update Guide:      https://www.silabs.com/documents/login/user-guides/UG216.pdf
-Page containing firmware:   https://www.silabs.com/documents/login/data-sheets/WT32i-DataSheet.pdf
-Link to firmware zip file:  https://www.silabs.com/documents/login/software/iWRAP-Firmware-Releases.zip
-Prolific PL2303 USB driver: http://www.prolific.com.tw/US/ShowProduct.aspx?p_id=225&pcid=41
-FTDI USB driver:            http://www.ftdichip.com/FTDrivers.htm
-
-Parts list used in BlueGigaEmpeg interface board:
-BlueGigaEmpeg PCB:             tfabris@gmail.com
-Pololu 7.5v V.Reg #2853:       https://www.pololu.com/product/2853
-TI MAX232E:                    https://www.digikey.com/product-detail/en/texas-instruments/MAX232EIN/296-27963-5-ND/1511027
-RS-232 connector:              https://www.digikey.com/product-detail/en/assmann-wsw-components/A-DS-09-A-KG-T2S/AE10968-ND/1241804
-Molex tuner connector:         https://www.digikey.com/product-detail/en/molex-llc/0039295083/WM3923-ND/356037
-Molex connector screws:  Qty:2 https://www.digikey.com/product-detail/en/b-f-fastener-supply/MPMS-003-0008-PH/H743-ND/274954
-M3 hex bolts (for case): Qty:4 https://www.amazon.com/gp/product/B00SN36C6M
-LED:                           https://www.digikey.com/product-detail/en/cree-inc/C503B-BCN-CV0Z0461/C503B-BCN-CV0Z0461-ND/1922945
-Reset button:                  https://www.digikey.com/product-detail/en/e-switch/TL1105LF250Q/EG2506-ND/378972
-Jumpers 0.10 pitch:      Qty:2 https://www.digikey.com/product-detail/en/te-connectivity-amp-connectors/2-382811-0/2-382811-0-ND/1864296
-Male conn. headers:  3x2       https://www.digikey.com/product-detail/en/molex-llc/0010897060/WM9874-ND/3068084
-                    18x2       https://www.digikey.com/product-detail/en/3m/961236-6404-AR/3M9466-36-ND/2071927
-                    22x1 Qty:2 https://www.digikey.com/product-detail/en/3m/961122-6404-AR/3M9457-22-ND/2071905
-                    10x1       https://www.digikey.com/product-detail/en/3m/961110-6404-AR/3M9457-10-ND/2071896
-                     8x1 Qty:2 https://www.digikey.com/product-detail/en/3m/961108-6404-AR/3M9457-08-ND/7104637
-Fem. conn. headers  22x1 Qty:2 https://www.digikey.com/product-detail/en/3m/929850-01-22-RA/929850E-01-22-ND/1094203
-2.2uf Ceramic Capacitor: Qty:4 https://www.digikey.com/product-detail/en/murata-electronics-north-america/RCER71H225K2K1H03B/490-11889-ND/4277808
-                               https://www.amazon.com/gp/product/B071VVTC7Z/ref=oh_aui_detailpage_o04_s00
-0.1uf Ceramic Capacitor        https://www.amazon.com/gp/product/B071VVTC7Z/ref=oh_aui_detailpage_o04_s00
-1.5k ohm resistors:      Qty:6 https://www.amazon.com/gp/product/B077FMSR86/ref=oh_aui_detailpage_o00_s00
-10k ohm resistors:       Qty:3 https://www.amazon.com/gp/product/B0185FIOTA/ref=oh_aui_detailpage_o02_s00
-100 ohm resistor:              https://www.digikey.com/product-detail/en/stackpole-electronics-inc/CF18JT100R/CF18JT100RCT-ND/2022718
-Jumper Wires:            Qty:3 (lying around)
-```
