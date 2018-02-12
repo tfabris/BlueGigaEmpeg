@@ -156,14 +156,14 @@ Make sure you have all of these things before working with the BlueGigaEmpeg:
 ###  Important:
 
 Do not connect the BlueGigaEmpeg module to the Empeg until after completing
-the step in this document titled [Modify empeg Car interior for I2S digital
-audio connection](#i2s). Also, once the I2S modification has been completed,
+the step in this document titled ["Modify empeg Car interior for I2S digital
+audio connection"](#i2s). Also, once the I2S modification has been completed,
 do not connect the Empeg to any tuner module. Damage may occur if these
 instructions are not followed.
 
 Be sure you are capable of safely making the internal modification to the
-empeg Car player as described in the section of this document titled [Modify
-Empeg Car interior for I2S digital audio connection](#i2s). I take no
+empeg Car player as described in the section of this document titled ["Modify
+Empeg Car interior for I2S digital audio connection"](#i2s). I take no
 responsibility for damage incurred while you are dismantling and modifying
 your empeg Car player.
 
@@ -265,9 +265,9 @@ folder after downloading and unzipping the project from GitHub.
 ###  Connection order special instructions:
 
 Do not connect the BlueGigaEmpeg module to the empeg Car until after
-completing the step in this document titled [Modify empeg Car interior for I2S
-digital audio connection](#i2s). Damage may occur if these instructions are
-not followed.
+completing the step in this document titled ["Modify empeg Car interior for
+I2S digital audio connection"](#i2s). Damage may occur if these instructions
+are not followed.
 
 Uploading code to the Arduino may be done with the BlueGigaEmpeg module
 disconnected from the empeg Car. No external power source is required in this
@@ -558,8 +558,8 @@ to reboot the player.
 Connect external hardware connections
 ==============================================================================
 Do not connect the BlueGigaEmpeg module to the empeg car's tuner connector
-until after completing the step in this document titled [Modify empeg Car
-interior for I2S digital audio connection](#i2s). Damage may occur if these
+until after completing the step in this document titled ["Modify empeg Car
+interior for I2S digital audio connection"](#i2s). Damage may occur if these
 instructions are not followed.
 
 If the I2S wiring modification has been completed, connect the tuner module
@@ -582,8 +582,8 @@ equally well with either sled power or AC adapter power.
 The USB connector on the Arduino, which is accessible from the outside of the
 BlueGigaEmpeg module enclosure, is normally left disconnected. It is only used
 for debugging, and for uploading the latest Arduino code to the BlueGigaEmpeg
-module. See the section titled [Debug Bluetooth Connection if
-needed](#debug-bluetooth-connection-if-needed) for more details on how to use
+module. See the section titled ["Debug Bluetooth Connection if
+needed"](#debug-bluetooth-connection-if-needed) for more details on how to use
 the connector for debugging.
 
 
@@ -1249,8 +1249,8 @@ are needed for that line. Schematic:
 
 Bluetooth chip+Board three I2S pins PCM_CLK, PCM_SYNC, PCM_IN connected to
 empeg IISC, IISW, IISD1 via a special modification to the empeg tuner module
-connector, as described in the section of this document titled [Modify empeg
-Car interior for I2S digital audio connection](#i2s).
+connector, as described in the section of this document titled ["Modify empeg
+Car interior for I2S digital audio connection"](#i2s).
 
 Each one of the three I2S lines will need to be reduced from 5v to 2.5v, to
 prevent frying the WT32i chip (I fried two chips this way until we figured
