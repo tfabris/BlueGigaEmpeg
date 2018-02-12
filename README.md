@@ -620,8 +620,8 @@ RESET/PAIR button for this purpose.
 
 Car and empeg should be playing nicely together now, assuming everything else
 is working correctly. Audio from the empeg comes out of your car stereo's
-speakers, the stereo's track change controls will change tracks on the empeg,
-and the track titles will appear on the car stereo's screen.
+speakers, the car stereo's track change controls will change tracks on the
+empeg, and the track titles will appear on the car stereo's screen.
 
 If there is good audio, but the track change controls and track titles do not
 work, see the section titled ["Test AVRCP behavior and set serial port crossover jumpers if needed"](#test-avrcp-behavior-and-set-serial-port-crossover-jumpers-if-needed).
