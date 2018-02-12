@@ -61,10 +61,7 @@ more, so plan on still having to mount your empeg where you can get to it.
 There are differences in Bluetooth implementation on various audio gear, and
 so there still might be bugs using this on your particular car stereo. This
 project is open source on GitHub, so that I can accept bug reports and code
-fixes from people with other brands of Bluetooth gear. If you encounter
-problems, get a debug log and file a report on GitHub, using the debug
-procedure described in the section of this document titled ["Debug Bluetooth
-connection if needed"](#debug-bluetooth-connection-if-needed).
+fixes from people with other brands of Bluetooth gear.
 
 
 Acknowledgments
