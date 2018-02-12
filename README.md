@@ -889,8 +889,9 @@ SYNTAX ERROR if there is a problem with any command.
       default settings to the Bluetooth chip again.
 
 See the iWrap 6.x command reference and the AVRCP command reference documents,
-linked in "Resources" elsewhere in this document, for more details on the
-incredibly rich and complex command language of this Bluetooth chip.
+linked in the ["Resources"](#resources) section of this document, for more
+details on the incredibly rich and complex command language of this Bluetooth
+chip.
 
 A note about response ordering in the debug console:
 
