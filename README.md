@@ -111,8 +111,6 @@ needing to perform repairs or maintenance on the module.
 
 - [Bluetooth Chip Firmware Upgrade                                                 ](#bluetooth-chip-firmware-upgrade)
 - [Set jumpers and switches, and modify Bluetooth board                            ](#set-jumpers-and-switches-and-modify-bluetooth-board)
-- [Solder headers onto the Bluetooth board                                         ](#solder-headers-onto-the-bluetooth-board)
-- [Assemble the BlueGigaEmpeg module                                               ](#assemble-the-bluegigaempeg-module)
 - [Hardware interface information and notes (internal board connections)           ](#hardware-interface-information-and-notes-internal-board-connections)
 - [Resources                                                                       ](#resources)
 
@@ -1048,71 +1046,6 @@ is the "off" position for this switch. This disconnects the BATT voltage from
 the 2.5v linear voltage regulator on the board. The BlueGigaEmpeg assembly
 will be supplying power directly to the chip at 3v and will not use the BATT
 power from that regulator.
-
-
-Solder headers onto the Bluetooth board
-==============================================================================
-Note: This is only for my personal reference. This is only needed if you have
-received a replacement board from BetzTechnik or you are doing other
-maintenance work.
-
-If you received the BetzTechnik board separately, you will need to solder the
-22-pin female headers onto it so that it can press fit onto the BlueGigaEmpeg
-circuit board. 
-
-IMPORTANT: The 22-pin female headers are inserted onto the BOTTOM SIDE of the
-BetzTechnik WT32i Bluetooth Breakout board, and they are through-hole
-components, so the soldering happens on the top side of the board. If you do
-this backwards, then the pinouts will be backwards, and you will damage the
-connected components.
-
-Most reliable procedure for soldering the headers to make sure they fit, is
-to solder them with the plugs already all press-fitted together, i.e., with
-the Betz board and the headers and the BlueGigaEmpeg all connected together.
-This prevents problems caused by minor changes in angle of the headers during
-soldering.
-
-
-Assemble the BlueGigaEmpeg module
-==============================================================================
-Note: This is only for my personal reference. This is only needed if you have
-received a replacement board from BetzTechnik or you are doing other
-maintenance work.
-
-Press fit the Arduino Mega board onto the BlueGigaEmpeg circuit board by
-turning it face down and aligning all of the pins. You will notice that not
-all pins on the Arduino are used, some of the headers are left unconnected on
-purpose. Still, it should be clear which pins connect to which headers, based
-on the silkscreen printing on the BlueGigaEmpeg circuit board and the pin
-positions. The arduino should fit only one way. Make sure the pins go all the
-way in correctly, and that no pins are bent and that there are no fitting
-problems.
-
-Press fit the BetzTechnik board onto the BlueGigaEmpeg board fully, making
-sure the corresponding pins are all lined up correctly according to the
-silkscreen printing on the boards. Make sure the pins go all the way in
-correctly, and that no pins are bent and that there are no fitting problems.
-
-Now you should have the BlueGigaEmpeg board, the BetzTechnik WT32i Breakout
-board, and the Arduino Mega board, all sandwiched together and fully fitted.
-
-Place the assembly into the BlueGigaEmpeg enclosure so that the RESET/PAIR
-button and the LED fit into the holes on the enclosure. If the LED got bent in
-shipping and handling, straighten it carefully so the LED fits into the hole.
-
-Place the lid atop the BlueGigaEmpeg enclosure with the screw holes and all of
-the fitting tabs aligned.
-
-Screw the four supplied screws into place using a 2.5mm hex tool. The four
-screws are the same kind of M3 hex bolts that hold the empeg fascia in place
-(I thought that would be a nice tribute), so you should already have a 2.5mm
-hex tool on hand. The screws may be a tight fit at first, if the enclosure is
-freshly printed. Tighten them down far enough to hold the lid snugly in place
-but do not overtighten, which would strip the plastic threads.
-
-Do not attach the BlueGigaEmpeg assembly to the empeg Car sled until after
-the I2S modifications are complete before attaching. The I2S modifications
-are described elsewhere in this document.
 
 
 Hardware interface information and notes (internal board connections)
