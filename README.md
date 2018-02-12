@@ -1199,6 +1199,8 @@ three times, one for each of the I2S connections):
 
 Resources
 ==============================================================================
+| Purchase:         |                                                         |
+|-------------------|---------------------------------------------------------|
 | Empeg Car player: | http://empegbbs.com/ubbthreads.php/forums/11/1/For_Sale |
 
 
