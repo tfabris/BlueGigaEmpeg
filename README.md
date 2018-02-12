@@ -1200,8 +1200,8 @@ three times, one for each of the I2S connections):
 Resources
 ==============================================================================
 ###  Purchase:
-| Item                        | Url                                                                  |
-|-----------------------------|---------------------------------------------------------------------|
+| Item                        | Url                                                                 |
+|:----------------------------|:--------------------------------------------------------------------|
 | Empeg Car player            | http://empegbbs.com/ubbthreads.php/forums/11/1/For_Sale             |
 | Arduino MEGA 2560 R3 Board  | https://www.amazon.com/gp/product/B01H4ZLZLQ                        |
 | BetzTechnik WT32i Breakout  | http://www.betztechnik.ca/store/p3/WT32i_breakout_board.html        |
@@ -1209,7 +1209,7 @@ Resources
 
 ###  Download software:
 | Item                        | Url                                                                                   |
-|-----------------------------|---------------------------------------------------------------------------------------|
+|:----------------------------|:--------------------------------------------------------------------------------------|
 | Arduino IDE                 | https://www.arduino.cc/en/Main/Software                                               |
 | BlueGigaEmpeg sketch        | https://github.com/tfabris/BlueGigaEmpeg                                              |
 | Hijack Kernel for empeg     | http://empeg-hijack.sourceforge.net/                                                  |
@@ -1219,7 +1219,7 @@ Resources
 
 ###  Bluetooth information, schematics, and command references:
 | Item                                                       | Url                                                                                           |
-|------------------------------------------------------------|-----------------------------------------------------------------------------------------------|
+|:-----------------------------------------------------------|:----------------------------------------------------------------------------------------------|
 | Bluetooth AVRCP specs                                      | https://www.bluetooth.org/docman/handlers/DownloadDoc.ashx?doc_id=292286                      |
 | Command reference                                          | https://www.silabs.com/documents/login/reference-manuals/iWRAP6-API-RM.pdf                    |
 | AVRCP command reference                                    | https://www.silabs.com/documents/login/application-notes/AN986.pdf                            |
@@ -1243,7 +1243,7 @@ Resources
 
 ### Upgrade firmware on the WT32i:
 | Item                           | Url                                                                         |
-|--------------------------------|-----------------------------------------------------------------------------|
+|:-------------------------------|:----------------------------------------------------------------------------|
 | Firmware Update Guide          | https://www.silabs.com/documents/login/user-guides/UG216.pdf                |
 | Page containing firmware       | https://www.silabs.com/documents/login/data-sheets/WT32i-DataSheet.pdf      |
 | Link to firmware zip file      | https://www.silabs.com/documents/login/software/iWRAP-Firmware-Releases.zip |
@@ -1252,7 +1252,7 @@ Resources
 
 ###  Parts list used in BlueGigaEmpeg interface board:
 | Item                                              | Qty   | Url                                                                                                                      |
-|---------------------------------------------------|-------|--------------------------------------------------------------------------------------------------------------------------|
+|:--------------------------------------------------|:------|:-------------------------------------------------------------------------------------------------------------------------|
 | BlueGigaEmpeg PCB                                 |       | tfabris@gmail.com                                                                                                        |
 | Pololu 7.5v V.Reg #2853                           |       | https://www.pololu.com/product/2853                                                                                      |
 | TI MAX232E                                        |       | https://www.digikey.com/product-detail/en/texas-instruments/MAX232EIN/296-27963-5-ND/1511027                             |
