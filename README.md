@@ -33,7 +33,9 @@ sure to perform all modifications listed in this document for this to work
 correctly. Follow the "Checklist" section of this document to make sure all
 steps are performed.
 
-NOTE: At the time of this writing, I only tested this on a very limited set of
+###  Caveats:
+
+At the time of this writing, I have tested this only on a very limited set of
 Bluetooth gear. I have tested it on:
 - My Honda Accord 2017 factory stereo.
 - Kenwood Bluetooth-equipped car stereo in my roommate's car.
@@ -45,7 +47,16 @@ Bluetooth gear. I have tested it on:
 Some of the devices listed above do not have full functionality. For instance,
 I cannot get track titles working on the Onkyo, and the Honda does not have
 controls for Shuffle, Fast Forward, or Rewind. As far as I can tell, these are
-limitations of the devices themselves.
+limitations of the devices themselves, not problems with the BlueGigaEmpeg.
+
+This is not intended to replace the empeg front panel user interface. This
+only allows you to do things like press Next Track, Pause, and Play on your
+car stereo. The full menu and user interface of the empeg is still needed for
+all other features of the empeg, such as choosing playlists. So if you're
+hoping to use this to mount the empeg in your trunk, you'll need a display
+extender kit from Eutronix.com as well, so that you can still reach the empeg
+front anel. Unfortunately, Stu at Eutronix isn't selling display extenders any
+more, so plan on still having to mount your empeg where you can get to it.
 
 There are differences in Bluetooth implementation on various audio gear, and
 so there still might be bugs using this on your particular car stereo. This
