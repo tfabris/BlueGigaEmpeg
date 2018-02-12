@@ -852,13 +852,14 @@ to change them back to their default values when you are done debugging, as
 some of them can slow down the responses on the BlueGigaEmpeg and cause the
 Bluetooth communication to miss things.
 
-Refer to the code comments accompanying these flags to understand them:
+Search for these flags in the BlueGigaEmpeg.ino sketch file. Refer to the code
+comments accompanying these flags in the file to understand them:
 
       EmpegSendCommandDebug
       displayEmpegSerial
       displayTracksOnSerial
 
-Useful debugging commands in the BlueGiga WT32i iWrap command language:
+###  Useful debugging commands in the BlueGiga WT32i iWrap command language:
 
 Typing any of these into the Arduino Serial Monitor should send these commands
 to the Bluetooth module directly. Many will echo a response. Module will say
