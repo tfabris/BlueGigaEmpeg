@@ -764,12 +764,12 @@ Bluetooth takes care of that now. No cellphone mute wire because the Bluetooth
 takes care of that now. No amp remote wire because there is no amp connected
 directly to the empeg. No aux connection to the empeg, etc.
 
-In this situation, the empeg does not have a 12v constant power concept at all
-and will not go into sleep mode when you turn off the ignition. However it,
-and the Bluetooth, will always power on and off at the same time as the car's
-headunit, and nothing will get confused. You might lose the clock/date/time
-information on the empeg sometimes, but your modern car likely has a perfectly
-functional clock of its own.
+In this situation, the empeg does not have a 12v constant power concept at
+all, and will not go into sleep mode when you turn off the ignition. However
+it, and the Bluetooth, will always power on and off at the same time as the
+car's headunit, and nothing will get confused. You might lose the
+date/time information on the empeg sometimes, but your modern car likely has
+a perfectly functional clock of its own.
 
 You'll notice that the empeg sled connector only supplies power if the empeg
 is awake. If you put the empeg into sleep mode via a long press on the top
