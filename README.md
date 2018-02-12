@@ -599,10 +599,10 @@ RESET/PAIR button for this purpose.
 - Turn the volume level on your car stereo down to a low level so that you're
   not blasted when the pairing process is complete.
 
-- If your car stereo contains a feature that lists existing Bluetooth
-  pairings, and if there is an existing entry for "empeg Car" from an earlier
-  pairing, make sure to delete that earlier pairing, because its security key
-  will be reset when you press the RESET/PAIR button in the next step.
+- If your car stereo has a feature that lists existing Bluetooth pairings, and
+  if there is an existing entry for "empeg Car" from an earlier pairing, make
+  sure to delete that earlier pairing, because its security key will be reset
+  when you press the RESET/PAIR button in the next step.
 
 - Press the RESET/PAIR button on the BlueGigaEmpeg. Its LED should light up
   blue for about 30 seconds or so.
@@ -611,7 +611,8 @@ RESET/PAIR button for this purpose.
   BlueGigaEmpeg module is lit. Look for the device "empeg Car" and pair it.
 
 - If the pairing doesn't work the first time, also try initiating pairing from
-  the car stereo AFTER the blue LED on the BlueGigaEmpeg module goes out.
+  the car stereo AFTER the blue LED on the BlueGigaEmpeg module goes out. Look
+  for the device "empeg Car" and pair it.
 
 - When the pairing is completed, turn the volume all the way up to 0.0 db on
   the empeg front panel. From now on, control the the overall volume level
