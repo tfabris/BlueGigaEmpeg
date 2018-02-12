@@ -30,8 +30,8 @@ The purpose of this BlueGigaEmpeg interface is twofold:
 
 Some modification of the empeg Car is required in order for this to work. Make
 sure to perform all modifications listed in this document for this to work
-correctly. Follow the "Checklist" section of this document to make sure all
-steps are performed.
+correctly. Follow the [Checklist](#checklist) section of this document to make
+sure all steps are performed.
 
 ###  Caveats:
 
