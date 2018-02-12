@@ -266,7 +266,7 @@ folder after downloading and unzipping the project from GitHub.
 
 Do not connect the BlueGigaEmpeg module to the empeg Car until after
 completing the step in this document titled [Modify empeg Car interior for I2S
-digital audio connection]](#i2s). Damage may occur if these instructions are
+digital audio connection](#i2s). Damage may occur if these instructions are
 not followed.
 
 Uploading code to the Arduino may be done with the BlueGigaEmpeg module
