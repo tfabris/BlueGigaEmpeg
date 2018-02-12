@@ -732,9 +732,9 @@ RS-232 Crossover jumper block, with silkscreened instructions on the board to
 describe how to change the setting. Set the RS-232 Crossover jumper block to
 the opposite setting.
 
-Place the assembly into the BlueGigaEmpeg enclosure so that the RESET/PAIR
-button and the LED fit into the holes on the enclosure. If the LED got bent,
-straighten it carefully so the LED fits into the hole.
+Place the assembly back into the BlueGigaEmpeg enclosure so that the
+RESET/PAIR button and the LED fit into the holes on the enclosure. If the LED
+got bent, straighten it carefully so the LED fits into the hole.
 
 When reassembling the BlueGigaEmpeg enclosure, Be careful not to overtighten
 the screws, if you tighten them too tight, you'll strip the plastic they're
