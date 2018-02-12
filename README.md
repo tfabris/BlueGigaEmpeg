@@ -52,11 +52,11 @@ limitations of the devices themselves, not problems with the BlueGigaEmpeg.
 This is not intended to replace the empeg front panel user interface. This
 only allows you to do things like press Next Track, Pause, and Play on your
 car stereo. The full menu and user interface of the empeg is still needed for
-all other features of the empeg, such as choosing playlists. So if you're
-hoping to use this to mount the empeg in your trunk, you'll need a display
+all other features of the empeg, such as choosing playlists. So this module
+won't let you mount the empeg in your trunk, unless you also have a display
 extender kit from Eutronix.com as well, so that you can still reach the empeg
-front anel. Unfortunately, Stu at Eutronix isn't selling display extenders any
-more, so plan on still having to mount your empeg where you can get to it.
+front panel. Unfortunately, Stu at Eutronix isn't selling display extenders
+any more, so plan on still having to mount your empeg where you can get to it.
 
 There are differences in Bluetooth implementation on various audio gear, and
 so there still might be bugs using this on your particular car stereo. This
