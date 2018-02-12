@@ -63,6 +63,9 @@ so there still might be bugs using this on your particular car stereo. This
 project is open source on GitHub, so that I can accept bug reports and code
 fixes from people with other brands of Bluetooth gear.
 
+This only works with the empeg Car Mk2 or the Rio Car player. It will not work
+with the empeg Car Mk1 player.
+
 
 Acknowledgments
 ==============================================================================
