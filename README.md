@@ -137,15 +137,15 @@ Make sure you have all of these things before working with the BlueGigaEmpeg:
 
 ###  Important:
 
-Do not connect the BlueGigaEmpeg module to the Empeg until after completing
-the step in this document titled ["Modify empeg Car interior for I2S digital
-audio connection"](#i2s). Also, once the I2S modification has been completed,
-do not connect the Empeg to any tuner module. Damage may occur if these
-instructions are not followed.
+Do not connect the BlueGigaEmpeg module to the empeg Car until after
+completing the step in this document titled ["Modify empeg Car interior for
+I2S digital audio connection"](#i2s). Also, once the I2S modification has
+been completed, do not connect the empeg to any tuner module. Damage may
+occur if these instructions are not followed.
 
 Be sure you are capable of safely making the internal modification to the
 empeg Car player as described in the section of this document titled ["Modify
-Empeg Car interior for I2S digital audio connection"](#i2s). I take no
+empeg Car interior for I2S digital audio connection"](#i2s). I take no
 responsibility for damage incurred while you are dismantling and modifying
 your empeg Car player.
 
@@ -453,7 +453,7 @@ the buttons from working correctly.
 
 Final wiring positions and colors:
                                                                                                                                                                 
-| Empeg IIS pads | Int. Empeg wires * | Int. wht Conn pos **  | Sled Tuner Plug | BlueGigaEmpeg Tuner Plug | Bluetooth Chip | Usage                            |
+| Empeg IIS pads | Int. empeg wires * | Int. wht Conn pos **  | Sled Tuner Plug | BlueGigaEmpeg Tuner Plug | Bluetooth Chip | Usage                            |
 |----------------|--------------------|-----------------------|-----------------|--------------------------|----------------|----------------------------------|
 |  1 IISC        |  Yellow+Green      |  Third from end       |  7 Purple       |  7  SCK                  |  30  PCM_CLK   |  Serial Clock                    |
 |  2 IISW        |  Brown wire        |  Right end            |  2 Grey         |  2  WS                   |  29  PCM_SYNC  |  Word Select aka Sync            |
@@ -1086,7 +1086,7 @@ MAX232 are as follows:
                             capacitor which bridges across 5v and GND. Place
                             this cap as close to pin 16 as possible.)
 
-Empeg tuner connector is used to supply power to the Pololu step-down
+The empeg tuner connector is used to supply power to the Pololu step-down
 transformer power supply, and from there, on to the rest of the assembly. Blue
 wire on tuner connector connects to the voltage input pin on Pololu, and the
 black wire on the tuner connector connects to the Pololu ground input pin.
