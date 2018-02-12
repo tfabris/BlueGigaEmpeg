@@ -318,8 +318,9 @@ Do not connect the BlueGigaEmpeg module to the empeg Car sled until the I2S
 modifications have been completed. Those modifications are described in the
 next step, below.
 
+<a name="i2s"></a>
 
-Modify empeg Car interior for I2S digital audio connection  <a name="i2s"></a>
+Modify empeg Car interior for I2S digital audio connection
 ==============================================================================
 To perform this step, you must be comfortable with disassembling the empeg Car
 player and removing the disk drive tray in such a way as to not cause damage
