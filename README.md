@@ -77,13 +77,14 @@ thanks to Shonky who had many helpful suggestions and who pointed out the
 WT32i chip that is the one that finally got used in this particular design.
 Also particular thanks to Stuart Euans of Eutronix who created the empeg
 Display Extender board, which was critical to me being able to get my empeg
-mounted in my Honda since I don't have dash space for the whole thing. And
-massive thanks to Mark Lord who assisted me in countless ways with the design
-and implementation, taught me a ton of important things, found my bugs, fixed
-issues with the Arduino compiler, modified his Hijack kernel to support this
-project, and pointed out all of my EE design flaws. And last but not least,
-thanks to the entire empeg team who made such a fantastic car MP3 player that
-we are still doing interesting things with it, nearly 20 years later.
+mounted in my new Honda, since it doesn't have dash space for the whole thing.
+And massive thanks to Mark Lord who assisted me in countless ways with the
+design and implementation, taught me a ton of important things, found my bugs,
+fixed issues with the Arduino compiler, modified his Hijack kernel to support
+this project, and pointed out all of my EE design flaws. And last but not
+least, thanks to the entire empeg team who made such a fantastic car MP3
+player that we are still doing interesting things with it, nearly 20 years
+later.
 
 
 Checklist
