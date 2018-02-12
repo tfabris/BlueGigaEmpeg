@@ -162,9 +162,10 @@ do not connect the Empeg to any tuner module. Damage may occur if these
 instructions are not followed.
 
 Be sure you are capable of safely making the internal modification to the
-empeg Car player as described in the section of this document titled "Modify
-Empeg Car interior for I2S digital audio connection". I take no responsibility
-for damage incurred while you are dismantling your empeg Car player.
+empeg Car player as described in the section of this document titled [Modify
+Empeg Car interior for I2S digital audio connection](#i2s). I take no
+responsibility for damage incurred while you are dismantling and modifying
+your empeg Car player.
 
 
 Modify your Arduino compiler for larger buffer size
@@ -264,9 +265,9 @@ folder after downloading and unzipping the project from GitHub.
 ###  Connection order special instructions:
 
 Do not connect the BlueGigaEmpeg module to the empeg Car until after
-completing the step in this document titled "Modify empeg Car interior for I2S
-digital audio connection". Damage may occur if these instructions are not
-followed.
+completing the step in this document titled [Modify empeg Car interior for I2S
+digital audio connection]](#i2s). Damage may occur if these instructions are
+not followed.
 
 Uploading code to the Arduino may be done with the BlueGigaEmpeg module
 disconnected from the empeg Car. No external power source is required in this
@@ -556,8 +557,8 @@ to reboot the player.
 Connect external hardware connections
 ==============================================================================
 Do not connect the BlueGigaEmpeg module to the empeg car's tuner connector
-until after completing the step in this document titled "Modify empeg Car
-interior for I2S digital audio connection". Damage may occur if these
+until after completing the step in this document titled [Modify empeg Car
+interior for I2S digital audio connection](#i2s). Damage may occur if these
 instructions are not followed.
 
 If the I2S wiring modification has been completed, connect the tuner module
