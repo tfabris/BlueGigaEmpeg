@@ -594,7 +594,7 @@ Bluetooth car stereo. You might also wish to re-pair again after editing the
 BlueGigaEmpeg firmware or the WT32i firmware. The BlueGigaEmpeg has a
 RESET/PAIR button for this purpose.
 
-###  Procedure:
+###  Pairing Procedure:
 
 - Turn the volume level on your car stereo down to a low level so that you're
   not blasted when the pairing process is complete.
@@ -639,7 +639,7 @@ I start my car, they both pair up correctly. I can use the steering wheel
 controls to initiate a speakerphone call, which automatically mutes and pauses
 the music from the empeg.
 
-###  Pairing process, technical details and troubleshooting:
+###  Technical details and troubleshooting for the pairing process:
 
 When you press the RESET/PAIR button on the BlueGigaEmpeg, it does the
 following:
