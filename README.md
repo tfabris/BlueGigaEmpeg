@@ -324,13 +324,13 @@ have any tuner modules, disconnect all of them from any and all sleds that you
 own. Damage may occur to your empeg and your tuner module if you dock your
 modified empeg to any tuner module after you make this modification.
 
-Disassemble your empeg player by carefully removing the fascia, lid and drive
-tray. You must do the disassembly carefully so as not to damage the empeg. You
-should theoretically be able to do this without disconnecting the IDE cable and
+###  Disassembly of empeg Car:
+
+Partially disassemble your empeg player by carefully removing the fascia, lid
+and drive tray. You must do the disassembly carefully so as not to damage the
+empeg. You should be able to do this without disconnecting the IDE cable and
 without removing the display board. Be very careful not to break any of the
 components sticking off the back of the display board.
-
-###  Disassembly of empeg Car:
 
 - Use a 2.5mm hex tool to carefully remove four hex bolts from the fascia.
 
