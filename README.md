@@ -131,7 +131,7 @@ Make sure you have all of these things before working with the BlueGigaEmpeg:
  - Empeg Mk2 or Rio Car player:
    - http://empegbbs.com/ubbthreads.php/forums/11/1/For_Sale
 
- - BlueGigaEmpeg Interface:
+ - BlueGigaEmpeg Interface (includes interface, BlueGiga chip, and Arduino):
    - tfabris@gmail.com
 
 
@@ -156,18 +156,15 @@ Make sure you have all of these things before working with the BlueGigaEmpeg:
 ###  Important:
 
 Do not connect the BlueGigaEmpeg module to the Empeg until after completing
-the step in this document titled "Modify Empeg Car interior for I2S digital
+the step in this document titled "Modify empeg Car interior for I2S digital
 audio connection". Also, once the I2S modification has been completed, do
 not connect the Empeg to any tuner module. Damage may occur if these
 instructions are not followed.
 
-You must already be comfortable with safely dismantling and repairing your
-empeg Car in order to safely make this modification. I take no responsibility
-for damage incurred while you are dismantling your empeg Car player.
-
 Be sure you are capable of safely making the internal modification to the
 empeg Car player as described in the section of this document titled "Modify
-Empeg Car interior for I2S digital audio connection". 
+Empeg Car interior for I2S digital audio connection". I take no responsibility
+for damage incurred while you are dismantling your empeg Car player.
 
 
 Modify your Arduino compiler for larger buffer size
@@ -248,11 +245,6 @@ Save the file.
 
 Compile and upload the latest version of BlueGigaEmpeg.ino to the Arduino
 ==============================================================================
-Uploading code to the Arduino may be done with the BlueGigaEmpeg module fully
-assembled. However do not plug the BlueGigaEmpeg module into the empeg Car
-tuner connector until after the I2S modification has been completed, as
-described elsewhere in this document.
-
 Obtain the BlueGigaEmpeg.ino Arduino sketch file (located in the project zip
 file) from GitHub, linked in the "Prerequisites" section of this document. In
 the GitHub project web site for BlueGigaEmpeg, find the button titled "Clone
@@ -271,24 +263,28 @@ folder after downloading and unzipping the project from GitHub.
 
 ###  Connection order special instructions:
 
-Before connecting the USB cable between the computer and the Arduino, make
-sure that the empeg is either not connected to the BlueGigaEmpeg module, or it
-is not powered up. In some conditions, the computer will not "see" the USB
-connection to the Arduino if you plug it into the computer when the Arduino is
-already receiving power from another power source such as the empeg itself.
+Do not connect the BlueGigaEmpeg module to the empeg Car until after
+completing the step in this document titled "Modify empeg Car interior for I2S
+digital audio connection". Damage may occur if these instructions are not
+followed.
 
-In addition, do not connect the BlueGigaEmpeg module to the Empeg until after
-completing the step in this document titled "Modify Empeg Car interior for I2S
-digital audio connection". Also, once the I2S modification has been completed,
-do not connect the Empeg to any tuner module. Damage may occur if these
-instructions are not followed.
+Uploading code to the Arduino may be done with the BlueGigaEmpeg module
+disconnected from the empeg Car. No external power source is required in this
+case, the Arduino gets its power from the USB cable in this situation.
+
+You may also upload code to the Arduino with the BlueGigaEmpeg module
+connected to the empeg Car, as long as the I2S modification has been already
+completed. However, the computer might not "see" the USB connection to the
+Arduino if it receives power from empeg first. So before connecting the USB
+cable between the computer and the Arduino, make sure that the empeg is either
+not connected to the BlueGigaEmpeg module, it is not powered up, or it is in
+sleep mode.
 
 ###  Upload the sketch:
 
-Connect the USB cable from the computer to the Arduino USB connector. This is
-the USB connector exposed on the end of the BlueGigaEmpeg enclosure. The
-correct USB cable is supplied with the BlueGigaEmpeg, it is an old style
-A-to-B connector.
+Connect the USB cable from the computer to the Arduino USB connector. The
+Arduino USB connector is the USB "type B" plug which is exposed on the end of
+the BlueGigaEmpeg enclosure.
 
 When first plugging the Arduino into the computer, it may need to install
 device driver files for the USB/serial connection to the Arduino. See the
@@ -302,6 +298,10 @@ Use the Arduino Serial Monitor feature (built into the Arduino IDE), set to
 115200 BPS, and observe the serial port output from the Arduino. It should
 list the RX and TX buffer sizes near the beginning of the output and indicate
 that they are good.
+
+After the latest version of the BlueGigaEmpeg.ino sketch is successfully
+uploaded to the Arduino, close the Arduino IDE and remove the USB cable. The
+USB cable should be disconnected during normal operation.
 
 
 Disconnect all tuner modules from all sleds you own
@@ -535,11 +535,11 @@ Install the latest Hijack Kernel onto the empeg Car player if it is not
 already installed. Link to the Hijack kernel is found in the "Prerequisites"
 section of this document. Make sure it is Hijack version 524 or later.
 
-In order to install the latest Hijack Kernel onto the empeg Car, it must be
-connected to your Windows computer's RS-232 serial port, or to a USB-to-RS-232
-adapter cable if your computer does not have an RS-232 serial port. Make sure
-the serial port drivers are installed and that you can see the empeg bootup
-messages correctly through a serial terminal program.
+In order to install the latest Hijack Kernel onto the empeg Car, you must
+connect the empeg car directly to your Windows computer's RS-232 serial port,
+or to a USB-to-RS-232 adapter cable if your computer does not have an RS-232
+serial port. Make sure the serial port drivers are installed and that you can
+see the empeg bootup messages correctly through a serial terminal program.
 
 To install the Hijack kernel, run Tony's Empeg Logo Editor. Link to the Logo
 Editor program is found in the "Prerequisites" section of this document. On
@@ -555,8 +555,9 @@ to reboot the player.
 Connect external hardware connections
 ==============================================================================
 Do not connect the BlueGigaEmpeg module to the empeg car's tuner connector
-unless the I2S wiring modification, described elsewhere in this document, has
-been completed.
+until after completing the step in this document titled "Modify empeg Car
+interior for I2S digital audio connection". Damage may occur if these
+instructions are not followed.
 
 If the I2S wiring modification has been completed, connect the tuner module
 connector from the empeg Car player docking sled to the tuner connector on the
@@ -581,16 +582,11 @@ for debugging, and for uploading the latest Arduino code to the BlueGigaEmpeg
 module. See the section titled "Debug Bluetooth Connection if needed" for more
 details on how to use the connector for debugging.
 
-Arduino power connector: The Arduino has a 5.5mm barrel plug connector for
-power. This connector is not exposed on the outside of the BlueGigaEmpeg
-enclosure. Do not use this connector. Power the BlueGigaEmpeg module only
-from the tuner plug via the empeg itself.
-
 
 Apply power and pair Bluetooth
 ==============================================================================
 Apply power to the empeg, and the BlueGigaEmpeg module will receive power. 
-Make sure the empeg is not in "sleep" mode, power to the tuner module
+Make sure the empeg is not in "sleep" mode, since power to the tuner module
 connector is turned off in sleep mode.
 
 The first time you use the BlueGigaEmpeg, you will need to pair it with your
@@ -605,8 +601,8 @@ RESET/PAIR button for this purpose.
 
 - If your car stereo contains a feature that lists existing Bluetooth
   pairings, and if there is an existing entry for "empeg Car" from an earlier
-  pairing, make sure to delete that earlier pairing because its security key
-  will be different when you press the RESET/PAIR button in the next step.
+  pairing, make sure to delete that earlier pairing, because its security key
+  will be reset when you press the RESET/PAIR button in the next step.
 
 - Press the RESET/PAIR button on the BlueGigaEmpeg. Its LED should light up
   blue for about 30 seconds or so.
@@ -618,19 +614,23 @@ RESET/PAIR button for this purpose.
   the car stereo AFTER the blue LED on the BlueGigaEmpeg module goes out.
 
 - When the pairing is completed, turn the volume all the way up to 0.0 db on
-  the empeg front panel, and from now on, you control the the volume level
+  the empeg front panel. From now on, control the the overall volume level
   from the car stereo controls.
 
 Car and empeg should be playing nicely together now, assuming everything else
 is working correctly. Audio from the empeg comes out of your car stereo's
 speakers, the stereo's track change controls will change tracks on the empeg,
-and the track titles will appear on the car stereo's screen. If there is good
-audio, but the track change controls and track titles do not work, see the
-section titled "Test AVRCP behavior and set serial port crossover jumpers if
-needed", located elsewhere in this document.
+and the track titles will appear on the car stereo's screen.
 
-After you have successfully paired with your car stereo, you should not need
-to pair it again each time you get in the car. It should automatically
+If there is good audio, but the track change controls and track titles do not
+work, see the section titled "Test AVRCP behavior and set serial port
+crossover jumpers if needed", located [here]
+(#test-avrcp-behavior-and-set-serial-port-crossover-jumpers-if-needed).
+
+###  Normal operation:
+
+After you have successfully paired with your car stereo once, you should not
+need to pair it again each time you get in the car. It should automatically
 reconnect each time you start your car.
 
 Some car stereos will let you pair your phone and the empeg at the same time.
@@ -638,10 +638,10 @@ My Honda allows me to do this. When pairing, the touch screen lets me choose
 whether the paired device is a "phone" device or a "music" device. I choose to
 pair my phone as a phone, and the empeg Car as a music device. Then, each time
 I start my car, they both pair up correctly. I can use the steering wheel
-controls to initiate a speakerphone call which automatically mutes and pauses
+controls to initiate a speakerphone call, which automatically mutes and pauses
 the music from the empeg.
 
-###  Technical details and troubleshooting:
+###  Pairing process, technical details and troubleshooting:
 
 When you press the RESET/PAIR button on the BlueGigaEmpeg, it does the
 following:
@@ -681,11 +681,12 @@ sequence will work for many stereos and headsets:
    button, initiate pairing from your stereo via its pairing feature.
 
 One final note about the pairing process: Paired devices share a set of
-security keys with each other. Pressing the RESET/PAIR button erases those
-keys from the WT32i chip. If your car stereo has the option to remember a list
-of multiple different Bluetooth devices (my Honda has this) then you must
-remember to delete the empeg Car from the list if you have pressed the
-RESET/PAIR button and are re-pairing a second time.
+security keys with each other. Pressing the RESET/PAIR button on the
+BlueGigaEmpeg module erases those keys from the WT32i chip. If your car stereo
+has the option to remember a list of multiple different Bluetooth devices (my
+Honda has this), then you must remember to first delete the empeg Car from the
+list, if you have pressed the RESET/PAIR button and you are re-pairing a
+second time.
 
 
 Set Bluetooth PIN code if needed (most likely not needed)
@@ -737,11 +738,9 @@ Place the assembly into the BlueGigaEmpeg enclosure so that the RESET/PAIR
 button and the LED fit into the holes on the enclosure. If the LED got bent,
 straighten it carefully so the LED fits into the hole.
 
-When reassembling the BlueGigaEmpeg enclosure, make sure to align the small
-notch in one end of the lid with the tuner module connector. The notch is
-there to make room for the release tab on the tuner module connector. And be
-careful not to overtighten the screws, if you tighten them too tight, you'll
-strip the plastic they're screwed into, and then they won't work any more.
+When reassembling the BlueGigaEmpeg enclosure, Be careful not to overtighten
+the screws, if you tighten them too tight, you'll strip the plastic they're
+screwed into, and then they won't work any more.
 
 
 Modify empeg's power connection to car if needed
@@ -1063,43 +1062,14 @@ circuit board.
 IMPORTANT: The 22-pin female headers are inserted onto the BOTTOM SIDE of the
 BetzTechnik WT32i Bluetooth Breakout board, and they are through-hole
 components, so the soldering happens on the top side of the board. If you do
-this backwards then the pinouts will be backwards and you will damage the
+this backwards, then the pinouts will be backwards, and you will damage the
 connected components.
 
-Best procedure for soldering the headers to make sure they fit:
-
-- Plug the loose 22-pin female headers onto the 22-pin male headers already
-  existing on the BlueGigaEmpeg board.
-
-- Place the BetzTechnik board onto the 22-pin headers so that their soldering
-  pins protrude through the holes in the BetzTechnik board.
-
-- Double check that the labeled connections all match up: check the silkscreen
-  printing on the BlueGigaEmpeg board with the silkscreen labels on the
-  BetzTechnik board and make sure everything matches up.
-
-- Make sure the BetzTechnik board is fully pressed down flat against the
-  headers and that there are no gaps.
-
-- With the board pressed into its final position, solder the end header pins
-  in place, i.e., the four end pins, one on each end of each header on each
-  side of the board. You're "tacking down" the ends of the headers to the Betz
-  board to make sure they are in the correct position.
-
-- Double check that the Betz board is still fully down flat onto the headers
-  and that everything is still fully fitted and flat, and that there are no
-  gaps.
-
-- With the header end pins tacked down and everything verified, then solder
-  the next pins in from the ends. Now you should have eight pins total
-  soldered, two on each end of the header rows. This should be enough to hold
-  the headers in their final positions temporarily.
-
-- Now carefully pull apart the Betz board from the BlueGigaEmpeg board,
-  separating the male headers from the female headers. Female headers should
-  still be held in place well against the Betz board.
-
-- Now fully solder all 44 header pins on the Betz board.
+Most reliable procedure for soldering the headers to make sure they fit, is
+to solder them with the plugs already all press-fitted together, i.e., with
+the Betz board and the headers and the BlueGigaEmpeg all connected together.
+This prevents problems caused by minor changes in angle of the headers during
+soldering.
 
 
 Assemble the BlueGigaEmpeg module
@@ -1129,12 +1099,8 @@ Place the assembly into the BlueGigaEmpeg enclosure so that the RESET/PAIR
 button and the LED fit into the holes on the enclosure. If the LED got bent in
 shipping and handling, straighten it carefully so the LED fits into the hole.
 
-Place the lid atop the BlueGigaEmpeg enclosure with the screw holes aligned.
-
-IMPORTANT: On the lid of the BlueGigaEmpeg enclosure, there is a small notch
-on one end. Make sure to align that notch with the Molex tuner connector on
-the board. The notch is there to make room for the release tab on the tuner
-connector.
+Place the lid atop the BlueGigaEmpeg enclosure with the screw holes and all of
+the fitting tabs aligned.
 
 Screw the four supplied screws into place using a 2.5mm hex tool. The four
 screws are the same kind of M3 hex bolts that hold the empeg fascia in place
@@ -1208,7 +1174,7 @@ the Pololu power supply.
 
 Arduino and Button: Arduino pin 52 digital I/O pin, connected to one of the
 ground legs of button. This same line (or the other ground leg of the button)
-also goes through 10k pulldown resistor to ground. One of the + legs of the
+also goes through a 10k pulldown resistor to ground. One of the + legs of the
 button connects to +5v coming from the Arduino 5v pin. Follow examples on the
 Internet of how to implement a simple temporary pushbutton on an Arduino:
 https://www.arduino.cc/en/Tutorial/Button
@@ -1227,17 +1193,21 @@ the same height as the top of the button plastic. Lens will protrude higher
 than the button by vaguely 2mm or so.
 
 LED anode: The positive/anode pin is the long lead. The positive pin is the
-side with the smaller metal bit visible inside the lens. The positive pin goes
-into the round hole on the PCB. The negative/cathode pin goes into the square
-hole on the PCB. The triangle/bar symbol on the PCB silkscreen is this:
+side with the smaller metal bit visible inside the lens. The positive/andoe
+pin goes into the hole on the PCB with the round pad. The negative/cathode pin
+goes into the hole on the PCB with the square pad. The triangle/bar symbol on
+the PCB silkscreen is this:
 
        positive  >|  negative
 
 
 ###  BlueGiga Bluetooth WT32i chip+board, critical connections:
 
-BetzTechnik board JP4 FTDI UART Enable jumper is cut after applying firmware
-update.
+BetzTechnik Bluetooth chip+board "JP4 FTDI UART Enable" jumper is cut after
+applying firmware update.
+
+BetzTechnik Bluetooth chip+board "Smd_2_pole_switch" is set to the "down" or
+"off" position.
 
 Bluetooth chip+board "5v" power pin NOT connected to anything.
 
@@ -1274,7 +1244,7 @@ are needed for that line. Schematic:
 
 Bluetooth chip+Board three I2S pins PCM_CLK, PCM_SYNC, PCM_IN connected to
 empeg IISC, IISW, IISD1 via a special modification to the empeg tuner module
-connector, as described in the section of this document titled "Modify Empeg
+connector, as described in the section of this document titled "Modify empeg
 Car interior for I2S digital audio connection".
 
 Each one of the three I2S lines will need to be reduced from 5v to 2.5v, to
