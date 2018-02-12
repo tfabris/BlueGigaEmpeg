@@ -63,8 +63,8 @@ so there still might be bugs using this on your particular car stereo. This
 project is open source on GitHub, so that I can accept bug reports and code
 fixes from people with other brands of Bluetooth gear. If you encounter
 problems, get a debug log and file a report on GitHub, using the debug
-procedure described in the section of this document titled "Debug Bluetooth
-connection if needed".
+procedure described in the section of this document titled ["Debug Bluetooth
+connection if needed"](#debug-bluetooth-connection-if-needed).
 
 
 Acknowledgments
@@ -156,9 +156,9 @@ Make sure you have all of these things before working with the BlueGigaEmpeg:
 ###  Important:
 
 Do not connect the BlueGigaEmpeg module to the Empeg until after completing
-the step in this document titled "Modify empeg Car interior for I2S digital
-audio connection". Also, once the I2S modification has been completed, do
-not connect the Empeg to any tuner module. Damage may occur if these
+the step in this document titled [Modify empeg Car interior for I2S digital
+audio connection](#i2s). Also, once the I2S modification has been completed,
+do not connect the Empeg to any tuner module. Damage may occur if these
 instructions are not followed.
 
 Be sure you are capable of safely making the internal modification to the
@@ -319,7 +319,7 @@ modifications have been completed. Those modifications are described in the
 next step, below.
 
 
-Modify empeg Car interior for I2S digital audio connection
+Modify empeg Car interior for I2S digital audio connection  <a name="i2s"></a>
 ==============================================================================
 To perform this step, you must be comfortable with disassembling the empeg Car
 player and removing the disk drive tray in such a way as to not cause damage
