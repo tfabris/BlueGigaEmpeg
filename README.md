@@ -1218,7 +1218,7 @@ Resources
 | FTDI USB driver:            | http://www.ftdichip.com/FTDrivers.htm                                                 |
 
 ###  Bluetooth information, schematics, and command references:
-
+| Item:                                                      | Url:                                                                                          |
 |------------------------------------------------------------|-----------------------------------------------------------------------------------------------|
 | Bluetooth AVRCP specs:                                     | https://www.bluetooth.org/docman/handlers/DownloadDoc.ashx?doc_id=292286                      |
 | Command reference:                                         | https://www.silabs.com/documents/login/reference-manuals/iWRAP6-API-RM.pdf                    |
@@ -1241,7 +1241,8 @@ Resources
 | GitHub Markdown:                                           | https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet                              |
 |                                                            | https://guides.github.com/features/mastering-markdown/                                        |
 
-| Upgrade firmware on the WT32i: |                                                                             |
+### Upgrade firmware on the WT32i:
+| Item:                          | Url:                                                                        |
 |--------------------------------|-----------------------------------------------------------------------------|
 | Firmware Update Guide:         | https://www.silabs.com/documents/login/user-guides/UG216.pdf                |
 | Page containing firmware:      | https://www.silabs.com/documents/login/data-sheets/WT32i-DataSheet.pdf      |
@@ -1249,7 +1250,8 @@ Resources
 | Prolific PL2303 USB driver:    | http://www.prolific.com.tw/US/ShowProduct.aspx?p_id=225&pcid=41             |
 | FTDI USB driver:               | http://www.ftdichip.com/FTDrivers.htm                                       |
 
-| Parts list used in BlueGigaEmpeg interface board: |       |                                                                                                                          |
+###  Parts list used in BlueGigaEmpeg interface board:
+| Item:                                             | Qty:  | Url:                                                                                                                     |
 |---------------------------------------------------|-------|--------------------------------------------------------------------------------------------------------------------------|
 | BlueGigaEmpeg PCB:                                |       | tfabris@gmail.com                                                                                                        |
 | Pololu 7.5v V.Reg #2853:                          |       | https://www.pololu.com/product/2853                                                                                      |
