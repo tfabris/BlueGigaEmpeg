@@ -1078,8 +1078,8 @@ power from that regulator.
 Hardware interface information and notes (internal board connections)
 ==============================================================================
 The BlueGigaEmpeg interface board implements everything described below. The
-information below is developer reference only, and you should not need to do
-any of the connections below yourself, unless you are developing your own
+information below is for developer reference only, and you should not need to
+do any of the connections below yourself, unless you are developing your own
 interface board.
 
 Arduino must be the "Mega" model with three hardware serial ports built in. I
