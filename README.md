@@ -38,7 +38,7 @@ The BlueGigaEmpeg interface works in two ways:
    stereo's touchscreen.
 
 Some modification of the empeg Car is required in order for this to work. The
-Molex connector on the back of the empeg Car docking sled, which is normally
+Molex connector on the empeg docking sled's wiring harness, which is normally
 used for an external AM/FM tuner module, must be converted into a digital audio
 interface for sending digital audio to the BlueGigaEmpeg module. Make sure to
 perform all modifications listed in this document for it to work correctly.
