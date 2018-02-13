@@ -589,7 +589,7 @@ RESET/PAIR button for this purpose.
 
 ###  Pairing Procedure:
 
-- Turn the volume level on your car stereo down to a low level so that you're
+- Turn the volume level on your car stereo down to a low level, so that you're
   not blasted when the pairing process is complete.
 
 - If your car stereo has a feature that lists existing Bluetooth pairings, and
@@ -597,8 +597,8 @@ RESET/PAIR button for this purpose.
   sure to delete that earlier pairing, because its security key will be reset
   when you press the RESET/PAIR button in the next step.
 
-- Press the RESET/PAIR button on the BlueGigaEmpeg. Its LED should light up
-  blue for about 30 seconds or so.
+- Press the recessed RESET/PAIR button on the BlueGigaEmpeg module. Its LED
+  should light up blue for about 30 seconds or so.
 
 - On the car stereo, initiate pairing mode while the blue LED on the
   BlueGigaEmpeg module is lit. Look for the device "empeg Car" and pair it.
@@ -607,17 +607,25 @@ RESET/PAIR button for this purpose.
   the car stereo AFTER the blue LED on the BlueGigaEmpeg module goes out. Look
   for the device "empeg Car" and pair it.
 
-- When the pairing is completed, turn the volume all the way up to 0.0 db on
-  the empeg front panel. From now on, control the the overall volume level
-  from the car stereo controls.
+- When the pairing is completed, set the volume. With the car stereo volume
+  still turned down to a low level, turn the volume on the empeg Car front
+  panel all the way up to 0.0 db. Then gently increase the volume on the car
+  stereo to the desired listening level. From now on, control the the overall
+  volume level from the car stereo controls and leave the empeg set to 0.0 db.
+  Note that there are features in the Hijack kernel for setting the volume
+  level on startup, so if the empeg keeps booting into a low volume mode,
+  check the Hijack kernel settings for "Volume Level on Boot" and set it to
+  "Previous".
 
 Car and empeg should be playing nicely together now, assuming everything else
 is working correctly. Audio from the empeg comes out of your car stereo's
 speakers, the car stereo's track change controls will change tracks on the
 empeg, and the track titles will appear on the car stereo's screen.
 
-If there is good audio, but the track change controls and track titles do not
-work, see the section titled ["Test AVRCP behavior and set serial port
+If there is good audio, but commands such as next/previous track and
+play/pause don't work, and if track titles do not display on your car stereo
+(if your stereo has this ability for Bluetooth), then there may be a simple
+fix for this. See the section titled ["Test AVRCP behavior and set serial port
 crossover jumpers if needed"](#test-avrcp-behavior-and-set-serial-port-crossover-jumpers-if-needed).
 
 ###  Normal operation:
@@ -632,7 +640,12 @@ whether the paired device is a "phone" device or a "music" device. I choose to
 pair my phone as a phone, and the empeg Car as a music device. Then, each time
 I start my car, they both pair up correctly. I can use the steering wheel
 controls to initiate a speakerphone call, which automatically mutes and pauses
-the music from the empeg.
+playback on the empeg.
+
+The empeg Car should automatically pause its playback when you switch to
+another input on your car stereo, such as switching to the radio or CD player,
+and should automatically resume playback when you switch back. 
+
 
 ###  Technical details and troubleshooting for the pairing process:
 
@@ -671,7 +684,8 @@ sequence will work for many stereos and headsets:
 
  - If that doesn't work, then wait for the RESET/PAIR LED on the
    BlueGigaEmpeg to go dark, and then, without touching the RESET/PAIR
-   button, initiate pairing from your stereo via its pairing feature.
+   button on the BlueGigaEmpeg module, initiate pairing from your stereo via
+   its pairing feature.
 
 One final note about the pairing process: Paired devices share a set of
 security keys with each other. Pressing the RESET/PAIR button on the
