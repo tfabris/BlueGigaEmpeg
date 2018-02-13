@@ -35,10 +35,12 @@ The BlueGigaEmpeg interface works in two ways:
    channel allows track title and artist information to be displayed on the car
    stereo's touchscreen.
 
-Some modification of the empeg Car is required in order for this to work. Make
-sure to perform all modifications listed in this document for this to work
-correctly. Follow the [Checklist](#checklist) section of this document to make
-sure all steps are performed.
+Some modification of the empeg Car is required in order for this to work. The
+molex connector on the back of the empeg Car docking sled, which is normally
+used for an external AM/FM tuner module, must be converted into a digital audio
+interface. Make sure to perform all modifications listed in this document for
+this to work correctly. Follow the [Checklist](#checklist) section of this
+document to make sure all steps are performed.
 
 ###  Caveats:
 
@@ -151,11 +153,14 @@ Make sure you have all of these things before working with the BlueGigaEmpeg:
 
 ###  Important:
 
-Do not connect the BlueGigaEmpeg module to the empeg Car until after
-completing the step in this document titled ["Modify empeg Car interior for
-I2S digital audio connection"](#i2s). Also, once the I2S modification has
-been completed, do not connect the empeg to any tuner module. Damage may
-occur if these instructions are not followed.
+The BlueGigaEmpeg module works by connecting to the molex connector on the
+back of the empeg Car docking sled which was originally intended for the
+tuner module. However, it must be modified before you can do this. Do not
+connect the BlueGigaEmpeg module to the empeg Car tuner module connector
+until after completing the step in this document titled ["Modify empeg Car
+interior for I2S digital audio connection"](#i2s). Also, once the I2S
+modification has been completed, do not connect the empeg to any tuner
+module. Damage may occur if these instructions are not followed.
 
 Be sure you are capable of safely making the internal modification to the
 empeg Car player as described in the section of this document titled ["Modify
