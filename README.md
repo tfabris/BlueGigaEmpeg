@@ -804,7 +804,7 @@ car's headunit, and nothing will get confused. You might lose the
 date/time information on the empeg sometimes, but your modern car likely has
 a perfectly functional clock of its own.
 
-You'll notice that the empeg sled connector only supplies power if the empeg
+You'll notice that the empeg tuner connector only supplies power if the empeg
 is awake. If you put the empeg into sleep mode via a long press on the top
 button, it will go to sleep, but that also means the Arduino+Bluetooth
 assembly stops receiving power. This is actually good: you want to be able to
