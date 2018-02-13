@@ -436,15 +436,15 @@ the end.
 
 With the three wires disconnected from the white connector, plug the white
 connector back into place with the remainder of its wires still connected.
-
 You should now have three wires inside the empeg, each with one end still
 connected to the docking connector assembly, and their other ends loose with
-small pin connectors on the ends of them. Carefully solder and shrink-tube
-your three jumper wires directly to these pin connectors in the exact order
-described below. After you have done this, your empeg's IIS pads will, when
-docked, now be carried out the back of the empeg, via the docking sled, into
-the tuner module Molex connector. Solder your jumper wires to the empeg
-interior wires in this order:
+small pin connectors on the ends of them.
+
+Carefully solder and shrink-tube your three jumper wires directly to these pin
+connectors in the exact order described below. After you have done this, your
+empeg's IIS pads will, when docked, now be carried out the back of the empeg,
+via the docking sled, into the tuner module Molex connector. Solder your jumper
+wires to the empeg interior wires in this order:
 
     IIS Pad 1 (IISC)  jumpered to Yellow+Green wire, originally third from end.
     IIS Pad 2 (IISW)  jumpered to Brown wire, originally the end wire.
