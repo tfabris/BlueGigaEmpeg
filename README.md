@@ -1040,7 +1040,8 @@ Steps:
  - After the upgrade is successful, unplug the USB cable from the board and
    computer, and close the Serial DFU Tool software.
 
- - Make sure to cut JP4 as described in the next step.
+ - Make sure to cut JP4, and set the power switch to the down/off position, as
+   described in the next step.
 
 
 Set jumpers and switches, and modify Bluetooth board
