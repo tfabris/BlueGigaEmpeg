@@ -517,7 +517,7 @@ Then restart the Emplode software. Emplode will now have a menu option
 which allows you to edit the config.ini on the player.
 
 Change the settings in config,ini as follows (adding new section headers such
-as [Hijack] only if that section does not already exist):
+as [hijack] only if that section does not already exist):
 
     [hijack]
     suppress_notify=2
