@@ -474,7 +474,7 @@ Final wiring positions and colors:
                                                                                                                                                                 
 | Empeg IIS pads | Int. empeg wires * | Int. wht Conn pos **  | Sled Tuner Plug | BlueGigaEmpeg Tuner Plug | Bluetooth Chip | Usage                            |
 |----------------|--------------------|-----------------------|-----------------|--------------------------|----------------|----------------------------------|
-|  1 IISC        |  Yellow+Green      |  Third from end       |  7 Purple       |  7  SCK                  |  30  PCM_CLK   |  Serial Clock                    |
+|  1 IISC        |  Yellow+Green wire |  Third from end       |  7 Purple       |  7  SCK                  |  30  PCM_CLK   |  Serial Clock                    |
 |  2 IISW        |  Brown wire        |  Right end            |  2 Grey         |  2  WS                   |  29  PCM_SYNC  |  Word Select aka Sync            |
 |  4 IISD1       |  Red wire          |  Second from end      |  1 Pink         |  1  SDIN                 |  27  PCM_IN    |  Serial Data aka PCM Audio Data  |
 |                |                    |                       |  4 Black        |  4  GND                  |      GND       |  Universal Ground                |
