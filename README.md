@@ -253,9 +253,12 @@ Compile and upload the latest version of BlueGigaEmpeg.ino to the Arduino
 Obtain the BlueGigaEmpeg.ino Arduino sketch file (located in the project zip
 file) from GitHub, linked in the [Prerequisites](#prerequisites) section of
 this document. In the GitHub project web site for BlueGigaEmpeg, find the
-button titled "Clone or download" and select "Download Zip" to download the
-zip file. Unzip the entire project into a folder named "BlueGigaEmpeg" on your
-computer's hard disk. Rename the folder to "BlueGigaEmpeg" if needed.
+button titled "Clone or download" and obtain the repository. Most people will
+select "Download Zip" to download the zip file, though if you are a Git user,
+feel free to clone the repository or select "Open in Desktop". If you are
+downloading the zip file, unzip the entire project into a folder named
+"BlueGigaEmpeg" on your computer's hard disk. This will likely require
+renaming the folder to "BlueGigaEmpeg" after unzipping the file.
 
 ###  Important:
 
@@ -263,10 +266,10 @@ The folder in which the BlueGigaEmpeg.ino file resides must be named
 "BlueGigaEmpeg" and not, for example, "BlueGigaEmpeg-Master", because the
 Arduino IDE won't recognize it as a Arduino project file unless the parent
 folder name is the same as the ".ino" file name. I don't know why this is a
-requirement, but it seems to be the case. If you're synchronizing with this
-repository via Git, it will automatically be named correctly, but if you are
-downloading and unzipping the Zip file, you will likely have to rename the
-folder after downloading and unzipping the project from GitHub.
+requirement, but based on my experiences with the Arduino IDE, that seemed to
+be the case. If you're synchronizing with this repository via Git, it will
+automatically be named correctly, but if you are downloading and unzipping
+the zip file, you will likely have to rename the folder after unzipping it.
 
 ###  Connection order special instructions:
 
