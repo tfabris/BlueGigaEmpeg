@@ -1,4 +1,4 @@
-BlueGigaEmpeg
+BlueGigaEmpeg Instructions
 ==============================================================================
 by Tony Fabris
 
