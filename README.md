@@ -1285,6 +1285,6 @@ Resources
 | 1.5k ohm resistors          | Qty:6 | https://www.amazon.com/gp/product/B077FMSR86/ref=oh_aui_detailpage_o00_s00                                         |
 | 10k ohm resistors           | Qty:3 | https://www.amazon.com/gp/product/B0185FIOTA/ref=oh_aui_detailpage_o02_s00                                         |
 | 100 ohm resistor            |       | https://www.digikey.com/product-detail/en/stackpole-electronics-inc/CF18JT100R/CF18JT100RCT-ND/2022718             |
-| Jumper Wires                | Qty:3 | (lying around)                                                                                                     |
+| Jumper Wires 9.5 inches     | Qty:3 | (lying around)                                                                                                     |
 
 
