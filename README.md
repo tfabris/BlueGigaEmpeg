@@ -1155,7 +1155,7 @@ the same height as the top of the button plastic. Lens will protrude higher
 than the button by vaguely 2mm or so.
 
 LED anode: The positive/anode pin is the long lead. The positive pin is the
-side with the smaller metal bit visible inside the lens. The positive/andoe
+side with the smaller metal bit visible inside the lens. The positive/anode
 pin goes into the hole on the PCB with the round pad. The negative/cathode pin
 goes into the hole on the PCB with the square pad. The triangle/bar symbol on
 the PCB silkscreen is this:
