@@ -1069,10 +1069,7 @@ peel up the pad or the traces, your board will no longer work correctly.
 
 On the BetzTechnik board, set the "Smd_2_pole_switch" to the "down" position
 (looking at the board so that the board's silkscreen name is readable) which
-is the "off" position for this switch. This disconnects the BATT voltage from
-the 2.5v linear voltage regulator on the board. The BlueGigaEmpeg assembly
-will be supplying power directly to the chip at 3v and will not use the BATT
-power from that regulator.
+is the "off" position for this switch. 
 
 
 Hardware interface information and notes (internal board connections)
