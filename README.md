@@ -25,10 +25,10 @@ its controls, in the same way that you would connect a smartphone to your car.
 
 The BlueGigaEmpeg interface works in two ways:
 
-1. Bluetooth A2DP connection allows high quality stereo audio from the empeg
+1. Bluetooth A2DP connection allows high quality digital audio from the empeg
    Car player to play on the modern car's stereo speakers without needing an
    Aux Input on the car stereo. This is useful because many cars no longer have
-   an Aux Input available, yet most new cars have Bluetooth.
+   an Aux Input available, yet most new cars have Bluetooth. 
 
 2. Bluetooth AVRCP connection allows the empeg Car to receive commands such as
    "next", "previous", "pause", etc. from the Bluetooth connection, allowing
@@ -40,9 +40,10 @@ The BlueGigaEmpeg interface works in two ways:
 Some modification of the empeg Car is required in order for this to work. The
 Molex connector on the back of the empeg Car docking sled, which is normally
 used for an external AM/FM tuner module, must be converted into a digital audio
-interface. Make sure to perform all modifications listed in this document for
-this to work correctly. Follow the [Checklist](#checklist) section of this
-document to make sure all steps are performed.
+interface for sending digital audio to the BlueGigaEmpeg module. Make sure to
+perform all modifications listed in this document for it to work correctly.
+Follow the [Checklist](#checklist) section of this document to make sure all
+steps are performed.
 
 ###  Caveats:
 
