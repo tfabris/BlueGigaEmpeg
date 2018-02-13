@@ -14,19 +14,26 @@ in-dash MP3 player made from 1999-2001 whose features are still, nearly 20
 years later, better than any other in-car MP3 solution available. However, the
 empeg Car didn't have Bluetooth since it wasn't in common use yet at the time.
 
-The purpose of this BlueGigaEmpeg interface is twofold:
+Modern cars are becoming increasingly difficult to install aftermarket stereos
+into, due to the car touchscreen dashboards and the high level of integration
+of the stereo system into the other car electronic and computer systems. This
+project adds Bluetooth to the empeg Car player, allowing it to be connected to
+a modern car's factory stereo system, and integrate with its controls, in the
+same way that you would connect a smartphone.
+
+The BlueGigaEmpeg interface works in two ways:
 
 1. Bluetooth A2DP connection allows high quality stereo audio from the empeg
-   Car player to play on the modern car stereo speakers without needing an AUX
-   input on the car stereo. The Bluetooth connection is useful because many
-   cars no longer have an AUX input available, yet most modern cars now have
-   Bluetooth available.
+   Car player to play on the modern car's stereo speakers without needing an
+   Aux Input on the car stereo. This is useful because many cars no longer have
+   an Aux Input available, yet most new cars have Bluetooth.
 
-2. Allow empeg Car to receive Bluetooth AVRCP commands such as "next",
-   "previous", "pause", etc. from the Bluetooth connection, thus allowing the
-   car stereo's touchscreen and steering wheel controls to be able to change
-   tracks on the empeg. In addition, the same AVRCP channel allows track title
-   and artist information to be displayed on the car stereo's touchscreen.
+2. Bluetooth AVRCP connection allows the empeg Car to receive commands such as
+   "next", "previous", "pause", etc. from the Bluetooth connection, allowing
+   the car stereo's touchscreen and steering wheel controls to be able to
+   change tracks and control playback on the empeg. In addition, the same AVRCP
+   channel allows track title and artist information to be displayed on the car
+   stereo's touchscreen.
 
 Some modification of the empeg Car is required in order for this to work. Make
 sure to perform all modifications listed in this document for this to work
@@ -35,8 +42,8 @@ sure all steps are performed.
 
 ###  Caveats:
 
-At the time of this writing, I have tested this only on a very limited set of
-Bluetooth gear. I have tested it on:
+At the time of this writing, I have tested this project on a very limited set
+of Bluetooth gear. So far, I have only tested it on:
 - My Honda Accord 2017 factory stereo.
 - Kenwood Bluetooth-equipped car stereo in my roommate's car.
 - Plantronics Voyager Edge Bluetooth headset.
@@ -49,25 +56,25 @@ I cannot get track titles working on the Onkyo, and the Honda does not have
 controls for Shuffle, Fast Forward, or Rewind. As far as I can tell, these are
 limitations of the devices themselves, not problems with the BlueGigaEmpeg.
 
-This is not intended to replace the empeg front panel user interface. This
-only allows you to do things like press Next Track, Pause, and Play on your
-car stereo. The full menu and user interface of the empeg is still needed for
-all other features of the empeg, such as selecting playlists. So this module
-won't let you mount the empeg in your trunk, unless you also have a display
-extender kit from Eutronix.com as well, so that you can still reach the empeg
-front panel. Unfortunately, Stu at Eutronix isn't selling display extenders
-any more. I was lucky to get a display extender several years ago when they
-were still being sold, so I'm able to mount my empeg in my trunk with this.
-But if you don't have one, plan on still having to mount your empeg where
-you can get to it.
-
 There are differences in Bluetooth implementation on various audio gear, and
 so there still might be bugs using this on your particular car stereo. This
 project is open source on GitHub, so that I can accept bug reports and code
 fixes from people with other brands of Bluetooth gear.
 
-This only works with the empeg Car Mk2 or the Rio Car player. It will not work
-with the empeg Car Mk1 player.
+This is not intended to replace the empeg front panel user interface. This
+only allows you to do things like press Next Track, Pause, and Play on your
+car stereo. The full menu and user interface of the empeg is still needed for
+all other features of the empeg, such as selecting playlists. So this module
+won't let you mount the empeg in your trunk, unless you also have a display
+extender kit from Eutronix.com as well, which would allow you to reach the
+empeg front panel from the driver's seat. Unfortunately, Stu at Eutronix
+isn't selling display extenders any more. I was lucky to get a display
+extender several years ago when they were still being sold, so I'm able to
+mount my empeg in my trunk with this. But if you don't have one, plan on
+still having to mount your empeg where you can get to it.
+
+This project only works with the empeg Car Mk2 or the Rio Car player. It will
+not work with the empeg Car Mk1 player.
 
 
 Acknowledgments
