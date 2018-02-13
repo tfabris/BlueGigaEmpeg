@@ -389,10 +389,10 @@ components sticking off the back of the display board.
 
 ###  Jumper the I2S pads to the docking connector wires:
 
-Refer to the annotated photograph in this repository named "I2S Wiring
-Modification Photo.jpg" to help understand the wiring instructions below.
+Refer to the annotated photograph "I2S Wiring Modification Photo.jpg" to help
+understand the wiring instructions below.
 
-Photo:
+I2S Wiring Modification Photo.jpg:
 ![Wiring Modification](https://github.com/tfabris/BlueGigaEmpeg/blob/master/I2S%20Wiring%20Modification%20Photo.jpg)
 
 Locate 5 blank IIS pads on the front left side of the empeg motherboard.
