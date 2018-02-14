@@ -12,7 +12,8 @@ modifications to your empeg are detailed there. In the meantime, please
 remember this:
 
 - Do not plug the BlueGigaEmpeg module into the empeg Car docking sled until
-  the modifications described in README.md have been completed.
+  the modifications described in README.md have been completed. Damage may
+  occur if you plug it in before everything is ready.
   
 Thank you, and enjoy your new toy!
 
