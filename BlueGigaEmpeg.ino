@@ -880,11 +880,6 @@ void setup()
   // Verify the serial buffer size
   verifySerialBuffer();
 
-  // Debugging
-  // Log("Size of scFixMessageMatrix is:        " + String(sizeof(scFixMessageMatrix)));
-  // Log("Size of pmMessageMatrix is:           " + String(sizeof(pmMessageMatrix)));
-  // Log("Size of empegCommandMessageMatrix is: " + String(sizeof(empegCommandMessageMatrix)));
-
   // Configure the Bluetooth device at startup, call my routine which sets all
   // data to the desired overall system defaults. This does not erase any
   // pairing information, that is left untouched.
@@ -2129,9 +2124,6 @@ void GrabPairAddressString(String stringToParse, String triggerString)
     return;
   }
 
-  // Debug logging
-  // Log(F("=== Trying to grab pair buddy's address. ==="));
-
   // Get our Bluetooth address out of the string if it's the one exact special
   // case string that we expect to see at this particular moment
   if ( stringToParse.indexOf(triggerString) > (-1)  )
@@ -2650,9 +2642,6 @@ void RespondToQueries(String &queryString)
       queryResponseString += F(" 2");
     }
 
-    // Debugging
-    // Log("-=: " + queryResponseString);
-
     // Response string is assembled, send it:
     SendBlueGigaCommand(queryResponseString);
     return;
@@ -2678,9 +2667,6 @@ void RespondToQueries(String &queryString)
     //    1 – a track is currently selected
     // At the moment hard code this to a track is currently selected...
     queryResponseString += F(" 1");
-
-    // Debugging
-    // Log("-=: " + queryResponseString);
 
     // Response string is assembled, send it:
     SendBlueGigaCommand(queryResponseString);
@@ -2728,9 +2714,6 @@ void RespondToQueries(String &queryString)
     {
       queryResponseString += F(" 2");
     }
-
-    // Debugging
-    // Log("-=: " + queryResponseString);
 
     // Response string is assembled, send it:
     SendBlueGigaCommand(queryResponseString);
@@ -2783,9 +2766,6 @@ void RespondToQueries(String &queryString)
     // If it's not found, we have a parsing error so bail out.
     if (elementsEndSelectPosition <= 23) {return;}
 
-    // Debugging: Log what we found.
-    // Log("String of the number of elements: *" + queryString.substring(elementsStartSelectPosition, elementsEndSelectPosition) + "*");
-
     // Turn it into an integer variable:
     numberOfElements = queryString.substring(elementsStartSelectPosition, elementsEndSelectPosition).toInt();
 
@@ -2825,18 +2805,12 @@ void RespondToQueries(String &queryString)
       // Check to see if we even found a space at all.
       if (elementsEndSelectPosition <= elementsStartSelectPosition)
       {
-        // Debugging output.
-        // Log("Element code string was not followed by a space: *" + queryString.substring(elementsStartSelectPosition) + "*");
-
         // Parse the current element code out to the end of the string because
         // we didn't find a space
         currentElementCode = queryString.substring(elementsStartSelectPosition).toInt();
       }
       else
       {
-        // Debugging output.
-        // Log("Element code string was followed by a space: *" + queryString.substring(elementsStartSelectPosition, elementsEndSelectPosition) + "*");
-
         // Parse the current element code out to the position of the space we
         // found because we found a space
         currentElementCode = queryString.substring(elementsStartSelectPosition, elementsEndSelectPosition).toInt();
@@ -2887,9 +2861,6 @@ void RespondToQueries(String &queryString)
       }
     }
 
-    // Debugging
-    // Log("-=: " + queryResponseString);
-    
     // Response string is assembled, send it:
     SendBlueGigaCommand(queryResponseString);
     return;
@@ -3261,11 +3232,6 @@ void DisplayAndSwallowResponses(int numResponsesToSwallow, unsigned long waitTim
 // ---------------------------------------------------------------------------
 void SetTrackMetaData(char empegMessageCode, String &stringToParse)  // Pass by reference to work around memory bug #25.
 {
-  // Debug logging for issue #25
-  // Log(F("stringToParse:"));
-  // Log(stringToParse); 
-  // Log(F(":stringToParse"));
-
   // Pre-strip doublequote characters out of the track data because our
   // messages to the Bluetooth chip need doublequote characters as delimiters
   // when we send metadata up to the host stereo. Silicon Labs support says
@@ -3427,9 +3393,6 @@ String ReplaceHighAsciiWithUtf8(String &stringToMakeUtf8Char)
     return stringToMakeUtf8Char;
   }
 
-  // Debug/profiling logging.
-  // Log(F("--UTF-8 Conversion Start."));
-
   // Set a static variable to keep track of the character we are pulling out
   // of the string to analyze. Do this as a "byte" instead of a "char" to make
   // our calculations look more straightforward, because a "byte" is unsigned
@@ -3483,9 +3446,6 @@ String ReplaceHighAsciiWithUtf8(String &stringToMakeUtf8Char)
       utf8ReturnString += char(oneStringChar - 64);
     }
   }
-
-  // Debug/profiling logging.
-  // Log(F("--UTF-8 Conversion End."));
 
   // Return our return string
   return utf8ReturnString;
@@ -3932,8 +3892,6 @@ void HandleEmpegString(String &theString)
     }
     else
     {
-      // Log("New Playlist length: " + empegDetailString);
-
       // Assign the global playlist length variable to the value Mark so
       // kindly gave us.
       trackTotalNumberString05 = empegDetailString;  
@@ -4143,12 +4101,6 @@ void HandleEmpegString(String &theString)
     // position string as a string value that can be sent to the Bluetooth
     // chip.
     trackPlaybackPositionString07 = String(empegMs);
-
-    // Debug output of the playback milliseconds.
-    // Log("Hours: " + String(empegHours));
-    // Log("Minutes: " + String(empegMinutes));
-    // Log("Seconds: " + String(empegSeconds));
-    // Log("Playback Milliseconds: " + trackPlaybackPositionString07);
   }
 }
 
