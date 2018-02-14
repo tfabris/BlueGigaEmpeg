@@ -2093,12 +2093,13 @@ void HandleString(String &theString)
 // GrabPairAddressString
 //
 // Grabs the Bluetooth address from a string that looks like this:
-// "INQUIRY_PARTIAL 0a:ea:ea:6a:7a:6a 240404" or perhaps a string that looks
-// like this: SET BT PAIR 0a:ea:ea:6a:7a:6a ad11da9ed235df50e86eeef1e3ba8b and
-// puts it into the global variable "pairAddressString". Only does the first
-// one it finds since the runstart of the program or since the user has
+//      "INQUIRY_PARTIAL 0a:ea:ea:6a:7a:6a 240404"
+// or perhaps a string that looks like this:
+//      "SET BT PAIR 0a:ea:ea:6a:7a:6a ad11da9ed235df50e86eeef1e3ba8b"
+// and puts it into the global variable "pairAddressString". Only does the
+// first one it finds since the start of the program, or since the user has
 // pressed the "reset/pair" button on the assembly. Does not save the variable
-// in permanent storage so if you need this variable after bootup you have to
+// in permanent storage, so if you need this variable after bootup you have to
 // re-retrieve it with special code. We leave it up to the Bluetooth chip to
 // store the pair addresses, and the Bluetooth chip automatically reconnects
 // to paired devices when it is powered back on, so our code only needs to
