@@ -2012,12 +2012,14 @@ void HandleString(String &theString)
     }
   }
 
-  // Respond to a particular AVRCP connection success message with a command that
-  // that tells the Bluetooth to repeatedly retry reconnections if it ever
+  // Respond to a particular AVRCP connection success message (in this case 
+  // triggering off of the AUDIO ROUTE success message) with a command which
+  // will tell the Bluetooth to repeatedly retry reconnections if it ever
   // becomes disconnected. This allows the empeg to reconnect to the car stereo
-  // when you start the car, instead of connecting to your phone in your pocket.
-  // On my stereo, it results in the perfect combination of the phone pairing to
-  // the car as a phone only (no music, just phone), and the empeg pairing as the
+  // when you start the car, instead of your stereo always connecting to your
+  // phone in your pocket and playing music from the phone instead. On my Honda
+  // stereo, this results in the perfect combination of the phone pairing to the
+  // car as a phone only (no music, just phone), and the empeg pairing as the
   // music source, simultaneously.
   //
   // This string/response pair was originally part of scFixMessageMatrix. It has
@@ -2037,6 +2039,7 @@ void HandleString(String &theString)
     // it on either side of the zero independently.
     if ( (theString.indexOf(F("AUDIO ROUTE ")) > (-1)) && (theString.indexOf(F(" A2DP LEFT RIGHT")) > (-1)) )
     {
+      // Use the autoReconnectString defined at the top of this program.
       SendBlueGigaCommand(autoReconnectString);
     }
   }
