@@ -300,6 +300,7 @@ boolean PerformUtf8Conversion = true;
 // circuit.
 #define EmpegSerial Serial1
 
+// Special Case Fix Matrix (scFixMatrix).
 // Matrix of special case fix strings and their Bluetooth responses. When a
 // Bluetooth statement is received from the Bluetooth module, this code will
 // respond back to the Bluetooth module with the specified text. These are
@@ -307,6 +308,8 @@ boolean PerformUtf8Conversion = true;
 // input->output pairs for answering certain pieces of text on the Bluetooth
 // module's serial port. There is other code elsewhere to handle input/output
 // that requires more detailed handling and parsing.
+// NOTE: Update the matrix size and the array size both, if you are changing
+// these.
 int scFixMatrixSize = 9;
 String scFixMessageMatrix[9][2] =
 {
@@ -460,6 +463,7 @@ static String transactionLabelTrackChanged = "";
 // to fix a bug, I need to know which one it's on.
 static String avrcpChannel = "";
 
+// Pair Mode Matrix (pmMatrix).
 // Matrix of messages and responses which are needed when in special pairing
 // mode. These also include some special casing for the Bluetooth device
 // address. The "{0}" in these strings are a special cased token indicating
@@ -473,7 +477,7 @@ String pmMessageMatrix[5][2] =
   // Respond to messages such as INQUIRY_PARTIAL 0a:ea:ea:6a:7a:6a 240404
   { "INQUIRY_PARTIAL ",          "PAIR {0}"},
 
-  // Respond to messages such as "PAIR 0a:ea:ea:6a:7a:6a OK" Respond during
+  // Respond to messages such as "PAIR 0a:ea:ea:6a:7a:6a OK". Respond during
   // the pair process with a connection attempt. Response should be "CALL",
   // the address to connect to, then a special code indicating the target type
   // and profile type. "19" is a special code for a certain kind of target
@@ -505,9 +509,10 @@ String pmMessageMatrix[5][2] =
 // string).
 const String tokenSubstitutionString = "{0}";
 
-// Get Bluetooth Address strings aka GBA. Set of strings which are the trigger
-// phrases to be used for identifying strings from the Bluetooth module that
-// can be used for getting the address of our main pairing buddy at any
+// Get Bluetooth Address Matrix (gbaMatrix).
+// Gets Bluetooth address of pairing buddy. Set of strings which are the
+// trigger phrases to be used for identifying strings from the Bluetooth module
+// that can be used for getting the address of our main pairing buddy at any
 // generic time as opposed to just during the pairing process. This allows us
 // to figure out who our pairing buddy is even when they are the ones
 // initiating the connection as opposed to us initiating it during the pairing
@@ -557,6 +562,7 @@ const String pairDetectionString = "AUDIO ROUTE ";
 static String pairAddressString = "";
 int pairAddressStringMaxLength = 25;
 
+// Empeg Command Matrix.
 // The translation table of AVRCP messages to empeg serial commands. This is
 // the commands that we must send to the empeg serial port if certain messages
 // come in from the Bluetooth module.
