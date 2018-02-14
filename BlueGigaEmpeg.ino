@@ -2251,12 +2251,13 @@ void GrabChannelNumber(String stringToParse)
 // Log
 //
 // Log a string of output to the Arduino USB debug serial port. Had to make it
-// into two functions calling a base function so that one version of it could
-// accept a string by reference as its parameter and the other version could
-// accept the F() macro as its parameter. If it weren't for the fact that I
-// wanted to save a bit of string-handling memory by accepting it as a
-// reference then I wouldn't need the fancy two-functions version below.
-// Not sure if jumping through these hoops is helping me much, memory-wise.
+// into two overloaded functions (a form of static polymorphism) calling a
+// base function, so that one version of it could accept a string by reference
+// as its parameter, and the other version could accept the F() macro (the 
+// Flash String Helper) as its parameter. If it weren't for the fact that I
+// needed to save a bit of string-handling memory by accepting it as a
+// reference, then I wouldn't need the fancy overloaded version, and could
+// have done this with a single function.
 // ---------------------------------------------------------------------------
 void Log(const String &logMessage)
 {
