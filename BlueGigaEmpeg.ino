@@ -1755,7 +1755,7 @@ char MainInputOutput()
 // prevent the main program loop for that long.
 // 
 // Another common use for this would be: If you issue a command to the
-// bluetooth and you want to wait for the response, and then process the data
+// Bluetooth and you want to wait for the response, and then process the data
 // retreived in the response (assuming that the data is automatically
 // retrieved by the MainInputOutput routine).
 //
