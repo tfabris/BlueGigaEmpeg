@@ -878,11 +878,21 @@ echo.
   results show up on the screen.
 
 - "Select all" in the serial monitor main window and copy and paste the
-  contents into a text document and attach it to the bug report.
+  contents into a text document.
   
-- Submit bug reports by creating an account at GitHub if you don't already
-  have one, then go to https://github.com/tfabris/BlueGigaEmpeg/issues and
-  press "New Issue".
+- Submit bug reports this way:
+  - Create an account at http://www.GitHub.com if you don't already have one.
+  - Search through existing bugs to see if your issue is related to them.
+    - Open bugs: https://github.com/tfabris/BlueGigaEmpeg/issues
+    - Closed bugs: https://github.com/tfabris/BlueGigaEmpeg/issues?q=is:issue+is:closed
+  - If yours is a new issue, then go to https://github.com/tfabris/BlueGigaEmpeg/issues
+    and press "New Issue".
+  - In the bug report, describe:
+    - Model of Bluetooth playback device.
+    - Frequency of the occurrence of the issue.
+    - Steps to reproduce the issue.
+    - Expected behavior versus actual behavior.
+  - Attach your debug log to the bug report.
 
 ###  Variables in the Arduino sketch:
 
