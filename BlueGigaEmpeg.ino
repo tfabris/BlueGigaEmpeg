@@ -2282,10 +2282,10 @@ void BaseLog(const String &logMessage)
   if (Serial)
   {
     // Calculate the delta between the last time that we logged an output line
-    // and now so that we can profile our output.
+    // and now, so that we can profile our output.
     if (outputMillis)
     {
-      // Set the value of the current output timing before printing it so that
+      // Set the value of the current output timing before printing it, so that
       // the act of printing it doesn't cloud our profiling results.
       currentOutputLineMillis = millis();
 
