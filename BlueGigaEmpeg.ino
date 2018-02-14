@@ -752,7 +752,7 @@ unsigned long pairButtonLastPressedMs = 0;
 int pairButtonState;
 int lastPairButtonState = LOW;
 
-// Variable for pin number of the reset/pair indicator blue LED.
+// Variable for Arduino pinout number of the reset/pair indicator blue LED.
 const int pairLedPin = 50;
 
 // Variable to globally keep track of whether we have recently initiated
