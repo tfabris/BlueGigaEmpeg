@@ -31,10 +31,11 @@ The BlueGigaEmpeg interface works in two ways:
    an Aux Input available, yet most new cars have Bluetooth. 
 
 2. Bluetooth AVRCP connection allows the empeg Car to receive commands such as
-   "next", "previous", "pause", etc. from the Bluetooth connection, allowing
-   the car stereo's touchscreen and steering wheel controls to be able to
-   change tracks and control playback on the empeg. In addition, the same AVRCP
-   channel allows track title and artist information to be displayed on the car
+   "next", "previous", "pause", etc. from the Bluetooth connection (by way of
+   the RS-232 serial port on the empeg Car docking sled), allowing the car
+   stereo's touchscreen and steering wheel controls to be able to change tracks
+   and control playback on the empeg. In addition, the same AVRCP channel
+   allows track title and artist information to be displayed on the car
    stereo's touchscreen.
 
 Some modification of the empeg Car is required in order for this to work. The
