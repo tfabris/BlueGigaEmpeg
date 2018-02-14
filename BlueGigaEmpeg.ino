@@ -1665,17 +1665,20 @@ char MainInputOutput()
     }
   }
 
-  // Monkey Reconnect is a failed attempt to work around issue #60, which was
-  // problems with the existing reconnect features found in the iWrap6
-  // language which had interesting problems. Instead of using either of the
-  // automatic reconnect features in the iWrap6 language, since both of them
+  // Monkey Reconnect is a failed attempt to work around issue #60, problems
+  // with the existing reconnect features found in the iWrap6 language. The
+  // fix was to try my own reconnects instead of using either of the existing
+  // automatic reconnect features in the iWrap6 language. Since both of them
   // gave me troubles on my Honda stereo, I attempted to control my own
-  // reconnects by doing it myself in my main input loop to see if that solves
-  // any of the troubles I was having. In the end, this caused more problems
-  // than it solved, and the fix to issue #60 turned out to be something
-  // completely different (it was actually caused by bad parameters to the
-  // built-in auto reconnect command). Keeping the code here for posterity,
-  // but disabled with monkeyReconnectEnabled=false at the top of the code.
+  // reconnects by doing it myself, in my main input loop, to see if I could
+  // solve any of the troubles I was having. In the end, this caused more
+  // problems than it solved, and the fix to issue #60 turned out to be
+  // something completely different. It was actually caused by bad parameters
+  // to one of the built-in auto reconnect command which was not clearly
+  // documented. I am keeping the code here for posterity, since I might want
+  // to leverage this same set of functionaly for other features at a later
+  // date. But I am leaving it disabled for now, with the variable
+  // monkeyReconnectEnabled set to false at the top of the code.
   if (monkeyReconnectEnabled)
   {
     // First, check to see if it's been x seconds of elapsed time since bootup
@@ -1714,10 +1717,9 @@ char MainInputOutput()
           // Prevent this code from firing twice in the same millisecond if
           // the loop happens to execute extra fast. Normally I would cringe
           // at a blind sleep in the code, but this can only occur if there
-          // hasn't been a connection yet and so the BlueGigaEmpeg isn't doing
-          // much critical yet. And also, it's only for 1 millisecond every
-          // few seconds, so it has less chance of causing problems. We'll see
-          // how it does.
+          // hasn't been a connection yet, and so the BlueGigaEmpeg isn't
+          // doing much critical yet. And also, it's only for 1 millisecond
+          // every few seconds, so it has less chance of causing problems.
           delay(1);
         }
         else
