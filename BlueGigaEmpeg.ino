@@ -1745,10 +1745,19 @@ char MainInputOutput()
 // ---------------------------------------------------------------------------
 // DisplayAndProcessCommands
 //
-// Runs the main input loop for a specified amount of time (including the fact
-// that it will process commands if the main input loop receives them). This
-// function is mostly useful for waiting for certain commands to be processed
-// and to respond with a response of some kind.
+// Repeatedly runs the serial data processing routine for a specified amount
+// of time, so that you can continue to process data outside the main input
+// loop. 
+// 
+// An example of using this would be: if you are inside a subroutine and you
+// need to wait for a certain amount of time before returning control back to
+// the main loop, but you can't afford to hang the serial I/O and the main
+// data processing loop for that long.
+// 
+// Another common use for this would be: If you issue a command to the
+// bluetooth and you want to wait for the response, and then process the data
+// retreived in the response (assuming that the data is automatically
+// retrieved by the main serial data processing routine).
 //
 // Parameters
 //    (ulong) idleTimeMs  Amount of time in approximate milliseconds to wait.
