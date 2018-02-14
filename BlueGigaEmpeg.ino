@@ -1822,8 +1822,8 @@ void HandleString(String &theString)
   commandToSend = "";
   static char empegCommandToSend = 0;
 
-  // Bugfix - If we get a "NO CARRIER" message from the Bluetooth chip then we
-  // need to set our globally stored transaction labels to blanks. This is
+  // Bugfix - If we get a "NO CARRIER" message from the Bluetooth chip, then
+  // we need to set our globally stored transaction labels to blanks. This is
   // because, upon disconnection from a Bluetooth device, the transaction
   // labels become invalid and now we should not be using them any more. They
   // should be reset so that upon the next reconnection that we can receive
@@ -1843,7 +1843,7 @@ void HandleString(String &theString)
   //      ClearGlobalVariables();
   //    }
 
-  // Bugfix - If we see the boot message from the BT chip, reset out globals.
+  // Bugfix - If we see the boot message from the BT chip, reset our globals.
   // I have seen situations where the Bluetooth chip has reset itself and we
   // see its initial boot message on the debug console again. If we see it we
   // need to clear out our variables because that means the Bluetooth chip
@@ -1910,8 +1910,8 @@ void HandleString(String &theString)
   // playback status information. Make sure our program responds to these
   // queries in a timely fashion if it receives them. This is a time-sensitive
   // routine that needs to respond immediately as soon as we get a query
-  // string so I have put it near the top of the string handling routine.
-  // However there is a catch-22 where one of the responses might need to be
+  // string, so I have put it near the top of the string handling routine.
+  // However, there is a catch-22, where one of the responses might need to be
   // the track metadata from the empeg. Since getting the track metadata from
   // the empeg might be slow, we need to be careful here and not spend "slow
   // time" trying to get the empeg track metadata every single time. This is
@@ -1920,7 +1920,7 @@ void HandleString(String &theString)
   // needed.
   RespondToQueries(theString);
 
-  // If we are inside the pairing process and we have detected that the
+  // If we are inside the pairing process, and we have detected that the
   // pairing process is complete, then set the flag to indicate that the
   // pairing process is complete. The pairing process will end once the flag
   // has been set to false. The actual handling of the inputs and responses to
@@ -1970,7 +1970,7 @@ void HandleString(String &theString)
       }
 
       // Also we must be able to cancel out of the FF/REW runaway protection
-      // when user has released the FF or REW button
+      // when user has released the FF or REW button.
       if ( (theString.indexOf(F("AVRCP FAST_FORWARD RELEASE")) > (-1)) || (theString.indexOf(F("AVRCP REWIND RELEASE")) > (-1)) )
       {
         // If we have detected the Bluetooth successfully sent a message which
