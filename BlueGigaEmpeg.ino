@@ -2228,8 +2228,8 @@ void GrabChannelNumber(String stringToParse)
     // Trim the string of any possible whitespace
     avrcpChannel.trim();
 
-    // Find out if the thing we got was an address. It should contain a low single digit number
-    // at the very least. Throw it away if it's not.
+    // Find out if the thing we got was a channel number. It should contain a
+    // low single digit number at the very least. Throw it away if it's not.
     if ( (avrcpChannel != "0") && (avrcpChannel != "1") && (avrcpChannel != "2") && (avrcpChannel != "3") && (avrcpChannel != "4") ) 
     {
       // Clear it out, it wasn't what we wanted, set it to nothing.
