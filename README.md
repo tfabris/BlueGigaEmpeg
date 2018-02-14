@@ -1072,10 +1072,10 @@ IMPORTANT: Use extreme care when cutting JP4. Make sure not to peel up the
 pads. There are two traces running to the USB side of the JP4 pad and if you
 peel up the pad or the traces, your board will no longer work correctly.
 
-On the BetzTechnik board, set the "Smd_2_pole_switch" (also labeled as U5 on
-some boards) to the "down" position (looking at the board so that the board's
-large silkscreen name is readable) which is the "off" position for this
-switch. 
+On the BetzTechnik board, set the "Smd_2_pole_switch" (also labeled as "U5"
+on some boards) to the "down" position (looking at the board so that the
+board's large silkscreen name is readable) which is the "off" position for
+this switch. 
 
 
 Hardware interface information and notes (internal board connections)
