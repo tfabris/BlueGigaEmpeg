@@ -2201,7 +2201,7 @@ void GrabChannelNumber(String stringToParse)
   // current time I'm only doing the AVRCP channel but I can expand this later
   // to also get the first and second A2DP channels if I end up needing them.
   // Note that the routine which calls this already looked for "LIST" and
-  // "CONNECTED" so I don't have to call that here.
+  // "CONNECTED" so I don't have to check for them here.
   if (stringToParse.indexOf(F("AVRCP")) < 0) {return;}
 
   // Set the value we're trying to grab to blank to start.
