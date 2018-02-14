@@ -665,9 +665,11 @@ const String digitalAudioRoutingControlString = "SET CONTROL AUDIO INTERNAL I2S_
 // Strings to set the gain level of the empeg, but only when BlueGigaEmpeg is
 // configured for analog audio. Normally it's not used; BlueGigaEmpeg runs on
 // digital audio so this gain setting usually does nothing. See Bluetooth chip
-// docs for gain level table. Uncomment this line if your player will be used
-// in AC/Home mode, (1v outputs):
+// docs for gain level table.
+//
+// Uncomment this line if your player will be used in AC/Home mode, (1v outputs):
 //     const String empegGainSettingString = "SET CONTROL GAIN E 0";
+//
 // Uncomment this line if your player will be used in DC/Car mode, such as in
 // a sled (4v outputs):
 const String empegGainSettingString = "SET CONTROL GAIN 9 0";
