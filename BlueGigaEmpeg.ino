@@ -64,7 +64,9 @@ boolean digitalAudio = true;
 //   - Commands typed in the Arduino main serial port debug console will go
 //     solely to the Bluetooth chip and will not be echoed to the empeg.
 // This should be set to false most of the time, and only set to true during
-// debugging sessions
+// debugging sessions in situations where it is hard to reach the empeg
+// Car front panel to change tracks. If you can reach the empeg Car front
+// panel during your debugging session, you probably don't need this.
 boolean EmpegSendCommandDebug=false;
 
 // Special case debugging feature - If you type Z on the Arduino debugging
@@ -76,6 +78,9 @@ boolean EmpegSendCommandDebug=false;
 //      you had pressed the RESET/PAIR button on the module.
 //   Setting false:
 //    - Typing Z will not do anything special.
+// This should be set to false most of the time, and only enabled for
+// debug sessions in which in which it is difficult to physically reach
+// the RESET/PAIR button on the BlueGigaEmpeg module.
 boolean TypeZtoPair=false;
 
 // Choose whether or not to display the empeg Serial Port outputs (for
@@ -295,7 +300,7 @@ boolean PerformUtf8Conversion = true;
 // circuit.
 #define EmpegSerial Serial1
 
-// Matrix of special case fix strings and their output timings. When a
+// Matrix of special case fix strings and their Bluetooth responses. When a
 // Bluetooth statement is received from the Bluetooth module, this code will
 // respond back to the Bluetooth module with the specified text. These are
 // "plain" response strings without any detailed parsing, they are just
