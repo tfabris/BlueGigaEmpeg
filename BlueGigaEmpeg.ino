@@ -2012,22 +2012,21 @@ void HandleString(String &theString)
     }
   }
 
-  // Respond to this particular AVRCP connection success message with a
-  // command that is supposed to force the Bluetooth to repeatedly retry
-  // connections if it ever becomes disconnected. Hopefully this will increase
-  // the chances that the empeg connects to the car stereo when you start the
-  // car, instead of connecting to your phone in your pocket. On my stereo,
-  // when this system works, it results in the perfect combination of the
-  // phone pairing to the car as a phone only (no music, just phone), and the
-  // empeg pairing as the music source, simultaneously.
+  // Respond to a particular AVRCP connection success message with a command that
+  // that tells the Bluetooth to repeatedly retry reconnections if it ever
+  // becomes disconnected. This allows the empeg to reconnect to the car stereo
+  // when you start the car, instead of connecting to your phone in your pocket.
+  // On my stereo, it results in the perfect combination of the phone pairing to
+  // the car as a phone only (no music, just phone), and the empeg pairing as the
+  // music source, simultaneously.
   //
-  // This string was originally part of scFixMessageMatrix. It has been
-  // removed from there and placed in here as a "by hand" check because the
-  // reconnection string code is now only done if we're not doing the other
+  // This string/response pair was originally part of scFixMessageMatrix. It has
+  // been removed from there and placed in here, as a "by hand" check, because
+  // the reconnection string code is now only done if we're not doing the other
   // reconnect method (the monkey reconnect). So it needs a special if
-  // statement here. Even though monkey reconnect is permanently disabled,
+  // statement here. Even though monkey reconnect is permanently disabled, I'm
   // leaving the code down here instead of in the scFixMessageMatrix because
-  // it helps keep memory usage down a bit.
+  // it helps keep Arduino memory consumption down a bit.
   if (!monkeyReconnectEnabled)
   { 
     // Attempt to fix bug #63 where the reconnect didn't seem to occur in all
