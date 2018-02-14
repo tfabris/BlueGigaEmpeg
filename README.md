@@ -1072,9 +1072,10 @@ IMPORTANT: Use extreme care when cutting JP4. Make sure not to peel up the
 pads. There are two traces running to the USB side of the JP4 pad and if you
 peel up the pad or the traces, your board will no longer work correctly.
 
-On the BetzTechnik board, set the "Smd_2_pole_switch" to the "down" position
-(looking at the board so that the board's silkscreen name is readable) which
-is the "off" position for this switch. 
+On the BetzTechnik board, set the "Smd_2_pole_switch" (also labeled as U5 on
+some boards) to the "down" position (looking at the board so that the board's
+large silkscreen name is readable) which is the "off" position for this
+switch. 
 
 
 Hardware interface information and notes (internal board connections)
@@ -1170,8 +1171,8 @@ the PCB silkscreen is this:
 BetzTechnik Bluetooth chip+board "JP4 FTDI UART Enable" jumper is cut after
 applying firmware update.
 
-BetzTechnik Bluetooth chip+board "Smd_2_pole_switch" is set to the "down" or
-"off" position.
+BetzTechnik Bluetooth chip+board "Smd_2_pole_switch" or "U5" switch is set to 
+the "off" position.
 
 Bluetooth chip+board "5v" power pin NOT connected to anything.
 
