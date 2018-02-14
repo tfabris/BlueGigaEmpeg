@@ -2134,14 +2134,14 @@ void GrabPairAddressString(String stringToParse, String triggerString)
     // the space too. For example if our trigger string is "INQUIRY_PARTIAL "
     // which is 16 characters including the space, start searching at 15.
     //
-    // BUGFIX - don't assume that our trigger string is at the start. When the
-    // thing we're trying to fix is the bad PDU registrations then the strings
-    // coming in can get mangled because I think my stereo head unit has a bug
-    // or perhaps it overflows the string buffer or something. In any case I
-    // got a bad string from the Bluetooth that looked like this:
+    // BUGFIX - don't assume that our trigger string is at the start. For
+    // example, when the thing we're trying to fix is the bad PDU
+    // registrations, then the strings coming in can get mangled by things
+    // like overflowed RS-232 input buffers. In any case, I once got a bad
+    // string from the Bluetooth that looked like this:
     //    AVRCP 0 PDU_REGISTER_NOTIFICATION 0 TRACK_REACHED_END 0SET BT PAIR 4e:fe:7e:5e:1e:2e 10e0f6999e06f4
-    // The data I really wanted was the address out of that string but
-    // initially this code  had assumed that the SET BT PAIR would be at the
+    // The data I really wanted was the address out of that string, but
+    // initially this code had assumed that the SET BT PAIR would be at the
     // start of the string. Fixing it to look for it in the proper place now.
     firstSpace = stringToParse.indexOf(F(" "), stringToParse.indexOf(triggerString) + triggerString.length() - 2);
 
