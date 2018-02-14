@@ -711,8 +711,8 @@ static String priorIsPlaying = "0";
 // Variable to keep track of whether or not we think the empeg has completed
 // its bootup procedure and the player is running, or if it's some unknown
 // state such as it's still in the process of booting up. This can help us
-// decide better whether or not it's in a playing or paused state and whether
-// it is ready to accept serial port commands.
+// decide better whether or not it's in a state that is ready to accept
+// serial port commands.
 boolean empegPlayerIsRunning = true;
 
 // Variable to keep track of whether or not we have seen a timestamp message
