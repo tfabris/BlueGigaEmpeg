@@ -3736,7 +3736,6 @@ void HandleEmpegString(String &theString)
       {
         // Code was found, flag it, log it, and break out of the FOR loop
         // completely because we don't need to check any more.
-        //   Log("Valid empeg message code flag found: " + empegMessageCode);
         foundEmpegMessageCode = true;
         break;
       }
