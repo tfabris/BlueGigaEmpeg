@@ -3350,9 +3350,6 @@ void SetTrackMetaData(char empegMessageCode, String &stringToParse)  // Pass by 
     }
     return;
   }
-
-  // Sanity check, this code should never hit.
-  //  Log(F("WARNING: DROPPED OUT OF BOTTOM OF SetTrackMetaData ROUTINE UNEXPECTEDLY."));
 }
 
 
@@ -3422,9 +3419,6 @@ String ReplaceHighAsciiWithUtf8(String &stringToMakeUtf8Char)
     // a hex C2 byte.
     if ((oneStringChar >= 128) && (oneStringChar <= 191))
     {
-      // Debugging output, disable in final release version
-      //   Log(F("--------------------- UTF-8 0xC2 conversion. -----------------------"));
-
       // Insert a hex C2 byte before inserting the same character as the
       // original input string in this position.
       utf8ReturnString += char(0xC2);
@@ -3435,9 +3429,6 @@ String ReplaceHighAsciiWithUtf8(String &stringToMakeUtf8Char)
     // character value is different by a fixed amount.
     if ((oneStringChar >= 192) && (oneStringChar <= 255))
     {
-      // Debugging output, disable in final release version
-      //  Log(F("--------------------- UTF-8 0xC3 conversion. -----------------------"));
-
       // Insert a hex C3 byte first.
       utf8ReturnString += char(0xC3);
       
@@ -3756,7 +3747,6 @@ void HandleEmpegString(String &theString)
     // this routine right now.
     if (!foundEmpegMessageCode)
     {
-      //  Log(F("Valid empeg message code flag was not found. Exiting routine."));
       return;
     }
 
@@ -3769,9 +3759,6 @@ void HandleEmpegString(String &theString)
     // the detail string got here as, say, "ZCelery Stalks at Midnight" then
     // the resulting string would now be "Celery Stalks at Midnight".
     empegDetailString = empegDetailString.substring(1); 
-
-    // Debugging only: Log what we parsed
-    //   Log("empegDetailString: " + empegDetailString); 
   }
 
   // If we received any track metadata from the empeg, specifically, if it's
@@ -3874,9 +3861,6 @@ void HandleEmpegString(String &theString)
   // after the disk drive spins down.
   if (empegMessageCode == 'R')
   {
-    // Debug logging
-    //  Log(F("Playlist length code R has been received from empeg serial port."));
-
     // Check to see if this string differs from what we already had in the
     // global variable, and perform different steps depending on  whether this
     // is new information (thus requiring a whole trip into the state change
