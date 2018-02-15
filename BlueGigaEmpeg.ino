@@ -2332,8 +2332,7 @@ void LogChar(char logChar)
 // SendBlueGigaCommand
 //
 // Send a command to the Bluetooth chip. Automatically append the required
-// line ending character. Some chips require a carriage return, some chips
-// require a linefeed or CRLF.
+// line ending character which is appropriate for this chip. 
 // ---------------------------------------------------------------------------
 void SendBlueGigaCommand(String commandString)
 {
