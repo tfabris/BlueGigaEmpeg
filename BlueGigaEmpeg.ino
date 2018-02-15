@@ -3212,16 +3212,16 @@ void DisplayAndSwallowResponses(int numResponsesToSwallow, unsigned long waitTim
 //
 // Parameters:
 //
-// stringToParse: The string to parse from the empeg, such as "TRed Barchetta"
-//                or "ARush" or "GProgressive Rock".
+// stringToParse: The string to parse from the empeg, such as "Red Barchetta"
+//                or "Rush" or "Progressive Rock" or "0".
 //
 // empegMessageCode: The single character of the message code from the
 //                   empeg which preceded the string to parse such as "G" or
 //                   "T" or whatever.
 //
-// Track data coming from the empeg will look something like this by the time
-// it reaches this routine (the single letter is the empegMessageCode and the
-// string following the letter is the stringToParse):
+// Track data coming from the empeg will be like this by the time it reaches
+// this routine (the single letter is the empegMessageCode and the string
+// following the letter is the stringToParse):
 //
 //  N  <tracknumber, actually playlist position, starts at zero>
 //  Z  <album name, added by Mark Lord in recent hijack versions>
@@ -3735,10 +3735,6 @@ void HandleEmpegString(String &theString)
       //    Log("Message code flag NOT found, empty string.");
       return;
     }
-
-    // If we found a character, then log it and check it to see if it's what
-    // we want, if it's in the list.
-    //  Log("Message code flag being tested for acceptance: " + empegMessageCode);
 
     // Precheck to make sure that we really got one of the message codes that
     // we were hoping for. It should match one of the strings in this list if
