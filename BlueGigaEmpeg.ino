@@ -3814,7 +3814,7 @@ void HandleEmpegString(String &theString)
       {
         // We are now in a situation where a new track boundary has been
         // crossed (because we got new track data just now) and now we know we
-        // were also in the middle of a FF/REW operation initiate by the
+        // were also in the middle of a FF/REW operation initiated by the
         // Bluetooth, so begin implementing the protection code now. Start by
         // turning off the flag variable since we're handling the situation
         // now.
