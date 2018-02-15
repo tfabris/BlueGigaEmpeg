@@ -3723,7 +3723,6 @@ void HandleEmpegString(String &theString)
       // If no string was retrieved then there is something wrong and we do
       // not have a coded string. Perhaps it was a mangled piece of data with
       // our trigger phrase at the end of the string. Bail out of the routine.
-      //    Log("Message code flag NOT found, empty string.");
       return;
     }
 
