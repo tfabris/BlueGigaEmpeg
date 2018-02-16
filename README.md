@@ -765,7 +765,7 @@ Place the assembly back into the BlueGigaEmpeg enclosure so that the
 RESET/PAIR button and the LED fit into the holes on the enclosure. If the LED
 got bent, straighten it carefully so the LED fits into the hole.
 
-When reassembling the BlueGigaEmpeg enclosure, Be careful not to overtighten
+When reassembling the BlueGigaEmpeg enclosure, be careful not to overtighten
 the screws, if you tighten them too tight, you'll strip the plastic they're
 screwed into, and then they won't work any more.
 
