@@ -104,8 +104,9 @@ later.
 
 Checklist
 ==============================================================================
-Implementing this requires some manual labor. Make sure to go through each
-step in this checklist. Each step is detailed in its own section, below.
+Installing the BlueGigaEmpeg module requires some modifications to your empeg
+Car player. Make sure to go through each step in this checklist. Each step is
+detailed in its own section, below.
 
 - [Prerequisites                                                                   ](#prerequisites)
 - [Modify your Arduino compiler for larger buffer size                             ](#modify-your-arduino-compiler-for-larger-buffer-size)
