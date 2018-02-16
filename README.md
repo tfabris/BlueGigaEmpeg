@@ -185,16 +185,19 @@ new song title every time.
 To fix the issue, you must edit one of the header files in the Arduino
 compiler libraries, and then you must compile and upload your sketch from your
 local PC to the Arduino board using the standalone version of the Arduino IDE.
-The link to the standalone Arduino IDE is in the [Prerequisites](#prerequisites)
-section of this document. Make sure to download the standalone Arduino IDE; do
-not use the Arduino web editor. The web editor won't work for this project
-because it doesn't have the capability of changing the header code to increase
-the size of the serial port buffer.
 
-The file that you need to edit will be the same on all operating systems, but
-the location of the file will be different depending on which OS you're using.
-The approximate location will be somewhere around this location, but the
-install location will vary:
+Download and install the Arduino IDE, linked from the
+[Prerequisites](#prerequisites) section of this document. Make sure to
+download the standalone (downloadable) version of the Arduino IDE; do not use
+the Arduino web editor. The web editor won't work for this project because it
+doesn't have the capability of changing the header code to increase the size
+of the serial port buffer.
+
+Once it is installed, you'll need to edit a file to increase the size of the
+Arduino's serial port buffers. The file that you need to edit will be the same
+on all operating systems, but the location of the file will be different
+depending on which OS you're using. The approximate location will be something
+like this, but the exact location will vary:
 
     (install location)/hardware/arduino/avr/cores/arduino/HardwareSerial.h
 
@@ -243,10 +246,13 @@ In other words, you are making the larger of the two possible transmit buffer
 sizes even larger (changing 64 to 128) and the larger of the two possible
 receive buffers even larger (changing 64 to 256).
 
-Note: Leave the "SERIAL_xx_BUFFER_SIZE 16" lines alone. Only modify the ones
-that were originally set to "64" and increase them as described above.
+Leave the "SERIAL_xx_BUFFER_SIZE 16" lines alone. Only modify the ones that
+were originally set to "64" and increase them as described above.
 
 Save the file.
+
+Note: If you reinstall or upgrade the Arduino IDE program, you will need to 
+perform this edit again before uploading new BlueGigaEmpeg code.
 
 
 Compile and upload the latest version of BlueGigaEmpeg.ino to the Arduino
