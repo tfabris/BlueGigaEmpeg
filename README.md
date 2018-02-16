@@ -604,7 +604,7 @@ connector is turned off in sleep mode.
 
 The first time you use the BlueGigaEmpeg, you will need to pair it with your
 Bluetooth car stereo. You might also wish to re-pair again after editing the
-BlueGigaEmpeg firmware or the WT32i firmware. The BlueGigaEmpeg has a
+BlueGigaEmpeg firmware or the WT32i firmware. The BlueGigaEmpeg has a recessed
 RESET/PAIR button for this purpose.
 
 ###  Pairing Procedure:
@@ -669,8 +669,8 @@ and should automatically resume playback when you switch back.
 
 ###  Technical details and troubleshooting for the pairing process:
 
-When you press the RESET/PAIR button on the BlueGigaEmpeg, it does the
-following:
+When you press the recessed RESET/PAIR button on the BlueGigaEmpeg, it does
+the following:
 
  - Erases all previous Bluetooth pairings from the BlueGigaEmpeg.
  
@@ -699,7 +699,7 @@ time you should also put your stereo into pair mode.
 If one method doesn't work for you, try the other method. For example this
 sequence will work for many stereos and headsets:
 
- - Press the RESET/PAIR button, and while the LED is still lit, then
+ - Press the recessed RESET/PAIR button, and while the LED is still lit, then
    initiate pairing on your Bluetooth stereo via its pairing feature.
 
  - If that doesn't work, then wait for the RESET/PAIR LED on the
@@ -708,7 +708,7 @@ sequence will work for many stereos and headsets:
    its pairing feature.
 
 One final note about the pairing process: Paired devices share a set of
-security keys with each other. Pressing the RESET/PAIR button on the
+security keys with each other. Pressing the recessed RESET/PAIR button on the
 BlueGigaEmpeg module erases those keys from the WT32i chip. If your car stereo
 has the option to remember a list of multiple different Bluetooth devices (my
 Honda has this), then you must remember to first delete the empeg Car from the
@@ -761,7 +761,7 @@ RS-232 Crossover jumper block, with silkscreened instructions on the board to
 describe how to change the setting. Set the RS-232 Crossover jumper block to
 the opposite setting.
 
-Place the assembly back into the BlueGigaEmpeg enclosure so that the
+Place the assembly back into the BlueGigaEmpeg enclosure so that the recessed
 RESET/PAIR button and the LED fit into the holes on the enclosure. If the LED
 got bent, straighten it carefully so the LED fits into the hole.
 
