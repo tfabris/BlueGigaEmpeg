@@ -46,7 +46,7 @@ boolean digitalAudio = true;
 // Debugging tool for the part of the code that sends commands to the empeg.
 // Normally, typing commands into the Arduino debug console will send those
 // same characters to the Bluetooth chip, so that you can try out commands on
-// the Bluetooth chip. The "EmpegSendCommandDebug" flag, below, expands on
+// the Bluetooth chip. The "empegSendCommandDebug" flag, below, expands on
 // this when the flag is enabled (set to "true") in the following way: When in
 // this mode, typing any of the empeg command characters (N P C W) into the
 // Arduino debug console will trigger the code to send that command to the
@@ -67,7 +67,7 @@ boolean digitalAudio = true;
 // debugging sessions in situations where it is hard to reach the empeg
 // Car front panel to change tracks. If you can reach the empeg Car front
 // panel during your debugging session, you probably don't need this.
-boolean EmpegSendCommandDebug=false;
+boolean empegSendCommandDebug=false;
 
 // Special case debugging feature - If you type Z on the Arduino debugging
 // console, enter pairing mode as if you'd pressed the RESET/PAIR button on
@@ -1630,10 +1630,10 @@ char MainInputOutput()
 
       // Perform special debugging trick in which we test the empeg Serial
       // port commands if we are in the special empeg debugging mode. To use
-      // this feature, enable EmpegSendCommandDebug flag at the top of the
+      // this feature, enable empegSendCommandDebug flag at the top of the
       // code. Then, send one of the empeg command keys (N P C W - Case
       // insensitive) to the Arduino serial console to trigger the effect.
-      if (EmpegSendCommandDebug)
+      if (empegSendCommandDebug)
       {
         // Iterate through our matrix of incoming AVRCP commands looking for a
         // match.
