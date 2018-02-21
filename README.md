@@ -612,12 +612,6 @@ harness on the car docking sled. See the section titled ["Modify empeg's power
 connection to car if needed"](#power) for more details about the car wiring
 connection.
 
-If you are doing any debugging/troubleshooting indoors, then it is also
-possible to use the empeg's 12v AC adapter, connected to the player's AC
-adapter input. However, a sled wiring harness is still needed, because the
-BlueGigaEmpeg module must connect through the tuner module connector in order
-to function.
-
 Make sure the empeg is not in "sleep" mode, since power to the tuner module
 connector is turned off in sleep mode.
 
@@ -893,10 +887,16 @@ If you need to debug the connection, here are some helpful tips.
 The BlueGigaEmpeg module is an Arduino command+control board, sandwiched to a
 custom interface board, connected to a BlueGiga WT32i Bluetooth chip. The
 firmware running on the Arduino allows for a terminal debug interface to the
-Bluetooth chip. When you connect a USB cable from your computer to the
-Arduino's USB connector (which is the USB-B connector accessible on the
-outside of the BlueGigaEmpeg casing) then you can use these kinds of serial
-terminal programs to access this terminal interface:
+Bluetooth chip. This is automatically invoked when you connect a USB cable
+from your computer to the Arduino's USB connector, which is the USB-B
+connector accessible on the outside of the BlueGigaEmpeg casing. Once
+connected, a USB-serial port will appear as a device on your computer through
+the FTDI UART chip built into the Arduino. Installing device drivers for the
+FTDI chip may be needed, but likely this has already been done for the step
+["Compile and upload the latest version of BlueGigaEmpeg.ino to the Arduino"](#compile-and-upload-the-latest-version-of-bluegigaempegino-to-the-arduino).
+
+When connected to the Arduino debug serial port, you can use these kinds of
+serial terminal programs to access the terminal debug interface:
  - The "Serial Monitor" feature built into the Arduino IDE program.
  - Any third party serial terminal program, such as "Putty".
 
@@ -929,8 +929,15 @@ So to successfully debug via the Arduino USB debug cable, you must connect
 the USB cable *first*, before applying power to the empeg (or before waking 
 the empeg from sleep). Meaning, if you are debugging in the car, you should 
 connect the USB cable first, and then turn on the ignition. If you are 
-debugging on the test bench, connect the USB cable first, then connect the AC 
-adapter to the empeg.
+debugging indoors, connect the USB cable first, then connect the AC adapter
+to the empeg.
+
+If you are doing debugging/troubleshooting indoors, it's possible to use the
+empeg's 12v AC adapter, connected to the player's AC adapter input. The
+BlueGigaEmpeg module works in both AC/Home mode and DC/Car mode. However, a
+sled wiring harness is still needed in AC/Home mode, because the BlueGigaEmpeg
+still needs the tuner connector on the harness in order to function.
+
 
 ###  Sending a bug report:
 
