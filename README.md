@@ -642,8 +642,14 @@ for this purpose.
   BlueGigaEmpeg module is lit. Look for the device "empeg Car" and pair it.
 
 - If the pairing doesn't work the first time, also try initiating pairing from
-  the car stereo AFTER the blue LED on the BlueGigaEmpeg module goes out. Look
-  for the device "empeg Car" and pair it.
+  the car stereo AFTER the blue LED on the BlueGigaEmpeg module goes out. From
+  your car stereo's touch screen interface, tell it to search for Bluetooth
+  devices, and when the device "empeg Car" appears, select it.
+  
+- Your car stereo might put up a random number on the screen and prompt you to 
+  confirm that number on the device. The BlueGigaEmpeg will automatically
+  confirm that number for you, so the prompt should disappear from the screen
+  after a short pause and the empeg should be paired after that.
  
 - If the pairing still doesn't work, try turning off the car stereo completely
   (turn off car ignition) and removing power from the empeg, then reapplying
@@ -690,7 +696,7 @@ and should automatically resume playback when you switch back.
 
 The BlueGigaEmpeg implements a specific set of Bluetooth controls. Not all car
 stereos support all of these controls. For instance, my Honda does not do
-Fast Forward or Rewind on any Bluetooth device, so those features don't work
+Fast Forward or Rewind with any Bluetooth device, so those features don't work
 on my Honda.
 
 Implemented:
@@ -712,6 +718,20 @@ Not implemented:
  - Music Search
  - Repeat mode (repeat all tracks, repeat one track, etc.)
 
+The empeg tuner connector only supplies power to the BlueGigaEmpeg module if
+the empeg is awake. If you put the empeg into sleep mode via a long press on
+the top button, it will go to sleep, but that also means the Arduino+Bluetooth
+assembly stops receiving power. This is actually good: you want to be able to
+turn the Bluetooth on and off and reboot it sometimes, and it's easy to do
+that just by sleeping and waking the empeg from its front panel.
+
+Most of the time, leave the player in "awake" mode. When you shut off the car
+ignition, the player fully shuts down. When you start the car again, the empeg
+starts up in "awake" mode and immediately supplies power to the BlueGigaEmpeg
+module, which then autoconnects to the car stereo head unit. If you have 
+trouble with the empeg waking up after you shut off the car ignition, see the
+section here: ["Modify empeg's power connection to car if needed"](#power).
+ 
 ###  Technical details and troubleshooting for the pairing process:
 
 When you press the recessed RESET/PAIR button on the BlueGigaEmpeg, it does
@@ -818,15 +838,15 @@ screwed into, and then they won't work any more.
 
 Modify empeg's power connection to car if needed
 ==============================================================================
-I might recommend that, for this installation, you wire up the empeg to your
-car differently than it would otherwise would be.
+I recommend that for this installation, you connect the empeg's wiring harness
+to your car differently than if it were a standard car installation.
 
-This design is intended to be used in such a way so that the empeg is not the
-primary stereo in the system. The empeg becomes one of the Bluetooth inputs
-into a modern car stereo. So the empeg's sleep mode, the empeg's "memory"
-power connection, and the way this Bluetooth module gets its power from the
-empeg tuner connector, all combine to cause some interesting problems with
-power state transitions. At least they did in my car, your mileage may vary.
+This design is intended for the empeg to be a secondary Bluetooth input
+into a modern car stereo, rather than the car's main stereo system. In this
+situation, the empeg's sleep mode, the empeg's "memory" power connection, and
+the way the BlueGigaEmpeg module gets its power from the empeg tuner
+connector, all combine to cause some interesting problems with power state
+transitions. At least they did in my car, your mileage may vary.
 
 I found that if I connected the empeg to my car via the regular method (i.e.
 car ignition wire to the orange ignition wire on the sled, and constant 12v
@@ -836,14 +856,14 @@ empeg would come back up out of sleep mode and play tracks silently to an
 unconnected Bluetooth module. I was worried that this might drain my car's
 battery.
 
-If this happens to you, then I recommend connecting power to the empeg like
-this instead:
+If that problem happens to you, then I recommend connecting power from the
+car to the empeg like this instead:
 
-- Yellow "memory" wire on empeg: Connect to car power 12v accessory power.
-- Orange "ignition" wire on empeg: Connect to that same 12v accessory power.
-- Do not connect your car's constant 12v power to any part of the empeg.
+- Orange "ignition" wire from empeg: Connect to that same 12v accessory power.
+- Yellow "memory" wire from empeg: Connect to car power 12v accessory power.
+- Do *not* connect your car's constant 12v power to any part of the empeg.
 - White "lights on" wire on empeg: Connect to car dash illumination power.
-- Connect ground to ground of course.
+- Connect ground to ground, of course.
 - Tuner module and serial plug connectors go to the BlueGigaEmpeg module.
 
 That should be all you need. No audio or amplifier connections because the
@@ -851,23 +871,13 @@ Bluetooth takes care of that now. No cellphone mute wire because the Bluetooth
 takes care of that now. No amp remote wire because there is no amp connected
 directly to the empeg. No aux connection to the empeg, etc.
 
-In this situation, the empeg does not have a 12v constant power concept at
-all, and will not go into sleep mode when you turn off the ignition. However
-it, and the Bluetooth, will always power on and off at the same time as the
-car's headunit, and nothing will get confused. You might lose the
-date/time information on the empeg sometimes, but your modern car likely has
-a perfectly functional clock of its own.
-
-You'll notice that the empeg tuner connector only supplies power if the empeg
-is awake. If you put the empeg into sleep mode via a long press on the top
-button, it will go to sleep, but that also means the Arduino+Bluetooth
-assembly stops receiving power. This is actually good: you want to be able to
-turn the Bluetooth on and off and reboot it sometimes, and it's easy to do
-that just by sleeping and waking the player by hand. Most of the time I leave
-the player awake, so that when I shut off the car ignition, the player fully
-shuts down, and then when I start my car again, the empeg starts up in "awake"
-mode and immediately supplies power to the Bluetooth assembly which then
-autoconnects to the car stereo head unit.
+In this situation, the empeg does not receive a 12v constant power source at
+all, and will completely lose all power when you turn off the ignition, rather
+than going into sleep mode. The empeg and its attached BlueGigaEmpeg module
+will always power on and off at the same time as the car sterep, and nothing
+will get confused about power state. You might lose the date/time information
+on the empeg sometimes, but your modern car likely has a perfectly functional
+clock of its own and so you don't need the empeg to keep time for you.
 
 
 Debug Bluetooth connection if needed
