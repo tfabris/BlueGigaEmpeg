@@ -896,8 +896,8 @@ Bluetooth chip. When you connect a USB cable from your computer to the
 Arduino's USB connector (which is the USB-B connector accessible on the
 outside of the BlueGigaEmpeg casing) then you can use these kinds of serial
 terminal programs to access this terminal interface:
- - The "serial monitor" feature built into the Arduino IDE program.
- - Any serial terminal program, such as "Putty".
+ - The "Serial Monitor" feature built into the Arduino IDE program.
+ - Any third party serial terminal program, such as "Putty".
 
 When connected to this serial terminal interface, everything you type is sent
 to the Bluetooth chip as a command, and all of the chip's responses are shown
