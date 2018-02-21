@@ -887,45 +887,63 @@ code because this was not tested with a wide range of Bluetooth gear.
 
 If you need to debug the connection, here are some helpful tips.
 
+###  Debug mode with Arduino
+
+The BlueGigaEmpeg module is an Arduino command+control board, sandwiched to a
+custom interface board, connected to a BlueGiga WT32i Bluetooth chip. The
+firmware running on the Arduino allows for a terminal debug interface to the
+Bluetooth chip. When you connect a USB cable from your computer to the
+Arduino's USB connector (which is the USB-B connector accessible on the
+outside of the BlueGigaEmpeg casing) then you can use these kinds of serial
+terminal programs to access this terminal interface:
+ - The "serial monitor" feature built into the Arduino IDE program.
+ - Any serial terminal program, such as "Putty".
+
+When connected to this serial terminal interface, everything you type is sent
+to the Bluetooth chip as a command, and all of the chip's responses are shown
+on your screen. You will also see all commands that the Arduino sends to the
+Bluetooth chip automatically, and see all of the chip's responses.
+
 ###  Power up sequence (startup order) for Arduino debugging:
 
 The USB cable from the computer will power the Arduino (and also the Bluetooth
-board because it is connected to the Arduino through the BlueGigaEmpeg
+chip because it is connected to the Arduino through the BlueGigaEmpeg
 interface board), but when the BlueGigaEmpeg assembly is connected to the
-empeg, power comes from the empeg tuner connector. Both can be connected at
-the same time during debugging. If using the USB cable for debugging mode, the
-order of connecting the cables and applying power are important.
+empeg, power comes from the empeg tuner connector. Both power sources can be
+connected at the same time during debugging. If using the USB cable for
+debugging mode, the sequence order of connecting the cables and applying power
+is important.
 
-When everything is connected together (empeg, Arduino, Bluetooth), the
-assembly and all devices which are part of the assembly will get their power
-off of the 12v power coming off the tuner connector on the empeg sled. This
-means that if you plug all this stuff in, it's already powered by the time you
-try to attach your USB debug cable to the Arduino.
+The BlueGigaEmpeg assembly, and all devices which are part of the assembly
+including the Arduino, normally get their power from the 12v power coming off
+the tuner connector on the empeg sled wiring harness. This means that if you
+plug it in and power the empeg, then the BlueGigaEmpeg is already powered by
+the time you try to attach your USB debug cable to the Arduino.
 
-On my computer system, if the Arduino is already externally powered when I
-connect my debug cable, then my computer cannot find its USB UART and is
+This causes a problem: If the Arduino is already externally powered when you
+connect the USB cable, then the computer cannot find its USB UART and is
 unable to connect to the debug port.
 
-So to successfully debug via the Arduino USB debug cable and use the Arduino
-Serial Monitor program, I must connect the USB cable FIRST, before applying
-power to the empeg (or before waking the empeg from sleep). Meaning if I am
-debugging in the car, I should connect the USB cable first and then turn on
-the ignition or wake the empeg from sleep. That way, the Serial Monitor
-program can find a port to connect to. If I am debugging on the test bench, I
-should connect the USB cable first, then connect the AC adapter to the empeg
-or wake the empeg from sleep.
-
-When using the Arduino Serial Monitor program, set it to 115200 baud, with
-either "Newline" or "Both NL and CR" as line endings. If you are using a
-different serial terminal program, set it to 115200 8n1 and turn on local
-echo.
+So to successfully debug via the Arduino USB debug cable, you must connect 
+the USB cable *first*, before applying power to the empeg (or before waking 
+the empeg from sleep). Meaning, if you are debugging in the car, you should 
+connect the USB cable first, and then turn on the ignition. If you are 
+debugging on the test bench, connect the USB cable first, then connect the AC 
+adapter to the empeg.
 
 ###  Sending a bug report:
 
 - Use the Arduino Serial Monitor or other serial terminal as described above.
 
-- Reproduce the issue so that the communication shows up on the serial output
-  while the issue is occurring.
+- Set the Serial Monitor program to 115200 baud, with either "Newline" or
+  "Both NL and CR" as line endings. If you are using a different serial
+  terminal program, set it to 115200 8n1 and turn on local echo.
+
+- Apply power to the empeg. You should see certain messages on the terminal
+  such as "empeg player boot process has started".
+
+- Reproduce the issue, so that the commands and responses show up on the
+  terminal output while the issue is occurring.
 
 - After the issue is reproduced, pause the empeg player so that additional
   timestamp reports no longer show up (screen stops scrolling constantly).
@@ -933,8 +951,13 @@ echo.
 - Type the "set" and "list" commands into the serial monitor so that their
   results show up on the screen.
 
-- "Select all" in the serial monitor main window and copy and paste the
-  contents into a text document.
+- Save the output of the terminal program into a text document. For some
+  terminal programs there is an option to save the output directly, for others
+  you will need to "select all" then copy and paste into a text editor.
+  - If you happen to be using Hyperterminal on old versions of Windows, it has
+    a known bug with copy/paste where it mangles the output, so don't use
+	that, use its feature for saving its output directly instead. Other
+	terminal programs should be OK though.
   
 - Submit bug reports this way:
   - Create an account at http://www.GitHub.com if you don't already have one.
