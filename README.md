@@ -721,6 +721,8 @@ Implemented:
  - Next Track
  - Rewind
  - Fast Forward
+ - Stop
+   - Pressing Stop on the car stereo should pause the empeg.
  - Shuffle
    - Note: Shuffle is implemented as a toggle on/off command. If your stereo
      has a feature to display the current shuffling state (displaying whether
@@ -732,6 +734,7 @@ Implemented:
 Not implemented:
  - Music Search
  - Repeat mode (repeat all tracks, repeat one track, etc.)
+ - Volume up/down/mute (set empeg to 0.0db and use car stereo volume instead)
 
 The empeg tuner connector only supplies power to the BlueGigaEmpeg module if
 the empeg is awake. If you put the empeg into sleep mode via a long press on
