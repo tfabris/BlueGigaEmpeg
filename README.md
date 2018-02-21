@@ -819,6 +819,10 @@ car if needed"](#power).
 If you have other problems not listed here, see this section: ["Debug
 Bluetooth connection if needed"](#debug-bluetooth-connection-if-needed).
 
+Also check to see if the issue you're encountering is a known bug or a
+previously-closed bug:
+- Open bugs: https://github.com/tfabris/BlueGigaEmpeg/issues
+- Closed bugs: https://github.com/tfabris/BlueGigaEmpeg/issues?q=is:issue+is:closed
 
 
 Set Bluetooth PIN code if needed (most likely not needed)
