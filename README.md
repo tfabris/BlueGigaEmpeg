@@ -307,17 +307,32 @@ Arduino USB connector is the USB "type B" plug which is exposed on the end of
 the BlueGigaEmpeg enclosure.
 
 When first plugging the Arduino into the computer, it may need to install
-device driver files for the USB/serial connection to the Arduino. See the
-Arduino documentation for instructions regarding the installation of these
-device driver files.
+device driver files for the USB/serial connection to the Arduino. This will be
+an FTDI USB UART driver. In theory, the installer for the Arduino IDE should
+have taken care of this for you, but if not, you can install the FTDI USB
+driver from the FTDI web site. A link to the FTDI drivers is found in the
+[Prerequisites](#prerequisites) section of this document.
 
-Using the Arduino IDE, open the BlueGigaEmpeg.ino project and compile and
-upload it to the Arduino Mega board.
+Run the Arduino IDE. In its "Tools" menu, select the "Board" menu and choose
+"Arduino/Genuino Mega or Mega 2560". Then use the "Tools" menu to select
+"Port" and choose the correct serial port for the Arduino connected to the
+USB cable.
 
-Use the Arduino Serial Monitor feature (built into the Arduino IDE), set to
-115200 BPS, and observe the serial port output from the Arduino. It should
+Then select the "File" menu, select "Open" and locate the BlueGigaEmpeg.ino
+project and compile and upload it to the Arduino Mega board by pressing the
+"Upload" button on the main window. (The Upload button is the circle with the
+arrow inside it.)
+
+Look at the Arduino IDE and make sure that there is no red text or other
+error messages which would indicate a problem compiling or uploading the
+sketch.
+
+Launch the Arduino Serial Monitor feature from the Arduino IDE. This is done
+by selecting "Tools" Then "Serial Monitor". Configure it to 115200 BPS, and
+now you should see some serial port output from the Arduino. The output should
 list the RX and TX buffer sizes near the beginning of the output and indicate
-that they are good.
+that they are good. If you don't already see this, try closing and re-opening
+the Serial Monitor.
 
 After the latest version of the BlueGigaEmpeg.ino sketch is successfully
 uploaded to the Arduino, close the Arduino IDE and remove the USB cable. The
