@@ -658,8 +658,13 @@ for this purpose.
   
 - Your car stereo might put up a random number on the screen and prompt you to 
   confirm that number on the device. The BlueGigaEmpeg will automatically
-  confirm that number for you, so the prompt should disappear from the screen
-  after a short pause and the empeg should be paired after that.
+  confirm that number for you.
+  
+- Your car stereo might prompt you to press a button to confirm or finalize
+  the pairing process, or it might prompt you to choose the connection type.
+  For instance, on my Honda, its touchscreen might prompt me to choose
+  whether to pair it as a music device, a phone device, or both. If you get
+  a prompt like this, choose the music device option.
  
 - If the pairing still doesn't work, try turning off the car stereo completely
   (turn off car ignition) and removing power from the empeg, then reapplying
