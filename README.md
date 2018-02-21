@@ -853,8 +853,7 @@ car ignition wire to the orange ignition wire on the sled, and constant 12v
 power to the yellow memory wire on the sled) then there were certain unusual
 states that it could get into. Sometimes I would shut off my car, but the
 empeg would come back up out of sleep mode and play tracks silently to an
-unconnected Bluetooth module. I was worried that this might drain my car's
-battery.
+unconnected Bluetooth module, draining my car's battery.
 
 If that problem happens to you, then I recommend connecting power from the
 car to the empeg like this instead:
