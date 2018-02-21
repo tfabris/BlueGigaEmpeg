@@ -941,7 +941,11 @@ still needs the tuner connector on the harness in order to function.
 
 ###  Sending a bug report:
 
-- Use the Arduino Serial Monitor or other serial terminal as described above.
+- Turn on the computer and connect the USB cable from the computer to the
+  Arduino debug port (the USB-B connector on the outside of the BlueGigaEmpeg
+  casing).
+
+- Run the Arduino Serial Monitor or other serial terminal as described above.
 
 - Set the Serial Monitor program to 115200 baud, with either "Newline" or
   "Both NL and CR" as line endings. If you are using a different serial
