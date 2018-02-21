@@ -321,7 +321,8 @@ that they are good.
 
 After the latest version of the BlueGigaEmpeg.ino sketch is successfully
 uploaded to the Arduino, close the Arduino IDE and remove the USB cable. The
-USB cable should be disconnected during normal operation.
+USB cable should be disconnected during normal operation of the BlueGigaEmpeg
+module.
 
 
 Disconnect all tuner modules from all sleds you own
@@ -971,7 +972,7 @@ still needs the tuner connector on the harness in order to function.
     a known bug with copy/paste where it mangles the output, so don't use
 	that, use its feature for saving its output directly instead. Other
 	terminal programs should be OK though.
-  
+
 - Submit bug reports this way:
   - Create an account at http://www.GitHub.com if you don't already have one.
   - Search through existing bugs to see if your issue is related to them.
@@ -986,6 +987,10 @@ still needs the tuner connector on the harness in order to function.
     - Expected behavior versus actual behavior.
   - Attach your debug log to the bug report.
 
+- When done with the debug session, disconnect the USB cable from the Arduino
+  debug port. This is normally left unconnected during normal operation of
+  the BlueGigaEmpeg module.
+  
 ###  Variables in the Arduino sketch:
 
 There are several flag variables in the BlueGigaEmpeg.ino sketch file, defined
