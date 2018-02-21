@@ -991,9 +991,9 @@ comments accompanying these flags in the file to understand them:
 
 ###  Useful debugging commands in the BlueGiga WT32i iWrap command language:
 
-Typing any of these into the Arduino Serial Monitor should send these commands
-to the Bluetooth module directly. Many will echo a response. Module will say
-SYNTAX ERROR if there is a problem with any command.
+Typing any of these into the serial terminal should send these commands to the
+Bluetooth chip directly. Many will echo a response. The Bluetooth chip will
+respond with "SYNTAX ERROR" if there is a problem with any command.
 
       SET
       Displays Bluetooth module's current settings.
