@@ -42,7 +42,7 @@ Molex connector on the empeg docking sled's wiring harness, which is normally
 used for an external AM/FM tuner module, must be converted into a digital audio
 interface for sending digital audio to the BlueGigaEmpeg module. Make sure to
 perform all modifications listed in this document for it to work correctly.
-Follow the [Checklist](#checklist) section of this document to make sure all
+Follow the [Installation](#installation) section of this document to make sure all
 steps are performed.
 
 ###  Caveats:
@@ -102,11 +102,10 @@ player that we are still doing interesting things with it, nearly 20 years
 later.
 
 
-Checklist
+Installation
 ==============================================================================
 Installing the BlueGigaEmpeg module requires some modifications to your empeg
-Car player. Make sure to go through each step in this checklist. Each step is
-detailed in its own section, below.
+Car player. Make sure to go through each of the steps linked below.
 
 - [Prerequisites                                                                   ](#prerequisites)
 - [Modify your Arduino compiler for larger buffer size                             ](#modify-your-arduino-compiler-for-larger-buffer-size)
@@ -115,6 +114,10 @@ detailed in its own section, below.
 - [Modify empeg Car interior for I2S digital audio connection                      ](#modify-empeg-car-interior-for-i2s-digital-audio-connection)
 - [Empeg Car configuration changes                                                 ](#empeg-car-configuration-changes)
 - [Upgrade the empeg Car's Hijack kernel and set "Serial Port Assignment"          ](#upgrade-the-empeg-cars-hijack-kernel-and-set-serial-port-assignment)
+
+
+Usage
+==============================================================================
 - [Connect external hardware connections                                           ](#connect-external-hardware-connections)
 - [Apply power and pair Bluetooth                                                  ](#apply-power-and-pair-bluetooth)
 - [Set Bluetooth PIN code if needed (most likely not needed)                       ](#set-bluetooth-pin-code-if-needed-most-likely-not-needed)
@@ -571,6 +574,11 @@ assignment" to "Player uses serial port" and follow the on-screen instructions
 to reboot the player.
 
 
+Using the BlueGigaEmpeg module
+==============================================================================
+Instructions for using the BlueGigaEmpeg module are listed below.
+
+
 Connect external hardware connections
 ==============================================================================
 Do not connect the BlueGigaEmpeg module to the empeg car's tuner connector
@@ -589,12 +597,6 @@ control commands from the BlueGigaEmpeg to the empeg Car player software, and
 also carries the track metadata (title/artist/etc) from the empeg Car player
 software to the BlueGigaEmpeg module.
 
-Power the empeg using 12 volts DC through its car docking sled. Alternatively,
-during bench testing in the house, you can connect the empeg's 12v AC adapter
-power supply to the empeg's AC adapter input. The BlueGigaEmpeg module will
-get its power from the empeg's tuner module connector, and it should work
-equally well with either sled power or AC adapter power.
-
 The USB connector on the Arduino, which is accessible from the outside of the
 BlueGigaEmpeg module enclosure, is normally left disconnected. It is only used
 for debugging, and for uploading the latest Arduino code to the BlueGigaEmpeg
@@ -605,14 +607,23 @@ the connector for debugging.
 
 Apply power and pair Bluetooth
 ==============================================================================
-Apply power to the empeg, and the BlueGigaEmpeg module will receive power. 
+Apply power to the empeg with 12 volts from your car ignition, via the wiring
+harness on the car docking sled. See the section titled ["Modify empeg's power
+connection to car if needed"](#power) for more details about the car wiring
+connection.
+
+If you are doing any debugging/troubleshooting in the house, using the empeg's
+12v AC adapter power supply also works, connected to the player's AC adapter
+input. However the sled and wiring harness are still needed, because the
+BlueGigaEmpeg module must connect through the sled's tuner module connector.
+
 Make sure the empeg is not in "sleep" mode, since power to the tuner module
 connector is turned off in sleep mode.
 
 The first time you use the BlueGigaEmpeg, you will need to pair it with your
 Bluetooth car stereo. You might also wish to re-pair again after editing the
-BlueGigaEmpeg firmware or the WT32i firmware. The BlueGigaEmpeg has a recessed
-RESET/PAIR button for this purpose.
+BlueGigaEmpeg firmware. The BlueGigaEmpeg has a recessed RESET/PAIR button
+for this purpose.
 
 ###  Pairing Procedure:
 
@@ -633,6 +644,10 @@ RESET/PAIR button for this purpose.
 - If the pairing doesn't work the first time, also try initiating pairing from
   the car stereo AFTER the blue LED on the BlueGigaEmpeg module goes out. Look
   for the device "empeg Car" and pair it.
+ 
+- If the pairing still doesn't work, try turning off the car stereo completely
+  (turn off car ignition) and removing power from the empeg, then reapplying
+  power to everything and trying again.
 
 - When the pairing is completed, set the volume. With the car stereo volume
   still turned down to a low level, turn the volume on the empeg Car front
@@ -667,12 +682,35 @@ whether the paired device is a "phone" device or a "music" device. I choose to
 pair my phone as a phone, and the empeg Car as a music device. Then, each time
 I start my car, they both pair up correctly. I can use the steering wheel
 controls to initiate a speakerphone call, which automatically mutes and pauses
-playback on the empeg.
+playback on the empeg, and resumes it after I hang up the call.
 
 The empeg Car should automatically pause its playback when you switch to
 another input on your car stereo, such as switching to the radio or CD player,
 and should automatically resume playback when you switch back. 
 
+The BlueGigaEmpeg implements a specific set of Bluetooth controls. Not all car
+stereos support all of these controls. For instance, my Honda does not do
+Fast Forward or Rewind on any Bluetooth device, so those features don't work
+on my Honda.
+
+Implemented:
+ - Pause
+ - Play
+ - Previous Track
+ - Next Track
+ - Rewind
+ - Fast Forward
+ - Shuffle
+   - Note: Shuffle is implemented as a toggle on/off command. If your stereo
+     has a feature to display the current shuffling state (displaying whether
+	 shuffle is currently turned on or turned off), it will not be correctly
+	 indicated on your stereo's screen. The empeg car does not report its
+	 shuffle state to the serial port, and so the Bluetooth interface cannot
+	 get a reliable query of the current state of shuffle.
+	 
+Not implemented:
+ - Music Search
+ - Repeat mode (repeat all tracks, repeat one track, etc.)
 
 ###  Technical details and troubleshooting for the pairing process:
 
@@ -776,6 +814,7 @@ When reassembling the BlueGigaEmpeg enclosure, be careful not to overtighten
 the screws, if you tighten them too tight, you'll strip the plastic they're
 screwed into, and then they won't work any more.
 
+<a name="power"></a>
 
 Modify empeg's power connection to car if needed
 ==============================================================================
