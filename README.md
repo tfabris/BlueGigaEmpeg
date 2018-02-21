@@ -838,9 +838,10 @@ to your car differently than if it were a standard car installation.
 
 This design is intended for the empeg to be a secondary Bluetooth input
 into a modern car stereo, rather than the car's main stereo system. In this
-situation, the empeg's sleep mode, the empeg's "memory" power connection, and
-the way the BlueGigaEmpeg module gets its power from the empeg tuner
-connector, all combine to cause some interesting problems with power state
+situation, the empeg's sleep mode, the empeg's "memory" power connection, the
+way the BlueGigaEmpeg module gets its power from the empeg tuner connector,
+and the way the car stereo issues Bluetooth commands when you shut off the
+ignition, all combine to cause some interesting problems with power state
 transitions. At least they did in my car, your mileage may vary.
 
 I found that if I connected the empeg to my car via the regular method (i.e.
