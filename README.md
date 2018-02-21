@@ -699,7 +699,7 @@ reconnect each time you start your car.
 
 Some car stereos will let you pair your phone and the empeg at the same time.
 My Honda allows me to do this. When pairing, the touch screen lets me choose
-whether the paired device is a "phone" device or a "music" device. I choose to
+whether the paired device is a phone device or a "music" device. I choose to
 pair my phone as a phone, and the empeg Car as a music device. Then, each time
 I start my car, they both pair up correctly. I can use the steering wheel
 controls to initiate a speakerphone call, which automatically mutes and pauses
