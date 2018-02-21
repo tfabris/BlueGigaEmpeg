@@ -790,6 +790,12 @@ sequence will work for many stereos and headsets:
    button on the BlueGigaEmpeg module, initiate pairing from your stereo via
    its pairing feature.
 
+Sometimes Bluetooth devices can get into odd states which require a reboot to
+fix. If you're having pairing troubles, reboot both devices: Reboot the car
+stereo by turning the ignition off and on again, and reboot the BlueGigaEmpeg
+by sleeping and waking the empeg with a long press on the top button of the
+front panel.
+
 One final note about the pairing process: Paired devices share a set of
 security keys with each other. Pressing the recessed RESET/PAIR button on the
 BlueGigaEmpeg module erases those keys from the WT32i chip. If your car stereo
