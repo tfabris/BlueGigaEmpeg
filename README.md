@@ -878,7 +878,7 @@ than going into sleep mode. The empeg and its attached BlueGigaEmpeg module
 will always power on and off at the same time as the car stereo, and nothing
 will get confused about power state. You might lose the date/time information
 on the empeg sometimes, but your modern car likely has a perfectly functional
-clock of its own and so you don't need the empeg to keep time for you.
+clock of its own.
 
 
 Debug Bluetooth connection if needed
