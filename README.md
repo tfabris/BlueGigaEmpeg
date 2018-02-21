@@ -597,7 +597,7 @@ Instructions for using the BlueGigaEmpeg module are listed below.
 
 Connect external hardware connections
 ==============================================================================
-Do not connect the BlueGigaEmpeg module to the empeg car's tuner connector
+Do not connect the BlueGigaEmpeg module to the empeg Car's tuner connector
 until after completing the step in this document titled ["Modify empeg Car
 interior for I2S digital audio connection"](#i2s). Damage may occur if these
 instructions are not followed.
