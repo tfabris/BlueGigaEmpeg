@@ -844,7 +844,7 @@ connector, all combine to cause some interesting problems with power state
 transitions. At least they did in my car, your mileage may vary.
 
 I found that if I connected the empeg to my car via the regular method (i.e.
-car ignition wire to the orange ignition wire on the sled, and constant 12v
+car accessory power to the orange ignition wire on the sled, and constant 12v
 power to the yellow memory wire on the sled) then there were certain unusual
 states that it could get into. Sometimes I would shut off my car, but the
 empeg would come back up out of sleep mode and play tracks silently to an
