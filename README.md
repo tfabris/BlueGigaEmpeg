@@ -1043,8 +1043,7 @@ immediately, because the main input loop for the Arduino code might not have
 caught up and read all the responses from the serial port yet. So, for
 example, a bad command might be issued several lines back, but the "SYNTAX
 ERROR" response doesn't appear until later. So don't assume that any
-command/response pair will always appear next to each other on the debug
-console screen, 
+command/response pair will always appear together on the debug console screen.
 
 
 Technical data (developers only)
