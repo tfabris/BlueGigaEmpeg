@@ -985,7 +985,7 @@ Bluetooth communication to miss things.
 Search for these flags in the BlueGigaEmpeg.ino sketch file. Refer to the code
 comments accompanying these flags in the file to understand them:
 
-      EmpegSendCommandDebug
+      empegSendCommandDebug
       displayEmpegSerial
       displayTracksOnSerial
 
