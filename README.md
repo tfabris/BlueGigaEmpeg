@@ -120,6 +120,8 @@ Usage
 ==============================================================================
 - [Connect external hardware connections                                           ](#connect-external-hardware-connections)
 - [Apply power and pair Bluetooth                                                  ](#apply-power-and-pair-bluetooth)
+- [Normal operation                                                                ](#normal-operation)
+- [Troubleshooting                                                                 ](#troubleshooting)
 - [Set Bluetooth PIN code if needed (most likely not needed)                       ](#set-bluetooth-pin-code-if-needed-most-likely-not-needed)
 - [Test AVRCP behavior and set serial port crossover jumpers if needed             ](#test-avrcp-behavior-and-set-serial-port-crossover-jumpers-if-needed)
 - [Modify empeg's power connection to car if needed                                ](#modify-empegs-power-connection-to-car-if-needed)
@@ -685,14 +687,11 @@ is working correctly. Audio from the empeg comes out of your car stereo's
 speakers, the car stereo's track change controls will change tracks on the
 empeg, and the track titles will appear on the car stereo's screen.
 
-If there is good audio, but commands such as next/previous track and
-play/pause don't work, and if track titles do not display on your car stereo
-(if your stereo has this ability for Bluetooth), then there may be a simple
-fix for this. See the section titled ["Test AVRCP behavior and set serial port
-crossover jumpers if needed"](#test-avrcp-behavior-and-set-serial-port-crossover-jumpers-if-needed).
+See [Troubleshooting](#troubleshooting) if you encounter any problems.
 
-###  Normal operation:
 
+Normal operation
+==============================================================================
 After you have successfully paired with your car stereo once, you should not
 need to pair it again each time you get in the car. It should automatically
 reconnect each time you start your car.
@@ -746,11 +745,12 @@ that just by sleeping and waking the empeg from its front panel.
 Most of the time, leave the player in "awake" mode. When you shut off the car
 ignition, the player fully shuts down. When you start the car again, the empeg
 starts up in "awake" mode and immediately supplies power to the BlueGigaEmpeg
-module, which then autoconnects to the car stereo head unit. If you have 
-trouble with the empeg waking up after you shut off the car ignition, see the
-section here: ["Modify empeg's power connection to car if needed"](#power).
- 
-###  Technical details and troubleshooting for the pairing process:
+module, which then autoconnects to the car stereo head unit.
+
+
+Troubleshooting
+==============================================================================
+###  Pairing issues:
 
 When you press the recessed RESET/PAIR button on the BlueGigaEmpeg, it does
 the following:
@@ -797,6 +797,22 @@ has the option to remember a list of multiple different Bluetooth devices (my
 Honda has this), then you must remember to first delete the empeg Car from the
 list, if you have pressed the RESET/PAIR button and you are re-pairing a
 second time.
+
+###  Other issues:
+
+If there is good audio, but commands such as next/previous track and
+play/pause don't work, and if track titles do not display on your car stereo
+(if your stereo has this ability for Bluetooth), then there may be a simple
+fix for this. See the section titled ["Test AVRCP behavior and set serial port
+crossover jumpers if needed"](#test-avrcp-behavior-and-set-serial-port-crossover-jumpers-if-needed).
+
+If you have trouble with the empeg waking up after you shut off the car
+ignition, see the section here: ["Modify empeg's power connection to
+car if needed"](#power).
+
+If you have other problems not listed here, see this section: ["Debug
+Bluetooth connection if needed"](#debug-bluetooth-connection-if-needed).
+
 
 
 Set Bluetooth PIN code if needed (most likely not needed)
