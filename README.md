@@ -859,8 +859,9 @@ battery.
 If that problem happens to you, then I recommend connecting power from the
 car to the empeg like this instead:
 
-- Orange "ignition" wire from empeg: Connect to that same 12v accessory power.
-- Yellow "memory" wire from empeg: Connect to car power 12v accessory power.
+- Orange "ignition" wire from empeg: Connect to car 12v accessory power.
+- Yellow "memory" wire from empeg: Connect to car 12v accessory power (instead
+  of the usual constant power).
 - Do *not* connect your car's constant 12v power to any part of the empeg.
 - White "lights on" wire on empeg: Connect to car dash illumination power.
 - Connect ground to ground, of course.
