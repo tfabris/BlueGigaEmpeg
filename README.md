@@ -319,7 +319,7 @@ Run the Arduino IDE. In its "Tools" menu, select the "Board" menu and choose
 USB cable.
 
 Then select the "File" menu, select "Open" and locate the BlueGigaEmpeg.ino
-project and compile and upload it to the Arduino Mega board by pressing the
+project. Compile and upload it to the Arduino Mega board by pressing the
 "Upload" button on the main window. (The Upload button is the circle with the
 arrow inside it.)
 
