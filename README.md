@@ -613,10 +613,10 @@ connection to car if needed"](#power) for more details about the car wiring
 connection.
 
 If you are doing any debugging/troubleshooting indoors, then it is also
-possible to use the empeg's 12v AC adapter power supply, connected to the
-player's AC adapter input. However, a sled wiring harness is still needed,
-because the BlueGigaEmpeg module must connect through the tuner module
-connector in order to function.
+possible to use the empeg's 12v AC adapter, connected to the player's AC
+adapter input. However, a sled wiring harness is still needed, because the
+BlueGigaEmpeg module must connect through the tuner module connector in order
+to function.
 
 Make sure the empeg is not in "sleep" mode, since power to the tuner module
 connector is turned off in sleep mode.
