@@ -115,11 +115,11 @@ Car player. Make sure to go through each of the steps linked below.
 - [Empeg Car configuration changes                                                 ](#empeg-car-configuration-changes)
 - [Upgrade the empeg Car's Hijack kernel and set "Serial Port Assignment"          ](#upgrade-the-empeg-cars-hijack-kernel-and-set-serial-port-assignment)
 - [Modify empeg's power connection to car if needed                                ](#modify-empegs-power-connection-to-car-if-needed)
+- [Connect external hardware connections                                           ](#connect-external-hardware-connections)
 
 
 Usage
 ==============================================================================
-- [Connect external hardware connections                                           ](#connect-external-hardware-connections)
 - [Apply power and pair Bluetooth                                                  ](#apply-power-and-pair-bluetooth)
 - [Normal operation                                                                ](#normal-operation)
 - [Troubleshooting                                                                 ](#troubleshooting)
@@ -649,11 +649,6 @@ on the empeg sometimes, but your modern car likely has a perfectly functional
 clock of its own.
 
 
-Using the BlueGigaEmpeg module
-==============================================================================
-Instructions for using the BlueGigaEmpeg module are listed below.
-
-
 Connect external hardware connections
 ==============================================================================
 Do not connect the BlueGigaEmpeg module to the empeg Car's tuner connector
@@ -679,15 +674,17 @@ the latest Arduino code to the BlueGigaEmpeg module. See the section titled
 for more details on how to use the connector for debugging.
 
 
+Using the BlueGigaEmpeg module
+==============================================================================
+Instructions for using the BlueGigaEmpeg module are listed below.
+
+
 Apply power and pair Bluetooth
 ==============================================================================
-Apply power to the empeg with 12 volts from your car ignition, via the wiring
-harness on the car docking sled. See the section titled ["Modify empeg's power
-connection to car if needed"](#power) for more details about the car wiring
-connection.
-
-Make sure the empeg is not in "sleep" mode, since power to the tuner module
-connector is turned off in sleep mode.
+Turn on your car's ignition to apply power to the empeg. This should also
+apply power to the connected BlueGigaEmpeg module via the tuner module
+connector. Make sure the empeg is not in "sleep" mode, since power to the
+tuner module connector is turned off in sleep mode.
 
 The first time you use the BlueGigaEmpeg, you will need to pair it with your
 Bluetooth car stereo. You might also wish to re-pair again after editing the
