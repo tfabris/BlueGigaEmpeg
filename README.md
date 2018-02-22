@@ -61,6 +61,8 @@ The BlueGigaEmpeg interface works in two ways:
    channel allows track title and artist information to be displayed on the car
    stereo's touchscreen.
 
+Demo video: https://www.youtube.com/watch?v=XS9U_ALc634
+
 Some modification of the empeg Car is required in order for this to work. The
 Molex connector on the empeg docking sled's wiring harness, which is normally
 used for an external AM/FM tuner module, must be converted into a digital audio
