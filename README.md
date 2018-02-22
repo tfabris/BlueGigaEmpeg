@@ -723,6 +723,12 @@ other connection for that matter) have not pulled out of the back of the
 docking connector on the empeg sled. This is a common problem. See the empeg
 FAQ for more information on this problem.
 
+If AVRCP commands and track titles fail to work intermittently, and it has
+occurred after you have uploaded a new version of the BlueGigaEmpeg firmware
+to the Arduino, then check to make sure that your Arduino IDE's compiler files
+have the corrected values for the serial port buffers as described in the
+[Updating firmware](#updating-firmware) section.
+
 If you have trouble with the empeg waking up after you shut off the car
 ignition, see the section here: ["Modify empeg's power connection to
 car"](#power).
