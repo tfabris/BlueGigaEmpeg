@@ -262,15 +262,15 @@ perform this edit again before uploading new BlueGigaEmpeg code.
 
 Compile and upload the latest version of BlueGigaEmpeg.ino to the Arduino
 ==============================================================================
-Obtain the BlueGigaEmpeg.ino Arduino sketch file (located in the project zip
-file) from GitHub, linked in the [Prerequisites](#prerequisites) section of
-this document. In the GitHub project web site for BlueGigaEmpeg, find the
-button titled "Clone or download" and obtain the repository. Most people will
-select "Download Zip" to download the zip file, though if you are a Git user,
-feel free to clone the repository or select "Open in Desktop". If you are
-downloading the zip file, unzip the entire project into a folder named
-"BlueGigaEmpeg" on your computer's hard disk. This will likely require
-renaming the folder to "BlueGigaEmpeg" after unzipping the file.
+Obtain the BlueGigaEmpeg.ino Arduino project file from GitHub, linked in the
+[Prerequisites](#prerequisites) section of this document. In the GitHub
+project web site for BlueGigaEmpeg, find the button titled "Clone or download"
+and obtain the repository. Most people will select "Download Zip" to download
+the zip file, though if you are a Git user, feel free to clone the repository
+or select "Open in Desktop". If you are downloading the zip file, unzip the
+entire project into a folder named "BlueGigaEmpeg" on your computer's hard
+disk. This will likely require renaming the folder to "BlueGigaEmpeg" after
+unzipping the file.
 
 ###  Important:
 
