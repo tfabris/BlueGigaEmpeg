@@ -8,6 +8,9 @@ BlueGigaEmpeg is a project to use a Silicon Labs BlueGiga WT32i Bluetooth
 chip, combined with an Arduino Mega board, to act as an interface between an
 empeg Car Mk2/2a MP3 player and a modern Bluetooth-equipped car.
 
+![Board](https://github.com/tfabris/BlueGigaEmpeg/blob/master/BlueGigaEmpeg%20Board%20Photo.jpg) ![Enclosure](https://github.com/tfabris/BlueGigaEmpeg/blob/master/BlueGigaEmpeg%20Enclosure%20Photo.jpg)
+
+
 ------------------------------------------------------------------------------
 
 Table of Contents
