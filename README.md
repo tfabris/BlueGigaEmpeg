@@ -15,6 +15,7 @@ Table of Contents
 - [Introduction                                                                    ](#introduction)
 - [Installation                                                                    ](#installation)
 - [Usage                                                                           ](#usage)
+- [Updating firmware                                                               ](#updating-firmware)
 - [Technical Data                                                                  ](#technical-data)
 
 ------------------------------------------------------------------------------
@@ -126,10 +127,8 @@ Installing the BlueGigaEmpeg module requires some modifications to your empeg
 Car player. Make sure to go through each of the steps linked below.
 
 - [Prerequisites                                                                   ](#prerequisites)
-- [Modify your Arduino compiler for larger buffer size                             ](#modify-your-arduino-compiler-for-larger-buffer-size)
-- [Compile and upload the latest version of BlueGigaEmpeg.ino to the Arduino       ](#compile-and-upload-the-latest-version-of-bluegigaempegino-to-the-arduino)
-- [Disconnect all tuner modules from all sleds you own                             ](#disconnect-all-tuner-modules-from-all-sleds-you-own)
 - [Modify empeg Car interior for I2S digital audio connection                      ](#modify-empeg-car-interior-for-i2s-digital-audio-connection)
+- [Disconnect all tuner modules from all sleds you own                             ](#disconnect-all-tuner-modules-from-all-sleds-you-own)
 - [Empeg Car configuration changes                                                 ](#empeg-car-configuration-changes)
 - [Upgrade the empeg Car's Hijack kernel and set "Serial Port Assignment"          ](#upgrade-the-empeg-cars-hijack-kernel-and-set-serial-port-assignment)
 - [Modify empeg's power connection to car if needed                                ](#modify-empegs-power-connection-to-car-if-needed)
@@ -172,194 +171,6 @@ empeg Car interior for I2S digital audio connection"](#i2s). I take no
 responsibility for damage incurred while you are dismantling and modifying
 your empeg Car player.
 
-
-Modify your Arduino compiler for larger buffer size
-------------------------------------------------------------------------------
-To update to the latest BlueGigaEmpeg firmware on the Arduino, you must
-increase the size of the serial port buffers in the Arduino compiler,
-otherwise there will be intermittent errors such as the track titles will
-sometimes not work. The symptom will be that you switch songs on the empeg,
-and the track title on the car stereo screen does not correctly change to the
-new song title every time.
-
-To fix the issue, you must edit one of the header files in the Arduino
-compiler libraries, and then you must compile and upload your sketch from your
-local PC to the Arduino board using the standalone version of the Arduino IDE.
-
-Download and install the Arduino IDE, linked from the
-[Prerequisites](#prerequisites) section of this document. Make sure to
-download the standalone (downloadable) version of the Arduino IDE; do not use
-the Arduino web editor. The web editor won't work for this project because it
-doesn't have the capability of changing the header code to increase the size
-of the serial port buffer.
-
-Once it is installed, you'll need to edit a file to increase the size of the
-Arduino's serial port buffers. The file that you need to edit will be the same
-on all operating systems, but the location of the file will be different
-depending on which OS you're using. The approximate location will be something
-like this, but the exact location will vary:
-
-    (install location)/hardware/arduino/avr/cores/arduino/HardwareSerial.h
-
-On a Macintosh computer, the file is harder to find. It is located in the
-following place on a Macintosh:
-
-    /Applications/Arduino.app/Contents/Java/hardware/arduino/avr/cores/arduino/HardwareSerial.h
-
-Or, more specifically, in the Macintosh Finder, navigate to:
-
-    Macintosh HD -> /Applications/Arduino
-
-Ctrl-click on the application file "Arduino" and select "Show Package
-Contents". Then navigate to:
-
-    Contents/Java/hardware/arduino/avr/cores/arduino/HardwareSerial.h
-
-Ctrl-click on the file "HardwareSerial.h" and select "Open With", and choose
-your favorite quick text editor program to edit the file with it.
-
-Regardless of which operating system you are doing this with, once you have
-HardwareSerial.h open, locate the following code lines:
-
-             #if !defined(SERIAL_TX_BUFFER_SIZE)
-             #if ((RAMEND - RAMSTART) < 1023)
-             #define SERIAL_TX_BUFFER_SIZE 16
-             #else
-    -->      #define SERIAL_TX_BUFFER_SIZE 64
-             #endif
-             #endif
-             #if !defined(SERIAL_RX_BUFFER_SIZE)
-             #if ((RAMEND - RAMSTART) < 1023)
-             #define SERIAL_RX_BUFFER_SIZE 16
-             #else
-    -->      #define SERIAL_RX_BUFFER_SIZE 64
-             #endif
-             #endif
-
-Now edit the lines indicated above, and change them to this instead:
-
-       #define SERIAL_TX_BUFFER_SIZE 128
-       
-       #define SERIAL_RX_BUFFER_SIZE 256
-
-In other words, you are making the larger of the two possible transmit buffer
-sizes even larger (changing 64 to 128) and the larger of the two possible
-receive buffers even larger (changing 64 to 256).
-
-Leave the "SERIAL_xx_BUFFER_SIZE 16" lines alone. Only modify the ones that
-were originally set to "64" and increase them as described above.
-
-Save the file.
-
-Note: If you reinstall or upgrade the Arduino IDE program, you will need to 
-perform this edit again before uploading new BlueGigaEmpeg code.
-
-
-Compile and upload the latest version of BlueGigaEmpeg.ino to the Arduino
-------------------------------------------------------------------------------
-Obtain the BlueGigaEmpeg.ino Arduino project file from GitHub, linked in the
-[Prerequisites](#prerequisites) section of this document. In the GitHub
-project web site for BlueGigaEmpeg, find the button titled "Clone or download"
-and obtain the repository. Most people will select "Download Zip" to download
-the zip file, though if you are a Git user, feel free to clone the repository
-or select "Open in Desktop". If you are downloading the zip file, unzip the
-entire project into a folder named "BlueGigaEmpeg" on your computer's hard
-disk. This will likely require renaming the folder to "BlueGigaEmpeg" after
-unzipping the file.
-
-####  Important:
-
-The folder in which the BlueGigaEmpeg.ino file resides must be named
-"BlueGigaEmpeg" and not, for example, "BlueGigaEmpeg-Master", because the
-Arduino IDE won't recognize it as an Arduino project file unless the parent
-folder name is the same as the ".ino" file name. I don't know why this is a
-requirement, but based on my experiences with the Arduino IDE, that seems to
-be the case. If you're synchronizing with this repository via Git, it will
-automatically be named correctly, but if you are downloading and unzipping
-the zip file, you will likely have to rename the folder after unzipping it.
-
-####  Connection order special instructions:
-
-The Arduino is located inside the enclosure of the BlueGigaEmpeg module, and
-you upload the code to it via the USB connector on the end of the
-BlueGigaEmpeg casing. Uploading code to the Arduino may be done with the
-BlueGigaEmpeg module disconnected from the empeg Car. No external power source
-is required in this case, the Arduino gets its power from the computer via the
-USB cable in this situation. When connecting the Arduino to the computer via
-the USB cable, if that's the only connection, then no special connection order
-is needed.
-
-In some cases, though, you may also want to upload code to the Arduino with
-the BlueGigaEmpeg module connected to the empeg Car. This is possible to do,
-however, special connection instructions are needed if you do this:
-
-- Do not connect the BlueGigaEmpeg module to the empeg Car until after
-  completing the step in this document titled ["Modify empeg Car interior for
-  I2S digital audio connection"](#i2s). Damage may occur if you connect it
-  before making the modification.
-  
-- The computer will not "see" the USB connection to the Arduino if it receives
-  power from the empeg first. So before connecting the USB cable between the
-  computer and the Arduino, make sure that the empeg is not powered up, or that
-  it is in sleep mode.
-
-####  Upload the sketch:
-
-Connect the USB cable from the computer to the Arduino USB connector. The
-Arduino USB connector is the USB "type B" plug which is exposed on the end of
-the BlueGigaEmpeg enclosure.
-
-When first plugging the Arduino into the computer, it may need to install
-device driver files for the USB/serial connection to the Arduino. In theory,
-the installer for the Arduino IDE should have taken care of installing these
-drivers for you. If not, search for help documents online about getting
-drivers for the "Arduino Mega 2560" chip working.
-
-Run the Arduino IDE. In its "Tools" menu, select the "Board" menu and choose
-"Arduino/Genuino Mega or Mega 2560". Then use the "Tools" menu to select
-"Port" and choose the correct serial port for the Arduino connected to the
-USB cable.
-
-Launch the Arduino Serial Monitor feature from the Arduino IDE. This is done
-by selecting "Tools" Then "Serial Monitor". Configure it to 115200 BPS, and
-now you should see some serial port output from the Arduino. If you don't
-already see this, try closing and re-opening the Serial Monitor.
-
-If the Serial Monitor is working, select the "File" menu in the Arduino IDE,
-select "Open" and locate the BlueGigaEmpeg.ino project that you obtained
-earlier. Compile and upload it to the Arduino Mega board by pressing the
-"Upload" button on the main window. The Upload button is the green circle
-with the arrow inside it.
-
-It will take several seconds to upload. Look at the Arduino IDE and make sure
-that there is no red text or other error messages near the bottom of the
-window which would indicate a problem compiling or uploading the sketch. If
-it is good, there will be a very small piece of text on the IDE, on the green
-bar between the code pane (top) and the console pane (bottom), saying "done
-uploading".
-
-After the latest version of the BlueGigaEmpeg.ino sketch is successfully
-uploaded to the Arduino, look at the output in the Serial Monitor again. The
-top section of the output should list the RX and TX buffer sizes near the
-beginning, and indicate that they are good.
-
-Close the Arduino IDE and remove the USB cable. The USB cable should be
-disconnected during normal operation of the BlueGigaEmpeg module.
-
-
-Disconnect all tuner modules from all sleds you own
-------------------------------------------------------------------------------
-The BlueGigaEmpeg re-purposes the tuner module connector on the empeg Car
-docking sled for a special digital audio interface. Damage may occur if you
-connect a tuner module once the digital audio interface modification is made.
-
-To prevent problems, make sure to disconnect any tuner modules from any
-docking sleds that you own. After making the I2S wiring modification to the
-empeg, do not use a tuner module any more.
-
-Do not connect the BlueGigaEmpeg module to the empeg Car sled until the I2S
-modifications have been completed. Those modifications are described in the
-next step, below.
 
 <a name="i2s"></a>
 
@@ -526,6 +337,17 @@ Final wiring positions and colors:
     
     ** (Original positions of these wires on the white connector near the Ethernet
        plug, now disconnected from that connector.)
+
+
+Disconnect all tuner modules from all sleds you own
+------------------------------------------------------------------------------
+The BlueGigaEmpeg re-purposes the tuner module connector on the empeg Car
+docking sled for a special digital audio interface. Damage may occur if you
+connect a tuner module once the digital audio interface modification is made.
+
+To prevent problems, make sure to disconnect any tuner modules from any
+docking sleds that you own. After making the I2S wiring modification to the
+empeg, do not use a tuner module any more.
 
 
 Empeg Car configuration changes
@@ -967,12 +789,19 @@ Bluetooth chip. This is automatically invoked when you connect a USB cable
 from your computer to the Arduino's USB connector, which is the USB-B
 connector accessible on the outside of the BlueGigaEmpeg casing. Once
 connected, a USB-serial port will appear as a device on your computer through
-the UART chip built into the Arduino. Installing device drivers for the UART
-chip may be needed, but likely this has already been done for the step
-["Compile and upload the latest version of BlueGigaEmpeg.ino to the Arduino"](#compile-and-upload-the-latest-version-of-bluegigaempegino-to-the-arduino).
+the UART chip built into the Arduino.
 
-When connected to the Arduino debug serial port, you can use these kinds of
-serial terminal programs to access the terminal debug interface:
+Installing device drivers for the Arduino's USB-serial UART will be needed. To
+install the device drivers and get the Arduino Serial Monitor working, install
+the Arduino IDE by following the instructions in the section ["Updating
+firmware"](#updating-firmware). This will also ensure that you are updated to
+the latest BlueGigaEmpeg firmware before trying to debug any problems.
+
+Once the device drivers are working for the Arduino's USB-serial UART, then
+any serial terminal program will be able to communicate with the Arduino and
+will work with its debug port. When connected to the Arduino debug serial
+port, you can use these kinds of serial terminal programs to access the
+terminal debug interface:
  - The "Serial Monitor" feature built into the Arduino IDE program.
  - Any third party serial terminal program, such as "Putty".
 
@@ -1124,6 +953,187 @@ caught up and read all the responses from the serial port yet. So, for
 example, a bad command might be issued several lines back, but the "SYNTAX
 ERROR" response doesn't appear until later. So don't assume that any
 command/response pair will always appear together on the debug console screen.
+
+
+Updating firmware
+==============================================================================
+Instructions for updating the firmware on the BlueGigaEmpeg module.
+
+- [Modify your Arduino compiler for larger buffer size                             ](#modify-your-arduino-compiler-for-larger-buffer-size)
+- [Compile and upload the latest version of BlueGigaEmpeg.ino to the Arduino       ](#compile-and-upload-the-latest-version-of-bluegigaempegino-to-the-arduino)
+
+
+Modify your Arduino compiler for larger buffer size
+------------------------------------------------------------------------------
+The firmware on the BlueGigaEmpeg module resides in an Arduino chip which is
+part of the BlueGigaEmpeg assembly. To update to the latest BlueGigaEmpeg
+firmware on the Arduino, you must increase the size of the serial port buffers
+in the Arduino compiler, otherwise there will be intermittent errors, such as
+the track titles will sometimes not work.
+
+To fix the issue, you must edit one of the header files in the Arduino
+compiler libraries, and then you must compile and upload your sketch from your
+local PC to the Arduino board using the standalone version of the Arduino IDE.
+
+Download and install the Arduino IDE, linked from the
+[Prerequisites](#prerequisites) section of this document. Make sure to
+download the standalone (downloadable) version of the Arduino IDE; do not use
+the Arduino web editor. The web editor won't work for this project because it
+doesn't have the capability of changing the header code to increase the size
+of the serial port buffer.
+
+Once it is installed, you'll need to edit a file to increase the size of the
+Arduino's serial port buffers. The file that you need to edit will be the same
+on all operating systems, but the location of the file will be different
+depending on which OS you're using. The approximate location will be something
+like this, but the exact location will vary:
+
+    (install location)/hardware/arduino/avr/cores/arduino/HardwareSerial.h
+
+On a Macintosh computer, the file is harder to find. It is located in the
+following place on a Macintosh:
+
+    /Applications/Arduino.app/Contents/Java/hardware/arduino/avr/cores/arduino/HardwareSerial.h
+
+Or, more specifically, in the Macintosh Finder, navigate to:
+
+    Macintosh HD -> /Applications/Arduino
+
+Ctrl-click on the application file "Arduino" and select "Show Package
+Contents". Then navigate to:
+
+    Contents/Java/hardware/arduino/avr/cores/arduino/HardwareSerial.h
+
+Ctrl-click on the file "HardwareSerial.h" and select "Open With", and choose
+your favorite quick text editor program to edit the file with it.
+
+Regardless of which operating system you are doing this with, once you have
+HardwareSerial.h open, locate the following code lines:
+
+             #if !defined(SERIAL_TX_BUFFER_SIZE)
+             #if ((RAMEND - RAMSTART) < 1023)
+             #define SERIAL_TX_BUFFER_SIZE 16
+             #else
+    -->      #define SERIAL_TX_BUFFER_SIZE 64
+             #endif
+             #endif
+             #if !defined(SERIAL_RX_BUFFER_SIZE)
+             #if ((RAMEND - RAMSTART) < 1023)
+             #define SERIAL_RX_BUFFER_SIZE 16
+             #else
+    -->      #define SERIAL_RX_BUFFER_SIZE 64
+             #endif
+             #endif
+
+Now edit the lines indicated above, and change them to this instead:
+
+       #define SERIAL_TX_BUFFER_SIZE 128
+       
+       #define SERIAL_RX_BUFFER_SIZE 256
+
+In other words, you are making the larger of the two possible transmit buffer
+sizes even larger (changing 64 to 128) and the larger of the two possible
+receive buffers even larger (changing 64 to 256).
+
+Leave the "SERIAL_xx_BUFFER_SIZE 16" lines alone. Only modify the ones that
+were originally set to "64" and increase them as described above.
+
+Save the file.
+
+Note: If you reinstall or upgrade the Arduino IDE program, you will need to 
+perform this edit again before uploading new BlueGigaEmpeg code.
+
+
+Compile and upload the latest version of BlueGigaEmpeg.ino to the Arduino
+------------------------------------------------------------------------------
+Obtain the BlueGigaEmpeg.ino Arduino project file from GitHub, linked in the
+[Prerequisites](#prerequisites) section of this document. In the GitHub
+project web site for BlueGigaEmpeg, find the button titled "Clone or download"
+and obtain the repository. Most people will select "Download Zip" to download
+the zip file, though if you are a Git user, feel free to clone the repository
+or select "Open in Desktop". If you are downloading the zip file, unzip the
+entire project into a folder named "BlueGigaEmpeg" on your computer's hard
+disk. This will likely require renaming the folder to "BlueGigaEmpeg" after
+unzipping the file.
+
+####  Important:
+
+The folder in which the BlueGigaEmpeg.ino file resides must be named
+"BlueGigaEmpeg" and not, for example, "BlueGigaEmpeg-Master", because the
+Arduino IDE won't recognize it as an Arduino project file unless the parent
+folder name is the same as the ".ino" file name. I don't know why this is a
+requirement, but based on my experiences with the Arduino IDE, that seems to
+be the case. If you're synchronizing with this repository via Git, it will
+automatically be named correctly, but if you are downloading and unzipping
+the zip file, you will likely have to rename the folder after unzipping it.
+
+####  Connection order special instructions:
+
+The Arduino is located inside the enclosure of the BlueGigaEmpeg module, and
+you upload the code to it via the USB connector on the end of the
+BlueGigaEmpeg casing. Uploading code to the Arduino may be done with the
+BlueGigaEmpeg module disconnected from the empeg Car. No external power source
+is required in this case, the Arduino gets its power from the computer via the
+USB cable in this situation. When connecting the Arduino to the computer via
+the USB cable, if that's the only connection, then no special connection order
+is needed.
+
+In some cases, though, you may also want to upload code to the Arduino with
+the BlueGigaEmpeg module connected to the empeg Car. This is possible to do,
+however, special connection instructions are needed if you do this:
+
+- Do not connect the BlueGigaEmpeg module to the empeg Car until after
+  completing the step in this document titled ["Modify empeg Car interior for
+  I2S digital audio connection"](#i2s). Damage may occur if you connect it
+  before making the modification.
+  
+- The computer will not "see" the USB connection to the Arduino if it receives
+  power from the empeg first. So before connecting the USB cable between the
+  computer and the Arduino, make sure that the empeg is not powered up, or that
+  it is in sleep mode.
+
+####  Upload the sketch:
+
+Connect the USB cable from the computer to the Arduino USB connector. The
+Arduino USB connector is the USB "type B" plug which is exposed on the end of
+the BlueGigaEmpeg enclosure.
+
+When first plugging the Arduino into the computer, it may need to install
+device driver files for the USB/serial connection to the Arduino. In theory,
+the installer for the Arduino IDE should have taken care of installing these
+drivers for you. If not, search for help documents online about getting
+drivers for the "Arduino Mega 2560" chip working.
+
+Run the Arduino IDE. In its "Tools" menu, select the "Board" menu and choose
+"Arduino/Genuino Mega or Mega 2560". Then use the "Tools" menu to select
+"Port" and choose the correct serial port for the Arduino connected to the
+USB cable.
+
+Launch the Arduino Serial Monitor feature from the Arduino IDE. This is done
+by selecting "Tools" Then "Serial Monitor". Configure it to 115200 BPS, and
+now you should see some serial port output from the Arduino. If you don't
+already see this, try closing and re-opening the Serial Monitor.
+
+If the Serial Monitor is working, select the "File" menu in the Arduino IDE,
+select "Open" and locate the BlueGigaEmpeg.ino project that you obtained
+earlier. Compile and upload it to the Arduino Mega board by pressing the
+"Upload" button on the main window. The Upload button is the green circle
+with the arrow inside it.
+
+It will take several seconds to upload. Look at the Arduino IDE and make sure
+that there is no red text or other error messages near the bottom of the
+window which would indicate a problem compiling or uploading the sketch. If
+it is good, there will be a very small piece of text on the IDE, on the green
+bar between the code pane (top) and the console pane (bottom), saying "done
+uploading".
+
+After the latest version of the BlueGigaEmpeg.ino sketch is successfully
+uploaded to the Arduino, look at the output in the Serial Monitor again. The
+top section of the output should list the RX and TX buffer sizes near the
+beginning, and indicate that they are good.
+
+Close the Arduino IDE and remove the USB cable. The USB cable should be
+disconnected during normal operation of the BlueGigaEmpeg module.
 
 
 Technical Data
