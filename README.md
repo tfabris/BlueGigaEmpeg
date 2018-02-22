@@ -157,7 +157,6 @@ Make sure you have all of these things before working with the BlueGigaEmpeg:
 | Hijack Kernel for empeg           | http://empeg-hijack.sourceforge.net                                                 |
 | Tony's Empeg Logo Editor          | http://empegbbs.com/ubbthreads.php/ubb/download/Number/7067/filename/logoedit17.zip |
 | Arduino standalone IDE            | https://www.arduino.cc/en/Main/Software                                             |
-| FTDI USB driver                   | http://www.ftdichip.com/FTDrivers.htm                                               |
 | BlueGigaEmpeg GitHub project      | https://github.com/tfabris/BlueGigaEmpeg                                            |
 | BlueGigaEmpeg.ino direct download | https://github.com/tfabris/BlueGigaEmpeg/archive/master.zip                         |
 
@@ -310,11 +309,10 @@ Arduino USB connector is the USB "type B" plug which is exposed on the end of
 the BlueGigaEmpeg enclosure.
 
 When first plugging the Arduino into the computer, it may need to install
-device driver files for the USB/serial connection to the Arduino. This will be
-an FTDI USB UART driver. In theory, the installer for the Arduino IDE should
-have taken care of this for you, but if not, you can install the FTDI USB
-driver from the FTDI web site. A link to the FTDI drivers is found in the
-[Prerequisites](#prerequisites) section of this document.
+device driver files for the USB/serial connection to the Arduino. In theory,
+the installer for the Arduino IDE should have taken care of installing these
+drivers for you. If not, search for help documents online about getting
+drivers for the Arduino Mega 2560 chip working.
 
 Run the Arduino IDE. In its "Tools" menu, select the "Board" menu and choose
 "Arduino/Genuino Mega or Mega 2560". Then use the "Tools" menu to select
@@ -943,8 +941,8 @@ Bluetooth chip. This is automatically invoked when you connect a USB cable
 from your computer to the Arduino's USB connector, which is the USB-B
 connector accessible on the outside of the BlueGigaEmpeg casing. Once
 connected, a USB-serial port will appear as a device on your computer through
-the FTDI UART chip built into the Arduino. Installing device drivers for the
-FTDI chip may be needed, but likely this has already been done for the step
+the UART chip built into the Arduino. Installing device drivers for the UART
+chip may be needed, but likely this has already been done for the step
 ["Compile and upload the latest version of BlueGigaEmpeg.ino to the Arduino"](#compile-and-upload-the-latest-version-of-bluegigaempegino-to-the-arduino).
 
 When connected to the Arduino debug serial port, you can use these kinds of
