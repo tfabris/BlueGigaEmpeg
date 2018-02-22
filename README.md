@@ -278,7 +278,7 @@ The folder in which the BlueGigaEmpeg.ino file resides must be named
 "BlueGigaEmpeg" and not, for example, "BlueGigaEmpeg-Master", because the
 Arduino IDE won't recognize it as an Arduino project file unless the parent
 folder name is the same as the ".ino" file name. I don't know why this is a
-requirement, but based on my experiences with the Arduino IDE, that seemed to
+requirement, but based on my experiences with the Arduino IDE, that seems to
 be the case. If you're synchronizing with this repository via Git, it will
 automatically be named correctly, but if you are downloading and unzipping
 the zip file, you will likely have to rename the folder after unzipping it.
