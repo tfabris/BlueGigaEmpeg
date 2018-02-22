@@ -15,6 +15,7 @@ Table of Contents
 - [Introduction                                                                    ](#introduction)
 - [Installation                                                                    ](#installation)
 - [Usage                                                                           ](#usage)
+- [Troubleshooting                                                                 ](#troubleshooting)
 - [Updating firmware                                                               ](#updating-firmware)
 - [Technical Data                                                                  ](#technical-data)
 
@@ -511,10 +512,6 @@ Usage
 ==============================================================================
 - [Apply power and pair Bluetooth                                                  ](#apply-power-and-pair-bluetooth)
 - [Normal operation                                                                ](#normal-operation)
-- [Troubleshooting                                                                 ](#troubleshooting)
-- [Set Bluetooth PIN code if needed (most likely not needed)                       ](#set-bluetooth-pin-code-if-needed-most-likely-not-needed)
-- [Test AVRCP behavior and set serial port crossover jumpers if needed             ](#test-avrcp-behavior-and-set-serial-port-crossover-jumpers-if-needed)
-- [Debug Bluetooth connection if needed                                            ](#debug-bluetooth-connection-if-needed)
 
 
 Apply power and pair Bluetooth
@@ -643,8 +640,15 @@ module, which then autoconnects to the car stereo head unit.
 
 Troubleshooting
 ------------------------------------------------------------------------------
-####  Pairing issues:
+- [Pairing issues                                                                  ](#pairing-issues)
+- [Other issues                                                                    ](#other-issues)
+- [Set Bluetooth PIN code if needed (most likely not needed)                       ](#set-bluetooth-pin-code-if-needed-most-likely-not-needed)
+- [Test AVRCP behavior and set serial port crossover jumpers if needed             ](#test-avrcp-behavior-and-set-serial-port-crossover-jumpers-if-needed)
+- [Debug Bluetooth connection if needed                                            ](#debug-bluetooth-connection-if-needed)
 
+
+Pairing issues
+------------------------------------------------------------------------------
 When you press the recessed RESET/PAIR button on the BlueGigaEmpeg, it does
 the following:
 
@@ -697,8 +701,8 @@ Honda has this), then you must remember to first delete the empeg Car from the
 list, if you have pressed the RESET/PAIR button and you are re-pairing a
 second time.
 
-####  Other issues:
-
+Other issues
+------------------------------------------------------------------------------
 If there is good audio, but commands such as next/previous track and
 play/pause don't work, and if track titles do not display on your car stereo
 (if your stereo has this ability for Bluetooth), then there may be a simple
@@ -714,15 +718,15 @@ If you have trouble with the empeg waking up after you shut off the car
 ignition, see the section here: ["Modify empeg's power connection to
 car"](#power).
 
-If you have other problems not listed here, see this section: ["Debug
-Bluetooth connection if needed"](#debug-bluetooth-connection-if-needed).
-
-Also check to see if the issue you're encountering is a known bug or a
+Check to see if the issue you're encountering is a known bug or a
 previously-closed bug:
 
 - Open bugs: https://github.com/tfabris/BlueGigaEmpeg/issues
 
 - Closed bugs: https://github.com/tfabris/BlueGigaEmpeg/issues?q=is:issue+is:closed
+
+If you have other problems not listed here, see this section: ["Debug
+Bluetooth connection if needed"](#debug-bluetooth-connection-if-needed).
 
 
 Set Bluetooth PIN code if needed (most likely not needed)
