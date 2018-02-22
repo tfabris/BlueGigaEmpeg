@@ -701,9 +701,9 @@ for this purpose.
   BlueGigaEmpeg module is lit. Look for the device "empeg Car" and pair it.
 
 - If the pairing doesn't work the first time, also try initiating pairing from
-  the car stereo AFTER the blue LED on the BlueGigaEmpeg module goes out. From
-  your car stereo's touch screen interface, tell it to search for Bluetooth
-  devices, and when the device "empeg Car" appears, select it.
+  the car stereo *after* the blue LED on the BlueGigaEmpeg module goes out.
+  From your car stereo's touch screen interface, tell it to search for
+  Bluetooth devices, and when the device "empeg Car" appears, select it.
   
 - Your car stereo might put up a random number on the screen and prompt you to 
   confirm that number on the device. The BlueGigaEmpeg will automatically
