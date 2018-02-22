@@ -140,13 +140,13 @@ Prerequisites
 ------------------------------------------------------------------------------
 Make sure you have all of these things before working with the BlueGigaEmpeg:
 
-###  Purchase:
+####  Purchase:
 | Item                        | URL                                                     |
 |:----------------------------|:--------------------------------------------------------|
 | Empeg Mk2 or Rio Car player | http://empegbbs.com/ubbthreads.php/forums/11/1/For_Sale |
 | BlueGigaEmpeg Interface     | tfabris@gmail.com                                       |
 
-###  Download software (Windows PC or Windows VM required for some of these items):
+####  Download software (Windows PC or Windows VM required for some of these items):
 | Item                              | URL                                                                                 |
 |:----------------------------------|:------------------------------------------------------------------------------------|
 | Hijack Kernel for empeg           | http://empeg-hijack.sourceforge.net                                                 |
@@ -155,7 +155,7 @@ Make sure you have all of these things before working with the BlueGigaEmpeg:
 | BlueGigaEmpeg GitHub project      | https://github.com/tfabris/BlueGigaEmpeg                                            |
 | BlueGigaEmpeg.ino direct download | https://github.com/tfabris/BlueGigaEmpeg/archive/master.zip                         |
 
-###  Important:
+####  Important:
 
 The BlueGigaEmpeg module works by connecting to the Molex connector on the
 back of the empeg Car docking sled which was originally intended for the
@@ -267,7 +267,7 @@ entire project into a folder named "BlueGigaEmpeg" on your computer's hard
 disk. This will likely require renaming the folder to "BlueGigaEmpeg" after
 unzipping the file.
 
-###  Important:
+####  Important:
 
 The folder in which the BlueGigaEmpeg.ino file resides must be named
 "BlueGigaEmpeg" and not, for example, "BlueGigaEmpeg-Master", because the
@@ -278,7 +278,7 @@ be the case. If you're synchronizing with this repository via Git, it will
 automatically be named correctly, but if you are downloading and unzipping
 the zip file, you will likely have to rename the folder after unzipping it.
 
-###  Connection order special instructions:
+####  Connection order special instructions:
 
 The Arduino is located inside the enclosure of the BlueGigaEmpeg module, and
 you upload the code to it via the USB connector on the end of the
@@ -303,7 +303,7 @@ however, special connection instructions are needed if you do this:
   computer and the Arduino, make sure that the empeg is not powered up, or that
   it is in sleep mode.
 
-###  Upload the sketch:
+####  Upload the sketch:
 
 Connect the USB cable from the computer to the Arduino USB connector. The
 Arduino USB connector is the USB "type B" plug which is exposed on the end of
@@ -384,7 +384,7 @@ have any tuner modules, disconnect all of them from any and all sleds that you
 own. Damage may occur to your empeg and your tuner module if you dock your
 modified empeg to any tuner module after you make this modification.
 
-###  Disassembly of empeg Car:
+####  Disassembly of empeg Car:
 
 Partially disassemble your empeg player by carefully removing the fascia, lid
 and drive tray. You must do the disassembly carefully so as not to damage the
@@ -428,7 +428,7 @@ components sticking off the back of the display board.
 - Do not disconnect the IDE cable. You should be able to set the drive tray
   aside carefully, without disconnecting the cable.
 
-###  Jumper the I2S pads to the docking connector wires:
+####  Jumper the I2S pads to the docking connector wires:
 
 Refer to the annotated photograph "I2S Wiring Modification Photo.jpg" to help
 understand the wiring instructions below.
@@ -691,7 +691,7 @@ Bluetooth car stereo. You might also wish to re-pair again after editing the
 BlueGigaEmpeg firmware. The BlueGigaEmpeg has a recessed RESET/PAIR button
 for this purpose.
 
-###  Pairing Procedure:
+####  Pairing Procedure:
 
 - Turn the volume level on your car stereo down to a low level, so that you're
   not blasted when the pairing process is complete.
@@ -804,7 +804,7 @@ module, which then autoconnects to the car stereo head unit.
 
 Troubleshooting
 ------------------------------------------------------------------------------
-###  Pairing issues:
+####  Pairing issues:
 
 When you press the recessed RESET/PAIR button on the BlueGigaEmpeg, it does
 the following:
@@ -858,7 +858,7 @@ Honda has this), then you must remember to first delete the empeg Car from the
 list, if you have pressed the RESET/PAIR button and you are re-pairing a
 second time.
 
-###  Other issues:
+####  Other issues:
 
 If there is good audio, but commands such as next/previous track and
 play/pause don't work, and if track titles do not display on your car stereo
@@ -957,7 +957,7 @@ code because this was not tested with a wide range of Bluetooth gear.
 
 If you need to debug the connection, here are some helpful tips.
 
-###  Debug mode with Arduino
+####  Debug mode with Arduino
 
 The BlueGigaEmpeg module is an Arduino command+control board, sandwiched to a
 custom interface board, connected to a BlueGiga WT32i Bluetooth chip. The
@@ -980,7 +980,7 @@ to the Bluetooth chip as a command, and all of the chip's responses are shown
 on your screen. You will also see all commands that the Arduino sends to the
 Bluetooth chip automatically, and see all of the chip's responses.
 
-###  Power up sequence (startup order) for Arduino debugging:
+####  Power up sequence (startup order) for Arduino debugging:
 
 The USB cable from the computer will power the Arduino (and also the Bluetooth
 chip because it is connected to the Arduino through the BlueGigaEmpeg
@@ -1014,7 +1014,7 @@ sled wiring harness is still needed in AC/Home mode, because the BlueGigaEmpeg
 still needs the tuner connector on the harness in order to function.
 
 
-###  Sending a bug report:
+####  Sending a bug report:
 
 - Turn on the computer and connect the USB cable from the computer to the
   Arduino debug port (the USB-B connector on the outside of the BlueGigaEmpeg
@@ -1064,7 +1064,7 @@ still needs the tuner connector on the harness in order to function.
   Arduino debug port. This is normally left disconnected during normal
   operation of the BlueGigaEmpeg module.
   
-###  Variables in the Arduino sketch:
+####  Variables in the Arduino sketch:
 
 There are several flag variables in the BlueGigaEmpeg.ino sketch file, defined
 at the top of the code, which can be modified if you need them when debugging.
@@ -1080,7 +1080,7 @@ comments accompanying these flags in the file to understand them:
       displayEmpegSerial
       displayTracksOnSerial
 
-###  Useful debugging commands in the BlueGiga WT32i iWrap command language:
+####  Useful debugging commands in the BlueGiga WT32i iWrap command language:
 
 Typing any of these into the serial terminal should send these commands to the
 Bluetooth chip directly. Many will echo a response. The Bluetooth chip will
@@ -1274,7 +1274,7 @@ tried it with an "Uno" model using software serial ports, and it had problems
 where characters sometimes got dropped, and it could not keep up with the data
 rates that I wanted.
 
-###  Arduino and RS-232 port, critical connections:
+####  Arduino and RS-232 port, critical connections:
 
 Arduino serial port 1 (Tx1/Rx1) connects to the empeg's RS-232 port, but it
 must go through an RS-232 converter circuit based on a MAX232 chip. This is
@@ -1350,7 +1350,7 @@ the PCB silkscreen is this:
        positive  >|  negative
 
 
-###  BlueGiga Bluetooth WT32i chip+board, critical connections:
+####  BlueGiga Bluetooth WT32i chip+board, critical connections:
 
 BetzTechnik Bluetooth chip+board "JP4 FTDI UART Enable" jumper is cut after
 applying firmware update.
@@ -1413,7 +1413,7 @@ three times, one for each of the I2S connections):
 
 Resources
 ------------------------------------------------------------------------------
-###  Purchase:
+####  Purchase:
 | Item                        | Url                                                          |
 |:----------------------------|:-------------------------------------------------------------|
 | Empeg Car player            | http://empegbbs.com/ubbthreads.php/forums/11/1/For_Sale      |
@@ -1421,7 +1421,7 @@ Resources
 | BetzTechnik WT32i Breakout  | http://www.betztechnik.ca/store/p3/WT32i_breakout_board.html |
 | BlueGigaEmpeg Interface     | tfabris@gmail.com                                            |
 
-###  Download software:
+####  Download software:
 | Item                        | Url                                                                                 |
 |:----------------------------|:------------------------------------------------------------------------------------|
 | Arduino IDE                 | https://www.arduino.cc/en/Main/Software                                             |
@@ -1431,7 +1431,7 @@ Resources
 | WT32i Firmware Upgrade      | https://www.silabs.com/documents/login/software/iWRAP-Firmware-Releases.zip         |
 | FTDI USB driver             | http://www.ftdichip.com/FTDrivers.htm                                               |
 
-###  Bluetooth information, schematics, and command references:
+####  Bluetooth information, schematics, and command references:
 | Item                        | Url                                                                                         |
 |:----------------------------|:--------------------------------------------------------------------------------------------|
 | Bluetooth AVRCP specs       | https://www.bluetooth.org/docman/handlers/DownloadDoc.ashx?doc_id=292286                    |
@@ -1455,7 +1455,7 @@ Resources
 | GitHub Markdown             | https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet                            |
 |                             | https://guides.github.com/features/mastering-markdown/                                      |
 
-### Upgrade firmware on the WT32i:
+####  Upgrade firmware on the WT32i:
 | Item                        | Url                                                                         |
 |:----------------------------|:----------------------------------------------------------------------------|
 | Firmware Update Guide       | https://www.silabs.com/documents/login/user-guides/UG216.pdf                |
@@ -1464,7 +1464,7 @@ Resources
 | Prolific PL2303 USB driver  | http://www.prolific.com.tw/US/ShowProduct.aspx?p_id=225&pcid=41             |
 | FTDI USB driver             | http://www.ftdichip.com/FTDrivers.htm                                       |
 
-###  Parts list used in BlueGigaEmpeg interface board:
+####  Parts list used in BlueGigaEmpeg interface board:
 | Item                        | Qty   | Url                                                                                                                |
 |:----------------------------|:------|:-------------------------------------------------------------------------------------------------------------------|
 | BlueGigaEmpeg PCB           |       | tfabris@gmail.com                                                                                                  |
