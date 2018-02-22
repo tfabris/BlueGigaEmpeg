@@ -351,11 +351,18 @@ empeg, do not use a tuner module any more.
 
 Empeg Car configuration changes
 ------------------------------------------------------------------------------
+The following configuration changes are required for BlueGigaEmpeg to work
+correctly.
+
+####  Player firmware version:
+
 I have tested the BlueGigaEmpeg with version 2.00 of the empeg Car software.
 It is designed to work with version 2.00 Beta 13 or version 2.00 Final. I have
 not tested it with the 3.0 Alpha version of the empeg Car software, but
 theoretically it should work. See the empeg Car FAQ for more information on
 upgrading the empeg Car player software if needed.
+
+#### Edit the config.ini on the player:
 
 Using the Emplode or Jemplode software, edit the empeg Car's config.ini as
 follows.
@@ -397,8 +404,9 @@ after changing the config.ini settings.
 
 Upgrade the empeg Car's Hijack kernel and set "Serial Port Assignment"
 ------------------------------------------------------------------------------
-Install the latest Hijack Kernel onto the empeg Car player if it is not
-already installed. Link to the Hijack kernel is found in the
+The latest version of Hijack is required in order for BlueGigaEmpeg to work
+correctly. Install the latest Hijack Kernel onto the empeg Car player if it is
+not already installed. Link to the Hijack kernel is found in the
 [Prerequisites](#prerequisites) section of this document. Make sure it is
 Hijack version 524 or later.
 
