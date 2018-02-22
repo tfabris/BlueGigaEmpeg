@@ -114,6 +114,7 @@ Car player. Make sure to go through each of the steps linked below.
 - [Modify empeg Car interior for I2S digital audio connection                      ](#modify-empeg-car-interior-for-i2s-digital-audio-connection)
 - [Empeg Car configuration changes                                                 ](#empeg-car-configuration-changes)
 - [Upgrade the empeg Car's Hijack kernel and set "Serial Port Assignment"          ](#upgrade-the-empeg-cars-hijack-kernel-and-set-serial-port-assignment)
+- [Modify empeg's power connection to car if needed                                ](#modify-empegs-power-connection-to-car-if-needed)
 
 
 Usage
@@ -124,7 +125,6 @@ Usage
 - [Troubleshooting                                                                 ](#troubleshooting)
 - [Set Bluetooth PIN code if needed (most likely not needed)                       ](#set-bluetooth-pin-code-if-needed-most-likely-not-needed)
 - [Test AVRCP behavior and set serial port crossover jumpers if needed             ](#test-avrcp-behavior-and-set-serial-port-crossover-jumpers-if-needed)
-- [Modify empeg's power connection to car if needed                                ](#modify-empegs-power-connection-to-car-if-needed)
 - [Debug Bluetooth connection if needed                                            ](#debug-bluetooth-connection-if-needed)
 
 
