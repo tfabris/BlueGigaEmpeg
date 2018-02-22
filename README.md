@@ -1367,6 +1367,11 @@ button connects to +5v coming from the Arduino 5v pin. Follow examples on the
 Internet of how to implement a simple temporary pushbutton on an Arduino:
 https://www.arduino.cc/en/Tutorial/Button
 
+Note: The BlueGigaEmpeg printed circuit board, Rev. 6, has the position of the
+10k button resistor labeled on the wrong side of the PCB. It will work on
+either side, but there is more clearance from the Arduino components if you
+move it to the other side of the board.
+
 Arduino and Pair mode indicator LED: Arduino pin 50 digital I/O pin, connected
 to +LED through resistor. Current of resistor determined by online LED
 resistor calculator and LED values. Then -LED connect to GND. Example: If
