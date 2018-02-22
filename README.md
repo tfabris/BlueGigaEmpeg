@@ -291,15 +291,17 @@ BlueGigaEmpeg casing. Uploading code to the Arduino may be done with the
 BlueGigaEmpeg module disconnected from the empeg Car. No external power source
 is required in this case, the Arduino gets its power from the computer via the
 USB cable in this situation. When connecting the Arduino to the computer via
-the USB cable, no special connection order is needed.
+the USB cable, if that's the only connection, then no special connection order
+is needed.
 
-In some cases, you may also want to upload code to the Arduino with the
-BlueGigaEmpeg module still connected to the empeg Car. This is possible to do,
+In some cases, though, you may also want to upload code to the Arduino with
+the BlueGigaEmpeg module connected to the empeg Car. This is possible to do,
 however, special connection instructions are needed if you do this:
 
 - Do not connect the BlueGigaEmpeg module to the empeg Car until after
   completing the step in this document titled ["Modify empeg Car interior for
-  I2S digital audio connection"](#i2s).
+  I2S digital audio connection"](#i2s). Damage may occur if you connect it
+  before making the modification.
   
 - The computer will not "see" the USB connection to the Arduino if it receives
   power from the empeg first. So before connecting the USB cable between the
