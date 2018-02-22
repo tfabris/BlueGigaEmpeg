@@ -16,12 +16,12 @@ empeg Car didn't have Bluetooth since it wasn't in common use yet at the time.
 
 Modern cars are becoming increasingly difficult to install aftermarket stereos
 into, due to the car touchscreen dashboards and the high level of integration
-of the stereo system into the other car electronic and computer systems. For
-owners of the empeg Car player, it's a problem, because it makes it hard to
-install our beloved player into our new cars. This project helps to solve this
-issue by adding digital Bluetooth output to the empeg Car player, allowing it
-to be connected to a modern car's factory stereo system, and integrate with
-its controls, in the same way that you would connect a smartphone to your car.
+of the stereo system into the other car systems. For owners of the empeg Car
+player, it's a problem, because it makes it hard to install our beloved player
+into our new cars. This project helps to solve this issue by adding digital
+Bluetooth output to the empeg Car player, allowing it to be connected to a
+modern car's factory stereo system, and integrate with its controls, in the
+same way that you would connect a smartphone to your car.
 
 The BlueGigaEmpeg interface works in two ways:
 
