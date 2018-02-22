@@ -549,11 +549,6 @@ for this purpose.
 - On the car stereo, initiate pairing mode while the blue LED on the
   BlueGigaEmpeg module is lit. Look for the device "empeg Car" and pair it.
 
-- If the pairing doesn't work the first time, also try initiating pairing from
-  the car stereo *after* the blue LED on the BlueGigaEmpeg module goes out.
-  From your car stereo's touch screen interface, tell it to search for
-  Bluetooth devices, and when the device "empeg Car" appears, select it.
-  
 - Your car stereo might put up a random number on the screen and prompt you to 
   confirm that number on the device. The BlueGigaEmpeg will automatically
   confirm that number for you.
@@ -563,10 +558,15 @@ for this purpose.
   For instance, on my Honda, its touchscreen might prompt me to choose
   whether to pair it as a music device, a phone device, or both. If you get
   a prompt like this, choose the music device option.
+
+- If the pairing doesn't work the first time, also try initiating pairing from
+  the car stereo *after* the blue LED on the BlueGigaEmpeg module goes out.
+  From your car stereo's touch screen interface, tell it to search for
+  Bluetooth devices, and when the device "empeg Car" appears, select it.
  
-- If the pairing still doesn't work, try turning off the car stereo completely
-  (turn off car ignition) and removing power from the empeg, then reapplying
-  power to everything and trying again.
+- If the pairing still doesn't work, try sleeping the empeg (long press on top
+  button, turning off the car stereo completely (turn off car ignition), turn
+  on the car ignition again, wake the empeg, and try again from the top.
 
 - When the pairing is completed, set the volume. With the car stereo volume
   still turned down to a low level, turn the volume on the empeg Car front
