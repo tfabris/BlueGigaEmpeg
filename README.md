@@ -767,7 +767,7 @@ stereos support all of these controls. For instance, my Honda does not do
 Fast Forward or Rewind with any Bluetooth device, so those features don't work
 on my Honda.
 
-Implemented:
+####  Implemented:
  - Pause
  - Play
  - Previous Track
@@ -784,11 +784,12 @@ Implemented:
 	 shuffle state to the serial port, and so the Bluetooth interface cannot
 	 get a reliable query of the current state of shuffle.
 	 
-Not implemented:
+####  Not implemented:
  - Music Search
  - Repeat mode (repeat all tracks, repeat one track, etc.)
  - Volume up/down/mute (set empeg to 0.0db and use car stereo volume instead)
 
+####  Sleep mode:
 The empeg tuner connector only supplies power to the BlueGigaEmpeg module if
 the empeg is awake. If you put the empeg into sleep mode via a long press on
 the top button, it will go to sleep, but that also means the Arduino+Bluetooth
