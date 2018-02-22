@@ -508,10 +508,10 @@ control commands from the BlueGigaEmpeg to the empeg Car player software, and
 also carries the track metadata (title/artist/etc) from the empeg Car player
 software to the BlueGigaEmpeg module.
 
-The USB connector on the outside of the BlueGigaEmpeg module enclosure is
-normally left disconnected. It is only used for debugging and for uploading
-the latest Arduino code to the BlueGigaEmpeg module. See the section titled
-["Debug Bluetooth Connection if needed"](#debug-bluetooth-connection-if-needed)
+The USB "type B" connector on the outside of the BlueGigaEmpeg module
+enclosure is normally left disconnected. It is only used for debugging and for
+uploading the latest Arduino code to the BlueGigaEmpeg module. See the section
+titled ["Debug Bluetooth Connection if needed"](#debug-bluetooth-connection-if-needed)
 for more details on how to use the connector for debugging.
 
 
