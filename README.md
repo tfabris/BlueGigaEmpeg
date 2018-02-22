@@ -510,11 +510,11 @@ for more details on how to use the connector for debugging.
 
 Usage
 ==============================================================================
-- [Apply power and pair Bluetooth                                                  ](#apply-power-and-pair-bluetooth)
+- [Pairing                                                                         ](#pairing)
 - [Normal operation                                                                ](#normal-operation)
 
 
-Apply power and pair Bluetooth
+Pairing
 ------------------------------------------------------------------------------
 Turn on your car's ignition to apply power to the empeg. This should also
 apply power to the connected BlueGigaEmpeg module via the tuner module
