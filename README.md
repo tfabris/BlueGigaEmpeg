@@ -1450,7 +1450,8 @@ three times, one for each of the I2S connections):
                             +--------------WT32i PCM_CLK
 
 Note: The BlueGigaEmpeg printed circuit board, Rev. 6, still has the old 10k
-value for the I2S voltage divider resistors silkscreened onto the board.
+value for the I2S voltage divider resistors silkscreened onto the board. The
+correct value for the I2S voltage divider resistors is 1.5k.
 
 
 Resources
