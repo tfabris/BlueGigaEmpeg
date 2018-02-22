@@ -5,6 +5,7 @@ BlueGigaEmpeg Instructions
 Congratulations to you, owner of a shiny new BlueGigaEmpeg module!
 
 Your full detailed instructions are located online here:
+
 - https://github.com/tfabris/BlueGigaEmpeg/blob/master/README.md
 
 Please carefully go through the installation section of that document, the
@@ -18,6 +19,7 @@ please remember this:
 Also feel free to look through the existing known issues here:
 
 - Open bugs: https://github.com/tfabris/BlueGigaEmpeg/issues
+
 - Closed bugs: https://github.com/tfabris/BlueGigaEmpeg/issues?q=is:issue+is:closed
 
 Thank you, and enjoy your new toy!
