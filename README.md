@@ -341,13 +341,13 @@ Final wiring positions and colors:
 
 Disconnect all tuner modules from all sleds you own
 ------------------------------------------------------------------------------
-The BlueGigaEmpeg re-purposes the tuner module connector on the empeg Car
-docking sled for a special digital audio interface. Damage may occur if you
-connect a tuner module once the digital audio interface modification is made.
+After completing the I2S wiring modification, the external tuner module will
+no longer work. Also, damage may occur if you connect a tuner module to a
+modified empeg.
 
 To prevent problems, make sure to disconnect any tuner modules from any
-docking sleds that you own. After making the I2S wiring modification to the
-empeg, do not use a tuner module any more.
+docking sleds that you own, and pack them away somewhere safe. After making
+the I2S wiring modification to the empeg, do not use a tuner module any more.
 
 
 Empeg Car configuration changes
