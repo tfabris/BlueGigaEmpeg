@@ -812,8 +812,9 @@ will work with its debug port. When connected to the Arduino debug serial
 port, you can use these kinds of serial terminal programs to access the
 terminal debug interface:
 
- - The "Serial Monitor" feature built into the Arduino IDE program.
- 
+ - The "Serial Monitor" feature built into the Arduino IDE program. To run
+   it, launch the Arduino IDE, select the "Tools" menu, then "Serial Monitor".
+
  - Any third party serial terminal program, such as "Putty".
 
 When connected to this serial terminal interface, everything you type is sent
