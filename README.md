@@ -7,7 +7,24 @@ https://github.com/tfabris/BlueGigaEmpeg
 BlueGigaEmpeg is a project to use a Silicon Labs BlueGiga WT32i Bluetooth
 chip, combined with an Arduino Mega board, to act as an interface between an
 empeg Car Mk2/2a MP3 player and a modern Bluetooth-equipped car.
+------------------------------------------------------------------------------
 
+Table of Contents
+==============================================================================
+- [Introduction                                                                    ](#introduction)
+- [Installation                                                                    ](#installation)
+- [Usage                                                                           ](#usage)
+- [Technical Data                                                                  ](#technical-data)
+------------------------------------------------------------------------------
+
+
+Introduction
+==============================================================================
+- [Project Information                                                             ](#project-information)
+- [Caveats                                                                         ](#caveats)
+- [Acknowledgments                                                                 ](#acknowledgments)
+
+Project Information
 ------------------------------------------------------------------------------
 The empeg Car (small "e") player, also sold as the Rio Car, is an amazing
 in-dash MP3 player made from 1999-2001 whose features are still, nearly 20
@@ -45,8 +62,8 @@ perform all modifications listed in this document for it to work correctly.
 Follow the [Installation](#installation) section of this document to make sure all
 steps are performed.
 
-###  Caveats:
-
+Caveats
+------------------------------------------------------------------------------
 At the time of this writing, I have tested this project on a very limited set
 of Bluetooth gear. So far, I have only tested it on:
 - My Honda Accord 2017 factory stereo.
@@ -81,9 +98,8 @@ still having to mount your empeg where you can get to it.
 This project only works with the empeg Car Mk2 or the Rio Car player. It will
 not work with the empeg Car Mk1 player.
 
-
 Acknowledgments
-==============================================================================
+------------------------------------------------------------------------------
 Many thanks to the members of the empegBBS who helped with this so much. The
 initial chip suggestion was by BBS member Elperepat, and even though I ended
 up not using the particular chip that he suggested (I had trouble with that
@@ -118,26 +134,6 @@ Car player. Make sure to go through each of the steps linked below.
 - [Connect external hardware connections                                           ](#connect-external-hardware-connections)
 
 
-Usage
-==============================================================================
-- [Apply power and pair Bluetooth                                                  ](#apply-power-and-pair-bluetooth)
-- [Normal operation                                                                ](#normal-operation)
-- [Troubleshooting                                                                 ](#troubleshooting)
-- [Set Bluetooth PIN code if needed (most likely not needed)                       ](#set-bluetooth-pin-code-if-needed-most-likely-not-needed)
-- [Test AVRCP behavior and set serial port crossover jumpers if needed             ](#test-avrcp-behavior-and-set-serial-port-crossover-jumpers-if-needed)
-- [Debug Bluetooth connection if needed                                            ](#debug-bluetooth-connection-if-needed)
-
-
-Technical Data
-==============================================================================
-There is some technical data located at the end of this document. This is for
-reference only, and should not be needed unless you are a developer or you are
-needing to perform repairs or maintenance on the module.
-
-- [Bluetooth Chip Firmware Upgrade                                                 ](#bluetooth-chip-firmware-upgrade)
-- [Set jumpers and switches, and modify Bluetooth board                            ](#set-jumpers-and-switches-and-modify-bluetooth-board)
-- [Hardware interface information and notes (internal board connections)           ](#hardware-interface-information-and-notes-internal-board-connections)
-- [Resources                                                                       ](#resources)
 
 
 Prerequisites
@@ -674,9 +670,16 @@ the latest Arduino code to the BlueGigaEmpeg module. See the section titled
 for more details on how to use the connector for debugging.
 
 
-Using the BlueGigaEmpeg module
+Usage
 ==============================================================================
-Instructions for using the BlueGigaEmpeg module are listed below.
+- [Apply power and pair Bluetooth                                                  ](#apply-power-and-pair-bluetooth)
+- [Normal operation                                                                ](#normal-operation)
+- [Troubleshooting                                                                 ](#troubleshooting)
+- [Set Bluetooth PIN code if needed (most likely not needed)                       ](#set-bluetooth-pin-code-if-needed-most-likely-not-needed)
+- [Test AVRCP behavior and set serial port crossover jumpers if needed             ](#test-avrcp-behavior-and-set-serial-port-crossover-jumpers-if-needed)
+- [Debug Bluetooth connection if needed                                            ](#debug-bluetooth-connection-if-needed)
+
+
 
 
 Apply power and pair Bluetooth
@@ -1125,11 +1128,16 @@ ERROR" response doesn't appear until later. So don't assume that any
 command/response pair will always appear together on the debug console screen.
 
 
-Technical data (developers only)
+Technical Data
 ==============================================================================
 All sections below are for developer reference, and should not be needed by
 end-users of the BlueGigaEmpeg module unless performing repairs or other
 maintenance.
+
+- [Bluetooth Chip Firmware Upgrade                                                 ](#bluetooth-chip-firmware-upgrade)
+- [Set jumpers and switches, and modify Bluetooth board                            ](#set-jumpers-and-switches-and-modify-bluetooth-board)
+- [Hardware interface information and notes (internal board connections)           ](#hardware-interface-information-and-notes-internal-board-connections)
+- [Resources                                                                       ](#resources)
 
 
 Bluetooth Chip Firmware Upgrade
