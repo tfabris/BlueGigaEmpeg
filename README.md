@@ -913,21 +913,33 @@ working fine, then skip this step and go on to the next step.
 
 However, if the Bluetooth pairs successfully and streams music, but you are
 unable to play/pause/next the empeg via the car stereo's controls, and the
-track titles don't show up on the car stereo's screen, then try changing the
-crossover jumper block on the BlueGigaEmpeg module as described below.
+track titles don't show up on the car stereo's screen, then try the following.
+
+First check to make sure that your car stereo even has the features you're
+trying to use. For example, try pairing your smartphone to the car stereo and
+see if you get play/pause/next/previous commands, and track titles, with that.
+
+If your smartphone works, and the empeg does not, double check that the
+serial port is actually working on the empeg docking sled, and that none of
+its wires have pulled out of the docking connector.
+
+If the serial port is good but you still get no joy with AVRCP commands on the
+BlueGigaEmpeg module, then try changing the crossover jumper block inside the
+BlueGigaEmpeg module as described below.
 
 These jumpers exist because I have seen empeg sleds with different wiring on
 the RS-232 plug. Some are wired straight, some are wired crossover. The jumper
-block allows you to wire the BlueGigaEmpeg board as straight or crossover to
+block allows you to set the BlueGigaEmpeg board as straight or crossover to
 compensate for this. The BlueGigaEmpeg ships with its jumpers in the crossover
 configuration by default, in order to compensate for the situation where the
-empeg sled serial plug is wired as straight through.
+empeg sled serial plug is wired as straight through. I think/hope this is the
+most common configuration.
 
-To change this, open the BlueGigaEmpeg enclosure with a 2.5mm hex tool and
-lift out the board assembly. Look near the button and LED, and you'll see the
-RS-232 Crossover jumper block, with silkscreened instructions on the board to
-describe how to change the setting. Set the RS-232 Crossover jumper block to
-the opposite setting.
+To change the jumpers, open the BlueGigaEmpeg enclosure with a 2.5mm hex tool
+and lift out the board assembly. Look near the button and LED, and you'll see
+the RS-232 Crossover jumper block, with silkscreened instructions on the board
+to describe how to change the setting. Set the RS-232 Crossover jumper block
+to the opposite setting.
 
 Place the assembly back into the BlueGigaEmpeg enclosure so that the recessed
 RESET/PAIR button and the LED fit into the holes on the enclosure. If the LED
