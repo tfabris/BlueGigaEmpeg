@@ -1004,13 +1004,13 @@ Modify your Arduino compiler for larger buffer size
 ------------------------------------------------------------------------------
 The firmware on the BlueGigaEmpeg module resides in an Arduino chip which is
 part of the BlueGigaEmpeg assembly. To update to the latest BlueGigaEmpeg
-firmware on the Arduino, you must increase the size of the serial port buffers
-in the Arduino compiler, otherwise there will be intermittent errors, such as
-the track titles will sometimes not work.
-
-To fix the issue, you must edit one of the header files in the Arduino
-compiler libraries, and then you must compile and upload your sketch from your
-local PC to the Arduino board using the standalone version of the Arduino IDE.
+firmware on the Arduino, you will be uploading the sketch to the Arduino. But
+there is a modification that you must perform first: You must increase the
+default size of the Arduino serial port buffers. This can only be done by
+modifying the compiler's files directly. If this isn't done, then after you
+upload new firmware to the Arduino, there will be intermittent errors in the
+BlueGigaEmpeg operation, such as commands sometimes being missed and track
+titles sometimes not working or being incomplete.
 
 Download and install the Arduino IDE, linked from the
 [Prerequisites](#prerequisites) section of this document. Make sure to
