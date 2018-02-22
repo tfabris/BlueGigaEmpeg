@@ -393,6 +393,7 @@ as [hijack] only if that section does not already exist):
 These settings are case-sensitive. Make sure to synchronize with the player
 after changing the config.ini settings.
 
+<a name="hijack"></a>
 
 Upgrade the empeg Car's Hijack kernel and set "Serial Port Assignment"
 ------------------------------------------------------------------------------
@@ -755,8 +756,12 @@ If your smartphone works, and the empeg does not, double check that the
 serial port is actually working on the empeg docking sled, and that none of
 its wires have pulled out of the docking connector.
 
-If the serial port is good but you still get no joy with AVRCP commands on the
-BlueGigaEmpeg module, then try changing the crossover jumper block inside the
+If the serial port is good but you still get no joy with AVRCP commands or
+track titles, then make sure that you correctly upgraded your player to the
+latest Hijack kernel as described [here](#hijack), and that you performed the
+changes listed in ["Empeg Car configuration changes"](#empeg-car-configuration-changes).
+
+Finally, you can try changing the crossover jumper block inside the
 BlueGigaEmpeg module as described below.
 
 These jumpers exist because I have seen empeg sleds with different wiring on
