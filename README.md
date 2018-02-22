@@ -482,6 +482,13 @@ perfectly functional clock of its own. The empeg is already designed to save
 its playback position when you pull it out of the sled, so it should continue
 to work correctly in this wiring scheme.
 
+Normally, if the empeg were connected with analog audio to a regular
+amplifier, but you used this wiring scheme of connecting the memory wire to
+the accessory power, then there would be a pop sound when turning of the
+ignition. But with the BlueGigaEmpeg, all audio is digital and goes through
+the Bluetooth connection, so there will not be a pop sound from the empeg in
+this case.
+
 
 Connect external hardware connections
 ------------------------------------------------------------------------------
