@@ -627,6 +627,8 @@ on my Honda.
 	 get a reliable query of the current state of shuffle.
 	 
 ####  Not implemented:
+The items below are not implemented for Bluetooth but you can still do them on
+the empeg car front panel.
  - Music Search
  - Repeat mode (repeat all tracks, repeat one track, etc.)
  - Volume up/down/mute (set empeg to 0.0db and use car stereo volume instead)
