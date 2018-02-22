@@ -165,11 +165,10 @@ interior for I2S digital audio connection"](#i2s). Also, once the I2S
 modification has been completed, do not connect the empeg to any tuner
 module. Damage may occur if these instructions are not followed.
 
-Be sure you are capable of safely making the internal modification to the
-empeg Car player as described in the section of this document titled ["Modify
-empeg Car interior for I2S digital audio connection"](#i2s). I take no
-responsibility for damage incurred while you are dismantling and modifying
-your empeg Car player.
+Be sure you are capable of safely making internal modifications to the empeg
+Car player, and your are able to safely solder and shrink-tube electronic
+components. I take no responsibility for damage incurred while you are
+dismantling and modifying your empeg Car player.
 
 
 <a name="i2s"></a>
