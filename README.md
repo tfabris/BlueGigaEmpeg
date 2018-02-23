@@ -563,8 +563,8 @@ for this purpose.
   BlueGigaEmpeg module is lit. Look for the device "empeg Car" and pair it.
 
 - Your car stereo might put up a random number on the screen and prompt you to 
-  confirm that number on the device. The BlueGigaEmpeg will automatically
-  confirm that number for you.
+  confirm that number on the device. If it does, the BlueGigaEmpeg will
+  automatically confirm that number for you.
   
 - Your car stereo might prompt you to press a button to confirm or finalize
   the pairing process, or it might prompt you to choose the connection type.
