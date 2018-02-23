@@ -439,16 +439,17 @@ to reboot the player.
 Modify empeg's power connection to car
 ------------------------------------------------------------------------------
 I recommend that for this installation, you connect the empeg's wiring harness
-to your car differently than if it were a standard car installation. This
-might not be required in your situation, but it was required for me.
+to your car differently than if it were a standard car installation. It might
+not be required for your installation, but it was required for mine, so doing
+this now could save you time and hassle later.
 
-This design is intended for the empeg to be a secondary Bluetooth input into a
-modern car stereo, rather than being the car's main stereo system. In this
-situation, the empeg's sleep mode, the empeg's "memory" power connection, the
-way the BlueGigaEmpeg module gets its power from the empeg tuner connector,
-and the way the car stereo issues Bluetooth commands when you shut off the
-ignition, all combine to cause some interesting problems with power state
-transitions.
+This BlueGigaEmpeg is designed to turn the empeg into a secondary Bluetooth 
+input into a modern car stereo, rather than being the car's main stereo 
+system. In this situation, the empeg's sleep mode, the empeg's "memory" power 
+connection, the way the BlueGigaEmpeg module gets its power from the empeg 
+tuner connector, and the way the car stereo issues Bluetooth commands when 
+you shut off the ignition, all combine to cause some interesting problems with
+power state transitions.
 
 I found that if I connected the empeg to my car's power via the regular method
 (i.e. car accessory power to the orange ignition wire on the sled, and car
@@ -458,7 +459,7 @@ car, but the empeg would come back up out of sleep mode and play tracks
 silently to an unconnected Bluetooth module, draining my car's battery.
 
 To prevent this problem from happening to you, I recommend connecting power
-from the car to the empeg like this instead:
+between the car and the empeg like this instead:
 
 - Orange "ignition" wire from empeg: Connect to car 12v accessory power.
 
@@ -490,7 +491,7 @@ work correctly in this wiring scheme.
 
 Normally, if the empeg were connected with analog audio to a regular
 amplifier, but you used this wiring scheme of connecting the memory wire to
-the accessory power, then there would be a pop sound when turning of the
+the accessory power, then there would be a pop sound when turning off the
 ignition. But with the BlueGigaEmpeg, all audio is digital and goes through
 the Bluetooth connection, so there will not be a pop sound from the empeg in
 this case.
