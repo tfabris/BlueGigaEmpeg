@@ -1484,7 +1484,10 @@ three times, one for each of the I2S connections):
 
 Note: The BlueGigaEmpeg printed circuit board, Rev. 6, still has the old 10k
 value for the I2S voltage divider resistors silkscreened onto the board. The
-correct value for the I2S voltage divider resistors is 1.5k.
+correct value for the I2S voltage divider resistors is 1.5k. Also, these are
+silkscreened onto the wrong side of the board. Theoretically they should work
+on either side of the board but if you put them on the opposite side then
+there's more clearance.
 
 
 Resources
