@@ -964,15 +964,16 @@ still needs the tuner connector on the harness in order to function.
   
 ####  Variables in the Arduino sketch:
 
-There are several flag variables in the BlueGigaEmpeg.ino sketch file, defined
+There are some flag variables in the BlueGigaEmpeg.ino sketch file, defined
 at the top of the code, which can be modified if you need them when debugging.
 Change them as you see fit, and re-upload the sketch to the Arduino. Remember
 to change them back to their default values when you are done debugging, as
 some of them can slow down the responses on the BlueGigaEmpeg and cause the
-Bluetooth communication to miss things.
+Bluetooth communication to malfunction intermittently.
 
-Search for these flags in the BlueGigaEmpeg.ino sketch file. Refer to the code
-comments accompanying these flags in the file to understand them:
+The most common flags you might want to change are these. Search for these
+flags in the BlueGigaEmpeg.ino sketch file. Refer to the code comments
+accompanying these flags in the file to understand what they do.
 
       empegSendCommandDebug
       displayEmpegSerial
