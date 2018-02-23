@@ -674,9 +674,9 @@ Pairing issues
 When you press the recessed RESET/PAIR button on the BlueGigaEmpeg, it does
 the following:
 
- - Erases all previous Bluetooth pairings from the BlueGigaEmpeg.
+ - Erases all previous Bluetooth pairings from the Bluetooth chip.
  
- - Resets the module to default settings as defined in the Arduino code.
+ - Resets the Bluetooth chip to default settings.
 
  - Looks for Bluetooth devices to pair with for about 30 seconds, and pairs
    automatically with the first one that it sees.
