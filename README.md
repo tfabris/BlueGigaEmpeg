@@ -818,7 +818,7 @@ BlueGigaEmpeg module as described below.
 
 The crossover jumpers exist because I have seen empeg sleds with different 
 wiring on the RS-232 plug. Some are wired straight, some are wired crossover.
-I added the jumper so that you to set the BlueGigaEmpeg board as straight or 
+I added the jumper so that you can set the BlueGigaEmpeg board as straight or 
 crossover to compensate for this. The BlueGigaEmpeg ships with its jumpers in
 the crossover configuration by default, in order to compensate for the 
 situation where the empeg sled serial plug is wired as straight through. I 
