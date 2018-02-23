@@ -66,10 +66,10 @@ Demo video: https://www.youtube.com/watch?v=XS9U_ALc634
 Some modification of the empeg Car is required in order for this to work. The
 Molex connector on the empeg docking sled's wiring harness, which is normally
 used for an external AM/FM tuner module, must be converted into a digital
-audio interface for sending digital audio to the BlueGigaEmpeg module. Make
-sure to perform all modifications listed in this document for it to work
-correctly. Follow the [Installation](#installation) section of this document
-to make sure all steps are performed.
+audio interface for sending audio data to the BlueGigaEmpeg module. Make sure
+to perform all modifications listed in this document for it to work correctly.
+Follow the [Installation](#installation) section of this document to make sure
+all steps are performed.
 
 Caveats
 ------------------------------------------------------------------------------
