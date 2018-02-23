@@ -1199,7 +1199,8 @@ uploading".
 After the latest version of the BlueGigaEmpeg.ino sketch is successfully
 uploaded to the Arduino, look at the output in the Serial Monitor again. The
 top section of the output should list the RX and TX buffer sizes near the
-beginning, and indicate that they are good.
+beginning, and indicate that they are good. An error message will appear
+if the serial port buffer sizes are not good.
 
 Close the Arduino IDE and remove the USB cable. The USB cable should be
 disconnected during normal operation of the BlueGigaEmpeg module.
