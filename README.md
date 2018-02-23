@@ -444,7 +444,7 @@ to your car differently than if it were a standard car installation. This
 might not be required in your situation, but it was required for me.
 
 This design is intended for the empeg to be a secondary Bluetooth input into a
-modern car stereo, rather than the car's main stereo system. In this
+modern car stereo, rather than being the car's main stereo system. In this
 situation, the empeg's sleep mode, the empeg's "memory" power connection, the
 way the BlueGigaEmpeg module gets its power from the empeg tuner connector,
 and the way the car stereo issues Bluetooth commands when you shut off the
