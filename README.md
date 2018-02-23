@@ -347,8 +347,8 @@ Final wiring positions and colors:
 
 Disconnect all tuner modules from all sleds you own
 ------------------------------------------------------------------------------
-After completing the I2S wiring modification, the external tuner module will
-no longer work. Also, damage may occur if you connect a tuner module to a
+After completing the I2S wiring modification, the external empeg tuner module
+will no longer work. Also, damage may occur if you connect a tuner module to a
 modified empeg.
 
 To prevent problems, make sure to disconnect any tuner modules from any
