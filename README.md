@@ -689,8 +689,8 @@ button at all. Sometimes, instead, you do the pairing when the RESET/PAIR LED
 is not lit. There are some stereos which need you to initiate pairing solely
 on the car stereo's touch screen. My Honda is one of these types of stereos.
 In my case, for initial pairing with my car stereo the first time, I don't
-press the RESET/PAIR button at all except for the purpose of erasing previous
-pairings. I just go to my car's touch screen, tell it to pair with the
+press the RESET/PAIR button at all (except for the purpose of erasing previous
+pairings). I just go to my car's touch screen, tell it to pair with the
 Bluetooth device named "empeg Car", and it works. 
 
 Some Bluetooth stereos still need you to press that RESET/PAIR button on the
