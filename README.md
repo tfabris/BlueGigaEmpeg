@@ -707,6 +707,13 @@ stereo by turning the ignition off and on again, and reboot the BlueGigaEmpeg
 by sleeping and waking the empeg with a long press on the top button of the
 front panel.
 
+When trying to pair, turn off any nearby Bluetooth devices which are in
+"discoverable" mode or "pairing" mode. The BlueGigaEmpeg has no user
+interface, so it has no way to pick and choose which device it's trying to
+pair with. It will attempt to pair with the first one it sees, so if there's
+more than one in the immediate neighborhood, it might not get the one you
+think it's getting.
+
 One final note about the pairing process: Paired devices share a set of
 security keys with each other. Pressing the recessed RESET/PAIR button on the
 BlueGigaEmpeg module erases those keys from the WT32i chip. If your car stereo
@@ -714,6 +721,7 @@ has the option to remember a list of multiple different Bluetooth devices (my
 Honda has this), then you must remember to first delete the empeg Car from the
 list, if you have pressed the RESET/PAIR button and you are re-pairing a
 second time.
+
 
 Other issues
 ------------------------------------------------------------------------------
