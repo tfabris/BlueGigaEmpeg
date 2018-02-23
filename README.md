@@ -568,7 +568,7 @@ for this purpose.
   
 - Your car stereo might prompt you to press a button to confirm or finalize
   the pairing process, or it might prompt you to choose the connection type.
-  For instance, on my Honda, its touchscreen might prompt me to choose
+  For instance, on my Honda, its touchscreen will prompt me to choose
   whether to pair it as a music device, a phone device, or both. If you get
   a prompt like this, choose the music device option.
 
