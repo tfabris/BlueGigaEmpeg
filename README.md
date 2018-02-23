@@ -682,7 +682,7 @@ the following:
    automatically with the first one that it sees.
 
  - The blue RESET/PAIR LED is lit during this pairing mode, and will turn
-   off once either pairing is complete or once the 30 seconds has run out.
+   off once pairing is complete, or once the 30 seconds has run out.
 
 Though this is counterintuitive: Sometimes you don't press that RESET/PAIR
 button at all. Sometimes, instead, you do the pairing when the RESET/PAIR LED
