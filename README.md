@@ -546,8 +546,8 @@ for this purpose.
 
 - If your car stereo has a feature that lists existing Bluetooth pairings, and
   if there is an existing entry for "empeg Car" from an earlier pairing, make
-  sure to delete that earlier pairing, because its security key will be reset
-  when you press the RESET/PAIR button in the next step.
+  sure to delete that earlier entry from the car stereo, because its security
+  key will be reset when you press the RESET/PAIR button in the next step.
 
 - Press the recessed RESET/PAIR button on the BlueGigaEmpeg module. Its LED
   should light up blue for about 30 seconds or so.
