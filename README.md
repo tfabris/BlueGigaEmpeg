@@ -1179,7 +1179,7 @@ Run the Arduino IDE. In its "Tools" menu, select the "Board" menu and choose
 USB cable.
 
 Launch the Arduino Serial Monitor feature from the Arduino IDE. This is done
-by selecting "Tools" Then "Serial Monitor". Configure it to 115200 BPS, and
+by selecting "Tools", then "Serial Monitor". Configure it to 115200 BPS, and
 now you should see some serial port output from the Arduino. If you don't
 already see this, try closing and re-opening the Serial Monitor.
 
