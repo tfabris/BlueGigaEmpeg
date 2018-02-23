@@ -1417,12 +1417,12 @@ side of the board. Rev. 7, not yet manufactured at the time of this writing,
 has it corrected in the CAD file already.
 
 Arduino and Pair mode indicator LED: Arduino pin 50 digital I/O pin, connected
-to +LED through resistor. Current of resistor determined by online LED
-resistor calculator and LED values. Then -LED connect to GND. Example: If
-using a blue LED with a 3.2v forward voltage and 20ma current, and the Arduino
-analog power supply from the analog pins will be 5 volts, then use a 100 ohm
-resistor for this value. Online resistor current calculator:
-http://led.linear1.org/1led.wiz
+to +LED through a resistor. Then, -LED connect to GND. The value of the
+resistor is determined by an online LED resistor calculator and the LED spec
+values. Example: If using a blue LED with a 3.2v forward voltage and 20ma
+current, and the Arduino analog power supply from the analog pins will be 5
+volts, then use a 100 ohm resistor for this value. An online LED resistor
+calculator can be found here: http://led.linear1.org/1led.wiz
 
 LED soldering height: To fit into the hole in the casing well, the top of the
 diode assembly itself inside the LED lens (the metal part) should top out at
