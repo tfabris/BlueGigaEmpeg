@@ -453,7 +453,7 @@ power state transitions.
 
 I found that if I connected the empeg to my car's power via the regular method
 (i.e. car accessory power to the orange ignition wire on the sled, and car
-constant 12v power to the yellow memory wire on the sled) then there were
+constant 12v power to the yellow memory wire on the sled), then there were
 certain unusual states that it could get into. Sometimes I would shut off my
 car, but the empeg would come back up out of sleep mode and play tracks
 silently to an unconnected Bluetooth module, draining my car's battery.
