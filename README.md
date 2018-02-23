@@ -65,11 +65,11 @@ Demo video: https://www.youtube.com/watch?v=XS9U_ALc634
 
 Some modification of the empeg Car is required in order for this to work. The
 Molex connector on the empeg docking sled's wiring harness, which is normally
-used for an external AM/FM tuner module, must be converted into a digital audio
-interface for sending digital audio to the BlueGigaEmpeg module. Make sure to
-perform all modifications listed in this document for it to work correctly.
-Follow the [Installation](#installation) section of this document to make sure all
-steps are performed.
+used for an external AM/FM tuner module, must be converted into a digital
+audio interface for sending digital audio to the BlueGigaEmpeg module. Make
+sure to perform all modifications listed in this document for it to work
+correctly. Follow the [Installation](#installation) section of this document
+to make sure all steps are performed.
 
 Caveats
 ------------------------------------------------------------------------------
@@ -163,18 +163,20 @@ Make sure you have all of these things before working with the BlueGigaEmpeg:
 ####  Important:
 
 The BlueGigaEmpeg module works by connecting to the Molex connector on the
-back of the empeg Car docking sled which was originally intended for the
-tuner module. However, it must be modified before you can do this. Do not
-connect the BlueGigaEmpeg module to the empeg Car tuner module connector
-until after completing the step in this document titled ["Modify empeg Car
-interior for I2S digital audio connection"](#i2s). Also, once the I2S
-modification has been completed, do not connect the empeg to any tuner
-module. Damage may occur if these instructions are not followed.
+empeg Car's docking sled wiring harness. This connector was originally
+intended for the tuner module, and the empeg must be modified so that the
+tuner module connector becomes a digital audio connection instead.
+
+Do not connect the BlueGigaEmpeg module to the tuner module connector until
+after completing the step in this document titled ["Modify empeg Car interior
+for I2S digital audio connection"](#i2s). Also, once the I2S modification has
+been completed, do not connect the empeg to any tuner module. Damage may occur
+if these instructions are not followed.
 
 Be sure you are capable of safely making internal modifications to the empeg
-Car player, and your are able to safely solder and shrink-tube electronic
-components. I take no responsibility for damage incurred while you are
-dismantling and modifying your empeg Car player.
+Car player, and your are able to solder and shrink-tube electronic components.
+I take no responsibility for damage incurred while you are dismantling and
+modifying your empeg Car player.
 
 
 <a name="i2s"></a>
@@ -190,23 +192,21 @@ motherboard. Use extreme caution when disassembling the empeg player.
 You will be modifying the interior of your empeg Car so that there can be
 three wires coming out the docking connector which carry digital audio data
 ("I2S" aka "IIS") and can connect to the BlueGigaEmpeg unit. This is done by
-hijacking three of the wires originally used for the FM Tuner Module on its
+hijacking three of the wires originally used for the empeg tuner module on its
 Molex connector. This tuner module connector will instead plug into the
 BlueGigaEmpeg electronic assembly, which contains the Bluetooth chip and the
 Arduino.
 
-IMPORTANT: Tuner module will no longer work after this modification. If you
-have any tuner modules, disconnect all of them from any and all sleds that you
-own. Damage may occur to your empeg and your tuner module if you dock your
-modified empeg to any tuner module after you make this modification.
+The empeg tuner module will no longer work after this modification, and damage
+may occur if you connect one your player. If you have a tuner module, now is a
+good time to disconnect it from the sled and put it away.
 
 ####  Disassembly of empeg Car:
 
 Partially disassemble your empeg player by carefully removing the fascia, lid
-and drive tray. You must do the disassembly carefully so as not to damage the
-empeg. You should be able to do this without disconnecting the IDE cable and
-without removing the display board. Be very careful not to break any of the
-components sticking off the back of the display board.
+and drive tray, as described below. You must do the disassembly gently, so as
+not to damage the empeg. Make sure not to break any of the components sticking
+off the back of the display board as you do this.
 
 - Use a 2.5mm hex tool to carefully remove four hex bolts from the fascia.
 
@@ -227,13 +227,13 @@ components sticking off the back of the display board.
 - Do not remove the display board.
 
 - Remove four Pozidriv screws on the outside sides of the player which are
-  holding the disk drive tray in place. Careful not to strip the screw heads
-  by using the wrong size or type of screwdriver. Information about Pozidriv
-  screws can be found here:
+  holding the disk drive tray in place. Be careful not to strip the screw
+  heads by using the wrong size or type of screwdriver. Information about
+  Pozidriv screws can be found here:
   https://en.wikipedia.org/wiki/List_of_screw_drives#Pozidriv
 
-- Gently and carefully lift out the drive tray. Make sure not to bump any of
-  the components on the back of the display board. There are some particularly
+- Gently lift out the drive tray. Make sure not to bump any of the
+  components on the back of the display board. There are some particularly
   fragile components there, and it's really important that you don't bump
   them, or your empeg display will stop working entirely. They are really easy
   to hit, too, so be super careful.
@@ -242,7 +242,8 @@ components sticking off the back of the display board.
   and routed so that you can put it back exactly as you found it. 
 
 - Do not disconnect the IDE cable. You should be able to set the drive tray
-  aside carefully, without disconnecting the cable.
+  gently aside, without disconnecting the cable, and also without putting
+  and stress on the cable.
 
 ####  Jumper the I2S pads to the docking connector wires:
 
@@ -406,6 +407,7 @@ as [hijack] only if that section does not already exist):
 These settings are case-sensitive. Make sure to synchronize with the player
 after changing the config.ini settings.
 
+
 <a name="hijack"></a>
 
 Upgrade the empeg Car's Hijack kernel and set "Serial Port Assignment"
@@ -449,19 +451,19 @@ and the way the car stereo issues Bluetooth commands when you shut off the
 ignition, all combine to cause some interesting problems with power state
 transitions.
 
-I found that if I connected the empeg to my car via the regular method (i.e.
-car accessory power to the orange ignition wire on the sled, and constant 12v
-power to the yellow memory wire on the sled) then there were certain unusual
-states that it could get into. Sometimes I would shut off my car, but the
-empeg would come back up out of sleep mode and play tracks silently to an
-unconnected Bluetooth module, draining my car's battery.
+I found that if I connected the empeg to my car's power via the regular method
+(i.e. car accessory power to the orange ignition wire on the sled, and car
+constant 12v power to the yellow memory wire on the sled) then there were
+certain unusual states that it could get into. Sometimes I would shut off my
+car, but the empeg would come back up out of sleep mode and play tracks
+silently to an unconnected Bluetooth module, draining my car's battery.
 
 To prevent this problem from happening to you, I recommend connecting power
 from the car to the empeg like this instead:
 
 - Orange "ignition" wire from empeg: Connect to car 12v accessory power.
 
-- Yellow "memory" wire from empeg: Also connect to car 12v accessory power
+- Yellow "memory" wire from empeg: *Also* connect to car 12v accessory power
   (instead of the usual constant power).
 
 - Do *not* connect your car's constant 12v power to any part of the empeg.
@@ -484,8 +486,8 @@ BlueGigaEmpeg module will always power on and off at the same time as the car
 stereo, and nothing will get confused about power state. You might lose the
 date/time information on the empeg sometimes, but your modern car likely has a
 perfectly functional clock of its own. The empeg is already designed to save
-its playback position when you pull it out of the sled, so it should continue
-to work correctly in this wiring scheme.
+its playback position when it unexpectedly loses power, so it will continue to
+work correctly in this wiring scheme.
 
 Normally, if the empeg were connected with analog audio to a regular
 amplifier, but you used this wiring scheme of connecting the memory wire to
@@ -497,24 +499,23 @@ this case.
 
 Connect external hardware connections
 ------------------------------------------------------------------------------
-Do not connect the BlueGigaEmpeg module to the empeg Car's tuner connector
-until after completing the step in this document titled ["Modify empeg Car
-interior for I2S digital audio connection"](#i2s). Damage may occur if these
-instructions are not followed.
+Do not connect the BlueGigaEmpeg module to the empeg Car's tuner module
+connector until after completing the step in this document titled ["Modify
+empeg Car interior for I2S digital audio connection"](#i2s).
 
 If the I2S wiring modification has been completed, connect the tuner module
 connector from the empeg Car player docking sled to the tuner connector on the
 BlueGigaEmpeg module. This plug carries 12v power to the BlueGigaEmpeg module
 and also carries I2S audio data.
 
-Connect the RS-232 serial port from the empeg Car player docking sled to the
-serial port on the BlueGigaEmpeg module. This plug carries the play/pause/next
-control commands from the BlueGigaEmpeg to the empeg Car player software, and
-also carries the track metadata (title/artist/etc) from the empeg Car player
-software to the BlueGigaEmpeg module.
+Connect the RS-232 serial plug from the empeg Car player docking sled directly
+to the serial port on the BlueGigaEmpeg module. This plug carries the
+play/pause/next control commands from the BlueGigaEmpeg to the empeg Car
+player software, and also carries the track metadata (title/artist/etc) from
+the empeg Car player software to the BlueGigaEmpeg module.
 
 The USB "type B" connector on the outside of the BlueGigaEmpeg module
-enclosure is normally left disconnected. It is only used for debugging and for
+enclosure is normally left disconnected. It is only used for debugging or for
 uploading the latest Arduino code to the BlueGigaEmpeg module. See the section
 titled ["Debug Bluetooth Connection if needed"](#debug-bluetooth-connection-if-needed)
 for more details on how to use the connector for debugging.
@@ -711,16 +712,22 @@ When trying to pair, turn off any nearby Bluetooth devices which are in
 "discoverable" mode or "pairing" mode. The BlueGigaEmpeg has no user
 interface, so it has no way to pick and choose which device it's trying to
 pair with. It will attempt to pair with the first one it sees, so if there's
-more than one in the immediate neighborhood, it might not get the one you
-think it's getting.
+more than one pairable device in the immediate neighborhood, it might not get
+the one you think it's getting.
 
-One final note about the pairing process: Paired devices share a set of
-security keys with each other. Pressing the recessed RESET/PAIR button on the
-BlueGigaEmpeg module erases those keys from the WT32i chip. If your car stereo
-has the option to remember a list of multiple different Bluetooth devices (my
-Honda has this), then you must remember to first delete the empeg Car from the
-list, if you have pressed the RESET/PAIR button and you are re-pairing a
-second time.
+If necessary, experiment with different positioning of the BlueGigaEmpeg
+module in relation to your car stereo. The Bluetooth chip is located near the
+top center of the unit, near recessed RESET/PAIR button. It will work best if
+it has line of sight to your car stereo and/or is physically close to it.
+
+Paired devices share a set of security keys with each other. Pressing the
+recessed RESET/PAIR button on the BlueGigaEmpeg module erases previous
+pairings, thus erasing those keys from the WT32i chip. This is important if
+your car stereo remembers an onscreen list of existing paired Bluetooth
+devices and gives you the option to manage those devices: The empeg Car's
+entry in that list becomes invalid when you press its RESET/PAIR button. So
+you will need to delete the empeg Car from that list before trying to pair
+it a second time.
 
 
 Other issues
