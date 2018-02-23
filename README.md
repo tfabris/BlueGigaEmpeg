@@ -876,7 +876,7 @@ terminal debug interface:
 When connected to this serial terminal interface, everything you type is sent
 to the Bluetooth chip as a command, and all of the chip's responses are shown
 on your screen. You will also see all commands that the Arduino sends to the
-Bluetooth chip automatically, and see all of the chip's responses.
+Bluetooth chip automatically, and see all of the chip's responses to them.
 
 ####  Power up sequence (startup order) for Arduino debugging:
 
