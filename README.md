@@ -1040,10 +1040,10 @@ titles sometimes not working or being incomplete.
 
 Download and install the Arduino IDE, linked from the
 [Prerequisites](#prerequisites) section of this document. Make sure to
-download the standalone (downloadable) version of the Arduino IDE; do not use
-the Arduino web editor. The web editor won't work for this project because it
-doesn't have the capability of changing the header code to increase the size
-of the serial port buffer.
+download and install the standalone version of the Arduino IDE; do not try to
+use the Arduino web editor. Though the web editor is convenient, it won't work
+for this project because it doesn't have the capability of changing the header
+files to increase the size of the serial port buffers.
 
 Once it is installed, you'll need to edit a file to increase the size of the
 Arduino's serial port buffers. The file that you need to edit will be the same
