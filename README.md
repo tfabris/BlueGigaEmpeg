@@ -496,6 +496,13 @@ ignition. But with the BlueGigaEmpeg, all audio is digital and goes through
 the Bluetooth connection, so there will not be a pop sound from the empeg in
 this case.
 
+By the way, I'm using a set of "Add-a-circuit" fuse adapters to connect my
+empeg to the car's power at the car's fuse panel. If you use this method, 
+make sure to research to find the correct size. For example, mine are the
+"low profile mini fuse" type. Some helpful links:
+- https://en.wikipedia.org/wiki/Fuse_(automotive)
+- https://www.google.com/search?q=Add-a-circuit+Fuse+Adapter
+
 
 Connect external hardware connections
 ------------------------------------------------------------------------------
