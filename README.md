@@ -816,13 +816,13 @@ changes listed in ["Empeg Car configuration changes"](#empeg-car-configuration-c
 Finally, you can try changing the crossover jumper block inside the
 BlueGigaEmpeg module as described below.
 
-These jumpers exist because I have seen empeg sleds with different wiring on
-the RS-232 plug. Some are wired straight, some are wired crossover. The jumper
-block allows you to set the BlueGigaEmpeg board as straight or crossover to
-compensate for this. The BlueGigaEmpeg ships with its jumpers in the crossover
-configuration by default, in order to compensate for the situation where the
-empeg sled serial plug is wired as straight through. I think/hope this is the
-most common configuration.
+The crossover jumpers exist because I have seen empeg sleds with different 
+wiring on the RS-232 plug. Some are wired straight, some are wired crossover.
+I added the jumper so that you to set the BlueGigaEmpeg board as straight or 
+crossover to compensate for this. The BlueGigaEmpeg ships with its jumpers in
+the crossover configuration by default, in order to compensate for the 
+situation where the empeg sled serial plug is wired as straight through. I 
+think/hope this is the most common configuration.
 
 To change the jumpers, open the BlueGigaEmpeg enclosure with a 2.5mm hex tool
 and lift out the board assembly. Look near the button and LED, and you'll see
