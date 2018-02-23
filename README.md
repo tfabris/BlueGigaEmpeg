@@ -842,9 +842,8 @@ screwed into, and then they won't work any more.
 Debug Bluetooth connection if needed
 ------------------------------------------------------------------------------
 Everything hopefully will work perfectly, but there may be bugs in the Arduino
-code because this was not tested with a wide range of Bluetooth gear.
-
-If you need to debug the connection, here are some helpful tips.
+code because this was not tested with a wide range of Bluetooth gear. If you
+need to debug the connection, here are some helpful tips.
 
 ####  Debug mode with Arduino
 
