@@ -1411,8 +1411,10 @@ https://www.arduino.cc/en/Tutorial/Button
 
 Note: The BlueGigaEmpeg printed circuit board, Rev. 6, has the position of the
 10k button resistor labeled on the wrong side of the PCB. It will work on
-either side, but there is more clearance from the Arduino components if you
-move it to the other side of the board.
+either side, but I discovered after manufacturing the Rev. 6 boards that there
+is better clearance from the Arduino components if you move it to the other
+side of the board. Rev. 7, not yet manufactured at the time of this writing,
+has it corrected in the CAD file already.
 
 Arduino and Pair mode indicator LED: Arduino pin 50 digital I/O pin, connected
 to +LED through resistor. Current of resistor determined by online LED
@@ -1500,8 +1502,9 @@ Note: The BlueGigaEmpeg printed circuit board, Rev. 6, still has the old 10k
 value for the I2S voltage divider resistors silkscreened onto the board. The
 correct value for the I2S voltage divider resistors is 1.5k. Also, these are
 silkscreened onto the wrong side of the board. Theoretically they should work
-on either side of the board but if you put them on the opposite side then
-there's more clearance.
+on either side of the board, but if you put them on the opposite side, then
+there's more clearance from the Arduino. Rev. 7, not yet manufactured at the
+time of this writing, has them corrected in the CAD file already.
 
 
 Resources
