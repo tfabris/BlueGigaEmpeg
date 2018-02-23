@@ -242,7 +242,7 @@ off the back of the display board as you do this.
 
 - Do not disconnect the IDE cable. You should be able to set the drive tray
   gently aside, without disconnecting the cable, and also without putting
-  and stress on the cable.
+  any stress on the cable.
 
 ####  Jumper the I2S pads to the docking connector wires:
 
