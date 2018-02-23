@@ -578,7 +578,7 @@ for this purpose.
   Bluetooth devices, and when the device "empeg Car" appears, select it.
  
 - If the pairing still doesn't work, try sleeping the empeg (long press on top
-  button, turning off the car stereo completely (turn off car ignition), turn
+  button), turning off the car stereo completely (turn off car ignition), turn
   on the car ignition again, wake the empeg, and try again from the top.
 
 - When the pairing is completed, set the volume. With the car stereo volume
