@@ -138,6 +138,7 @@ Car player. Make sure to go through each of the steps linked below.
 - [Upgrade the empeg Car's Hijack kernel and set "Serial Port Assignment"          ](#upgrade-the-empeg-cars-hijack-kernel-and-set-serial-port-assignment)
 - [Modify empeg's power connection to car                                          ](#modify-empegs-power-connection-to-car)
 - [Connect external hardware connections                                           ](#connect-external-hardware-connections)
+- [Mounting                                                                        ](#mounting)
 
 
 Prerequisites
@@ -527,11 +528,40 @@ play/pause/next control commands from the BlueGigaEmpeg to the empeg Car
 player software, and also carries the track metadata (title/artist/etc) from
 the empeg Car player software to the BlueGigaEmpeg module.
 
+####  USB Connector:
+
 The USB "type B" connector on the outside of the BlueGigaEmpeg module
-enclosure is normally left disconnected. It is only used for debugging or for
-uploading the latest Arduino code to the BlueGigaEmpeg module. See the section
-titled ["Debug Bluetooth Connection if needed"](#debug-bluetooth-connection-if-needed)
-for more details on how to use the connector for debugging.
+enclosure is left disconnected during normal operation. It is only used for
+debugging, and for uploading the latest Arduino code to the BlueGigaEmpeg
+module. However, if you are mounting your BlueGigaEmpeg module permanently in
+a hard-to-reach location in your car, make sure to run a USB cable from this
+port to a reachable location, so that you can connect a laptop to it later.
+See the section of this document titled ["Debug Bluetooth Connection if
+needed"](#debug- bluetooth-connection-if- needed) for more details on how to
+use the USB connector for debugging.
+
+
+Mounting
+------------------------------------------------------------------------------
+The BlueGigaEmpeg module can be permanently mounted to the car if needed. Four
+mounting tabs are included on the casing for this purpose, though Velcro or
+other methods can work too. It can also be simply stuffed in somewhere with
+the rest of the attachment wiring, as long as it's not "dangling" and putting
+stress on the attachment cables.
+
+When mounting, remember to:
+
+- Try to leave the recessed RESET/PAIR button reachable somehow. You won't
+  need to use it very often, but when you do, it's super nice to be able to
+  reach it. If you can't make the button reachable, then the USB cable will
+  also allow you to pair, but the button is much more convenient.
+
+- Make sure to leave the USB port accessible for firmware updates, debugging,
+  and for pairing in situations where you can't reach the RESET/PAIR button.
+  My best recommendation is to find a type-a-to-type-b printer cable (you
+  probably have a few extras lying around), attach it to the BlueGigaEmpeg's
+  USB port, and route it somewhere in your car that you can reach with a
+  laptop when you need to. 
 
 
 Usage
@@ -558,15 +588,24 @@ for this purpose.
   not blasted when the pairing process is complete.
 
 - If your car stereo has a feature that lists existing Bluetooth pairings, and
-  if there is an existing entry for "empeg Car" from an earlier pairing, make
-  sure to delete that earlier entry from the car stereo, because its security
-  key will be reset when you press the RESET/PAIR button in the next step.
+  if there is an existing entry for "empeg Car" from an earlier pairing (for
+  example, if you need to pair a second time), make sure to delete that
+  earlier entry from the car stereo, because the security key will become
+  invalid when you press the RESET/PAIR button in the next step.
 
-- Press the recessed RESET/PAIR button on the BlueGigaEmpeg module. Its LED
-  should light up blue for about 30 seconds or so.
+- Press the recessed RESET/PAIR button on the BlueGigaEmpeg module. You do not
+  need to hold down the button, a single click is all it needs. The adjacent
+  LED should light up blue for about 30 seconds or so.
+  
+  - If you can't reach the RESET/PAIR button, then it is also possible to
+    initiate pairing from the USB debug connection, via a connected laptop, by
+    enabling the "typeZtoPair" flag variable in the Arduino software. See
+    ["Debug Bluetooth connection if needed"](#debug-bluetooth-connection-if-needed)
+    for more information.
 
-- On the car stereo, initiate pairing mode while the blue LED on the
-  BlueGigaEmpeg module is lit. Look for the device "empeg Car" and pair it.
+- On the car stereo, initiate its pairing mode while the blue LED on the
+  BlueGigaEmpeg module is lit. If the stereo offers you a list of devices to
+  pair with, then look for the device "empeg Car" and pair it.
 
 - Your car stereo might put up a random number on the screen and prompt you to 
   confirm that number on the device. If it does, the BlueGigaEmpeg will
@@ -984,6 +1023,16 @@ accompanying these flags in the file to understand what they do.
       empegSendCommandDebug
       displayEmpegSerial
       displayTracksOnSerial
+      typeZtoPair
+
+The "typeZtoPair" flag is particularly useful when the BlueGigaEmpeg module is
+permanently mounted in your car. It will allow you to initiate RESET/PAIR mode
+on the BlueGigaEmpeg from a connected laptop, without having to physically
+press the RESET/PAIR button. This can be helpful if you have mounted the
+BlueGigaEmpeg module in a hard-to-reach location in your car. Enable the flag,
+re-upload the sketch to the Arduino, after which, if you type Z in the serial
+debug console, the BlueGigaEmpeg will go into RESET/PAIR mode, the same as if
+you had pressed the button.
 
 ####  Useful debugging commands in the BlueGiga WT32i iWrap command language:
 
@@ -1208,8 +1257,12 @@ top section of the output should list the RX and TX buffer sizes near the
 beginning, and indicate that they are good. An error message will appear
 if the serial port buffer sizes are not good.
 
-Close the Arduino IDE and remove the USB cable. The USB cable should be
-disconnected during normal operation of the BlueGigaEmpeg module.
+Close the Arduino IDE and disconnect the USB cable from the computer. The USB
+cable is normally left disconnected during normal operation of the
+BlueGigaEmpeg module. It is safe to leave a USB cable attached to it, for
+example, if the BlueGigaEmpeg module is permanently mounted in a hard-to-reach
+place, you should leave a USB cable attached that extends to a reachable
+location. This will make future updates and debugging easier.
 
 
 Technical Data

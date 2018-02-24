@@ -71,17 +71,21 @@ boolean empegSendCommandDebug=false;
 
 // Special case debugging feature - If you type Z on the Arduino debugging
 // console, enter pairing mode as if you'd pressed the RESET/PAIR button on
-// the BlueGigaEmpeg assembly. Use with caution and enable at your own risk.
+// the BlueGigaEmpeg assembly. Useful if your module is mounted in a
+// hard-to-reach location in your car.
 //   Setting true:
 //    - Typing Z into the Arduino main serial port debug console will
 //      initiate pairing mode on the BlueGigaEmpeg module, the same as if
-//      you had pressed the RESET/PAIR button on the module.
+//      you had pressed the RESET/PAIR button on the module. This includes
+//      situations where a Z is part of some other command that you are
+//      typing, so use caution not to type commands with Z's in them
+//      while this flag is enabled.
 //   Setting false:
 //    - Typing Z will not do anything special.
 // This should be set to false most of the time, and only enabled for
-// debug sessions in which in which it is difficult to physically reach
+// situations in which in which it is difficult to physically reach
 // the RESET/PAIR button on the BlueGigaEmpeg module.
-boolean TypeZtoPair=false;
+boolean typeZtoPair=false;
 
 // Choose whether or not to display the empeg Serial Port outputs (for
 // instance the empeg boot up messages) on the serial debug console of the
@@ -1619,8 +1623,8 @@ char MainInputOutput()
       
       // Special Case Debug code only. Bench test code to force pairing mode
       // to start via a typed console command. Type Z to start pairing if this
-      // feature is enabled by the TypeZtoPair at the top of the code.
-      if (TypeZtoPair)
+      // feature is enabled by the typeZtoPair variable at the top of the code.
+      if (typeZtoPair)
       {
         if (String("z").equalsIgnoreCase((String)userChar))
         {
