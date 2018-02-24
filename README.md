@@ -322,10 +322,11 @@ location.
 After the glue is fully dry, carefully reassemble the player. Reassemble in
 the reverse order of disassembly. Make sure to put everything back where you
 found it, in particular, make sure the IDE cable is folded and routed the same
-way as it was when you disassembled the player. Be careful not to overtighten
-the hex bolts which hold the fascia in place, they should only be
-finger-tight. If you overtighten them, you may crack the fascia and/or prevent
-the buttons from working correctly.
+way as it was when you disassembled the player.
+
+When reassembling, be careful not to overtighten the hex bolts which hold the
+fascia in place, they should only be finger-tight. If you overtighten them,
+you may crack the fascia and/or prevent the buttons from working correctly.
 
 Final wiring positions and colors:
                                                                                                                                                                 
