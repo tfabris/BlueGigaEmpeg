@@ -463,6 +463,10 @@ To prevent this problem from happening to you, I recommend connecting power
 between the car and the empeg like this instead:
 
 - Orange "ignition" wire from empeg: Connect to car 12v accessory power.
+  - "Acessory Power" is the power that is only on when your car ignition is
+    on, or your key is set to the "accessory" position so that your car
+    stereo is turned on. Or the pushbutton equivalent of that, if your car
+    doesn't have a physical key.
 
 - Yellow "memory" wire from empeg: *Also* connect to car 12v accessory power
   (instead of the usual constant power).
