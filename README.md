@@ -558,7 +558,7 @@ When mounting, remember to:
 
 - Make sure to leave the USB port accessible for firmware updates, debugging,
   and for pairing in situations where you can't reach the RESET/PAIR button.
-  My best recommendation is to find a type-a-to-type-b printer cable (you
+  My best recommendation is to find a long type-a-to-type-b printer cable (you
   probably have a few extras lying around), attach it to the BlueGigaEmpeg's
   USB port, and route it somewhere in your car that you can reach with a
   laptop when you need to. 
@@ -596,7 +596,7 @@ for this purpose.
 - Press the recessed RESET/PAIR button on the BlueGigaEmpeg module. You do not
   need to hold down the button, a single click is all it needs. The adjacent
   LED should light up blue for about 30 seconds or so.
-  
+
   - If you can't reach the RESET/PAIR button, then it is also possible to
     initiate pairing from the USB debug connection, via a connected laptop, by
     enabling the "typeZtoPair" flag variable in the Arduino software. See
