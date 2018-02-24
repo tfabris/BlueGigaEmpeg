@@ -549,7 +549,7 @@ other methods can work too. It can also be simply stuffed in somewhere with
 the rest of the attachment wiring, as long as it's not "dangling" and putting
 stress on the attachment cables.
 
-When mounting, remember to:
+When mounting:
 
 - Try to leave the recessed RESET/PAIR button reachable somehow. You won't
   need to use it very often, but when you do, it's super nice to be able to
