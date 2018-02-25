@@ -270,8 +270,8 @@ empeg. The pinouts of these five pads are:
       4 = IISD1 aka  SD      aka "serial data" (1 of 2)
       5 = IISD2 aka  SD      aka "serial data" (2 of 2)
 
-Carefully solder three supplied jumper wires to pads 1,2, and 4, and you must
-keep track of which wires are soldered to which pads.
+Carefully solder the three supplied jumper wires to pads 1,2, and 4, and you
+must keep track of which wires are soldered to which pads.
 
 When soldering, make sure the jumper wires and the solder joints are flat to
 the board instead of sticking upwards. The disk drive tray gets close to that
@@ -300,10 +300,13 @@ connected to the docking connector assembly, and their other ends loose with
 small pin connectors on the ends of them.
 
 Carefully solder and shrink-tube your three jumper wires directly to these pin
-connectors in the exact order described below. After you have done this, your
-empeg's IIS pads will, when docked, now be carried out the back of the empeg,
-via the docking sled, into the tuner module Molex connector. Solder your jumper
-wires to the empeg interior wires in this order:
+connectors in the exact order described below. Shrink tubing has been
+supplied with the BlueGigaEmpeg.
+
+After you have done this, your empeg's IIS pads will, when docked, now be
+carried out the back of the empeg, via the docking sled, into the tuner module
+Molex connector. Solder your jumper wires to the empeg interior wires in this
+order:
 
     IIS Pad 1 (IISC)  jumpered to Yellow+Green wire, originally third from end.
     IIS Pad 2 (IISW)  jumpered to Brown wire, originally the end wire.
@@ -356,6 +359,9 @@ modified empeg.
 To prevent problems, make sure to disconnect any tuner modules from any
 docking sleds that you own, and pack them away somewhere safe. After making
 the I2S wiring modification to the empeg, do not use a tuner module any more.
+
+Label your empeg with the supplied stickers, which tell your future selves
+not to use this particular empeg with tuner modules any more.
 
 
 Empeg Car configuration changes
