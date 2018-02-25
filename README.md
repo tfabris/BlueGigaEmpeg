@@ -1320,6 +1320,11 @@ Steps:
    USB of the virtual machine. For example, if running Parallels on Mac, it
    will prompt you to do so when you plug it in while Parallels is running.)
 
+ - The red LED on the BetzTechnik board will dimly pulse, indicating that the
+   chip is asleep. Move the power switch on the BetzTechnik board into the
+   "on/up" position in order to turn on the board and make the LED blink
+   brightly and randomly.
+
  - Run Windows Device Manager. This can be found in the Windows control panel,
    by searching from the Start menu, or by running the program "DEVMGMT.MSC".
 
@@ -1374,9 +1379,7 @@ Steps:
    SerialDFU.exe utility which says "Factory Restore All". Make sure to CHECK
    that checkbox when doing the firmware upgrade.
 
- - Make sure the upgrade completes successfully. Note that you might need to
-   press the reset button or change the position of the power switch on the
-   board to succeed.
+ - Make sure the upgrade completes successfully (a message box should say so).
 
  - After the upgrade is successful, unplug the USB cable from the board and
    computer, and close the Serial DFU Tool software.
@@ -1408,10 +1411,12 @@ IMPORTANT: Use extreme care when cutting JP4. Make sure not to peel up the
 pads. There are two traces running to the USB side of the JP4 pad and if you
 peel up the pad or the traces, your board will no longer work correctly.
 
-On the BetzTechnik board, set the "Smd_2_pole_switch" (also labeled as "U5"
-on some boards) to the "down" position (looking at the board so that the
-board's large silkscreen name is readable) which is the "off" position for
-this switch. 
+Use a continuity tester to make sure that the two halves of JP4 do not have
+continuity.
+
+On the BetzTechnik board, set the power switch "U5" to the "down" position
+(looking at the board so that the board's large silkscreen name is readable)
+which is the "off" position for this switch. 
 
 
 Hardware interface information and notes (internal board connections)
@@ -1658,3 +1663,23 @@ Resources
 | Jumper Wires 9.5 inches     | Qty:3 | (lying around)                                                                                                     |
 
 
+Test, packing, and shipment checklist
+------------------------------------------------------------------------------
+Verify the following things before final packing and shipping:
+- BetzTechnik board upgraded to version 6.2.0-1122.
+- BetzTechnik board JP4 is cut.
+- BetzTechnik board power switch is in the down/off position.
+- Arduino contains current version of Github code, check version at bootup.
+- Arduino displays good serial buffers, check messages at bootup.
+- WT32i reports version 6.2.0-1122 when booted.
+- Powering up empeg displays a message on debug console (empeg messages work).
+- Pairing button and LED works, pairing mode pairs with the playback device.
+- Play/pause works on Bluetooth playback device (AVRCP+empeg commands work).
+- Audio playback quality is good.
+- Touch-check for no hot components after playing music for a few minutes.
+- Place assembly into enclosure, make sure fit is perfect, LED is in the hole.
+- Make sure pair button works with the enclosure closed up.
+- Screw in the enclosure bolts slowly in stages, to prevent heat stripping.
+- Can remove and reinsert enclosure bolts without stripping the plastic.
+- Box includes baggie with USB cable, jumper wires, stickers, shrink tubing.
+- Printout of one-pager instruction sheet in box.
