@@ -1287,7 +1287,7 @@ maintenance.
 - [Set jumpers and switches, and modify Bluetooth board                            ](#set-jumpers-and-switches-and-modify-bluetooth-board)
 - [Hardware interface information and notes (internal board connections)           ](#hardware-interface-information-and-notes-internal-board-connections)
 - [Resources                                                                       ](#resources)
-
+- [Test, packing, and shipment checklist                                           ](#test-packing-and-shipment-checklist)
 
 Bluetooth Chip Firmware Upgrade
 ------------------------------------------------------------------------------
@@ -1669,6 +1669,8 @@ Verify the following things before final packing and shipping:
 - BetzTechnik board upgraded to version 6.2.0-1122.
 - BetzTechnik board JP4 is cut.
 - BetzTechnik board power switch is in the down/off position.
+- Jumpers on BlueGigaEmpeg board are set to the "crossover" configuration.
+- LED is straight.
 - Arduino contains current version of Github code, check version at bootup.
 - Arduino displays good serial buffers, check messages at bootup.
 - WT32i reports version 6.2.0-1122 when booted.
@@ -1682,4 +1684,4 @@ Verify the following things before final packing and shipping:
 - Screw in the enclosure bolts slowly in stages, to prevent heat stripping.
 - Can remove and reinsert enclosure bolts without stripping the plastic.
 - Box includes baggie with USB cable, jumper wires, stickers, shrink tubing.
-- Printout of one-pager instruction sheet in box.
+- Printout of one-pager instruction sheet is included in the box.
