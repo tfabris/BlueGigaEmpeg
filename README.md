@@ -229,8 +229,9 @@ off the back of the display board as you do this.
 
 - Remove four Pozidriv screws on the outside sides of the player which are
   holding the disk drive tray in place. Be careful not to strip the screw
-  heads by using the wrong size or type of screwdriver. Information about
-  Pozidriv screws can be found here:
+  heads by using the wrong size or type of screwdriver. Make sure to select a
+  screwdriver which fits the heads of the screws good and tight. Information
+  about Pozidriv screws can be found here:
   https://en.wikipedia.org/wiki/List_of_screw_drives#Pozidriv
 
 - Gently lift out the drive tray. Make sure not to bump any of the
