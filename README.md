@@ -222,7 +222,8 @@ off the back of the display board as you do this.
   tricky on some players, requiring some gentle levering against the tabs with
   a screwdriver. You shouldn't need to bend or force anything, but it may be a
   bit of a tight fit as you remove it. Use caution not to slip and damage the
-  components on the display board.
+  components on the display board. As shown in this photo:
+  ![Lid removal](https://github.com/tfabris/BlueGigaEmpeg/blob/master/Lid%20removal.jpg)
 
 - Do not remove the display board.
 
