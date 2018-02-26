@@ -80,7 +80,7 @@ of Bluetooth gear. So far, I have only tested it on:
 - My Honda Accord 2017 factory stereo.
 - Kenwood Bluetooth-equipped car stereo in my roommate's car.
 - Plantronics Voyager Edge Bluetooth headset.
-- Onkyo home stereo with Bluetooth input.
+- Onkyo TX-SR33 home stereo with Bluetooth input.
 - Etekcity standalone Bluetooth receiver.
 - iHome brand toy Stardestroyer with a Bluetooth speaker.
 
