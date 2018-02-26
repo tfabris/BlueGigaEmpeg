@@ -795,6 +795,11 @@ it a second time.
 
 Other issues
 ------------------------------------------------------------------------------
+Some problems can be solved by rebooting the Bluetooth module. Simply sleep
+the empeg by pressing and holding the top button, then wake it up again with
+another button press. This bounces power to the tuner module connector where
+the BlueGigaEmpeg gets its power.
+
 If there is good audio, but commands such as next/previous track and
 play/pause don't work, and if track titles do not display on your car stereo
 (assuming your stereo has this ability), then there may be a simple fix for
