@@ -72,6 +72,9 @@ section of this document.
 
 Caveats
 ------------------------------------------------------------------------------
+This project only works with the empeg Car Mk2 or the Rio Car player. It will
+not work with the empeg Car Mk1 player.
+
 At the time of this writing, I have tested this project on a very limited set
 of Bluetooth gear. So far, I have only tested it on:
 - My Honda Accord 2017 factory stereo.
@@ -103,8 +106,6 @@ extender several years ago when they were still being sold, so I'm able to
 mount my empeg in my trunk with this. But if you don't have one, plan on
 still having to mount your empeg where you can get to it.
 
-This project only works with the empeg Car Mk2 or the Rio Car player. It will
-not work with the empeg Car Mk1 player.
 
 Acknowledgments
 ------------------------------------------------------------------------------
@@ -117,13 +118,16 @@ WT32i chip that is the one that finally got used in this particular design.
 Also particular thanks to Stuart Euans of Eutronix who created the empeg
 Display Extender board, which was critical to me being able to get my empeg
 mounted in my new Honda, since it doesn't have dash space for the whole thing.
-And massive thanks to Mark Lord who assisted me in countless ways with the
-design and implementation, taught me a ton of important things, found my bugs,
-fixed issues with the Arduino compiler, modified his Hijack kernel to support
-this project, and pointed out all of my EE design flaws. And last but not
-least, thanks to the entire empeg team who made such a fantastic car MP3
-player that we are still doing interesting things with it, nearly 20 years
-later.
+Big thanks to Peter Betz of Betztechnik, who made a convenient and perfectly
+sized breakout board containing the chip I wanted to work with, and who was
+very helpful and responsive in emails, and even made another manufacturing run
+with an updated design. And massive thanks to Mark Lord who assisted me in
+countless ways with the design and implementation, taught me a ton of
+important things, found my bugs, fixed issues with the Arduino compiler,
+modified his Hijack kernel to support this project, and pointed out all of my
+EE design flaws. And last but not least, thanks to the entire empeg team who
+made such a fantastic car MP3 player that we are still doing interesting
+things with it, nearly 20 years later.
 
 
 Installation
