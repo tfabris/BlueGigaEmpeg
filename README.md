@@ -340,19 +340,19 @@ you may crack the fascia and/or prevent the buttons from working correctly.
 
 Final wiring positions and colors:
                                                                                                                                                                 
-| Empeg IIS pads | Int. empeg wires * | Int. wht Conn pos **  | Sled Tuner Plug | BlueGigaEmpeg Tuner Plug | Bluetooth Chip | Usage                            |
-|----------------|--------------------|-----------------------|-----------------|--------------------------|----------------|----------------------------------|
-|  1 IISC        |  Yellow+Green wire |  Third from end       |  7 Purple       |  7  SCK                  |  30  PCM_CLK   |  Serial Clock                    |
-|  2 IISW        |  Brown wire        |  Right end            |  2 Grey         |  2  WS                   |  29  PCM_SYNC  |  Word Select aka Sync            |
-|  4 IISD1       |  Red wire          |  Second from end      |  1 Pink         |  1  SDIN                 |  27  PCM_IN    |  Serial Data aka PCM Audio Data  |
-|                |                    |                       |  4 Black        |  4  GND                  |      GND       |  Universal Ground                |
-|                |                    |                       |  8 Blue         |  8  12vPower             |                |  Power to voltage regulator      |
+| Empeg IIS pads | Interior empeg wires * | Interior white conn pos **  | Sled Tuner Plug | BlueGigaEmpeg Tuner Plug | Bluetooth Chip | Usage                            |
+|----------------|------------------------|-----------------------------|-----------------|--------------------------|----------------|----------------------------------|
+|  1 IISC        |  Yellow+Green wire     |  Third from end             |  7 Purple       |  7  SCK                  |  30  PCM_CLK   |  Serial Clock                    |
+|  2 IISW        |  Brown wire            |  Right end                  |  2 Grey         |  2  WS                   |  29  PCM_SYNC  |  Word Select aka Sync            |
+|  4 IISD1       |  Red wire              |  Second from end            |  1 Pink         |  1  SDIN                 |  27  PCM_IN    |  Serial Data aka PCM Audio Data  |
+|                |                        |                             |  4 Black        |  4  GND                  |      GND       |  Universal Ground                |
+|                |                        |                             |  8 Blue         |  8  12vPower             |                |  Power to voltage regulator      |
 
-    *  (These are the interior wires connecting the docking sled connector to the
-       motherboard.)
+    *  (These are the interior wires running between the docking sled and the
+        white connector on the empeg motherboard.)
     
-    ** (Original positions of these wires on the white connector near the Ethernet
-       plug, now disconnected from that connector.)
+    ** (Original positions of these wires on the white connector near the
+        Ethernet plug, now disconnected from that connector.)
 
 
 Disconnect all tuner modules from all sleds you own
