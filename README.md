@@ -893,18 +893,30 @@ situation where the empeg sled serial plug is wired as straight through. I
 think/hope this is the most common configuration.
 
 To change the jumpers, open the BlueGigaEmpeg enclosure with a 2.5mm hex tool
-and lift out the board assembly. Look near the button and LED, and you'll see
-the RS-232 Crossover jumper block, with silkscreened instructions on the board
-to describe how to change the setting. Set the RS-232 Crossover jumper block
-to the opposite setting.
+and lift out the electronic board assembly. Look near the button and LED, and
+you'll see the RS-232 Crossover jumper block, with silkscreened instructions
+on the board to describe how to change the setting. Set the RS-232 Crossover
+jumper block to the opposite setting.
 
-Place the assembly back into the BlueGigaEmpeg enclosure so that the recessed
-RESET/PAIR button and the LED fit into the holes on the enclosure. If the LED
-got bent, straighten it carefully so the LED fits into the hole.
+Place the board assembly back into the BlueGigaEmpeg enclosure so that the
+recessed RESET/PAIR button and the LED fit into the holes on the enclosure.
+If the LED got bent, straighten it carefully so the LED fits into the hole
+in the casing.
 
-When reassembling the BlueGigaEmpeg enclosure, be careful not to overtighten
-the screws, if you tighten them too tight, you'll strip the plastic they're
-screwed into, and then they won't work any more.
+You should not need to force the BlueGigaEmpeg board assembly back into its
+casing, but it is a very precise fit so that it doesn't rattle. You might
+have to nudge and coax it a bit into its final position, but it should fit
+perfectly without forcing it. When placing the lid back onto the enclosure,
+the lid should fit gently and perfectly without forcing it down. If you feel
+like you need to force the lid closed, then you either have the lid backwards
+or you haven't gotten the board assembly seated back into the casing
+correctly, so try again.
+
+When reassembling the BlueGigaEmpeg enclosure, make sure to put the screws
+back in carefully. If you're using a powered screwdriver, use a slow speed, so
+that friction and heat don't melt the 3D printed plastic, thus stripping the
+screw holes. Make sure not to overtighten the screws, which would also strip
+the screw holes. Just make them tight enough to keep the casing cleanly shut.
 
 
 Debug Bluetooth connection if needed
