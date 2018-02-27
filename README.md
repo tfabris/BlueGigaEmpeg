@@ -497,7 +497,7 @@ Bluetooth takes care of that now. No amp remote wire, because there is no amp
 connected directly to the empeg.
 
 When connected this way, the empeg does not receive a 12v constant power
-source at all, and will completely lose all power when you turn off the
+source. Instead, it will completely lose all power when you turn off the
 ignition, rather than going into sleep mode. The empeg and its attached
 BlueGigaEmpeg module will always power on and off at the same time as the car
 stereo, and nothing will get confused about power state. You might lose the
@@ -506,12 +506,10 @@ perfectly functional clock of its own. The empeg is already designed to save
 its playback position when it unexpectedly loses power, so it will continue to
 work correctly in this wiring scheme.
 
-Normally, if the empeg were connected with analog audio to a regular
-amplifier, but you used this wiring scheme of connecting the memory wire to
-the accessory power, then there would be a pop sound when turning off the
-ignition. But with the BlueGigaEmpeg, all audio is digital and goes through
-the Bluetooth connection, so there will not be a pop sound from the empeg in
-this case.
+In a normal car install, with analog audio and an amplifier connected to the
+empeg, the wiring scheme described above would cause a pop sound when turning
+off the ignition. But with the BlueGigaEmpeg, all audio is digital, and goes
+through the Bluetooth connection, so there will not be a pop sound.
 
 By the way, I'm using a set of "Add-a-circuit" fuse adapters to connect my
 empeg to the car's power at the car's fuse panel. This let me avoid the hassle
