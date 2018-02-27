@@ -636,7 +636,8 @@ for this purpose.
  
 - If the pairing still doesn't work, try sleeping the empeg (long press on top
   button), turning off the car stereo completely (turn off car ignition), turn
-  on the car ignition again, wake the empeg, and try again from the top.
+  on the car ignition again, wake the empeg, and try again from the top. This
+  ensures that all devices have been fully rebooted.
 
 - When the pairing is completed, set the volume. With the car stereo volume
   still turned down to a low level, turn the volume on the empeg Car front
