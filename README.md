@@ -602,7 +602,7 @@ for this purpose.
 - If your car stereo has a feature that lists existing Bluetooth pairings, and
   if there is an existing entry for "empeg Car" from an earlier pairing (for
   example, if you need to pair a second time), make sure to delete that
-  earlier entry from the car stereo, because the security key will become
+  earlier entry from the car stereo, because its security key will become
   invalid when you press the RESET/PAIR button in the next step.
 
 - Press the recessed RESET/PAIR button on the BlueGigaEmpeg module. You do
