@@ -379,8 +379,7 @@ correctly.
 I have tested the BlueGigaEmpeg with version 2.00 of the empeg Car software.
 It is designed to work with version 2.00 Beta 13 or version 2.00 Final. I have
 not tested it with the 3.0 Alpha version of the empeg Car software, but
-theoretically it should work. See the empeg Car FAQ for more information on
-upgrading the empeg Car player software if needed.
+theoretically it should work.
 
 #### Edit the config.ini on the player:
 
@@ -813,10 +812,10 @@ play/pause don't work, and if track titles do not display on your car stereo
 this. See the section titled ["Test AVRCP behavior and set serial port
 crossover jumpers if needed"](#test-avrcp-behavior-and-set-serial-port-crossover-jumpers-if-needed).
 
-Also check to make sure that the wires for the serial port connection (or any
-other connection for that matter) have not pulled out of the back of the
-docking connector on the empeg sled. This is a common problem. See the empeg
-FAQ for more information on this problem.
+Check to make sure that the wires for the serial port connection (or any other
+connection for that matter) have not pulled out of the back of the docking
+connector on the empeg sled. This is a common problem. See here for the
+correct wiring scheme: http://empegbbs.com/ubbthreads.php/topics/370309/
 
 If AVRCP commands and track titles fail to work intermittently, and it has
 occurred after you have uploaded a new version of the BlueGigaEmpeg firmware
