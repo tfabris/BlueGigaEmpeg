@@ -605,9 +605,9 @@ for this purpose.
   earlier entry from the car stereo, because the security key will become
   invalid when you press the RESET/PAIR button in the next step.
 
-- Press the recessed RESET/PAIR button on the BlueGigaEmpeg module. You do not
-  need to hold down the button, a single click is all it needs. The adjacent
-  LED should light up blue for about 30 seconds or so.
+- Press the recessed RESET/PAIR button on the BlueGigaEmpeg module. You do
+  *not* need to hold down the button, a single click is all it needs. The
+  adjacent LED should light up blue for about 30 seconds or so.
 
   - If you can't reach the RESET/PAIR button, then it is also possible to
     initiate pairing from the USB debug connection, via a connected laptop, by
