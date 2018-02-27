@@ -904,13 +904,13 @@ If the LED got bent, straighten it carefully so the LED fits into the hole
 in the casing.
 
 You should not need to force the BlueGigaEmpeg board assembly back into its
-casing, but it is a very precise fit so that it doesn't rattle. You might
-have to nudge and coax it a bit into its final position, but it should fit
+casing, but it is a very precise fit so that it doesn't rattle. You might have
+to nudge and coax it a bit into its final position, but it should fit
 perfectly without forcing it. When placing the lid back onto the enclosure,
-the lid should fit gently and perfectly without forcing it down. If you feel
-like you need to force the lid closed, then you either have the lid backwards
-or you haven't gotten the board assembly seated back into the casing
-correctly, so try again.
+the lid should fit gently and perfectly, and should close completely, without
+forcing it down. If you feel like you need to force the lid closed, then you
+either have the lid backwards, or you haven't gotten the board assembly seated
+back into the casing correctly, so try again.
 
 When reassembling the BlueGigaEmpeg enclosure, make sure to put the screws
 back in carefully. If you're using a powered screwdriver, use a slow speed, so
