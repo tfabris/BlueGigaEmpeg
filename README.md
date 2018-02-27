@@ -689,12 +689,18 @@ on my Honda.
  - Stop
    - Pressing Stop on the car stereo should pause the empeg.
  - Shuffle
-   - Note: Shuffle is implemented as a toggle on/off command. If your stereo
-     has a feature to display the current shuffling state (displaying whether
-	 shuffle is currently turned on or turned off), it will not be correctly
-	 indicated on your stereo's screen. The empeg car does not report its
-	 shuffle state to the serial port, and so the Bluetooth interface cannot
-	 get a reliable query of the current state of shuffle.
+   - Shuffle is implemented as a toggle on/off command. If your stereo has a
+     feature to display the current shuffling state (displaying whether
+     shuffle is currently turned on or turned off), it will not be correctly
+     indicated on your stereo's screen. The empeg car does not report its
+     shuffle state to the serial port, so the BlueGigaEmpeg cannot report the
+     correct state of shuffle to the car stereo. Pressing the shuffle button
+     on the car stereo should still toggle shuffle on the empeg on and off,
+     regardless of the indicated state. Since the empeg has different types
+     of shuffle, toggling shuffle from the car stereo will send the "%" 
+     command to the serial port on the empeg, which I believe will toggle
+     back and forth between "shuffle off" and "shuffle using the last shuffle
+     type that you previously selected".
 	 
 ####  Not implemented:
 The items below are not implemented for Bluetooth, but you can still do them on
