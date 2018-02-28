@@ -244,7 +244,50 @@ const String codecString="SET CONTROL CODEC SBC JOINT_STEREO 44100 0\r\n        
 //
 // Set it to this to use BlueGiga iWrap6 auto reconnect feature and control
 // its reconnect speed.
+//
+// Fifth stage of working on issue #71... to go back to original parameters
+// and have a rethink. Sigh. I tried adding back in the fast reconnect but
+// with the  original working profile parameters because that seems to work
+// well as long as I have the profile parameters right. UPDATE: Still got an
+// IWRAP reboot with the fast reconnect parameter so let's go back to original
+// speed for now, and keep thinking about this.
 const String autoReconnectString = "SET CONTROL RECONNECT 2888 0 0 1f 19 A2DP";
+//
+// Fourth attempt to fix issue #71. Go back to "0 None" but then reverse the
+// A2DP and AVRCP profiles. Maybe it's a stack of profiles to connect in
+// reverse order? Some of the tested behavior seems to indicate that it might
+// be. Also try shortening the reconnect time to ludicrously low to make
+// certain that it always beats the phone to the punch. Did not work: There
+// were a lot of IWRAP reboots caused by the weird profile parameters, so we
+// can't do these profile parameters. Can't have it constantly rebooting IWRAP
+// while it's trying to connect.
+//   const String autoReconnectString = "SET CONTROL RECONNECT 888 0 0 1f 0 NONE AVRCP A2DP";
+//
+// Third attempt to fix issue #71. Counter-intuitively try AVRCP as the custom
+// profile and A2DP as the second profile. Didn't work - Doesn't solve issue
+// #71 - A2DP reconnects but AVRCP does not.
+//    const String autoReconnectString = "SET CONTROL RECONNECT 2888 0 0 1f 17 AVRCP A2DP";
+//
+// Second attempt to fix issue #71 - No AVRCP on Onkyo.  Try a middle ground
+// and specify the 19 A2DP custom profile, but then ALSO specify AVRCP and see
+// if that will work correctly to fix BOTH bugs. This didn't work. Somehow on
+// the Onkyo this ONLY connects the AVRCP profile and not the A2DP profile.
+// Don't know why.
+//   const String autoReconnectString = "SET CONTROL RECONNECT 2888 0 0 1f 19 A2DP AVRCP";
+//
+// First attempt to fix issue #71 - No AVRCP on Onkyo. See if changing the
+// reconnect to not use a custom profile but to still reconnect to AD2P as
+// well as AVRCP works to fix this. This WORKED to fix the issue on the Onkyo
+// but then induced another unlivable problem on the Honda. Doing "0 NONE A2DP
+// AVRCP" re-induced something that looked like issue #60 on the Honda, i.e.,
+// reboots of the IWRAP, though they were not the same things as issue #60,
+// they were just IWRAP crashing and rebooting, period. Also it let the iPhone
+// in the door so that it connected first instead of the empeg sometimes. Bad.
+//   const String autoReconnectString = "SET CONTROL RECONNECT 2888 0 0 1f 0 NONE A2DP AVRCP";
+//
+// Version of string prior to issue #71 fix, this causes Onkyo problems but works
+// perfectly on all other devices besides the onkyo:
+//   const String autoReconnectString = "SET CONTROL RECONNECT 2888 0 0 1f 19 A2DP";
 //
 // Set it to this (blank string) if you want to turn off the BlueGiga iWrap6
 // reconnect feature and depend upon your stereo headunit to reconnect.
@@ -314,8 +357,8 @@ boolean PerformUtf8Conversion = true;
 // that requires more detailed handling and parsing.
 // NOTE: Update the matrix size and the array size both, if you are changing
 // these.
-int scFixMatrixSize = 9;
-String scFixMessageMatrix[9][2] =
+int scFixMatrixSize = 12;
+String scFixMessageMatrix[12][2] =
 {
     // Bluetooth in                        // Bluetooth out        
 
@@ -418,9 +461,20 @@ String scFixMessageMatrix[9][2] =
   // Note that these are NOT needed. You only need to issue streaming start
   // from a RING coming in from the headunit. It does not help to do it when
   // seeing a CONNECT message.
-  // { "CONNECT 1 A2DP 19",                   "A2DP STREAMING START"},
-  // { "CONNECT 2 A2DP 19",                   "A2DP STREAMING START"},
-  // { "CONNECT 3 A2DP 19",                   "A2DP STREAMING START"},
+  //
+  // UPDATE: Attempting to fix issue #71 (No Onkyo AVRCP), while also trying
+  // to prevent re-inducing issue #60 (Host sends bad PDU registrations forcing)
+  // me to reboot), I re-encountered issue #67 (silence after cold boot) and
+  // I think it's because I needed to speed up the reconnect interval to make
+  // it work. So I'm trying to put these STREAMING START commands back in here
+  // to fix issue #67 for good. This is an experiment. I'm also getting a problem
+  // where sometimes the WT32i reboots when I issue STREAMING START commands but
+  // I'm not entirely sure where the problem lies. Perhaps it is the quantity of
+  // streaming starts or the speed of reconnection in the reconnect command.
+  // Not sure yet.
+  { "CONNECT 1 A2DP 19",                   "A2DP STREAMING START"},
+  { "CONNECT 2 A2DP 19",                   "A2DP STREAMING START"},
+  { "CONNECT 3 A2DP 19",                   "A2DP STREAMING START"},
 };
 
 // Variable to control whether or not we reconnect the Bluetooth module
