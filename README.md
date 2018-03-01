@@ -946,7 +946,9 @@ track titles don't show up on the car stereo's screen, then try the following.
   bug with some devices that you might be encountering. Some devices, when you
   pair with them as A2DP, will automatically enable an AVRCP channel. Some
   might not. In that case, you can attempt to change the Arduino code variable
-  "autoReconnectMode" to 2, and see if that fixes the problem. See GitHub
+  "autoReconnectMode" to 2, and see if that fixes the problem. If you change
+  this value, make sure to re-upload the code to the Arduino, then press the
+  RESET/PAIR button and re-pair with your stereo after doing it. See GitHub
   issue #71 for more details on this problem and on the work-around.
 
 
