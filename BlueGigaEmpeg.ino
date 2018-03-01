@@ -160,6 +160,47 @@ boolean outputMillis=true;
 // data on the serial port when it is not needed.
 boolean displayTracksOnSerial=false;
 
+
+// Configure the mode that the BlueGigaEmpeg uses to reconnect to the host
+// stereo. Chooses the main reconnection string that commands the Bluetooth
+// module how to behave at power-on, in terms of how it attempts to reconnect
+// to its previously-connected pairing buddy (if any).
+//      Setting 0:
+//           - Disable reconnection. A blank string is sent to the Bluetooth
+//             chip instead of sending a command to automatically reconnect.
+//             This prevents the BlueGigaEmpeg from automatically connecting
+//             again after having been previously paired. It will be up to the
+//             host stereo to initiate automatic reconnection in this case.
+//             Note: If you want to use this non-default setting, you must do
+//             the following: You must upload the modified code to the
+//             BlueGigaEmpeg, then with the BlueGigaEmpeg running, you must
+//             reset and re-pair the BlueGigaEmpeg unit by pressing the
+//             RESET/PAIR button.
+//      Setting 1:
+//           - Default setting. The Bluetooth chip is commanded to attempt
+//             automatic reconnection to the previously-paired host stereo at
+//             any time that it is disconnected, including at power-on. It
+//             will continuously attempt reconnection in all cases at all
+//             times when it is not connected, if there is any previous
+//             pairing buddy in its memory.
+//      Setting 2:
+//           - Alternate setting. Similar to Setting 1 above, but uses a
+//             slightly different syntax for the reconnect command. This is an
+//             attempt to work around a bug where AVRCP commands didn't always
+//             work on certain devices. See GitHub issue #71 "Onkyo AVRCP
+//             commands do not work." for more details. Enable this alternate
+//             mode only if it fixes that specific bug with your stereo, since
+//             it may cause adverse affects when used with other stereos.
+//             Note: If you want to use this non-default setting, you must do
+//             the following: You must upload the modified code to the
+//             BlueGigaEmpeg, then with the BlueGigaEmpeg running, you must
+//             reset and re-pair the BlueGigaEmpeg unit by pressing the
+//             RESET/PAIR button.
+//
+// This setting should be left at the default value of "1" in most cases.
+const int autoReconnectMode = 1;
+
+
 // Strings to define which codecs to use for A2DP audio transmission. To
 // remove a codec from the capability list, use its command with no
 // parameters. For example:
@@ -183,77 +224,83 @@ const String codecString="SET CONTROL CODEC SBC JOINT_STEREO 44100 0\r\n        
 // Labs.
 //   const String codecString="SET CONTROL CODEC APT-X_LL JOINT_STEREO 44100 0\r\n            SET CONTROL CODEC APT-X JOINT_STEREO 44100 1\r\n            SET CONTROL CODEC SBC JOINT_STEREO 44100 2\r\n            SET CONTROL CODEC AAC";
 
+
+// Auto Reconnect - This next section is a big deal, it was the largest source
+// of bugs and issues on the WT32i chip over the long run, due to unclear
+// documentation. 
+// 
 // String to tell the unit to automatically try reconnecting every few seconds
 // when and if it ever becomes disconnected from its main pairing buddy.
 // Trying to make it grab hold of the car stereo as soon as the car turns on,
 // instead of connecting to my cellphone every time. Tried multiple possible
-// versions of this, only one of which produced decent results.
+// versions of this, only one of which produced decent results. Even that one
+// was very difficult to get working correctly.
 //
-// Version 1: "SET CONTROL RECONNECT". 
+// Version 1: "SET CONTROL RECONNECT". (Only one that worked decently.)
 //
-// The string may, in some cases, include a baked-in second additional
-// STORECONFIG command in some cases. If the command is preset, it is there to
-// store the configuration of the connection. The docs say that this
-// STORECONFIG command is merely to store the reconnect functionality but it's
-// not made clear if it stores all configuration information or just that one.
-// There are also some other places in the docs which say that the STORECONFIG
-// might not be needed depending on the bitmask value of the third parameter.
+// Descriptions of parameters which come after the "RECONNECT" parameter:
 //
-// First parameter is retry interval in milliseconds. The docs say that the
-// reconnect timer should be longer than 500ms.
+//   First parameter is retry interval in milliseconds. The docs say that the
+//   reconnect timer should be longer than 500ms.
 //
-// Second and third parameters are max attempts and total timeout, which are
-// set to zero to indicate infinite retry.
+//   Second and third parameters are max attempts and total timeout, which are
+//   set to zero to indicate infinite retry.
 //
-// Fourth parameter is a 16 bit bitmask. See section 6.89 in the "iWRAP 6.1.1
-// USER GUIDE AND API REFERENCE" document for details. It must be typed in as
-// a hexadecimal number. The bitmask values are:
+//   Fourth parameter is a 16 bit bitmask. See section 6.89 in the
+//   "iWRAP 6.1.1 USER GUIDE AND API REFERENCE" document for details. It must
+//   be typed in as a hexadecimal number. The bitmask values are:
 //
-// Bit 0 (value 1): Automatically store connection order after each established
-// connection. If this bit is set to 0 then user must manually store device order
-// before power off device by command: STORECONFIG
+//      Bit 0 (value 1): Automatically store connection order after each
+//      established connection. If this bit is set to 0 then user must
+//      manually store device order before power off device by command:
+//      STORECONFIG
 //
-// Bit 1 (value 2): Start again reconnection after correctly disconnected device.
+//      Bit 1 (value 2): Start again reconnection after correctly
+//      disconnected device.
 //
-// Bit 2 (value 4): Automatically make defragmentation and reset module when
-// there is no free memory for storing connection history order.
+//      Bit 2 (value 4): Automatically make defragmentation and reset
+//      module when there is no free memory for storing connection history
+//      order.
 //
-// Bit 3 (value 8): Automatically make reset module when link loss connection
-// appear.
+//      Bit 3 (value 8): Automatically make reset module when link loss
+//      connection appear.
 //
-// Bit 4 (value 16): Reconnect to all devices. When currently BT connection is
-// disconnected by the user and Bit 1 is set then last connected device will be
-// taken into account during reconnection procedure as a last device in queue.
-// When this bit is 0 and Bit 1 is set then last connected device will be out of
-// reconnection list until next reset or successful connection appear.
+//      Bit 4 (value 16): Reconnect to all devices. When currently BT
+//      connection is disconnected by the user and Bit 1 is set then last
+//      connected device will be taken into account during reconnection
+//      procedure as a last device in queue. When this bit is 0 and Bit 1
+//      is set then last connected device will be out of reconnection list
+//      until next reset or successful connection appear.
 //
-// Bit 5 (value 32): If during reconnection link key from remote device is
-// missing then it will be removed automatically from paired device list.
+//      Bit 5 (value 32): If during reconnection link key from remote device
+//      is missing then it will be removed automatically from paired device
+//      list.
 //
-// Remaining bits of the fourth parameter must be zero.
+//      Remaining bits of the fourth parameter must be zero.
 //
-// Fifth and sixth parameters are custom target and custom profile. It should
-// be "19 A2DP" to set a custom A2DP profile, and "0 NONE" or perhaps "0 NONE
-// A2DP AVRCP" if trying to specify the A2DP and AVRCP profiles. "19" is the
-// secret code, the "L2CAP PSM" code, for "A2DP", and 17 is the secret code
-// for "AVRCP".
+//   Fifth and sixth parameters are custom target and custom profile. It should
+//   be "19 A2DP" to set a custom A2DP profile, and "0 NONE" or perhaps "0 NONE
+//   A2DP AVRCP" if you don't want to use a custom profile at all and you're
+//   trying to specify the A2DP and AVRCP profiles directly without a custom
+//   profile. "19" is the secret code, the "L2CAP PSM" code, for "A2DP", and 17
+//   is the secret code for "AVRCP".
 //
-// Seventh parameter and on (if used), are the list of profiles and the order
-// in which profiles are tried to connect. For instance if your list was HFP
-// A2DP AVRCP then it would try to connect to those profiles in that order
-// (ignoring whatever was in the custom profile right before it). If your list
-// is CUSTOM A2DP AVRCP then it would try the custom profile first, then A2DP
-// then AVRCP. It's important to remember that you must put CUSTOM in the list
-// to use the custom profile. You may omit the list entirely (ending the
-// command at the custom profile) and in that case the custom profile is
-// assumed to be used since it is the only specified profile. This is very
-// confusing and hard to glean from the docs. This caused many bugs as I tried
-// different combinations. Here are the bad ones I tried due to
-// misunderstanding the bad docs, and each of their bad results:
+//   Seventh parameter and on (if used), are the list of profiles and the order
+//   in which profiles are tried to connect. For instance if your list was HFP
+//   A2DP AVRCP then it would try to connect to those profiles in that order
+//   (ignoring whatever was in the custom profile right before it). If your list
+//   is CUSTOM A2DP AVRCP then it would try the custom profile first, then A2DP
+//   then AVRCP. It's important to remember that you must put CUSTOM in the list
+//   to use the custom profile. You may omit the list entirely (ending the
+//   command at the custom profile) and in that case the custom profile is
+//   assumed to be used since it is the only specified profile. This is very
+//   confusing and hard to glean from the docs. This caused many bugs as I tried
+//   different combinations. Here are the bad ones I tried due to
+//   misunderstanding the bad docs, and each of their bad results:
 //
 //    const String autoReconnectString = "SET CONTROL RECONNECT 800 0 0 7 0 A2DP A2DP AVRCP\r\n            STORECONFIG";
 //    const String autoReconnectString = "SET CONTROL RECONNECT 4800 0 0 7 0 A2DP A2DP AVRCP\r\n            STORECONFIG";
-//    - Incorrect parameters. "0 A2DP" is non-sequiter, should be "0 NONE", but
+//    - Incorrect parameters. "0 A2DP" is non-sequitur, should be "0 NONE", but
 //      that doesn't matter since it was ignored. Instead it tried to connect
 //      A2DP AVRCP in that order.
 //    - This caused issue #60, bad PDU registrations from the Honda stereo.
@@ -299,7 +346,9 @@ const String codecString="SET CONTROL CODEC SBC JOINT_STEREO 44100 0\r\n        
 //   const String autoReconnectString = "";
 //    - Blank string works to turn off reconnect. Set it to this blank string
 //      if you want to turn off the BlueGiga iWrap6 reconnect feature and
-//      depend upon your stereo headunit to reconnect.
+//      depend upon your stereo headunit to reconnect. This is now a
+//      configurable option at the top of the code, see "autoReconnectMode" at
+//      the top of the code for details.
 //
 //   const String autoReconnectString = "SET CONTROL RECONNECT 2888 0 0 17 0 NONE A2DP AVRCP";
 //    - Parameters are syntactically correct.
@@ -332,7 +381,7 @@ const String codecString="SET CONTROL CODEC SBC JOINT_STEREO 44100 0\r\n        
 //      automatically initiate an AVRCP connection after we established an
 //      A2DP connection. All other devices do, but not the Onkyo.
 //
-const String autoReconnectString = "SET CONTROL RECONNECT 2888 0 0 17 0 NONE A2DP";
+// Currently used, default, auto reconnect string:
 //    - Parameters are syntactically correct.
 //    - 17 instead of 1f means no weird IWRAP reboots.  
 //    - Attempt to see if the root of many problems was the custom profile
@@ -344,6 +393,23 @@ const String autoReconnectString = "SET CONTROL RECONNECT 2888 0 0 17 0 NONE A2D
 //    - Works perfectly on Honda, still need to test on other devices.
 //    - To Do: Test to see if it magically fixes Issue #71 on Onkyo. I am not
 //      optimistic, but it's worth a try.
+const String autoReconnectString = "SET CONTROL RECONNECT 2888 0 0 17 0 NONE A2DP";
+
+// Version 1.5: Alternate version of autoReconnectString to fix issue #71.
+//
+// This is an attempted work around to issue #71 "No AVRCP on Onkyo". This is
+// not a solution since this cannot work universally to all devices, it causes
+// problems on other devices (induces issue #60 "Bad PDU Registrations" on my
+// Honda). However a user can enable this with the flag variable
+// "autoReconnectMode" at the top of the code if they encounter a problem.
+//    - Parameters are syntactically correct.
+//    - 17 instead of 1f means no weird IWRAP reboots.
+//    - No custom profile used.
+//    - A2DP and AVRCP are tried in that order.
+//    - Fixes issue #71 on Onkyo.
+//    - Re-induces issue #60 all over again just like the earlier
+//      syntactically-incorrect one.
+const String alternateAutoReconnectString = "SET CONTROL RECONNECT 2888 0 0 17 0 NONE A2DP AVRCP";
 
 
 // Version 2: "SET CONTROL AUTOCALL".
@@ -944,6 +1010,46 @@ void setup()
   priorTotalNumberString05.reserve(metadataSmallLength);
   priorGenreString06.reserve(metadataMaxLength);
   priorPlaybackPositionString07.reserve(metadataSmallLength);
+
+  // Configure the auto reconnect mode of this device based upon the user
+  // setting at the top of the code. This is to allow for alternate versions
+  // of the automatic reconnection behavior of the BlueGigaEmpeg. This is
+  // one part of a set of workarounds to mitigate issue #71 (no AVRCP on
+  // Onkyo) and issue #60 (Bad PDU Registrations) at the same time, since it
+  // seems that I can't fix both of them easily at the same time using the
+  // built in reconnect feature of the BlueGiga chip.
+  switch (autoReconnectMode)
+  {
+    case 0:
+      // If the user has configured autoReconnectMode to 0, then set
+      // autoReconnectString to a blank string to indicate that no automatic
+      // reconnects are to be attempted.
+      autoReconnectString = "";
+      break;
+
+    case 1:
+      // If the user has configured autoReconnectMode to 1, that is the
+      // default setting. In this case, autoReconnectString is already set to
+      // the correct default setting and there is nothing needed to do in this
+      // situation. Exit out of the switch statement without changing the
+      // contents of the string autoReconnectString.
+      break;
+
+    case 2:
+      // If the user has configured autoReconnectMode to 2, then it is because
+      // they want to use an alternate version of the reconnect string to fix
+      // a specific issue on their specific stereo. Change autoReconnectString
+      // to the alternate string so that the alternate string is used in all
+      // cases instead of the default string.
+      autoReconnectString = alternateAutoReconnectString;
+      break;
+
+    default:
+      // If the user has mis-configured the autoReconnectMode variable, then
+      // do nothing since autoReconnectString defaults to the correct default
+      // setting.
+      break;
+  }
   
   // Open serial communications on the built Arduino debug console serial port
   // which is pins 0 and 1, this is the same serial output that you see when
