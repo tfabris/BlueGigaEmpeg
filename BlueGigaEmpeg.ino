@@ -251,17 +251,20 @@ const String codecString="SET CONTROL CODEC SBC JOINT_STEREO 44100 0\r\n        
 // well as long as I have the profile parameters right. UPDATE: Still got an
 // IWRAP reboot with the fast reconnect parameter so let's go back to original
 // speed for now, and keep thinking about this. UPDATE: Had a think and found
-// out more information about the reconnect. To do: Try 19 A2DP CUSTOM AVRCP.
+// out more information about the reconnect. To do: Try 19 A2DP CUSTOM AVRCP
+// and if that doesn't work then also try 17 AVRCP CUSTOM A2DP.
 const String autoReconnectString = "SET CONTROL RECONNECT 2888 0 0 1f 19 A2DP";
 //
 // Fourth attempt to fix issue #71. Go back to "0 None" but then reverse the
 // A2DP and AVRCP profiles. Maybe it's a stack of profiles to connect in
 // reverse order? Some of the tested behavior seems to indicate that it might
-// be. Also try shortening the reconnect time to ludicrously low to make
-// certain that it always beats the phone to the punch. Did not work: There
-// were a lot of IWRAP reboots caused by the weird profile parameters, so we
-// can't do these profile parameters. Can't have it constantly rebooting IWRAP
-// while it's trying to connect. 
+// be. (UPDATE: No it's not reverse order, the specs say it's in the order
+// given, my only problem was not including CUSTOM in the list before.) Also
+// try shortening the reconnect time to ludicrously low to make certain that
+// it always beats the phone to the punch. Did not work: There were a lot of
+// IWRAP reboots caused by the weird profile parameters, so we can't do these
+// profile parameters. Can't have it constantly rebooting IWRAP while it's
+// trying to connect.
 //   const String autoReconnectString = "SET CONTROL RECONNECT 888 0 0 1f 0 NONE AVRCP A2DP";
 //
 // Third attempt to fix issue #71. Counter-intuitively try AVRCP as the custom
