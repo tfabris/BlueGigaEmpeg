@@ -250,7 +250,7 @@ const String codecString="SET CONTROL CODEC SBC JOINT_STEREO 44100 0\r\n        
 // with the  original working profile parameters because that seems to work
 // well as long as I have the profile parameters right. UPDATE: Still got an
 // IWRAP reboot with the fast reconnect parameter so let's go back to original
-// speed for now, and keep thinking about this.
+// speed for now, and keep thinking about this. 
 const String autoReconnectString = "SET CONTROL RECONNECT 2888 0 0 1f 19 A2DP";
 //
 // Fourth attempt to fix issue #71. Go back to "0 None" but then reverse the
@@ -260,19 +260,28 @@ const String autoReconnectString = "SET CONTROL RECONNECT 2888 0 0 1f 19 A2DP";
 // certain that it always beats the phone to the punch. Did not work: There
 // were a lot of IWRAP reboots caused by the weird profile parameters, so we
 // can't do these profile parameters. Can't have it constantly rebooting IWRAP
-// while it's trying to connect.
+// while it's trying to connect. TO DO: Retry this with a more normal reconnect
+// time.
 //   const String autoReconnectString = "SET CONTROL RECONNECT 888 0 0 1f 0 NONE AVRCP A2DP";
 //
 // Third attempt to fix issue #71. Counter-intuitively try AVRCP as the custom
 // profile and A2DP as the second profile. Didn't work - Doesn't solve issue
-// #71 - A2DP reconnects but AVRCP does not.
+// #71 - A2DP reconnects but AVRCP does not. WHY: This was also bad syntax.
+// Should have been "17 AVRCP CUSTOM A2DP" instead.
 //    const String autoReconnectString = "SET CONTROL RECONNECT 2888 0 0 1f 17 AVRCP A2DP";
 //
 // Second attempt to fix issue #71 - No AVRCP on Onkyo.  Try a middle ground
 // and specify the 19 A2DP custom profile, but then ALSO specify AVRCP and see
 // if that will work correctly to fix BOTH bugs. This didn't work. Somehow on
 // the Onkyo this ONLY connects the AVRCP profile and not the A2DP profile.
-// Don't know why.
+// Don't know why. UPDATE: Figured out why. In order for this to have worked
+// the way I intended it, it should have been 19 A2DP CUSTOM AVRCP. This is 
+// not clear in the documentation at all and took many readthroughs to
+// understand. If I specify a custom profile (in this case 19 A2DP) then it
+// will not be used unless I put CUSTOM in the profile list. So by not
+// including CUSTOM then it ignored the 19 A2DP. In other words:
+// Bad:  19 A2DP AVRCP 
+// Good: 19 A2DP CUSTOM AVRCP
 //   const String autoReconnectString = "SET CONTROL RECONNECT 2888 0 0 1f 19 A2DP AVRCP";
 //
 // First attempt to fix issue #71 - No AVRCP on Onkyo. See if changing the
