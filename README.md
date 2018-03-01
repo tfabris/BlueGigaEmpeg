@@ -871,9 +871,9 @@ track titles don't show up on the car stereo's screen, then try the following.
   and see if you get play/pause/next/previous commands, and track titles,
   with that.
 
-- If your smartphone works, and the empeg does not, double check that the
-  serial port is actually working on the empeg docking sled, and that none of
-  its wires have pulled out of the docking connector.
+- If AVRCP commands work with your smartphone, but the empeg does not, double
+  check that the serial port is actually working on the empeg docking sled,
+  and that none of its wires have pulled out of the docking connector.
 
 - Verify that you get good serial port messages from the empeg when you
   connect the RS-232 serial cable directly from your computer to the empeg
