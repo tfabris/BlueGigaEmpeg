@@ -866,56 +866,91 @@ However, if the Bluetooth pairs successfully and streams music, but you are
 unable to play/pause/next the empeg via the car stereo's controls, and the
 track titles don't show up on the car stereo's screen, then try the following.
 
-First check to make sure that your car stereo even has the features you're
-trying to use. For example, try pairing your smartphone to the car stereo and
-see if you get play/pause/next/previous commands, and track titles, with that.
+- First check to make sure that your car stereo even has the features you're
+  trying to use. For example, try pairing your smartphone to the car stereo
+  and see if you get play/pause/next/previous commands, and track titles,
+  with that.
 
-If your smartphone works, and the empeg does not, double check that the
-serial port is actually working on the empeg docking sled, and that none of
-its wires have pulled out of the docking connector.
+- If your smartphone works, and the empeg does not, double check that the
+  serial port is actually working on the empeg docking sled, and that none of
+  its wires have pulled out of the docking connector.
 
-If the serial port is good but you still get no joy with AVRCP commands or
-track titles, then make sure that you correctly upgraded your player to the
-latest Hijack kernel as described [here](#hijack), and that you performed the
-changes listed in ["Empeg Car configuration changes"](#empeg-car-configuration-changes).
+- Verify that you get good serial port messages from the empeg when you
+  connect the RS-232 serial cable directly from your computer to the empeg
+  docking sled serial port connection (with the BlueGigaEmpeg out of the
+  picture), and verify that they are coming in correctly at 115200 BPS.
 
-Finally, you can try changing the crossover jumper block inside the
-BlueGigaEmpeg module as described below.
+- If the serial port is good, but you still get no joy with AVRCP commands or
+  track titles, then make sure that you correctly upgraded your player to the
+  latest Hijack kernel as described [here](#hijack), and that you performed
+  the changes listed in
+  ["Empeg Car configuration changes"](#empeg-car-configuration-changes).
 
-The crossover jumpers exist because I have seen empeg sleds with different 
-wiring on the RS-232 plug. Some are wired straight, some are wired crossover.
-I added the jumpers so that you can set the BlueGigaEmpeg board as straight or
-crossover to compensate for this. The BlueGigaEmpeg ships with its jumpers in
-the crossover configuration by default, in order to compensate for the 
-situation where the empeg sled serial plug is wired as straight through. I 
-think/hope this is the most common configuration.
+- If the above things are verified as good, then use [debug mode](#debug),
+  temporarily enable the "displayEmpegSerial" feature in the Arduino code,
+  upload the code to the Arduino, cycle the power on the empeg, and watch
+  to make sure that serial output from the empeg appears on the screen. If
+  no serial port messages from the empeg appear in the debug console with
+  "displayEmpegSerial" enabled, then there is a chance that the serial
+  wiring is crossed over. Try changing the crossover jumper block inside
+  the BlueGigaEmpeg module:
 
-To change the jumpers, open the BlueGigaEmpeg enclosure with a 2.5mm hex tool
-and lift out the electronic board assembly. Look near the button and LED, and
-you'll see the RS-232 Crossover jumper block, with silkscreened instructions
-on the board to describe how to change the setting. Set the RS-232 Crossover
-jumper block to the opposite setting.
+  - The crossover jumpers exist because I have seen empeg sleds with
+    different wiring on the RS-232 plug. Some are wired straight, some are
+    wired crossover. I added the jumpers so that you can set the
+    BlueGigaEmpeg board as straight or crossover to compensate for this. The
+    BlueGigaEmpeg ships with its jumpers in the crossover configuration by
+    default, in order to compensate for the situation where the empeg sled
+    serial plug is wired as straight through. I think/hope this is the most
+    common configuration.
 
-Place the board assembly back into the BlueGigaEmpeg enclosure so that the
-recessed RESET/PAIR button and the LED fit into their corresponding holes on
-the enclosure. If the LED got bent, straighten it carefully so the LED fits
-into its hole in the casing.
+  - To change the jumpers, open the BlueGigaEmpeg enclosure with a 2.5mm hex
+    tool and lift out the electronic board assembly. Look near the button
+    and LED, and you'll see the RS-232 Crossover jumper block, with
+    silkscreened instructions on the board to describe how to change the
+    setting. Set the RS-232 Crossover jumper block to the opposite setting.
 
-You should not need to force the BlueGigaEmpeg board assembly back into its
-casing, but it is a very precise fit so that it doesn't rattle. You might have
-to nudge and coax it a bit into its final position, but it should fit
-perfectly without forcing it. When placing the lid back onto the enclosure,
-the lid should fit gently and perfectly, and should close completely, without
-forcing it down. If you feel like you need to force the lid closed, then you
-either have the lid backwards, or you haven't gotten the board assembly seated
-back into the casing correctly, so try again.
+  - Place the board assembly back into the BlueGigaEmpeg enclosure so that
+    the recessed RESET/PAIR button and the LED fit into their corresponding
+    holes on the enclosure. If the LED got bent, straighten it carefully so
+    the LED fits into its hole in the casing.
 
-When reassembling the BlueGigaEmpeg enclosure, make sure to put the screws
-back in carefully. If you're using a powered screwdriver, use a slow speed, so
-that friction and heat don't melt the 3D printed plastic, thus stripping the
-screw holes. Make sure not to overtighten the screws, which would also strip
-the screw holes. Just make them tight enough to keep the casing cleanly shut.
+  - You should not need to force the BlueGigaEmpeg board assembly back into
+    its casing, but it is a very precise fit so that it doesn't rattle. You
+    might have to nudge and coax it a bit into its final position, but it
+    should fit perfectly without forcing it. When placing the lid back onto
+    the enclosure, the lid should fit gently and perfectly, and should close
+    completely, without forcing it down. If you feel like you need to force
+    the lid closed, then you either have the lid backwards, or you haven't
+    gotten the board assembly seated back into the casing correctly, so try
+    again.
 
+  - When reassembling the BlueGigaEmpeg enclosure, make sure to put the
+    screws back in carefully. If you're using a powered screwdriver, use a
+    slow speed, so that friction and heat don't melt the 3D printed plastic,
+    thus stripping the screw holes. Make sure not to overtighten the screws,
+    which would also strip the screw holes. Just make them tight enough to
+    keep the casing cleanly shut.
+
+  - Recheck and see if this fixed the issue, then return the code variable
+    "displayEmpegSerial" back to its original state and re-upload the code to
+    the Arduino.
+
+- If changing the crossover jumpers does not make empeg serial port messages
+  appear on the debug screen with "displayEmpegSerial" enabled, then
+  re-diagnose from the top, because you've still got a serial port problem of
+  some kind.
+
+- If you are getting good serial port messages from the empeg, but you are
+  unable to get AVRCP commands working, there is one particular special case
+  bug with some devices that you might be encountering. Some devices, when you
+  pair with them as A2DP, will automatically enable an AVRCP channel. Some
+  might not. In that case, you can attempt to change the Arduino code variable
+  "autoReconnectMode" to 2, and see if that fixes the problem. See GitHub
+  issue #71 for more details on this problem and on the work-around.
+
+
+<a name="debug"></a>
 
 Debug Bluetooth connection if needed
 ------------------------------------------------------------------------------
