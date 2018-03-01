@@ -205,7 +205,7 @@ const String codecString="SET CONTROL CODEC SBC JOINT_STEREO 44100 0\r\n        
 // Second and third parameters are max attempts and total timeout, which are
 // set to zero to indicate infinite retry.
 //
-// Third parameter is a 16 bit bitmask. See section 6.89 in the "iWRAP 6.1.1
+// Fourth parameter is a 16 bit bitmask. See section 6.89 in the "iWRAP 6.1.1
 // USER GUIDE AND API REFERENCE" document for details. It must be typed in as
 // a hexadecimal number. The bitmask values are:
 //
@@ -230,95 +230,122 @@ const String codecString="SET CONTROL CODEC SBC JOINT_STEREO 44100 0\r\n        
 // Bit 5 (value 32): If during reconnection link key from remote device is
 // missing then it will be removed automatically from paired device list.
 //
-// Remaining bits of the third parameter must be zero.
+// Remaining bits of the fourth parameter must be zero.
 //
-// Fourth and fifth parameters are custom target and custom profile which I
-// think I had wrong in earlier versions. I think it should be "19 A2DP" if I
-// am using the custom profile, or "0 NONE" if I am not, and I was doing
-// neither of those things in previous versions. I think that these two
-// parameters must go together. "19" is the secret code for "A2DP", it is the
-// "L2CAP PSM" code for A2DP, and I think that the 19 must always be followed
-// by A2DP even though the docs are not clear on this point. Changing these
-// parameters to "19 A2DP" and leaving off all the other profile parameters
-// seems to fix issue #60.
+// Fifth and sixth parameters are custom target and custom profile. It should
+// be "19 A2DP" to set a custom A2DP profile, and "0 NONE" or perhaps "0 NONE
+// A2DP AVRCP" if trying to specify the A2DP and AVRCP profiles. "19" is the
+// secret code, the "L2CAP PSM" code, for "A2DP", and 17 is the secret code
+// for "AVRCP".
 //
-// Set it to this to use BlueGiga iWrap6 auto reconnect feature and control
-// its reconnect speed.
+// Seventh parameter and on (if used), are the list of profiles and the order
+// in which profiles are tried to connect. For instance if your list was HFP
+// A2DP AVRCP then it would try to connect to those profiles in that order
+// (ignoring whatever was in the custom profile right before it). If your list
+// is CUSTOM A2DP AVRCP then it would try the custom profile first, then A2DP
+// then AVRCP. It's important to remember that you must put CUSTOM in the list
+// to use the custom profile. You may omit the list entirely (ending the
+// command at the custom profile) and in that case the custom profile is
+// assumed to be used since it is the only specified profile. This is very
+// confusing and hard to glean from the docs. This caused many bugs as I tried
+// different combinations. Here are the bad ones I tried due to
+// misunderstanding the bad docs, and each of their bad results:
 //
-// Fifth stage of working on issue #71... to go back to original parameters
-// and have a rethink. Sigh. I tried adding back in the fast reconnect but
-// with the  original working profile parameters because that seems to work
-// well as long as I have the profile parameters right. UPDATE: Still got an
-// IWRAP reboot with the fast reconnect parameter so let's go back to original
-// speed for now, and keep thinking about this. UPDATE: Had a think and found
-// out more information about the reconnect. To do: Try 19 A2DP CUSTOM AVRCP
-// and if that doesn't work then also try 17 AVRCP CUSTOM A2DP.
-const String autoReconnectString = "SET CONTROL RECONNECT 2888 0 0 1f 19 A2DP";
-//
-// Fourth attempt to fix issue #71. Go back to "0 None" but then reverse the
-// A2DP and AVRCP profiles. Maybe it's a stack of profiles to connect in
-// reverse order? Some of the tested behavior seems to indicate that it might
-// be. (UPDATE: No it's not reverse order, the specs say it's in the order
-// given, my only problem was not including CUSTOM in the list before.) Also
-// try shortening the reconnect time to ludicrously low to make certain that
-// it always beats the phone to the punch. Did not work: There were a lot of
-// IWRAP reboots caused by the weird profile parameters, so we can't do these
-// profile parameters. Can't have it constantly rebooting IWRAP while it's
-// trying to connect.
-//   const String autoReconnectString = "SET CONTROL RECONNECT 888 0 0 1f 0 NONE AVRCP A2DP";
-//
-// Third attempt to fix issue #71. Counter-intuitively try AVRCP as the custom
-// profile and A2DP as the second profile. Didn't work - Doesn't solve issue
-// #71 - A2DP reconnects but AVRCP does not. WHY: This was also bad syntax.
-// Should have been "17 AVRCP CUSTOM A2DP" instead. See second attempt details
-// below for an explanation.
-//    const String autoReconnectString = "SET CONTROL RECONNECT 2888 0 0 1f 17 AVRCP A2DP";
-//
-// Second attempt to fix issue #71 - No AVRCP on Onkyo. Try a middle ground
-// and specify the 19 A2DP custom profile, but then ALSO specify AVRCP and see
-// if that will work correctly to fix BOTH bugs. This didn't work. Somehow on
-// the Onkyo this ONLY connects the AVRCP profile and not the A2DP profile.
-// Don't know why. UPDATE: Figured out why. In order for this to have worked
-// the way I intended it, it should have been 19 A2DP CUSTOM AVRCP. This is 
-// not clear in the documentation at all and took many a read-through to
-// understand. If I specify a custom profile (in this case 19 A2DP) then it
-// will not be used unless I put CUSTOM in the profile list. So by not
-// including CUSTOM then it ignored the 19 A2DP. In other words:
-// Bad:  19 A2DP AVRCP 
-// Good: 19 A2DP CUSTOM AVRCP
-//   const String autoReconnectString = "SET CONTROL RECONNECT 2888 0 0 1f 19 A2DP AVRCP";
-//
-// First attempt to fix issue #71 - No AVRCP on Onkyo. See if changing the
-// reconnect to not use a custom profile but to still reconnect to AD2P as
-// well as AVRCP works to fix this. This WORKED to fix the issue on the Onkyo
-// but then induced another unlivable problem on the Honda. Doing "0 NONE A2DP
-// AVRCP" re-induced something that looked like issue #60 on the Honda, i.e.,
-// reboots of the IWRAP, though they were not the same things as issue #60,
-// they were just IWRAP crashing and rebooting, period. Also it let the iPhone
-// in the door so that it connected first instead of the empeg sometimes. Bad.
-// I don't know why the reboots occurred or why it was letting the iPhone in
-// the door at all. This is still a mystery.
-//   const String autoReconnectString = "SET CONTROL RECONNECT 2888 0 0 1f 0 NONE A2DP AVRCP";
-//
-// Version of string prior to issue #71 fix, this causes Onkyo problems but
-// works perfectly on all other devices besides the Onkyo. This is because on
-// all other devices, the AVRCP connection happens automatically if the A2DP
-// connection works. The Onkyo however does not initiate an AVRCP connection
-// after A2DP works so nothing happens with AVRCP. Our goal is to get both,
-// and have them work without causing instability in the IWRAP.
-//   const String autoReconnectString = "SET CONTROL RECONNECT 2888 0 0 1f 19 A2DP";
-//
-// Set it to this (blank string) if you want to turn off the BlueGiga iWrap6
-// reconnect feature and depend upon your stereo headunit to reconnect.
-//    const String autoReconnectString = "";
-//
-// Keeping this for future reference: Intermittently buggy one caused issue #60:
-//    const String autoReconnectString = "SET CONTROL RECONNECT 4800 0 0 7 0 A2DP A2DP AVRCP\r\n            STORECONFIG";
-//
-// Note: To repro the "Bad PDU registration bug", uncomment this line. A short
-// reconnect interval repros the Bad PDU registration issue frequently:
 //    const String autoReconnectString = "SET CONTROL RECONNECT 800 0 0 7 0 A2DP A2DP AVRCP\r\n            STORECONFIG";
+//    const String autoReconnectString = "SET CONTROL RECONNECT 4800 0 0 7 0 A2DP A2DP AVRCP\r\n            STORECONFIG";
+//    - Incorrect parameters. "0 A2DP" is non-sequiter, should be "0 NONE", but
+//      that doesn't matter since it was ignored. Instead it tried to connect
+//      A2DP AVRCP in that order.
+//    - This caused issue #60, bad PDU registrations from the Honda stereo.
+//    - Reconnect interval 800 is too short, exacerbating other problems. The
+//      shorter the reconnect interval, the more often issue #60 reproduced.
+//    - STORECONFIG isn't needed. The "7" bitmask means we don't need it.
 //
+//   const String autoReconnectString = "SET CONTROL RECONNECT 2888 0 0 1f 0 NONE A2DP AVRCP";
+//   const String autoReconnectString = "SET CONTROL RECONNECT 888 0 0 1f 0 NONE AVRCP A2DP";
+//    - Parameters are syntactically correct.
+//    - Updated bitmask in fourth parameter to better behavior (1F). However
+//      it contains a mistake: The bit for "Automatically reset module when
+//      link loss connection" was set, which caused reboots sometimes.
+//    - This caused frequent reboots of the unit as it tried to connect to,
+//      the Honda, making things worse.
+//    - This fixed issue #71 on the Onkyo (no AVRCP on Onkyo) but caused
+//      Honda reboots during reconnection and let the iPhone in the door
+//      sometimes.
+//    - Speedier reconnect speed attempts (888) simply exacerbated reboots.
+//
+//   const String autoReconnectString = "SET CONTROL RECONNECT 2888 0 0 1f 19 A2DP AVRCP";
+//   const String autoReconnectString = "SET CONTROL RECONNECT 2888 0 0 1f 17 AVRCP A2DP";
+//    - Incorrect parameters. The lack of the word "CUSTOM" in the seventh
+//      parameter position means that custom profile never is used. So only
+//      one of the two ever got used. Either it didn't fix Onkyo issue #71,
+//      or it didn't play any sound.
+//    - 1f in fourth parameter still has the "reset module on link loss" bug.
+// 
+//   const String autoReconnectString = "SET CONTROL RECONNECT 2888 0 0 1f 19 A2DP CUSTOM AVRCP";
+//   const String autoReconnectString = "SET CONTROL RECONNECT 2888 0 0 1f 17 AVRCP CUSTOM A2DP";
+//    - Parameters are syntactically correct.
+//    - Even though custom profile is used in addition to the other profile,
+//      the first one re-induced issue #60 Bad PDU registrations, and the
+//      second one induced a large number of IWRAP reboots due to the "1f".
+//   
+//   const String autoReconnectString = "SET CONTROL RECONNECT 2888 0 0 1f 19 A2DP";
+//    - Parameters are syntactically correct. A single A2DP profile is used.
+//    - Works perfectly on Honda and several other devices.
+//    - Causes issue #71, no AVRCP on Onkyo because the Onkyo does not
+//      automatically initiate an AVRCP connection after we established an
+//      A2DP connection. All other devices do, but not the Onkyo.
+//    
+//   const String autoReconnectString = "";
+//    - Blank string works to turn off reconnect. Set it to this blank string
+//      if you want to turn off the BlueGiga iWrap6 reconnect feature and
+//      depend upon your stereo headunit to reconnect.
+//
+//   const String autoReconnectString = "SET CONTROL RECONNECT 2888 0 0 17 0 NONE A2DP AVRCP";
+//    - Parameters are syntactically correct.
+//    - 17 instead of 1f means no weird IWRAP reboots.
+//    - No custom profile used.
+//    - A2DP and AVRCP are tried in that order.
+//    - Fixes issue #71 on Onkyo.
+//    - Re-induces issue #60 all over again just like the earlier
+//      syntactically-incorrect one.
+// 
+//   const String autoReconnectString = "SET CONTROL RECONNECT 2888 0 0 17 0 NONE AVRCP A2DP";
+//    - Parameters are syntactically correct.
+//    - 17 instead of 1f means I expect no weird IWRAP reboots, but got them
+//      anyway.
+//    - No custom profile used.
+//    - Backwards order of AVRCP and A2DP connection, trying AVRCP first in
+//      an attempt to avoid issue #60.
+//    - Successfully avoids issue #60 but there are still random IWRAP
+//      reboots, so this is a no-go.
+//    - Also causes a particularly bad problem where the head unit constantly
+//      queries for new track info in a continuous loop. Very bad.
+//
+//   const String autoReconnectString = "SET CONTROL RECONNECT 2888 0 0 17 19 A2DP";
+//    - Parameters are syntactically correct.
+//    - 17 instead of 1f means no weird IWRAP reboots.  
+//    - "19 A2DP" without specifying "CUSTOM" is the same as if I had used
+//      "19 A2DP CUSTOM", i.e., it ends up defaulting to "CUSTOM" anyway.
+//    - Works perfectly on Honda and several other devices.
+//    - Causes issue #71, no AVRCP on Onkyo because the Onkyo does not
+//      automatically initiate an AVRCP connection after we established an
+//      A2DP connection. All other devices do, but not the Onkyo.
+//
+const String autoReconnectString = "SET CONTROL RECONNECT 2888 0 0 17 0 NONE A2DP";
+//    - Parameters are syntactically correct.
+//    - 17 instead of 1f means no weird IWRAP reboots.  
+//    - Attempt to see if the root of many problems was the custom profile
+//      entirely. In this case, do not use any custom profile, instead
+//      specify A2DP only, and specify it directly without a custom profile.
+//    - Conceptually "0 NONE A2DP" should be the same as "19 A2DP" or
+//      "19 A2DP CUSTOM", but this command has been super weird in other ways,
+//      so work with this for a while and see if it fixes other problems.
+//    - Works perfectly on Honda, still need to test on other devices.
+//    - To Do: Test to see if it magically fixes Issue #71 on Onkyo. I am not
+//      optimistic, but it's worth a try.
+
+
 // Version 2: "SET CONTROL AUTOCALL".
 //
 // Abandoned version of reconnect feature. This seems to work well, when it
