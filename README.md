@@ -1737,14 +1737,14 @@ Resources
 Test, packing, and shipment checklist
 ------------------------------------------------------------------------------
 Verify the following things before final packing and shipping:
-- BetzTechnik board upgraded to version 6.2.0-1122.
+- BetzTechnik board upgraded to version 6.2.0 build 1122.
 - BetzTechnik board JP4 is cut.
 - BetzTechnik board power switch is in the down/off position.
 - Jumpers on BlueGigaEmpeg board are set to the "crossover" configuration.
 - LED is straight.
 - Arduino contains current version of Github code, check version at bootup.
 - Arduino displays good serial buffers, check messages at bootup.
-- WT32i reports version 6.2.0-1122 when booted.
+- WT32i reports version "(6.2.0 build 1122)" when booted.
 - Powering up empeg displays a message on debug console (empeg messages work).
 - Pairing button and LED works, pairing mode pairs with the playback device.
 - Play/pause works on Bluetooth playback device (AVRCP+empeg commands work).
