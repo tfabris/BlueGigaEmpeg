@@ -783,8 +783,8 @@ When trying to pair, turn off any nearby Bluetooth devices which are in
 "discoverable" mode or "pairing" mode. The BlueGigaEmpeg has no user
 interface, so it has no way to pick and choose which device it's trying to
 pair with. It will attempt to pair with the first one it sees, so if there's
-more than one pairable device in the immediate neighborhood, it might not get
-the one you think it's getting.
+more than one pairable device in the immediate vicinity, it might not get the
+one you think it's getting.
 
 If necessary, experiment with different positioning of the BlueGigaEmpeg
 module in relation to your car stereo. The Bluetooth chip is located near the
