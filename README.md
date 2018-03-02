@@ -84,15 +84,16 @@ of Bluetooth gear. So far, I have only tested it on:
 - Etekcity standalone Bluetooth receiver.
 - iHome brand toy Stardestroyer with a Bluetooth speaker.
 
-Some of the devices listed above do not have full functionality. For instance,
-I cannot get track titles working on the Onkyo, and the Honda does not have
+Some of the devices listed above do not have full functionality. For example,
+The Onkyo does not display AVRCP track titles, and the Honda does not have
 controls for Shuffle, Fast Forward, or Rewind. As far as I can tell, these are
 limitations of the devices themselves, not problems with the BlueGigaEmpeg.
+These limitations exist when those devices are paired with smartphones, too.
 
 There are differences in Bluetooth implementation on various audio gear, and
-so there still might be bugs using this on your particular car stereo. This
-project is open source on GitHub, so that I can accept bug reports and code
-fixes from people with other brands of Bluetooth gear.
+so there still might be bugs when using the BlueGigaEmpeg on your particular
+car stereo. This project is open source on GitHub, so that I can accept bug
+reports and code fixes from people with other brands of Bluetooth gear.
 
 This is not intended to replace the empeg front panel user interface. This
 only allows you to do things like press Next Track, Pause, and Play on your
@@ -100,11 +101,11 @@ car stereo. The full menu and user interface of the empeg is still needed for
 all other features of the empeg, such as selecting playlists. So this module
 won't let you mount the empeg in your trunk, unless you also have a display
 extender kit from Eutronix.com as well, which would allow you to reach the
-empeg front panel from the driver's seat. Unfortunately, Stu at Eutronix
-isn't selling display extenders any more. I was lucky to get a display
-extender several years ago when they were still being sold, so I'm able to
-mount my empeg in my trunk with this. But if you don't have one, plan on
-still having to mount your empeg where you can get to it.
+empeg front panel from the driver's seat. Unfortunately, Stu at Eutronix isn't
+selling display extenders any more. I was lucky to get a display extender
+several years ago when they were still being sold, so I'm able to mount my
+empeg in my trunk with this. But if you don't have one, plan on still having
+to mount your empeg where you can get to it.
 
 
 Acknowledgments
