@@ -143,7 +143,7 @@ Car player. Make sure to go through each of the steps linked below.
 - [Empeg Car configuration changes                                                 ](#empeg-car-configuration-changes)
 - [Upgrade the empeg Car's Hijack kernel and set "Serial Port Assignment"          ](#upgrade-the-empeg-cars-hijack-kernel-and-set-serial-port-assignment)
 - [Modify empeg's power connection to car                                          ](#modify-empegs-power-connection-to-car)
-- [Connect external hardware connections                                           ](#connect-external-hardware-connections)
+- [Connect BlueGigaEmpeg to empeg Car player                                       ](#connect-bluegigaempeg-to-empeg-car-player)
 - [Mounting                                                                        ](#mounting)
 
 
@@ -523,7 +523,7 @@ the "low profile mini fuse" type. Some helpful links:
 - https://www.google.com/search?q=Add-a-circuit+Fuse+Adapter
 
 
-Connect external hardware connections
+Connect BlueGigaEmpeg to empeg Car player
 ------------------------------------------------------------------------------
 Do not connect the BlueGigaEmpeg module to the empeg Car's tuner module
 connector until after completing the step in this document titled ["Modify
