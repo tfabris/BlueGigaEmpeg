@@ -1045,7 +1045,7 @@ still needs the tuner connector on the harness in order to function.
 - Run the Arduino Serial Monitor or other serial terminal as described above.
 
 - Set the Serial Monitor program to 115200 baud, with either "Newline" or
-  "Both NL and CR" as line endings. If you are using a different serial
+  "Both NL & CR" as line endings. If you are using a different serial
   terminal program, set it to 115200 8n1 and turn on local echo.
 
 - Apply power to the empeg. You should see certain messages on the terminal
