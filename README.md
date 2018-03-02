@@ -549,8 +549,8 @@ module. However, if you are mounting your BlueGigaEmpeg module permanently in
 a hard-to-reach location in your car, make sure to run a USB cable from this
 port to a reachable location, so that you can connect a laptop to it later.
 See the section of this document titled ["Debug Bluetooth Connection if
-needed"](#debug- bluetooth-connection-if- needed) for more details on how to
-use the USB connector for debugging.
+needed"](#debug) for more details on how to use the USB connector for
+debugging.
 
 
 Mounting
