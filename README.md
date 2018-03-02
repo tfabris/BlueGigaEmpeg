@@ -612,7 +612,7 @@ for this purpose.
   - If you can't reach the RESET/PAIR button, then it is also possible to
     initiate pairing from the USB debug connection, via a connected laptop, by
     enabling the "typeZtoPair" flag variable in the Arduino software. See
-    ["Debug Bluetooth connection if needed"](#debug-bluetooth-connection-if-needed)
+    ["Debug Bluetooth connection if needed"](#debug)
     for more information.
 
 - On the car stereo, initiate its pairing mode while the blue LED on the
@@ -836,7 +836,7 @@ previously-closed bug:
 - Closed bugs: https://github.com/tfabris/BlueGigaEmpeg/issues?q=is:issue+is:closed
 
 If you have other problems not listed here, see this section: ["Debug
-Bluetooth connection if needed"](#debug-bluetooth-connection-if-needed).
+Bluetooth connection if needed"](#debug).
 
 
 Set Bluetooth PIN code if needed (most likely not needed)
