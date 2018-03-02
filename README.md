@@ -84,11 +84,12 @@ of Bluetooth gear. So far, I have only tested it on:
 - Etekcity standalone Bluetooth receiver.
 - iHome brand toy Stardestroyer with a Bluetooth speaker.
 
-Some of the devices listed above do not have full functionality. For example,
-The Onkyo does not display AVRCP track titles, and the Honda does not have
-controls for Shuffle, Fast Forward, or Rewind. As far as I can tell, these are
-limitations of the devices themselves, not problems with the BlueGigaEmpeg.
-These limitations exist when those devices are paired with smartphones, too.
+Some Bluetooth stereo playback devices do not have full functionality. For
+example, The Onkyo listed above does not display AVRCP track titles, and my
+2017 Honda does not have controls for Shuffle, Fast Forward, or Rewind. As far
+as I can tell, these are limitations of the devices themselves, not problems
+with the BlueGigaEmpeg: These limitations exist when those devices are paired
+with smartphones, too.
 
 There are differences in Bluetooth implementation on various audio gear, and
 so there still might be bugs when using the BlueGigaEmpeg on your particular
