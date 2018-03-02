@@ -987,8 +987,10 @@ terminal debug interface:
 
  - The "Serial Monitor" feature built into the Arduino IDE program. To run
    it, launch the Arduino IDE, select the "Tools" menu, then "Serial Monitor".
+   Set it to 115200 BPS and set line endings to "both NL & CR".
 
- - Any third party serial terminal program, such as "Putty".
+ - Any third party serial terminal program, such as "Putty". Set it to
+   115200 BPS, 8n1, with local echo turned on.
 
 When connected to this serial terminal interface, everything you type is sent
 to the Bluetooth chip as a command, and all of the chip's responses are shown
