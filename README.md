@@ -308,9 +308,10 @@ small pin connectors on the ends of them.
 
 Carefully solder and shrink-tube your three jumper wires directly to these pin
 connectors in the exact order described below. Shrink tubing has been
-supplied with the BlueGigaEmpeg.
+supplied with the BlueGigaEmpeg. Don't forget to put the shrink tubing onto
+the jumper wires before you solder them.
 
-After you have done this, your empeg's IIS pads will, when docked, now be
+After you have done this, your empeg's I2S pads will, when docked, now be
 carried out the back of the empeg, via the docking sled, into the tuner module
 Molex connector. Solder your jumper wires to the empeg interior wires in this
 order:
