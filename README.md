@@ -706,10 +706,11 @@ on my Honda.
 ####  Not implemented:
 The items below are not implemented for Bluetooth, but you can still do them on
 the empeg front panel.
- - Music Search
+ - Music search or playlist/track browsing
+ - Menu selection and navigation
  - Repeat mode (repeat all tracks, repeat one track, etc.)
  - Volume up/down/mute (set empeg to 0.0db and use car stereo volume instead)
-
+ 
 ####  Sleep mode:
 The empeg tuner connector only supplies power to the BlueGigaEmpeg module if
 the empeg is awake. If you put the empeg into sleep mode via a long press on
