@@ -999,30 +999,35 @@ Bluetooth chip automatically, and see all of the chip's responses to them.
 
 ####  Power up sequence (startup order) for Arduino debugging:
 
-The USB cable from the computer will power the Arduino (and also the Bluetooth
-chip because it is connected to the Arduino through the BlueGigaEmpeg
-interface board), but when the BlueGigaEmpeg assembly is connected to the
-empeg, power comes from the empeg tuner connector. Both power sources can be
-connected at the same time during debugging. If using the USB cable for
-debugging mode, the sequence order of connecting the cables and applying power
-is important.
+The BlueGigaEmpeg module can connect to any of these power sources:
 
-The BlueGigaEmpeg assembly, and all devices which are part of the assembly
-including the Arduino, normally get their power from the 12v power coming off
-the tuner connector on the empeg sled wiring harness. This means that if you
-plug it in and power the empeg, then the BlueGigaEmpeg is already powered by
-the time you try to attach your USB debug cable to the Arduino.
+- The tuner module connector from the empeg Car docking sled. This is the
+  normal way for it to get its power during normal operation.
 
-This causes a problem: If the Arduino is already externally powered when you
-connect the USB cable, then the computer cannot find its USB UART and is
-unable to connect to the debug port.
+- The Arduino USB "type B" port accessible on the BlueGigaEmpeg casing. This
+  allows you to upload new Arduino software to the module without needing to
+  connect the BlueGigaEmpeg to the empeg's docking sled.
 
-So to successfully debug via the Arduino USB debug cable, you must connect 
-the USB cable *first*, before applying power to the empeg (or before waking 
-the empeg from sleep). Meaning, if you are debugging in the car, you should 
-connect the USB cable first, and then turn on the ignition. If you are 
-debugging indoors, connect the USB cable first, then connect the AC adapter
-to the empeg.
+- Both of the above can be connected at the same time, and the BlueGigaEmpeg
+  will get its power from whichever one supplied power to it first.
+
+Because both power sources can be connected at the same time during debugging,
+if you are using the USB cable for debugging mode, the sequence order of
+connecting the cables and applying power is important.
+
+If you connect the BlueGigaEmpeg to the empeg docking sled and power it up,
+and then attach the Arduino USB cable to the computer, then the Arduino USB is
+not getting power from the USB port (the tuner connector was first) and so the
+USB connection will not identify itself to the computer. This causes a
+problem: The computer cannot find the Arduino's USB UART and is unable to
+connect to the debug port.
+
+So, to successfully debug via the Arduino USB debug cable, you must connect
+the USB cable to your computer *first*, and turn the computer on, before
+applying power to the empeg (or before waking the empeg from sleep). Meaning,
+if you are debugging in the car, you should  connect the USB cable first, and
+then turn on the ignition. If you are debugging indoors, connect the USB cable
+first, then connect the AC adapter to the empeg.
 
 If you are doing debugging/troubleshooting indoors, it's possible to use the
 empeg's 12v AC adapter, connected to the player's AC adapter input. The
