@@ -78,11 +78,11 @@ not work with the empeg Car Mk1 player.
 At the time of this writing, I have tested this project on a very limited set
 of Bluetooth gear. So far, I have only tested it on:
 - My Honda Accord 2017 factory stereo.
-- Kenwood Bluetooth-equipped car stereo in my roommate's car.
+- Kenwood KDC-BT318U car stereo.
 - Plantronics Voyager Edge Bluetooth headset.
 - Onkyo TX-SR33 home stereo with Bluetooth input.
-- Etekcity standalone Bluetooth receiver.
-- iHome brand toy Stardestroyer with a Bluetooth speaker.
+- Etekcity EA-TR1 standalone Bluetooth receiver.
+- iHome Li-B33E7 toy Stardestroyer with a Bluetooth speaker.
 
 Some Bluetooth stereo playback devices do not have full functionality. For
 example, The Onkyo listed above does not display AVRCP track titles, and my
