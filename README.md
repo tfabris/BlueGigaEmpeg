@@ -963,7 +963,7 @@ track titles don't show up on the car stereo's screen, then try the following.
 	  change it from 1 to 2, and save the file.
 	  
 	- Re-upload the code to the Arduino as described in the ["Updating
-	  firmware"](#updating-firmware) section,then press the RESET/PAIR button
+	  firmware"](#updating-firmware) section, then press the RESET/PAIR button
 	  and re-pair with your stereo after doing it.
 	  
 	- Double check that it solves the problem both immediately after pairing,
