@@ -947,12 +947,28 @@ track titles don't show up on the car stereo's screen, then try the following.
 - If you are getting good serial port messages from the empeg, but you are
   unable to get AVRCP commands working, there is one particular special case
   bug with some devices that you might be encountering. Some devices, when you
-  pair with them as A2DP, will automatically enable an AVRCP channel. Some
-  might not. In that case, you can attempt to change the Arduino code variable
-  "autoReconnectMode" to 2, and see if that fixes the problem. If you change
-  this value, make sure to re-upload the code to the Arduino, then press the
-  RESET/PAIR button and re-pair with your stereo after doing it. See GitHub
-  issue #71 for more details on this problem and on the work-around.
+  pair with them as A2DP, will automatically enable an AVRCP channel as well.
+  Some might not.
+  
+  - You can tell if you have this problem by using [debug mode](#debug) and
+    typing the LIST command while the module is paired. The output of the LIST
+    command should have three entries: Two A2DP channels for left and right
+    audio, and one AVRCP channel for commands and data. If your LIST command
+    shows only two A2DP channels but no AVRCP channel, then you have this
+	problem. Try the following:
+	
+	- Get the latest version of the BlueGigaEmpeg.ino code as described in the
+	  ["Updating firmware"](#updating-firmware) section, edit it, and change
+      the variable "autoReconnectMode" to 2 and save the file.
+	  
+	- Re-upload the code to the Arduino as described in the ["Updating
+	  firmware"](#updating-firmware) section,then press the RESET/PAIR button
+	  and re-pair with your stereo after doing it.
+	  
+	- Double check that it solves the problem both immediately after pairing,
+      and also solves the problem if you turn off your stereo and back on
+      again (i.e., after the BlueGigaEmpeg automatically reconnects). See
+	  GitHub issue #71 for more details on this problem and this work-around.
 
 
 <a name="debug"></a>
