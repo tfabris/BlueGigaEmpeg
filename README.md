@@ -1364,7 +1364,7 @@ Close the Arduino IDE and disconnect the USB cable from the computer. The USB
 cable is normally left disconnected during normal operation of the
 BlueGigaEmpeg module. It is safe to leave a USB cable attached to it, for
 example, if the BlueGigaEmpeg module is permanently mounted in a hard-to-reach
-place, you should leave a USB cable attached that extends to a reachable
+place, you should leave a USB cable attached which extends to a reachable
 location. This will make future updates and debugging easier.
 
 
