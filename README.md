@@ -809,10 +809,9 @@ another button press. This bounces power to the tuner module connector where
 the BlueGigaEmpeg gets its power.
 
 If there is good audio, but commands such as next/previous track and
-play/pause don't work, and if track titles do not display on your car stereo
-(assuming your stereo has this ability), then there may be a simple fix for
-this. See the section titled ["Test AVRCP behavior and set serial port
-crossover jumpers if needed"](#test-avrcp-behavior-and-set-serial-port-crossover-jumpers-if-needed).
+play/pause don't work, and if track titles do not display on your car stereo,
+See the section titled ["Test AVRCP behavior and set serial port crossover
+jumpers if needed"](#test-avrcp-behavior-and-set-serial-port-crossover-jumpers-if-needed).
 
 Check to make sure that the wires for the serial port connection (or any other
 connection for that matter) have not pulled out of the back of the docking
