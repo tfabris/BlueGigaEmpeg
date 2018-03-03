@@ -957,9 +957,10 @@ track titles don't show up on the car stereo's screen, then try the following.
     shows only two A2DP channels but no AVRCP channel, then you have this
 	problem. Try the following:
 	
-	- Get the latest version of the BlueGigaEmpeg.ino code as described in the
-	  ["Updating firmware"](#updating-firmware) section, edit it, and change
-      the variable "autoReconnectMode" to 2 and save the file.
+	- Get the latest version of the BlueGigaEmpeg.ino source code as described
+	  in the ["Updating firmware"](#updating-firmware) section. Edit the
+	  BlueGigaEmpeg.ino code file. Locate the variable "autoReconnectMode",
+	  change it from 1 to 2, and save the file.
 	  
 	- Re-upload the code to the Arduino as described in the ["Updating
 	  firmware"](#updating-firmware) section,then press the RESET/PAIR button
