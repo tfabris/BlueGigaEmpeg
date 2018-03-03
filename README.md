@@ -945,10 +945,10 @@ track titles don't show up on the car stereo's screen, then try the following.
   some kind.
 
 - If you are getting good serial port messages from the empeg, but you are
-  unable to get AVRCP commands working, there is one particular special case
-  bug with some devices that you might be encountering. Some devices, when you
-  pair with them as A2DP, will automatically enable an AVRCP channel as well.
-  Some might not.
+  still unable to get AVRCP commands working, there is one particular special
+  case bug with some devices that you might be encountering. Most devices,
+  when you pair with them as A2DP, will automatically enable an AVRCP channel
+  as well. I have found some which do not, though.
   
   - You can tell if you have this problem by using [debug mode](#debug) and
     typing the LIST command while the module is paired. The output of the LIST
