@@ -1043,10 +1043,10 @@ problem: The computer cannot find the Arduino's USB UART and is unable to
 connect to the debug port.
 
 So, to successfully debug via the Arduino USB debug cable, you must connect
-the USB cable to your computer *first*, and turn the computer on, before
-applying power to the empeg (or before waking the empeg from sleep). Meaning,
-if you are debugging in the car, you should  connect the USB cable first, and
-then turn on the ignition. If you are debugging indoors, connect the USB cable
+the USB cable to your computer *first*, with the computer on, before applying
+power to the empeg (or before waking the empeg from sleep). Meaning, if you
+are debugging in the car, you should  connect the USB cable first, and then
+turn on the ignition. If you are debugging indoors, connect the USB cable
 first, then connect the AC adapter to the empeg.
 
 If you are doing debugging/troubleshooting indoors, it's possible to use the
