@@ -1361,11 +1361,13 @@ beginning, and indicate that they are good. An error message will appear
 if the serial port buffer sizes are not good.
 
 Close the Arduino IDE and disconnect the USB cable from the computer. The USB
-cable is normally left disconnected during normal operation of the
-BlueGigaEmpeg module. It is safe to leave a USB cable attached to it, for
-example, if the BlueGigaEmpeg module is permanently mounted in a hard-to-reach
-place, you should leave a USB cable attached which extends to a reachable
-location. This will make future updates and debugging easier.
+cable should be left disconnected from the computer during normal operation of
+the BlueGigaEmpeg module. It is safe to leave a USB cable attached to the
+BlueGigaEmpeg module as long as you don't have the other end always hooked up
+to a computer. For example, if the BlueGigaEmpeg module is permanently mounted
+in a hard-to-reach place in your car, you should leave a USB cable attached to
+it which extends to a reachable location. This will make future firmware
+updates and debugging easier by bringing a laptop computer into your car.
 
 
 Technical Data
