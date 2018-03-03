@@ -1304,9 +1304,9 @@ USB cable in this situation. When connecting the Arduino to the computer via
 the USB cable, if that's the only connection, then no special connection order
 is needed.
 
-In some cases, though, you may also want to upload code to the Arduino with
-the BlueGigaEmpeg module connected to the empeg Car. This is possible to do,
-however, special connection instructions are needed if you do this:
+In some cases, though, you may also want to upload code to the Arduino while
+the BlueGigaEmpeg module is connected to the empeg Car. This is possible to
+do, however, special connection instructions are needed if you do this:
 
 - Do not connect the BlueGigaEmpeg module to the empeg Car until after
   completing the step in this document titled ["Modify empeg Car interior for
