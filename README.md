@@ -1004,8 +1004,10 @@ port, you can use these kinds of serial terminal programs to access the
 terminal debug interface:
 
  - The "Serial Monitor" feature built into the Arduino IDE program. To run
-   it, launch the Arduino IDE, select the "Tools" menu, then "Serial Monitor".
-   Set it to 115200 BPS and set line endings to "both NL & CR".
+   it, launch the Arduino IDE, select the "Tools" menu, select "port" and
+   select the correct port from the submenu. Then select "Tools" again,
+   then "Serial Monitor". Set it to 115200 BPS and set line endings to
+   "both NL & CR".
 
  - Any third party serial terminal program, such as "Putty". Set it to
    115200 BPS, 8n1, with local echo turned on.
