@@ -88,8 +88,8 @@ Some Bluetooth stereo playback devices do not have full functionality. For
 example, The Onkyo listed above does not display AVRCP track titles, and my
 2017 Honda does not have controls for Shuffle, Fast Forward, or Rewind. As far
 as I can tell, these are limitations of the devices themselves, not problems
-with the BlueGigaEmpeg: These limitations exist when those devices are paired
-with smartphones, too.
+with the BlueGigaEmpeg: These same limitations exist when those devices are
+paired with smartphones, too.
 
 There are differences in Bluetooth implementation on various audio gear, and
 so there still might be bugs when using the BlueGigaEmpeg on your particular
@@ -180,7 +180,7 @@ been completed, do not connect the empeg to any tuner module. Damage may occur
 if these instructions are not followed.
 
 Be sure you are capable of safely making internal modifications to the empeg
-Car player, and your are able to solder and shrink-tube electronic components.
+Car player, and you are able to solder and shrink-tube electronic components.
 I take no responsibility for damage incurred while you are dismantling and
 modifying your empeg Car player.
 
@@ -433,11 +433,11 @@ not already installed. Link to the Hijack kernel is found in the
 [Prerequisites](#prerequisites) section of this document. Make sure it is
 Hijack version 524 or later.
 
-In order to install the latest Hijack Kernel onto the empeg Car, you must
-connect the empeg car directly to your Windows computer's RS-232 serial port,
-or to a USB-to-RS-232 adapter cable if your computer does not have an RS-232
-serial port. Make sure the serial port drivers are installed and that you can
-see the empeg bootup messages correctly through a serial terminal program.
+In order to install the latest Hijack Kernel onto the empeg, you must connect
+the empeg directly to your Windows computer's RS-232 serial port, or to a
+USB-to-RS-232 adapter cable if your computer does not have an RS-232 serial
+port. Make sure the serial port drivers are installed and that you can see the
+empeg bootup messages correctly through a serial terminal program.
 
 To install the Hijack kernel, run Tony's Empeg Logo Editor. Link to the Logo
 Editor program is found in the [Prerequisites](#prerequisites) section of this
