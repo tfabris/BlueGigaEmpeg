@@ -1021,12 +1021,13 @@ Bluetooth chip automatically, and see all of the chip's responses to them.
 
 The BlueGigaEmpeg module can connect to any of these power sources:
 
-- The tuner module connector from the empeg Car docking sled. This is the
-  default way for it to get its power during normal operation.
+- Obtain power from the tuner module connector on the empeg's docking sled
+  wiring harness. This is the default way for it to get its power during
+  normal operation.
 
-- The Arduino USB "type B" port accessible on the BlueGigaEmpeg casing. This
-  allows you to upload new Arduino software to the module without needing to
-  connect the BlueGigaEmpeg to the empeg's docking sled.
+- Obtain power from the USB plug, the Arduino USB "type B" port accessible on
+  the BlueGigaEmpeg casing. Allows you to upload new Arduino firmware to the
+  BlueGigaEmpeg module while it is disconnected from the empeg's docking sled.
 
 - Both of the above can be connected at the same time, and the BlueGigaEmpeg
   will get its power from whichever one supplied power to it first.
