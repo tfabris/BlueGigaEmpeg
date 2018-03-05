@@ -609,7 +609,7 @@ for this purpose.
 - Press the recessed RESET/PAIR button on the BlueGigaEmpeg module. You do
   *not* need to hold down the button, a single click is all it needs. The
   adjacent LED should light up blue for about 30 seconds or so.
-
+  
   - If you can't reach the RESET/PAIR button, then it is also possible to
     initiate pairing from the USB debug connection, via a connected laptop, by
     enabling the "typeZtoPair" flag variable in the Arduino software. See
@@ -703,7 +703,7 @@ on my Honda.
      command to the serial port on the empeg, which I believe will toggle
      back and forth between "shuffle off" and "shuffle using the last shuffle
      type that you previously selected".
-	 
+
 ####  Not implemented:
 The items below are not implemented for Bluetooth, but you can still do them on
 the empeg front panel.
@@ -956,21 +956,21 @@ track titles don't show up on the car stereo's screen, then try the following.
     command should have three entries: Two A2DP channels for left and right
     audio, and one AVRCP channel for commands and data. If your LIST command
     shows only two A2DP channels but no AVRCP channel, then you have this
-	problem. Try the following:
-	
-	- Get the latest version of the BlueGigaEmpeg.ino source code as described
-	  in the ["Updating firmware"](#updating-firmware) section. Edit the
-	  BlueGigaEmpeg.ino code file. Locate the variable "autoReconnectMode",
-	  change it from 1 to 2, and save the file.
-	  
-	- Re-upload the code to the Arduino as described in the ["Updating
-	  firmware"](#updating-firmware) section, then press the RESET/PAIR button
-	  and re-pair with your stereo after doing it.
-	  
-	- Double check that it solves the problem both immediately after pairing,
+    problem. Try the following:
+
+    - Get the latest version of the BlueGigaEmpeg.ino source code as described
+      in the ["Updating firmware"](#updating-firmware) section. Edit the
+      BlueGigaEmpeg.ino code file. Locate the variable "autoReconnectMode",
+      change it from 1 to 2, and save the file.
+      
+    - Re-upload the code to the Arduino as described in the ["Updating
+      firmware"](#updating-firmware) section, then press the RESET/PAIR button
+      and re-pair with your stereo after doing it.
+      
+    - Double check that it solves the problem both immediately after pairing,
       and also solves the problem if you turn off your stereo and back on
       again (i.e., after the BlueGigaEmpeg automatically reconnects). See
-	  GitHub issue #71 for more details on this problem and this work-around.
+      GitHub issue #71 for more details on this problem and this work-around.
 
 
 <a name="debug"></a>
@@ -1091,8 +1091,8 @@ still needs the tuner connector on the harness in order to function.
   you will need to "select all" then copy and paste into a text editor.
   - If you happen to be using Hyperterminal on old versions of Windows, it has
     a known bug with copy/paste where it mangles the output, so don't use
-	that, use its feature for saving its output directly instead. Other
-	terminal programs should be OK though.
+    that, use its feature for saving its output directly instead. Other
+    terminal programs should be OK though.
 
 - Submit bug reports this way:
   - Create an account at http://www.GitHub.com if you don't already have one.
