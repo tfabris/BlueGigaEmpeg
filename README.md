@@ -789,8 +789,8 @@ one you think it's getting.
 
 If necessary, experiment with different positioning of the BlueGigaEmpeg
 module in relation to your car stereo. The Bluetooth chip is located near the
-top center of the unit, near recessed RESET/PAIR button. It will work best if
-it has line of sight to your car stereo and/or is physically close to it.
+top center of the unit, near the recessed RESET/PAIR button. It will work best
+if it has line of sight to your car stereo and/or is physically close to it.
 
 Paired devices share a set of security keys with each other. Pressing the
 recessed RESET/PAIR button on the BlueGigaEmpeg module erases previous
