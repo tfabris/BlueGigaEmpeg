@@ -1069,8 +1069,9 @@ still needs the tuner connector on the harness in order to function.
   "Both NL & CR" setting. If you are using a different serial terminal
   program, set your program to 115200 8n1, and turn on local echo.
 
-- Apply power to the empeg. You should a message appear on the console which
-  says "empeg player boot process has started". 
+- Apply power to the empeg. You should see a debug message appear on the
+  serial terminal program's console which says "empeg player boot process has
+  started".
 
 - Reproduce the issue, so that the commands and responses show up on the
   terminal output while the issue is occurring.
