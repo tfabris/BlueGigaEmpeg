@@ -569,11 +569,12 @@ When mounting:
   also allow you to pair, but the button is much more convenient.
 
 - Make sure to leave the USB port accessible for firmware updates, debugging,
-  and for pairing in situations where you can't reach the RESET/PAIR button.
-  My best recommendation is to find a long USB type-A-to-type-B cable (It's a
-  standard USB printer cable, you probably have a few extras of these lying
-  around already), attach it to the BlueGigaEmpeg's USB port, and route it
-  somewhere in your car that you can reach with a laptop when you need to. 
+  and especially if you mounted the BlueGigaEmpeg in a place where you can't
+  reach its RESET/PAIR button. My best recommendation is to find a long USB
+  type-A-to-type-B cable (It's a standard USB printer cable, you probably
+  have a few extras of these lying around already), attach it to the
+  BlueGigaEmpeg's USB port, and route it somewhere in your car that you can
+  reach with a laptop when you need to.
 
 
 Usage
