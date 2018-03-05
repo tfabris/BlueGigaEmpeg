@@ -1111,9 +1111,9 @@ still needs the tuner connector on the harness in order to function.
 	  the same issue?
   - Attach your debug log to the bug report.
 
-- When you are done with the debug session, remove the USB cable from the
-  Arduino debug port. This is normally left disconnected during normal
-  operation of the BlueGigaEmpeg module.
+- When you are done with the debug session, disconnect the USB cable from the
+  computer. It should be left disconnected during normal operation of the
+  BlueGigaEmpeg module.
   
 ####  Variables in the Arduino sketch:
 
