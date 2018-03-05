@@ -569,7 +569,8 @@ When mounting:
   also allow you to pair, but the button is much more convenient.
 
 - Make sure to leave the USB port accessible for firmware updates and
-  debugging. My best recommendation is to find a long USB type-A-to-type-B
+  debugging. If you have mounted the BlueGigaEmpeg in a hard-to-reach
+  location, then my best recommendation is to find a long USB type-A-to-type-B
   cable (It's a standard USB printer cable, you probably have a few extras of
   these lying around already), attach it to the BlueGigaEmpeg's USB port, and
   route it somewhere in your car that you can reach with a laptop when you
