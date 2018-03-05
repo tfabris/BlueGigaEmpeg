@@ -1142,10 +1142,10 @@ The "typeZtoPair" flag is particularly useful when the BlueGigaEmpeg module is
 permanently mounted in your car. It will allow you to initiate RESET/PAIR mode
 on the BlueGigaEmpeg from a connected laptop, without having to physically
 press the RESET/PAIR button. This can be helpful if you have mounted the
-BlueGigaEmpeg module in a hard-to-reach location in your car. Enable the flag,
-re-upload the sketch to the Arduino, after which, if you type Z in the serial
-debug console, the BlueGigaEmpeg will go into RESET/PAIR mode, the same as if
-you had pressed the button.
+BlueGigaEmpeg module in a hard-to-reach location where the RESET/PAIR button
+is inaccessible. Enable the flag and re-upload the sketch to the Arduino,
+after which, if you type Z in the serial debug console, the BlueGigaEmpeg will
+go into RESET/PAIR mode, the same as if you had pressed the button.
 
 ####  Useful debugging commands in the BlueGiga WT32i iWrap command language:
 
