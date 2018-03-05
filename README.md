@@ -1065,12 +1065,12 @@ still needs the tuner connector on the harness in order to function.
 
 - Run the Arduino Serial Monitor or other serial terminal as described above.
 
-- Set the Serial Monitor program to 115200 baud, with either "Newline" or
-  "Both NL & CR" as line endings. If you are using a different serial
-  terminal program, set it to 115200 8n1 and turn on local echo.
+- Set the Serial Monitor program to 115200 baud, with line endings set to the
+  "Both NL & CR" setting. If you are using a different serial terminal
+  program, set your program to 115200 8n1, and turn on local echo.
 
-- Apply power to the empeg. You should see certain messages on the terminal
-  such as "empeg player boot process has started".
+- Apply power to the empeg. You should a message appear on the console which
+  says "empeg player boot process has started". 
 
 - Reproduce the issue, so that the commands and responses show up on the
   terminal output while the issue is occurring.
@@ -1078,8 +1078,11 @@ still needs the tuner connector on the harness in order to function.
 - After the issue is reproduced, pause the empeg player so that additional
   timestamp reports no longer show up (screen stops scrolling constantly).
 
-- Type the "set" and "list" commands into the serial monitor so that their
-  results show up on the screen.
+- Type the "set" and "list" commands into the serial monitor, pressing the
+  Enter key after each one. Their output results should show up on the screen.
+  "Set" should show all basic settings of the Bluetooth module, and "list"
+  should show the currently-paired device, and which transport channels are
+  being used (such as A2DP and/or AVRCP).
 
 - Save the output of the terminal program into a text document. For some
   terminal programs there is an option to save the output directly, for others
