@@ -1101,10 +1101,14 @@ still needs the tuner connector on the harness in order to function.
   - If yours is a new issue, then go to https://github.com/tfabris/BlueGigaEmpeg/issues
     and press "New Issue".
   - In the bug report, describe:
-    - Model of Bluetooth playback device.
-    - Frequency of the occurrence of the issue.
-    - Steps to reproduce the issue.
-    - Expected behavior versus actual behavior.
+    - Model of Bluetooth device. What kind of car stereo do you have?
+    - Frequency of the occurrence of the issue. Does it happen every time,
+	  sometimes, only when it's cold out, only in a leap year?
+    - Steps to reproduce the issue. Please give as much detail as possible.
+    - Expected behavior, versus actual behavior.
+	- Things you've already tried doing to diagnose or narrow down the
+	  problem. For example, have you paired your smartphone, and does it have
+	  the same issue?
   - Attach your debug log to the bug report.
 
 - When you are done with the debug session, remove the USB cable from the
