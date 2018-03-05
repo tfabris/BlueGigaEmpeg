@@ -1765,7 +1765,8 @@ Resources
 
 Test, packing, and shipment checklist
 ------------------------------------------------------------------------------
-Verify the following things before final packing and shipping:
+The following things are verified before packing and shipping a BlueGigaEmpeg:
+
 - BetzTechnik board upgraded to version 6.2.0 build 1122.
 - BetzTechnik board JP4 is cut after upgrade.
 - BetzTechnik board power switch is in the down/off position.
