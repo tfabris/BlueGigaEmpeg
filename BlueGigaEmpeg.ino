@@ -1100,23 +1100,6 @@ void setup()
   // the reset; this is a soft reset). Resetting it here prevents bugs where
   // the Bluetooth state is desynchronized from the Arduino state.
   QuickResetBluetooth(0);    
-
-  // Attempt to fix issue #70 broken up high pitched playback on cold boot.
-  // Experimentally start the module set in analog audio mode and then switch
-  // to digital. SetGlobalChipDefaults sets it to analog and then this section
-  // sets it to digital and resets it again.
-  if (digitalAudio)
-  {
-    // If we are in digital mode, then we need to set the chip to digital and
-    // bounce it one more time to see if this fixes issue #70.
-    SendBlueGigaCommand(digitalAudioRoutingControlString);
-    QuickResetBluetooth(0);
-  }
-  else
-  {
-    // If we are in analog mode then do nothing since the chip is already
-    // in analog mode at this point in the code.
-  }
 }
 
 
@@ -1446,20 +1429,14 @@ void SetGlobalChipDefaults()
 
   // Audio routing on the chip. Control string for audio routing is configured
   // at top of program.
-  //
-  // Attempt to fix issue #70 broken up high pitched playback on cold boot.
-  // Experimentally start the module set in analog audio mode and then switch
-  // to digital. SetGlobalChipDefaults here sets it to analog and then a
-  // different part of the code sets it to digital after restarting.
-  //
-  // if (digitalAudio)
-  // {
-  //   SendBlueGigaCommand(digitalAudioRoutingControlString);    
-  // }
-  // else
-  // {
-    SendBlueGigaCommand(analogAudioRoutingControlString);    
-  // }
+  if (digitalAudio)
+  {
+    SendBlueGigaCommand(digitalAudioRoutingControlString);    
+  }
+  else
+  {
+    SendBlueGigaCommand(analogAudioRoutingControlString);  
+  }
 
   // Turn off the mic preamp to prevent distortion on line level inputs if
   // they are being used.
@@ -1590,23 +1567,6 @@ void PairBluetooth()
   // the pairing process will not work correctly. So make sure this gets done
   // before the pairing process.
   QuickResetBluetooth(0); // "0" means just a reboot
-
-  // Attempt to fix issue #70 broken up high pitched playback on cold boot.
-  // Experimentally start the module set in analog audio mode and then switch
-  // to digital. It was set to analog above in SetGlobalChipDefaults and then
-  // reset, now set it to digital and reset it again.
-  if (digitalAudio)
-  {
-    // If we are in digital mode, then we need to set the chip to digital and
-    // bounce it one more time to see if this fixes issue #70.
-    SendBlueGigaCommand(digitalAudioRoutingControlString);
-    QuickResetBluetooth(0);
-  }
-  else
-  {
-    // If we are in analog mode then do nothing since the chip is already
-    // in analog mode at this point in the code.
-  }
 
   // Freewheel for a moment after setting global chip defaults. Need a time
   // window before the chip will accept the INQUIRY command below.
@@ -2001,7 +1961,7 @@ char MainInputOutput()
 // 
 // Another common use for this would be: If you issue a command to the
 // Bluetooth and you want to wait for the response, and then process the data
-// retreived in the response (assuming that the data is automatically
+// retrieved in the response (assuming that the data is automatically
 // retrieved by the MainInputOutput routine).
 //
 // Parameters
@@ -4614,6 +4574,20 @@ void QuickResetBluetooth(int resetType)
   // any time that the Bluetooth module is disconnected to prevent the tracks
   // from spooling out silently to no audience.
   SendEmpegCommand('W');
+
+  // During initial attempts to fix issue #70, though those initial fix
+  // attempts did not work, there was an important thing that I discovered
+  // which I would like to try here anyway. Before resetting the module, let
+  // the module idle a bit before actually performing the reset. I found that
+  // sometimes certain commands which configured the module wouldn't "take" if
+  // the reset command came too quickly after issuing the command to the
+  // module. As if the module didn't have time to process "saving" the
+  // configuration change unless I gave it a bit of time to think about it.
+  // Attempt to fix this by giving it a bit of time before every reset
+  // attempt. Because I'm assuming a chip reset is about to occur here (i.e.,
+  // "all bets are off"), don't bother to even try to process any commands
+  // while we're waiting. Just blow everything off while we're waiting.
+  DisplayAndSwallowResponses(4,500);
 
   // Perform different types of resets depending on the parameter passed in.
   switch (resetType)
