@@ -728,11 +728,24 @@ module, which then autoconnects to the car stereo head unit.
 
 Troubleshooting
 ------------------------------------------------------------------------------
+- [Always use the latest firmware                                                  ](#always-use-the-latest-firmware)
 - [Pairing issues                                                                  ](#pairing-issues)
 - [Other issues                                                                    ](#other-issues)
 - [Set Bluetooth PIN code if needed (most likely not needed)                       ](#set-bluetooth-pin-code-if-needed-most-likely-not-needed)
 - [Test AVRCP behavior and set serial port crossover jumpers if needed             ](#test-avrcp-behavior-and-set-serial-port-crossover-jumpers-if-needed)
 - [Debug Bluetooth connection if needed                                            ](#debug-bluetooth-connection-if-needed)
+
+
+Always use the latest firmware
+------------------------------------------------------------------------------
+When troubleshooting, always start with the most recent versions of the
+BlueGigaEmpeg firmware and the most recent Hijack Kernel.
+
+- To update the BlueGigaEmpeg firmware, see the section titled ["Updating
+  firmware"](#updating-firmware).
+
+- To update the Hijack kernel, see the section titled ["Upgrade the empeg
+  Car's Hijack kernel and set Serial Port Assignment"](#hijack).
 
 
 Pairing issues
