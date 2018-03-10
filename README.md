@@ -739,7 +739,7 @@ Troubleshooting
 Always use the latest firmware
 ------------------------------------------------------------------------------
 When troubleshooting, always start with the most recent versions of the
-BlueGigaEmpeg firmware and the most recent Hijack Kernel.
+BlueGigaEmpeg firmware and Hijack Kernel.
 
 - To update the BlueGigaEmpeg firmware, see the section titled ["Updating
   firmware"](#updating-firmware).
