@@ -16,12 +16,12 @@ empeg Car Mk2/2a MP3 player and a modern Bluetooth-equipped car.
 Table of Contents
 ==============================================================================
 
-- ###[Introduction                                                                    ](#introduction)
-- ###[Installation                                                                    ](#installation)
-- ###[Usage                                                                           ](#usage)
-- ###[Troubleshooting                                                                 ](#troubleshooting)
-- ###[Updating firmware                                                               ](#updating-firmware)
-- ###[Technical Data                                                                  ](#technical-data)
+- [Introduction                                                                    ](#introduction)
+- [Installation                                                                    ](#installation)
+- [Usage                                                                           ](#usage)
+- [Troubleshooting                                                                 ](#troubleshooting)
+- [Updating firmware                                                               ](#updating-firmware)
+- [Technical Data                                                                  ](#technical-data)
 
 ------------------------------------------------------------------------------
 
