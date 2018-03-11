@@ -788,6 +788,10 @@ sequence will work for many stereos and headsets:
    button on the BlueGigaEmpeg module, initiate pairing from your stereo via
    its pairing feature.
 
+You may also go straight to the second pairing method, without pressing the
+recessed RESET/PAIR button on the BlueGigaEmpeg, if you already know that your
+stereo requires the second method in order to work.
+
 Sometimes Bluetooth devices can get into odd states which require a reboot to
 fix. If you're having pairing troubles, reboot both devices: Reboot the car
 stereo by turning the ignition off and on again, and reboot the BlueGigaEmpeg
