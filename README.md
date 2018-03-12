@@ -163,13 +163,13 @@ Make sure you have all of these things before working with the BlueGigaEmpeg:
 | BlueGigaEmpeg Interface     | tfabris@gmail.com                                       |
 
 ####  Download software (Windows PC or Windows VM required for some of these items):
-| Item                                  | URL                                                                                              |
-|:--------------------------------------|:-------------------------------------------------------------------------------------------------|
-| Hijack Kernel for empeg               | http://empeg-hijack.sourceforge.net                                                              |
-| Tony's Empeg Logo Editor              | http://empegbbs.com/ubbthreads.php/ubb/download/Number/7067/filename/logoedit17.zip              |
-| Arduino standalone IDE                | https://www.arduino.cc/en/Main/Software                                                          |
-| Latest BlueGigaEmpeg Arduino firmware | Direct download latest project file: https://github.com/tfabris/BlueGigaEmpeg/archive/master.zip |
-|                                       | GitHub project, if you are using the Git tool: https://github.com/tfabris/BlueGigaEmpeg          |
+| Item                                  | URL                                                                                                       |
+|:--------------------------------------|:----------------------------------------------------------------------------------------------------------|
+| Hijack Kernel for empeg               | http://empeg-hijack.sourceforge.net                                                                       |
+| Tony's Empeg Logo Editor              | http://empegbbs.com/ubbthreads.php/ubb/download/Number/7067/filename/logoedit17.zip                       |
+| Arduino standalone IDE                | https://www.arduino.cc/en/Main/Software                                                                   |
+| Latest BlueGigaEmpeg Arduino firmware | Direct download latest project file: https://github.com/tfabris/BlueGigaEmpeg/archive/master.zip          |
+|                                       | (Alternative) GitHub project, if you are using the Git tool: https://github.com/tfabris/BlueGigaEmpeg     |
 
 ####  Important:
 
