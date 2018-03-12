@@ -286,6 +286,11 @@ empeg. The pinouts of these five pads are:
 Carefully solder the three supplied jumper wires to pads 1,2, and 4, and you
 must keep track of which wires are soldered to which pads.
 
+Note: The coloring of the supplied jumper wires is random and arbitrary. They
+are each colored differently, so that you can tell which ones were soldered
+to which IIS pads, but their particular colors are not intended to match
+anything.
+
 When soldering, make sure the jumper wires and the solder joints are flat to
 the board instead of sticking upwards. The disk drive tray gets close to that
 location when mounted, so make sure they don't have a chance to contact the
