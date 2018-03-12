@@ -993,8 +993,8 @@ track titles don't show up on the car stereo's screen, then try the following.
     keep the casing cleanly shut.
 
   - Recheck and see if this fixed the issue, then return the code variable
-    "displayEmpegSerial" back to its original state and re-upload the code to
-    the Arduino.
+    "displayEmpegSerial" back to its original state and re-upload the sketch
+	to the Arduino.
 
 - If changing the crossover jumpers does not make empeg serial port messages
   appear on the debug screen with "displayEmpegSerial" enabled, then
