@@ -318,8 +318,8 @@ supplied with the BlueGigaEmpeg. Don't forget to put the shrink tubing onto
 the jumper wires before you solder them.
 
 After you have done this, your empeg's I2S pads will, when docked, now be
-carried out the back of the empeg, via the docking sled, into the tuner module
-Molex connector. Solder your jumper wires to the empeg interior wires in this
+carried out the back of the empeg, via the docking sled, into the Molex tuner
+module connector. Solder your jumper wires to the empeg interior wires in this
 order:
 
     IIS Pad 1 (IISC)  jumpered to Yellow+Green wire, originally third from end.
