@@ -788,7 +788,8 @@ Pairing issues
 When you press the recessed RESET/PAIR button on the BlueGigaEmpeg, it does
 the following:
 
- - Erases all previous Bluetooth pairings from the Bluetooth chip.
+ - Erases all previous Bluetooth pairings and security keys from the Bluetooth
+   chip.
  
  - Resets the Bluetooth chip to default settings.
 
@@ -851,7 +852,10 @@ your car stereo remembers an onscreen list of existing paired Bluetooth
 devices and gives you the option to manage those devices: The empeg Car's
 entry in that list becomes invalid when you press its RESET/PAIR button. So
 you will need to delete the empeg Car from that list before trying to pair
-it a second time.
+it a second time. Conversely, if you delete the empeg Car from your car
+stereo's list of paired devices, you'll also need to clear the security key
+from the Bluetooth chip by pressing the RESET/PAIR button on the
+BlueGigaEmpeg module.
 
 
 Other issues
