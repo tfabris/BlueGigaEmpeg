@@ -996,10 +996,10 @@ track titles don't show up on the car stereo's screen, then try the following.
     "displayEmpegSerial" back to its original state and re-upload the sketch
 	to the Arduino.
 
-- If changing the crossover jumpers does not make empeg serial port messages
-  appear on the debug screen with "displayEmpegSerial" enabled, then put the
-  jumpers back to their original setting, and re-diagnose from the top,
-  because you've still got a serial port problem of some kind.
+- If changing the crossover jumpers does not make the empeg's serial port
+  messages appear on the Arduino debug console with "displayEmpegSerial"
+  enabled, then you've still got a serial port problem. Put the crossover
+  jumpers back to their original setting, and re-diagnose from the top.
 
 - If you are getting good serial port messages from the empeg, but you are
   still unable to get AVRCP commands working, there is one particular special
