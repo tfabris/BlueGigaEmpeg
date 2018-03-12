@@ -1,6 +1,6 @@
 BlueGigaEmpeg
 ==============================================================================
-by Tony Fabris
+&copy; 2018 by Tony Fabris
 
 https://github.com/tfabris/BlueGigaEmpeg
 
@@ -103,11 +103,15 @@ car stereo. The full menu and user interface of the empeg is still needed for
 all other features of the empeg, such as selecting playlists. So this module
 won't let you mount the empeg in your trunk, unless you also have a display
 extender kit from Eutronix.com as well, which would allow you to reach the
-empeg front panel from the driver's seat. Unfortunately, Stu at Eutronix isn't
+empeg front panel from the driver's seat. Unfortunately, Eutronix.com isn't
 selling display extenders any more. I was lucky to get a display extender
 several years ago when they were still being sold, so I'm able to mount my
-empeg in my trunk with this. But if you don't have one, plan on still having
-to mount your empeg where you can get to it.
+empeg in my trunk with this. But if you don't have a display extender kit,
+you will still have to mount your empeg someplace where you can reach it from
+the driver's seat. (By the way, don't try rolling your own display extender by
+simply extending the wires. Special buffer circuitry is required in order to
+safely extend the empeg display, or you run the risk of damaging the empeg
+or its display.)
 
 
 Acknowledgments
@@ -118,19 +122,19 @@ up not using the particular chip that he suggested (I had trouble with that
 chip), it was his suggestion that started me experimenting with Bluetooth. Big
 thanks to Shonky who had many helpful suggestions and who pointed out the
 WT32i chip that is the one that finally got used in this particular design.
-Also particular thanks to Stuart Euans of Eutronix who created the empeg
+Also particular thanks to Stuart Euans of Eutronix.com who created the empeg
 Display Extender board, which was critical to me being able to get my empeg
-mounted in my new Honda, since it doesn't have dash space for the whole thing.
-Big thanks to Peter Betz of Betztechnik, who made a convenient and perfectly
-sized breakout board containing the chip I wanted to work with, and who was
-very helpful and responsive in emails, and even made another manufacturing run
-with an updated design. And massive thanks to Mark Lord who assisted me in
-countless ways with the design and implementation, taught me a ton of
-important things, found my bugs, fixed issues with the Arduino compiler,
-modified his Hijack kernel to support this project, and pointed out all of my
-EE design flaws. And last but not least, thanks to the entire empeg team who
-made such a fantastic car MP3 player that we are still doing interesting
-things with it, nearly 20 years later.
+mounted cleanly in my new Honda, since it doesn't have dash space for the
+whole empeg. Big thanks to Peter Betz of Betztechnik, who made a convenient
+and perfectly-sized breakout board containing the chip I wanted to work with,
+and who was very helpful and responsive in emails, and even made another
+manufacturing run with an updated design for me. And massive thanks to Mark
+Lord who assisted me in countless ways with the design and implementation,
+taught me a ton of important things, found my bugs, fixed issues with the
+Arduino compiler, modified his Hijack kernel to support this project, and
+pointed out all of my EE design flaws. And last but not least, thanks to the
+entire empeg team who made such a fantastic car MP3 player that we are still
+doing interesting things with it, nearly 20 years later.
 
 
 Installation
