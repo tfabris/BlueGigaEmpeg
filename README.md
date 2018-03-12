@@ -666,21 +666,37 @@ need to pair it again each time you get in the car. It should automatically
 reconnect each time you start your car.
 
 Some car stereos will let you pair your phone and the empeg at the same time.
-My Honda allows me to do this. When pairing, the touch screen lets me choose
-whether the paired device is a phone device or a music device. I choose to
-pair my phone as a phone, and the empeg Car as a music device. Then, each time
-I start my car, they both pair up correctly. I can use the steering wheel
-controls to initiate a speakerphone call, which automatically mutes and pauses
-playback on the empeg, and resumes it after I hang up the call.
+Not all car stereos will have this feature. My Honda allows me to do this, and
+it works like this: When pairing, the car's touch screen lets me choose
+whether the paired device is a phone device, a music device, or both. I choose
+to pair my phone as a phone, and the empeg Car as a music device. Then, each
+time I start my car, they both pair up correctly. I can use the steering wheel
+controls to initiate a speakerphone call, which automatically pauses playback
+on the empeg, and resumes playback after I hang up the call.
 
-The empeg Car should automatically pause its playback when you switch to
-another input on your car stereo, such as switching to the radio or CD player,
-and should automatically resume playback when you switch back. 
+The empeg Car should automatically pause its playback when you turn off the
+car stereo. It should also pause when you switch to another input source on
+your car stereo, such as switching to the radio or to the CD player. It should
+automatically resume playback when you turn the stereo on, or switch back to
+the Bluetooth input.
+
+The empeg Car should automatically pause its playback immediately after its
+boot sequence is complete, then it will wait until there is a successful
+Bluetooth connection, then it will resume playback after Bluetooth is
+connected. If Bluetooth is already connected by the time that the empeg boot
+sequence is complete, it will resume playback when it is done booting up. This
+prevents the empeg from playing music silently while it waits for your car
+stereo to boot up. This is needed for some cars whose stereos have long boot
+times which exceed the empeg boot time. My Honda has a stereo like that, it
+takes about 25 seconds to boot up and be able to play Bluetooth music, more
+than twice as long as the empeg takes to boot up. Without this feature, there
+would be about 15 seconds' worth of song "lost" (played silently) each time I
+started my car.
 
 The BlueGigaEmpeg implements a specific set of Bluetooth controls. Not all car
 stereos support all of these controls. For instance, my Honda does not do
-Fast Forward or Rewind with any Bluetooth device, so those features don't work
-on my Honda.
+Fast Forward or Rewind with any Bluetooth device, so those particular features
+don't work on my Honda.
 
 ####  Implemented:
  - Pause
@@ -724,7 +740,7 @@ that just by sleeping and waking the empeg from its front panel.
 Most of the time, leave the player in "awake" mode. When you shut off the car
 ignition, the player fully shuts down. When you start the car again, the empeg
 starts up in "awake" mode and immediately supplies power to the BlueGigaEmpeg
-module, which then autoconnects to the car stereo head unit.
+module, which then automatically connects to the car stereo head unit.
 
 
 Troubleshooting
