@@ -163,13 +163,13 @@ Make sure you have all of these things before working with the BlueGigaEmpeg:
 | BlueGigaEmpeg Interface     | tfabris@gmail.com                                       |
 
 ####  Download software (Windows PC or Windows VM required for some of these items):
-| Item                              | URL                                                                                 |
-|:----------------------------------|:------------------------------------------------------------------------------------|
-| Hijack Kernel for empeg           | http://empeg-hijack.sourceforge.net                                                 |
-| Tony's Empeg Logo Editor          | http://empegbbs.com/ubbthreads.php/ubb/download/Number/7067/filename/logoedit17.zip |
-| Arduino standalone IDE            | https://www.arduino.cc/en/Main/Software                                             |
-| BlueGigaEmpeg GitHub project      | https://github.com/tfabris/BlueGigaEmpeg                                            |
-| BlueGigaEmpeg.ino direct download | https://github.com/tfabris/BlueGigaEmpeg/archive/master.zip                         |
+| Item                                | URL                                                                                              |
+|:------------------------------------|:-------------------------------------------------------------------------------------------------|
+| Hijack Kernel for empeg             | http://empeg-hijack.sourceforge.net                                                              |
+| Tony's Empeg Logo Editor            | http://empegbbs.com/ubbthreads.php/ubb/download/Number/7067/filename/logoedit17.zip              |
+| Arduino standalone IDE              | https://www.arduino.cc/en/Main/Software                                                          |
+| BlueGigaEmpeg Arduino project file  | Project: https://github.com/tfabris/BlueGigaEmpeg                                                |
+|                                     | Direct Download Latest Project File: https://github.com/tfabris/BlueGigaEmpeg/archive/master.zip |
 
 ####  Important:
 
