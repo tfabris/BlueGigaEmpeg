@@ -324,9 +324,12 @@ the jumper wires before you solder them.
 
 Solder your jumper wires to the empeg interior wires in this order:
 
-    IIS Pad 1 (IISC)  jumpered to Yellow+Green wire, originally third from end.
-    IIS Pad 2 (IISW)  jumpered to Brown wire, originally the end wire.
-    IIS Pad 4 (IISD1) jumpered to Red wire, originally second from end.
+- IIS Pad 1 (IISC): jumpered to the yellow+Green wire which was originally the
+  third wire the from end of the white connector.
+- IIS Pad 2 (IISW): jumpered to the brown wire which was originally the end
+  wire on the white connector.
+- IIS Pad 4 (IISD1): jumpered to the red wire which was originally the second
+  wire from the end of the white connector.
 
 After you have done this, your empeg's I2S pads will, when docked, now be
 carried out the back of the empeg, via the docking sled, into the Molex tuner
