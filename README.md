@@ -1782,7 +1782,7 @@ Resources
 | Dev Board Reference Design  | https://www.silabs.com/documents/login/reference-designs/Reference-Design-DKWT32i.pdf       |
 | Dev Board Full Schematic    | https://www.silabs.com/documents/login/reference-designs/DKWT32i-v2.2.zip                   |
 | BetzTechnik Schematic       | http://www.betztechnik.ca/uploads/2/5/6/7/25674051/wt32i.pdf                                |
-| Pololu V.Reg #2853 Pinout   | https://a.pololu-files.com/picture/0J5850.1200.jpg                                          |
+| Pololu V.Reg #2853 Pinout   | https://a.pololu-files.com/picture/0J5779.1200.jpg                                          |
 | Arduino Mega Pin Map        | https://www.arduino.cc/en/uploads/Hacking/Atmega168PinMap2.png                              |
 | Arduino Mega Standalone     | https://www.arduino.cc/en/Main/Standalone                                                   |
 | ClassOfDevice generators    | http://bluetooth-pentest.narod.ru/software/bluetooth_class_of_device-service_generator.html |
