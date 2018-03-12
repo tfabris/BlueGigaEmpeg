@@ -947,8 +947,8 @@ track titles don't show up on the car stereo's screen, then try the following.
   ["Empeg Car configuration changes"](#empeg-car-configuration-changes).
 
 - If the above things are verified as good, then use [debug mode](#debug),
-  temporarily enable the "displayEmpegSerial" feature in the Arduino code,
-  upload the code to the Arduino, cycle the power on the empeg, and watch
+  temporarily enable the "displayEmpegSerial" feature in the Arduino sketch,
+  upload the sketch to the Arduino, cycle the power on the empeg, and watch
   to make sure that serial output from the empeg appears on the screen. If
   no serial port messages from the empeg appear in the debug console with
   "displayEmpegSerial" enabled, then there is a chance that the serial
