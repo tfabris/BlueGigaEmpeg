@@ -540,9 +540,8 @@ the "low profile mini fuse" type. Some helpful links:
 
 Connect BlueGigaEmpeg to empeg Car player
 ------------------------------------------------------------------------------
-Do not connect the BlueGigaEmpeg module to the empeg Car's tuner module
-connector until after completing the step in this document titled ["Modify
-empeg Car interior for I2S digital audio connection"](#i2s).
+Only do this step after completing the prior step in this document titled
+["Modify empeg Car interior for I2S digital audio connection"](#i2s).
 
 If the I2S wiring modification has been completed, connect the tuner module
 connector from the empeg Car player docking sled to the tuner connector on the
