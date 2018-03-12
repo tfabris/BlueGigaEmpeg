@@ -1559,11 +1559,11 @@ maintenance work.
 On the BetzTechnik WT32i Breakout board:
 
 Cut the jumper at "JP4 FTDI_+5v" on the BetzTechnik board, but only do this
-AFTER successfully updating the chip's firmware to the latest version. Cutting
-the jumper shuts off power to the the BetzTechnik onboard UART, which prevents
-the UART and the Arduino pin-to-pin serial connection from arguing with each
-other. This prevents errors on the serial port which would cause the chip to
-reboot randomly.
+*after* successfully updating the chip's firmware to the latest version.
+Cutting the jumper shuts off power to the the BetzTechnik onboard UART, which
+prevents the UART and the Arduino pin-to-pin serial connection from arguing
+with each other. This prevents errors on the serial port which would cause the
+chip to reboot randomly.
 
 JP4 is made of two exposed solder pads, plus a very tiny bridge trace between
 them. Cut this tiny bridge trace with a sharp X-Acto knife. Magnification will
