@@ -317,14 +317,15 @@ connectors in the exact order described below. Shrink tubing has been
 supplied with the BlueGigaEmpeg. Don't forget to put the shrink tubing onto
 the jumper wires before you solder them.
 
-After you have done this, your empeg's I2S pads will, when docked, now be
-carried out the back of the empeg, via the docking sled, into the Molex tuner
-module connector. Solder your jumper wires to the empeg interior wires in this
-order:
+Solder your jumper wires to the empeg interior wires in this order:
 
     IIS Pad 1 (IISC)  jumpered to Yellow+Green wire, originally third from end.
     IIS Pad 2 (IISW)  jumpered to Brown wire, originally the end wire.
     IIS Pad 4 (IISD1) jumpered to Red wire, originally second from end.
+
+After you have done this, your empeg's I2S pads will, when docked, now be
+carried out the back of the empeg, via the docking sled, into the Molex tuner
+module connector.
 
 Make sure that your jumper wires are carefully tucked down around the left
 side of the empeg and out of the way of the disk drive tray assembly as shown
