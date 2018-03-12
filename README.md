@@ -1840,7 +1840,6 @@ The following things are verified before packing and shipping a BlueGigaEmpeg:
 - BetzTechnik board JP4 is cut after upgrade.
 - BetzTechnik board power switch is in the down/off position.
 - Jumpers on BlueGigaEmpeg board are set to the "crossover" configuration.
-- LED is straight.
 - Arduino contains current version of Github code, check version at bootup.
 - Arduino displays good serial buffers, check messages at bootup.
 - WT32i reports version "(6.2.0 build 1122)" when booted.
@@ -1849,6 +1848,7 @@ The following things are verified before packing and shipping a BlueGigaEmpeg:
 - Play/pause works on Bluetooth playback device (AVRCP+empeg commands work).
 - Audio playback quality is good.
 - Touch-check for no hot components after playing music for a few minutes.
+- LED is straight.
 - Place assembly into enclosure, make sure fit is perfect, LED is in the hole.
 - Make sure pair button works with the enclosure closed up.
 - Screw in the enclosure bolts slowly, and in three stages, to prevent heat stripping.
