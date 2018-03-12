@@ -558,7 +558,7 @@ the empeg Car player software to the BlueGigaEmpeg module.
 
 The USB "type B" connector on the outside of the BlueGigaEmpeg module
 enclosure is left disconnected during normal operation. It is only used for
-debugging, and for uploading the latest Arduino code to the BlueGigaEmpeg
+debugging, and for uploading the latest Arduino sketch to the BlueGigaEmpeg
 module. However, if you are mounting your BlueGigaEmpeg module permanently in
 a hard-to-reach location in your car, make sure to run a USB cable from this
 port to a reachable location, so that you can connect a laptop to it later.
@@ -909,7 +909,7 @@ interaction will be needed.
 
 In rare cases where a special PIN code is is needed, there is a place in the
 "BlueGigaEmpeg.ino" source code file where you can modify the PIN to something
-other than "0000". Find the line in the code that defines the variable
+other than "0000". Find the line in the sketch that defines the variable
 "btPinCodeString". That line contains the "0000" default PIN code. Change it
 to your correct PIN code for your stereo and re-upload the sketch to the
 Arduino. It can accept PIN codes up to 16 digits long.
@@ -992,8 +992,8 @@ track titles don't show up on the car stereo's screen, then try the following.
     which would also strip the screw holes. Just make them tight enough to
     keep the casing cleanly shut.
 
-  - Recheck and see if this fixed the issue, then return the code variable
-    "displayEmpegSerial" back to its original state and re-upload the sketch
+  - Recheck and see if this fixed the issue, then return the variable
+    "displayEmpegSerial" back to its original state, and re-upload the sketch
 	to the Arduino.
 
 - If changing the crossover jumpers does not make the empeg's serial port
@@ -1016,10 +1016,10 @@ track titles don't show up on the car stereo's screen, then try the following.
 
     - Get the latest version of the BlueGigaEmpeg.ino source code as described
       in the ["Updating firmware"](#updating-firmware) section. Edit the
-      BlueGigaEmpeg.ino code file. Locate the variable "autoReconnectMode",
+      BlueGigaEmpeg.ino sketch file. Locate the variable "autoReconnectMode",
       change it from 1 to 2, and save the file.
       
-    - Re-upload the code to the Arduino as described in the ["Updating
+    - Re-upload the sketch to the Arduino as described in the ["Updating
       firmware"](#updating-firmware) section, then press the RESET/PAIR button
       and re-pair with your stereo after doing it.
       
@@ -1176,7 +1176,7 @@ still needs the tuner connector on the harness in order to function.
 ####  Variables in the Arduino sketch:
 
 There are some flag variables in the BlueGigaEmpeg.ino sketch file, defined at
-the top of the code, which can be modified if you need them when debugging.
+the top of the sketch, which can be modified if you need them when debugging.
 Change them as you see fit, and re-upload the sketch to the Arduino. See the
 ["Updating firmware"](#updating-firmware) section for information on uploading
 the sketch to the Arduino.
@@ -1241,7 +1241,7 @@ incredibly rich and complex command language of this Bluetooth chip.
 A note about response ordering in the debug console:
 
 Sometimes the responses from the Bluetooth module do not show up on the screen
-immediately, because the main input loop for the Arduino code might not have
+immediately, because the main input loop in the Arduino sketch might not have
 caught up and read all the responses from the serial port yet. So, for
 example, a bad command might be issued several lines back, but the "SYNTAX
 ERROR" response doesn't appear until later. So don't assume that any
@@ -1336,7 +1336,8 @@ were originally set to "64" and increase them as described above.
 Save the file.
 
 Note: If you reinstall or upgrade the Arduino IDE program, you will need to 
-perform this edit again before uploading new BlueGigaEmpeg code.
+perform this edit again before uploading a new version of the BlueGigaEmpeg
+sketch to the Arduino.
 
 
 Compile and upload the latest version of BlueGigaEmpeg.ino to the Arduino
@@ -1364,17 +1365,17 @@ the zip file, you will likely have to rename the folder after unzipping it.
 ####  Connection order special instructions:
 
 The Arduino is located inside the enclosure of the BlueGigaEmpeg module, and
-you upload the code to it via the USB connector on the end of the
-BlueGigaEmpeg casing. Uploading code to the Arduino may be done with the
-BlueGigaEmpeg module disconnected from the empeg Car. No external power source
-is required in this case, the Arduino gets its power from the computer via the
-USB cable in this situation. When connecting the Arduino to the computer via
-the USB cable, if that's the only connection, then no special connection order
-is needed.
+you upload the sketch to it ("sketch" is the name for an Arduino program) via
+the USB connector on the end of the BlueGigaEmpeg casing. Uploading the sketch
+to the Arduino may be done with the BlueGigaEmpeg module disconnected from the
+empeg Car. No external power source is required in this case, the Arduino gets
+its power from the computer via the USB cable in this situation. When
+connecting the Arduino to the computer via the USB cable, if that's the only
+connection, then no special connection order is needed.
 
-In some cases, though, you may also want to upload code to the Arduino while
-the BlueGigaEmpeg module is connected to the empeg Car. This is possible to
-do, however, special connection instructions are needed if you do this:
+In some cases, though, you may also want to upload the sketch to the Arduino
+while the BlueGigaEmpeg module is connected to the empeg Car. This is possible
+to do, however, special connection instructions are needed if you do this:
 
 - Do not connect the BlueGigaEmpeg module to the empeg Car until after
   completing the step in this document titled ["Modify empeg Car interior for
