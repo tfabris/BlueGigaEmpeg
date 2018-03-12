@@ -631,7 +631,7 @@ for this purpose.
   
   - If you can't reach the RESET/PAIR button, then it is also possible to
     initiate pairing from the USB debug connection, via a connected laptop, by
-    enabling the "typeZtoPair" flag variable in the Arduino software. See
+    enabling the "typeZtoPair" flag variable in the Arduino sketch. See
     ["Debug Bluetooth connection if needed"](#debug)
     for more information.
 
