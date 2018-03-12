@@ -168,7 +168,7 @@ Make sure you have all of these things before working with the BlueGigaEmpeg:
 | Hijack Kernel for empeg             | http://empeg-hijack.sourceforge.net                                                              |
 | Tony's Empeg Logo Editor            | http://empegbbs.com/ubbthreads.php/ubb/download/Number/7067/filename/logoedit17.zip              |
 | Arduino standalone IDE              | https://www.arduino.cc/en/Main/Software                                                          |
-| BlueGigaEmpeg Arduino project file  | Project: https://github.com/tfabris/BlueGigaEmpeg                                                |
+| BlueGigaEmpeg Arduino firmware file | Project location on GitHub: https://github.com/tfabris/BlueGigaEmpeg                                                |
 |                                     | Direct Download Latest Project File: https://github.com/tfabris/BlueGigaEmpeg/archive/master.zip |
 
 ####  Important:
