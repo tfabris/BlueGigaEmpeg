@@ -267,7 +267,7 @@ understand the wiring instructions below.
 I2S Wiring Modification Photo.jpg:
 ![Wiring Modification](https://github.com/tfabris/BlueGigaEmpeg/blob/master/I2S%20Wiring%20Modification%20Photo.jpg)
 
-Locate 5 blank IIS pads on the front left side of the empeg motherboard.
+Locate 5 blank I2S pads on the front left side of the empeg motherboard.
 Pads are outlined in a white silkscreen rectangle with the letters "IIS" next
 to the outline. White silkscreen rectangle will have one corner of it with a
 small diagonal "snip" to the corner which will indicate pad number 1 of the
@@ -288,7 +288,7 @@ must keep track of which wires are soldered to which pads.
 
 Note: The coloring of the supplied jumper wires is random and arbitrary. They
 are each colored differently, so that you can tell which ones were soldered
-to which IIS pads, but their particular colors are not intended to match
+to which I2S pads, but their particular colors are not intended to match
 anything.
 
 When soldering, make sure the jumper wires and the solder joints are flat to
