@@ -175,14 +175,15 @@ Make sure you have all of these things before working with the BlueGigaEmpeg:
 
 The BlueGigaEmpeg module works by connecting to the Molex connector on the
 empeg Car's docking sled wiring harness. This connector was originally
-intended for the tuner module, and the empeg must be modified so that the
-tuner module connector becomes a digital audio connection instead.
+intended for the empeg's external tuner module. The empeg must be modified so
+that the tuner module connector becomes a digital audio connection instead.
 
-Do not connect the BlueGigaEmpeg module to the tuner module connector until
-after completing the step in this document titled ["Modify empeg Car interior
-for I2S digital audio connection"](#i2s). Also, once the I2S modification has
-been completed, do not connect the empeg to any tuner module. Damage may occur
-if these instructions are not followed.
+Do not connect the BlueGigaEmpeg to the tuner module connector until after
+completing the step in this document titled ["Modify empeg Car interior for
+I2S digital audio connection"](#i2s). Also, once the I2S modification has been
+completed, connect the Molex tuner module connector *only* to the
+BlueGigaEmpeg, do not connect it to a tuner module, or to anything else.
+Damage may occur if these instructions are not followed.
 
 Be sure you are capable of safely making internal modifications to the empeg
 Car player, and you are able to solder and shrink-tube electronic components.
