@@ -604,6 +604,15 @@ String scFixMessageMatrix[12][2] =
 // reboot loop.
 boolean reconnectIfBadRegistrationReceived=true;
 
+// Variable to control whether or not we reboot the Bluetooth module 
+// whenever we see a bad connection at the wrong sample rate. This works
+// around issue #70, the case where sometimes the stereo would connect to
+// the BlueGigaEmpeg with a bad sample rate of 48000, causing crackling
+// high pitched playback audio. This runs a risk of an infinite reboot
+// loop, so it's being controlled here with a boolean flag that we can 
+// disable if necessary.
+boolean workAroundChipmunkProblem=true;
+
 // Reserve variable space for the transaction status labels used to hold a
 // particular string in memory in the query/response code. The host stereo
 // sends a query which contains a specific transaction label, which is a
@@ -2077,6 +2086,34 @@ void HandleString(String &theString)
   if (theString.indexOf(F("WRAP THOR AI"))         > (-1)) {connected = false;}
   if (theString.indexOf(F("NO CARRIER 0 ERROR"))   > (-1)) {connected = false;}
   if (theString.indexOf(F("NO CARRIER 1 ERROR"))   > (-1)) {connected = false;}
+
+  // Attempt to work around GitHub issue #70, crackling high pitched playback,
+  // by detecting the case where the problem occurs, and rebooting the WT32i
+  // if it happens. I can't figure out how to prevent it altogether so we
+  // will work around it. This is controlled by a global flag at the top
+  // of the code, "workAroundChipmunkProblem".
+  if (workAroundChipmunkProblem)
+  {
+    // Detect the problem, which is a string saying that its codec is working
+    // at 48khz instead of the required 44.1khz. The bad string looks like
+    // this, but not all pieces of the string might match exactly, so look
+    // for some of the sections but not all of them:
+    //      A2DP CODEC SBC JOINT_STEREO 48000 BITPOOL 2-53
+    //
+    if ( (theString.indexOf(F("A2DP CODEC ")) > (-1)) && (theString.indexOf(F(" 48000 ")) > (-1)) && (theString.indexOf(F(" BITPOOL ")) > (-1)))
+    {
+      // If the problem is detected, then restart the Bluetooth.
+      Log(F("Stereo connected with bad audio sampling rate of 48000. Restarting Bluetooth module."));
+      QuickResetBluetooth(0);
+
+      // This workaround for issue #70 caused a whole other problem, which
+      // was that some AVRCP stuff didn't work correctly either after the
+      // reboot. Experimentally trying a double reboot here to see if it
+      // fixes both problems.
+      QuickResetBluetooth(0);
+    }
+  }
+
  
   // Handle "get Bluetooth address" strings - these are strings that are
   // intended to tell me who my current pairing buddy is. This must come early
