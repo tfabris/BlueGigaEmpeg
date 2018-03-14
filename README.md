@@ -655,9 +655,13 @@ for this purpose.
   Bluetooth devices, and when the device "empeg Car" appears, select it.
  
 - If the pairing still doesn't work, try sleeping the empeg (long press on top
-  button), turning off the car stereo completely (turn off car ignition), turn
-  on the car ignition again, wake the empeg, and try again from the top. This
-  ensures that all devices have been fully rebooted.
+  button), then waking it up again with another button press. This will reboot
+  the BlueGigaEmpeg module.
+
+- If pairing still doesn't work, try turning off the car stereo completely
+  (turn off car ignition), turn on the car ignition again, sleep and wake the
+  empeg, and try again from the top. This ensures that both devices have been
+  fully rebooted.
 
 - When the pairing is completed, set the volume. With the car stereo volume
   still turned down to a low level, turn the volume on the empeg Car front
@@ -828,10 +832,12 @@ recessed RESET/PAIR button on the BlueGigaEmpeg, if you already know that your
 stereo requires the second method in order to work.
 
 Sometimes Bluetooth devices can get into odd states which require a reboot to
-fix. If you're having pairing troubles, reboot both devices: Reboot the car
-stereo by turning the ignition off and on again, and reboot the BlueGigaEmpeg
-by sleeping and waking the empeg with a long press on the top button of the
-front panel.
+fix. If you're having pairing troubles, try rebooting the BlueGigaEmpeg by
+sleeping and waking the empeg with a long press on the top button of the
+front panel, followed by another button press to wake it. If that doesn't
+work, try rebooting both devices: Reboot the car stereo by turning the
+ignition off and on again, and also reboot the BlueGigaEmpeg by sleeping and
+waking the empeg.
 
 When trying to pair, turn off any nearby Bluetooth devices which are in
 "discoverable" mode or "pairing" mode. The BlueGigaEmpeg has no user
