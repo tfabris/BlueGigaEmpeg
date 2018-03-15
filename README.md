@@ -1012,6 +1012,7 @@ Everything hopefully will work perfectly, but there may be bugs in the Arduino
 code because this was not tested with a wide range of Bluetooth gear. If you
 need to debug the connection, here are some helpful tips.
 
+
 ####  Debug mode with Arduino
 
 The BlueGigaEmpeg module is an Arduino command+control board, sandwiched to a
@@ -1029,25 +1030,44 @@ the Arduino IDE by following the instructions in the section ["Updating
 firmware"](#updating-firmware). This will also ensure that you are updated to
 the latest BlueGigaEmpeg firmware before trying to debug any problems.
 
-Once the device drivers are working for the Arduino's USB-serial UART, then
-any serial terminal program will be able to communicate with the Arduino and
-will work with its debug port. When connected to the Arduino debug serial
-port, you can use these kinds of serial terminal programs to access the
-terminal debug interface:
+Once the device drivers are working for the Arduino's USB-serial UART, then the
+"Serial Monitor" feature built into the Arduino IDE program will work as the debug
+console. To run it, do the following:
 
- - The "Serial Monitor" feature built into the Arduino IDE program. To run
-   it, launch the Arduino IDE, select the "Tools" menu, select "port" and
-   select the correct port from the submenu. Then select "Tools" again,
-   then "Serial Monitor". Set it to 115200 BPS and set line endings to
-   "both NL & CR".
+- Launch the Arduino IDE that you installed as part of ["Updating
+  firmware"](#updating-firmware).
 
- - Any third party serial terminal program, such as "Putty". Set it to
-   115200 BPS, 8n1, with local echo turned on.
+- Select the "Tools" menu, select "Board" and select "Arduino/Genuino Mega or
+  Mega 2560".
+
+- Select the "Tools" menu, select "Processor" and select "ATmega2560
+  (mega2560)".
+
+- Select the "Tools" menu, select "Port" and select the correct serial port
+  that represents the connected Arduino (this will be different on each
+  system).
+
+- Select "Tools" then "Serial Monitor". The serial monitor will appear.
+  Set it to 115200 BPS and set line endings to "both NL & CR".
 
 When connected to this serial terminal interface, everything you type is sent
 to the Bluetooth chip as a command, and all of the chip's responses are shown
 on your screen. You will also see all commands that the Arduino sends to the
 Bluetooth chip automatically, and see all of the chip's responses to them.
+
+You may also type certain specific commands to the empeg serial port to control
+the empeg. Type a single character followed by pressing the Enter key.
+The following commands are supported:
+- N - Next track.
+- P - Previous track.
+- C - Play (think "continue").
+- W - Pause (think "wait").
+- F - Begin fast forwarding.
+- B - Begin rewinding (think "backwards").
+- A - Stop fast forwarding or rewinding (think "abort").
+- % - Toggle Shuffle on or off.
+- Z - Place the BlueGigaEmpeg module into pairing mode for approx. 30 seconds.
+
 
 ####  Power up sequence (startup order) for Arduino debugging:
 
@@ -1095,18 +1115,17 @@ still needs the tuner connector on the harness in order to function.
   Arduino debug port (the USB-B connector on the outside of the BlueGigaEmpeg
   casing).
 
-- Run the Arduino Serial Monitor or other serial terminal as described above.
+- Run the Arduino Serial Monitor as described above.
 
 - Set the Serial Monitor program to 115200 baud, with line endings set to the
-  "Both NL & CR" setting. If you are using a different serial terminal
-  program, set your program to 115200 8n1, and turn on local echo.
+  "Both NL & CR" setting.
 
 - Apply power to the empeg. You should see a debug message appear on the
-  serial terminal program's console which says "empeg player boot process has
+  serial monitor program's console which says "empeg player boot process has
   started".
 
 - Reproduce the issue, so that the commands and responses show up on the
-  terminal output while the issue is occurring.
+  monitor's output while the issue is occurring.
 
 - After the issue is reproduced, pause the empeg player so that additional
   timestamp reports no longer show up (screen stops scrolling constantly).
@@ -1117,13 +1136,7 @@ still needs the tuner connector on the harness in order to function.
   should show the currently-paired device, and which transport channels are
   being used (such as A2DP and/or AVRCP).
 
-- Save the output of the terminal program into a text document. For some
-  terminal programs there is an option to save the output directly, for others
-  you will need to "select all" then copy and paste into a text editor.
-  - If you happen to be using Hyperterminal on old versions of Windows, it has
-    a known bug with copy/paste where it mangles the output, so don't use
-    that, use its feature for saving its output directly instead. Other
-    terminal programs should be OK though.
+- Copy and paste the output of the serial monitor into a text document.
 
 - Submit bug reports this way:
   - Create an account at http://www.GitHub.com if you don't already have one.
@@ -1142,7 +1155,7 @@ still needs the tuner connector on the harness in order to function.
     - Things you've already tried doing to diagnose or narrow down the
       problem. For example, does it have the same issue when you pair it with
       your smartphone?
-  - Attach your debug log to the bug report.
+  - Attach your serial monitor output file to the bug report.
 
 - When you are done with the debug session, disconnect the USB cable from the
   computer. It should be left disconnected during normal operation of the
@@ -1165,23 +1178,15 @@ The most common flags you might want to change are these. Search for these
 flags in the BlueGigaEmpeg.ino sketch file. Refer to the code comments
 accompanying these flags in the file to understand what they do.
 
-      empegSendCommandDebug
       displayEmpegSerial
       displayTracksOnSerial
-      typeZtoPair
-
-The "typeZtoPair" flag is particularly useful when the BlueGigaEmpeg module is
-permanently mounted in your car. It will allow you to initiate RESET/PAIR mode
-on the BlueGigaEmpeg from a connected laptop, without having to physically
-press the RESET/PAIR button. This can be helpful if you have mounted the
-BlueGigaEmpeg module in a hard-to-reach location where the RESET/PAIR button
-is inaccessible. Enable the flag and re-upload the sketch to the Arduino,
-after which, if you type Z in the serial debug console, the BlueGigaEmpeg will
-go into RESET/PAIR mode, the same as if you had pressed the button.
+      logLineByLine
+      autoReconnectMode
+      PerformUtf8Conversion
 
 ####  Useful debugging commands in the BlueGiga WT32i iWrap command language:
 
-Typing any of these into the serial terminal should send these commands to the
+Typing any of these into the serial monitor should send these commands to the
 Bluetooth chip directly. Many will echo a response. The Bluetooth chip will
 respond with "SYNTAX ERROR" if there is a problem with any command.
 
@@ -1375,21 +1380,31 @@ the installer for the Arduino IDE should have taken care of installing these
 drivers for you. If not, search for help documents online about getting
 drivers for the "Arduino Mega 2560" chip working.
 
-Run the Arduino IDE. In its "Tools" menu, select the "Board" menu and choose
-"Arduino/Genuino Mega or Mega 2560". Then use the "Tools" menu to select
-"Port" and choose the correct serial port for the Arduino connected to the
-USB cable.
+Once the device drivers are installed and working, do the following:
 
-Launch the Arduino Serial Monitor feature from the Arduino IDE. This is done
-by selecting "Tools", then "Serial Monitor". Configure it to 115200 BPS, and
-now you should see some serial port output from the Arduino. If you don't
-already see this, try closing and re-opening the Serial Monitor.
+- Launch the Arduino IDE that you installed earlier.
+
+- Select the "Tools" menu, select "Board" and select "Arduino/Genuino Mega or
+  Mega 2560".
+
+- Select the "Tools" menu, select "Processor" and select "ATmega2560
+  (mega2560)".
+
+- Select the "Tools" menu, select "Port" and select the correct serial port
+  that represents the connected Arduino (this will be different on each
+  system).
+
+- Select "Tools" then "Serial Monitor". The serial monitor will appear.
+  Set it to 115200 BPS and set line endings to "both NL & CR".
+
+You should see some serial port output from the Arduino. If you don't already
+see this, try closing and re-opening the Serial Monitor.
 
 If the Serial Monitor is working, select the "File" menu in the Arduino IDE,
-select "Open" and locate the BlueGigaEmpeg.ino project that you obtained
-earlier. Compile and upload it to the Arduino Mega board by pressing the
-"Upload" button on the main window. The Upload button is the green circle
-with the arrow inside it.
+select "Open" and locate the BlueGigaEmpeg.ino project file in the folder that
+you obtained and unzipped earlier. Compile and upload it to the Arduino Mega
+board by pressing the "Upload" button on the main window. The Upload button is
+the green circle with the arrow inside it.
 
 It will take several seconds to upload. Look at the Arduino IDE and make sure
 that there is no red text or other error messages near the bottom of the

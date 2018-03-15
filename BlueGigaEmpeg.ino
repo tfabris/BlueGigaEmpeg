@@ -38,11 +38,6 @@ const String btAuthTypeString = "SET BT SSP 1 0";
 // codes up to 16 digits long.
 const String btPinCodeString = "SET BT AUTH * 0000";
 
-// Control whether or not the module uses digital I2S audio, or analog line-
-// level audio inputs (for example the line level inputs on the BlueGiga dev
-// board).
-boolean digitalAudio = true;
-
 // Choose whether or not to display the empeg Serial Port outputs (for
 // instance the empeg boot up messages) on the serial debug console of the
 // Arduino. Only needed for debugging, not needed for final build runtime.
@@ -116,6 +111,24 @@ boolean outputMillis=true;
 // data on the serial port when it is not needed.
 boolean displayTracksOnSerial=false;
 
+// Variable to control whether or not this program performs a conversion of
+// High ASCII to UTF-8 in the code. For instance, on the empeg, you might have
+// a track by "Blue Öyster Cult", with the "Ö" being represented by a High
+// ASCII character (a single ASCII byte with a value greater than 127). In
+// that situation, you might see the the car stereo's LCD touchscreen display
+// say "Blue ?yster Cult". With this variable set to "true" it will instead
+// convert that to UTF-8, which should be readable by your car stereo touch
+// screen. If you encounter problems with some track titles which might
+// already be encoded as UTF-8 on your empeg, then try setting this value to
+// "false" and see if that fixes it.
+//   Setting true:
+//      - Character values between ASCII 128 and ASCII 255 in the track metadata
+//        on the empeg will be converted to their UTF-8 equivalents before being
+//        sent up the Bluetooth chain to the car stereo.
+//   Setting false:
+//      - No UTF-8 conversion will be performed and the track metadata is sent
+//        from the empeg to the car stereo without any changes.
+boolean PerformUtf8Conversion = true;
 
 // Configure the mode that the BlueGigaEmpeg uses to reconnect to the host
 // stereo. Chooses the main reconnection string that commands the Bluetooth
@@ -155,8 +168,6 @@ boolean displayTracksOnSerial=false;
 //
 // This setting should be left at the default value of "1" in most cases.
 const int autoReconnectMode = 1;
-
-
 
 // Auto Reconnect - This next section is a big deal, it was the largest source
 // of bugs and issues on the WT32i chip over the long run, due to unclear
@@ -344,7 +355,6 @@ const String autoReconnectString = "SET CONTROL RECONNECT 2888 0 0 17 0 NONE A2D
 //      syntactically-incorrect one.
 const String alternateAutoReconnectString = "SET CONTROL RECONNECT 2888 0 0 17 0 NONE A2DP AVRCP";
 
-
 // Version 2: "SET CONTROL AUTOCALL".
 //
 // Abandoned version of reconnect feature. This seems to work well, when it
@@ -401,25 +411,12 @@ const String codecString="SET CONTROL CODEC SBC JOINT_STEREO 44100 0\r\n        
 //     A2DP CODEC SBC JOINT_STEREO 48000 BITPOOL 2-53
 //     A2DP CODEC APT-X_LL STEREO 44100
 
-// Variable to control whether or not this program performs a conversion of
-// High ASCII to UTF-8 in the code. For instance, on the empeg, you might have
-// a track by "Blue Öyster Cult", with the "Ö" being represented by a High
-// ASCII character (a single ASCII byte with a value greater than 127). In
-// that situation, you might see the the car stereo's LCD touchscreen display
-// say "Blue ?yster Cult". With this variable set to "true" it will instead
-// convert that to UTF-8, which should be readable by your car stereo touch
-// screen. If you encounter problems with some track titles which might
-// already be encoded as UTF-8 on your empeg, then try setting this value to
-// "false"
-// and see if that fixes it.
-//   Setting true:
-//      - Character values between ASCII 128 and ASCII 255 in the track metadata
-//        on the empeg will be converted to their UTF-8 equivalents before being
-//        sent up the Bluetooth chain to the car stereo.
-//   Setting false:
-//      - No UTF-8 conversion will be performed and the track metadata is sent
-//        from the empeg to the car stereo without any changes.
-boolean PerformUtf8Conversion = true;
+
+
+// Control whether or not the module uses digital I2S audio, or analog line-
+// level audio inputs (for example the line level inputs on the BlueGiga dev
+// board).
+boolean digitalAudio = true;
 
 // Arduino serial port 2 is connected to Bluetooth chip.
 #define BlueGigaSerial Serial2 
@@ -441,7 +438,7 @@ boolean PerformUtf8Conversion = true;
 int scFixMatrixSize = 12;
 String scFixMessageMatrix[12][2] =
 {
-    // Bluetooth in                        // Bluetooth out        
+  // Bluetooth in                       // Bluetooth out        
 
   // Respond to PIN code prompt as if we were a user saying OK to that PIN
   // code. This was needed on Mark Lord's car stereo. It is expected to be
@@ -449,7 +446,7 @@ String scFixMessageMatrix[12][2] =
   // the top of this program. NOTE: This uses the pair address substitution
   // string in the same way that the Pairing Mode strings use it. See the
   // pmMessageMatrix for details.
-  { "SSP CONFIRM ",                                 "SSP CONFIRM {0} OK"},
+  { "SSP CONFIRM ",                     "SSP CONFIRM {0} OK"},
 
   // We issue a "Streaming start" command in certain situations. However,
   // don't do the corresponding thing for "streaming stop", because it causes
@@ -457,7 +454,7 @@ String scFixMessageMatrix[12][2] =
   // streaming starts up again, so, if you unpause at the 00:00 mark of a
   // song, then the beginning of the song is cut off. I am leaving this line
   // in here, commented out, to remind myself not to ever try to do this.
-  //        { "AVRCP PAUSE PRESS",                  "A2DP STREAMING STOP"},
+  //        { "AVRCP PAUSE PRESS",       "A2DP STREAMING STOP"},
 
   // Get Capabilities 2 is asking for manufacturer ID. According to the
   // BlueGiga documentation the chip will fill in the response details for
