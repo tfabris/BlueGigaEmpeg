@@ -649,11 +649,6 @@ for this purpose.
   whether to pair it as a music device, a phone device, or both. If you get
   a prompt like this, choose the music device option.
 
-- If the pairing doesn't work the first time, also try initiating pairing from
-  the car stereo *after* the blue LED on the BlueGigaEmpeg module goes out.
-  From your car stereo's touch screen interface, tell it to search for
-  Bluetooth devices, and when the device "empeg Car" appears, select it.
- 
 - If the pairing still doesn't work, try sleeping the empeg (long press on top
   button), then waking it up again with another button press. This will reboot
   the BlueGigaEmpeg module.
@@ -798,38 +793,24 @@ the following:
  - Resets the Bluetooth chip to default settings.
 
  - Looks for Bluetooth devices to pair with for about 30 seconds, and pairs
-   automatically with the first one that it sees.
+   automatically with the first one that it sees. Starting with version 1.1.5
+   of the BlueGigaEmpeg sketch, it will alternate between searching for
+   devices and listening for devices during that 30 seconds.
 
  - The blue RESET/PAIR LED is lit during this pairing mode, and will turn
    off once pairing is complete, or once the 30 seconds has run out.
 
-Though this is counterintuitive: Sometimes you don't press that RESET/PAIR
-button at all. Sometimes, instead, you do the pairing when the RESET/PAIR LED
-is not lit. There are some stereos which need you to initiate pairing solely
-on the car stereo's touch screen. My Honda is one of these types of stereos.
-In my case, for initial pairing with my car stereo the first time, I don't
-press the RESET/PAIR button at all (except for the purpose of erasing previous
-pairings). I just go to my car's touch screen, tell it to pair with the
-Bluetooth device named "empeg Car", and it works. 
-
-Some Bluetooth stereos still need you to press that RESET/PAIR button on the
-BlueGigaEmpeg, which should light the LED for about 30 seconds, during which
-time you should also put your stereo into pair mode.
-
-If one method doesn't work for you, try the other method. For example this
-sequence will work for many stereos and headsets:
-
- - Press the recessed RESET/PAIR button, and while the LED is still lit, then
-   initiate pairing on your Bluetooth stereo via its pairing feature.
-
- - If that doesn't work, then wait for the RESET/PAIR LED on the
-   BlueGigaEmpeg to go dark, and then, without touching the RESET/PAIR
-   button on the BlueGigaEmpeg module, initiate pairing from your stereo via
-   its pairing feature.
-
-You may also go straight to the second pairing method, without pressing the
-recessed RESET/PAIR button on the BlueGigaEmpeg, if you already know that your
-stereo requires the second method in order to work.
+Paired devices share a set of security keys with each other. Pressing the
+recessed RESET/PAIR button on the BlueGigaEmpeg module erases previous
+pairings, thus erasing those keys from the WT32i chip. This is important if
+your car stereo remembers an onscreen list of existing paired Bluetooth
+devices and gives you the option to manage those devices: The empeg Car's
+entry in that list becomes invalid when you press its RESET/PAIR button. So
+you will need to delete the empeg Car from that list before trying to pair
+it a second time. Conversely, if you delete the empeg Car from your car
+stereo's list of paired devices, you'll also need to clear the security key
+from the Bluetooth chip by pressing the RESET/PAIR button on the
+BlueGigaEmpeg module.
 
 Sometimes Bluetooth devices can get into odd states which require a reboot to
 fix. If you're having pairing troubles, try rebooting the BlueGigaEmpeg by
@@ -850,18 +831,6 @@ If necessary, experiment with different positioning of the BlueGigaEmpeg
 module in relation to your car stereo. The Bluetooth chip is located near the
 top center of the unit, near the recessed RESET/PAIR button. It will work best
 if it has line of sight to your car stereo and/or is physically close to it.
-
-Paired devices share a set of security keys with each other. Pressing the
-recessed RESET/PAIR button on the BlueGigaEmpeg module erases previous
-pairings, thus erasing those keys from the WT32i chip. This is important if
-your car stereo remembers an onscreen list of existing paired Bluetooth
-devices and gives you the option to manage those devices: The empeg Car's
-entry in that list becomes invalid when you press its RESET/PAIR button. So
-you will need to delete the empeg Car from that list before trying to pair
-it a second time. Conversely, if you delete the empeg Car from your car
-stereo's list of paired devices, you'll also need to clear the security key
-from the Bluetooth chip by pressing the RESET/PAIR button on the
-BlueGigaEmpeg module.
 
 
 Other issues
