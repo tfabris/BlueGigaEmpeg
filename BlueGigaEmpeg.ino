@@ -43,50 +43,6 @@ const String btPinCodeString = "SET BT AUTH * 0000";
 // board).
 boolean digitalAudio = true;
 
-// Debugging tool for the part of the code that sends commands to the empeg.
-// Normally, typing commands into the Arduino debug console will send those
-// same characters to the Bluetooth chip, so that you can try out commands on
-// the Bluetooth chip. The "empegSendCommandDebug" flag, below, expands on
-// this when the flag is enabled (set to "true") in the following way: When in
-// this mode, typing any of the empeg command characters (N P C W) into the
-// Arduino debug console will trigger the code to send that command to the
-// empeg. Since all of your typing gets sent to the Bluetooth chip, as well,
-// it's possible that typing one of these empeg commands by itself will cause
-// "SYNTAX ERROR" to be echoed back by the Bluetooth chip. That's OK, no
-// worries, you probably didn't hurt it. This is only needed for software
-// development, not needed for final build runtime.
-//   Setting true:
-//    - Typing N, P, C, or W into the Arduino main serial port debug console,
-//      even if they are included as part of another command such as a command
-//      sent to the Bluetooth, will result in the N, P, C, or W command being
-//      sent to the empeg (as well as being sent to the Bluetooth chip).
-//   Setting false:
-//   - Commands typed in the Arduino main serial port debug console will go
-//     solely to the Bluetooth chip and will not be echoed to the empeg.
-// This should be set to false most of the time, and only set to true during
-// debugging sessions in situations where it is hard to reach the empeg
-// Car front panel to change tracks. If you can reach the empeg Car front
-// panel during your debugging session, you probably don't need this.
-boolean empegSendCommandDebug=false;
-
-// Special case debugging feature - If you type Z on the Arduino debugging
-// console, enter pairing mode as if you'd pressed the RESET/PAIR button on
-// the BlueGigaEmpeg assembly. Useful if your module is mounted in a
-// hard-to-reach location in your car.
-//   Setting true:
-//    - Typing Z into the Arduino main serial port debug console will
-//      initiate pairing mode on the BlueGigaEmpeg module, the same as if
-//      you had pressed the RESET/PAIR button on the module. This includes
-//      situations where a Z is part of some other command that you are
-//      typing, so use caution not to type commands with Z's in them
-//      while this flag is enabled.
-//   Setting false:
-//    - Typing Z will not do anything special.
-// This should be set to false most of the time, and only enabled for
-// situations in which in which it is difficult to physically reach
-// the RESET/PAIR button on the BlueGigaEmpeg module.
-boolean typeZtoPair=false;
-
 // Choose whether or not to display the empeg Serial Port outputs (for
 // instance the empeg boot up messages) on the serial debug console of the
 // Arduino. Only needed for debugging, not needed for final build runtime.
@@ -201,41 +157,6 @@ boolean displayTracksOnSerial=false;
 const int autoReconnectMode = 1;
 
 
-// Strings to define which codecs to use for A2DP audio transmission. To
-// remove a codec from the capability list, use its command with no
-// parameters. For example:
-//       SET CONTROL CODEC AAC
-// Will remove the AAC codec from the capability list. This is NOT in the
-// documentation, so I had to figure that out from trial and error.
-// 
-// Uncomment this string to use default SBC codec.
-const String codecString="SET CONTROL CODEC SBC JOINT_STEREO 44100 0\r\n            SET CONTROL CODEC APT-X_LL\r\n            SET CONTROL CODEC APT-X\r\n            SET CONTROL CODEC AAC";
-//
-// Uncomment this string to use Apple AAC codec and fall back to the default
-// SBC codec if the AAC codec is not available. I believe this requires the
-// purchase and installation of a special license. This is probably not worth
-// it because the chip's command documentation says that it is unsupported on
-// most devices, and you'll only see it functioning on Apple-made devices.
-// In particular, it doesn't work on my target system, my Honda car stereo,
-// so I won't be attempting to support this.
-//   const String codecString="SET CONTROL CODEC AAC JOINT_STEREO 44100 0\r\n            SET CONTROL CODEC SBC JOINT_STEREO 44100 1\r\n            SET CONTROL CODEC APT-X_LL\r\n            SET CONTROL CODEC APT-X";
-//
-// Uncomment this string to use APT-X Low Latency codec. Requires purchase of
-// and installation of a special license for APT-X codec from Silicon Labs.
-// The license installation process in onerous and requires the purchase of
-// a special chip programming tool called a CSR USB-SPI programmer. Even if
-// you have the tool, the steps to accomplish the job are very tricky and the
-// Silicon Labs tech support does not give you all the important details that
-// you need to know to accomplish the job. I was able to do it once, with a
-// lot of trial and error, but honestly I don't think it's worth it to do it.
-//   const String codecString="SET CONTROL CODEC APT-X_LL JOINT_STEREO 44100 0\r\n            SET CONTROL CODEC APT-X JOINT_STEREO 44100 1\r\n            SET CONTROL CODEC SBC JOINT_STEREO 44100 2\r\n            SET CONTROL CODEC AAC";
-//
-// How to tell which codec is being used: When initial connection to your host
-// stereo occurs, a message will appear on the serial port like one of the
-// ones below, which tells you the details of what codec is used:
-//     A2DP CODEC SBC JOINT_STEREO 44100 BITPOOL 2-53
-//     A2DP CODEC SBC JOINT_STEREO 48000 BITPOOL 2-53
-//     A2DP CODEC APT-X_LL STEREO 44100
 
 // Auto Reconnect - This next section is a big deal, it was the largest source
 // of bugs and issues on the WT32i chip over the long run, due to unclear
@@ -443,6 +364,42 @@ const String alternateAutoReconnectString = "SET CONTROL RECONNECT 2888 0 0 17 0
 // but do not enable this feature, it causes more problems than it solves.
 const unsigned long monkeyReconnectInterval = 3600L;
 boolean monkeyReconnectEnabled = false;
+
+// Strings to define which codecs to use for A2DP audio transmission. To
+// remove a codec from the capability list, use its command with no
+// parameters. For example:
+//       SET CONTROL CODEC AAC
+// Will remove the AAC codec from the capability list. This is NOT in the
+// documentation, so I had to figure that out from trial and error.
+// 
+// Uncomment this string to use default SBC codec.
+const String codecString="SET CONTROL CODEC SBC JOINT_STEREO 44100 0\r\n            SET CONTROL CODEC APT-X_LL\r\n            SET CONTROL CODEC APT-X\r\n            SET CONTROL CODEC AAC";
+//
+// Uncomment this string to use Apple AAC codec and fall back to the default
+// SBC codec if the AAC codec is not available. I believe this requires the
+// purchase and installation of a special license. This is probably not worth
+// it because the chip's command documentation says that it is unsupported on
+// most devices, and you'll only see it functioning on Apple-made devices.
+// In particular, it doesn't work on my target system, my Honda car stereo,
+// so I won't be attempting to support this.
+//   const String codecString="SET CONTROL CODEC AAC JOINT_STEREO 44100 0\r\n            SET CONTROL CODEC SBC JOINT_STEREO 44100 1\r\n            SET CONTROL CODEC APT-X_LL\r\n            SET CONTROL CODEC APT-X";
+//
+// Uncomment this string to use APT-X Low Latency codec. Requires purchase of
+// and installation of a special license for APT-X codec from Silicon Labs.
+// The license installation process in onerous and requires the purchase of
+// a special chip programming tool called a CSR USB-SPI programmer. Even if
+// you have the tool, the steps to accomplish the job are very tricky and the
+// Silicon Labs tech support does not give you all the important details that
+// you need to know to accomplish the job. I was able to do it once, with a
+// lot of trial and error, but honestly I don't think it's worth it to do it.
+//   const String codecString="SET CONTROL CODEC APT-X_LL JOINT_STEREO 44100 0\r\n            SET CONTROL CODEC APT-X JOINT_STEREO 44100 1\r\n            SET CONTROL CODEC SBC JOINT_STEREO 44100 2\r\n            SET CONTROL CODEC AAC";
+//
+// How to tell which codec is being used: When initial connection to your host
+// stereo occurs, a message will appear on the serial port like one of the
+// ones below, which tells you the details of what codec is used:
+//     A2DP CODEC SBC JOINT_STEREO 44100 BITPOOL 2-53
+//     A2DP CODEC SBC JOINT_STEREO 48000 BITPOOL 2-53
+//     A2DP CODEC APT-X_LL STEREO 44100
 
 // Variable to control whether or not this program performs a conversion of
 // High ASCII to UTF-8 in the code. For instance, on the empeg, you might have
@@ -839,13 +796,15 @@ const String digitalAudioRoutingControlString = "SET CONTROL AUDIO INTERNAL I2S_
 // a sled (4v outputs):
 const String empegGainSettingString = "SET CONTROL GAIN 9 0";
 
-// Strings to hold an incoming line of serial characters from Bluetooth module
-// or empeg. Will be reset each time an entire message from the Bluetooth
-// module or empeg is processed.
+// Strings to hold an incoming line of serial characters from Bluetooth
+// module, empeg, or user debug console. Will be reset each time an entire
+// message from any of those sources are processed.
 static String btInputString = "";
 int btInputStringMaxLength = 275;
 static String empegInputString;
 int empegInputStringMaxLength = 275;
+static String userInputString;
+int userInputStringMaxLength = 150;
 
 // Some other string limits, how many string input characters will we allow
 // from the serial port before it is too excessive and we should start a new
@@ -853,11 +812,13 @@ int empegInputStringMaxLength = 275;
 int btSwallowInputStringMaxLength = 150;
 
 // Global variables used in main "Loop" function to detect when an entire
-// complete message string has been received from the Bluetooth module or
-// empeg. Will be set to true when a line termination character is received
-// indicating that the string is complete.
+// complete message string has been received from the Bluetooth module, empeg,
+// or from the user via the Arduino debug serial port. Will be set to true
+// when a line termination character is received indicating that the string is
+// complete.
 boolean btStringComplete = false;
 boolean empegStringComplete = false;
+boolean userStringComplete = false;
 
 // Variable to keep track of what the current empeg Playing state is reported
 // to be. This is used when responding to the Bluetooth module's queries for
@@ -1886,62 +1847,58 @@ char MainInputOutput()
   }
     
   // If I type something on the debug console (the Arduino main USB serial
-  // debug port) assume that this is intended as a command to send to the
-  // Bluetooth module, and forward it there.
-  if (Serial)
+  // debug port) the things that I type could either be empeg single-character
+  // serial port commands intended for the empeg, or they could be iWrap
+  // commands intended for the Bluetooth chip.  Check to see if any characters
+  // are available from the user on the Arduino serial port from the Arduino
+  // debug cable, and process them into individual lines for later parsing and
+  // command/response.
+  if(Serial)
   {
     if (Serial.available())
     {
-      // Read the character from the serial port.
+      // Begin blinking the LED to indicate activity.
+      BlinkBlue(true);
+
+      // Read one character (byte) from the Bluetooth serial port.
       userChar = Serial.read();
-  
-      // Write that character to the Bluetooth Board.
-      BlueGigaSerial.write(userChar);
-  
-      // Local echo the character back to the debug console.
-      LogChar(userChar);
       
-      // Special Case Debug code only. Bench test code to force pairing mode
-      // to start via a typed console command. Type Z to start pairing if this
-      // feature is enabled by the typeZtoPair variable at the top of the code.
-      if (typeZtoPair)
+      // Add the character that we read to our input line string for use
+      // later.
+      userInputString += userChar;
+      
+      // Check to see if it's a carriage return or if the length of the string
+      // is too large to hold, either way we consider the string to be done,
+      // baked, and ready to do something with.
+      if ((userChar == '\n') || (userInputString.length() >= (userInputStringMaxLength - 2)))
       {
-        if (String("z").equalsIgnoreCase((String)userChar))
-        {
-          PairBluetooth();
-        }
+        // String is ready to be processed if one of the above things was
+        // true.
+        userStringComplete = true;
+
+        // Trim extra CR LF and whitespace at the end of the string if any.
+        userInputString.trim();
+
+        // Log the string.
+        Log(userInputString);
       }
 
-      // Perform special debugging trick in which we test the empeg Serial
-      // port commands if we are in the special empeg debugging mode. To use
-      // this feature, enable empegSendCommandDebug flag at the top of the
-      // code. Then, send one of the empeg command keys (N P C W - Case
-      // insensitive) to the Arduino serial console to trigger the effect.
-      if (empegSendCommandDebug)
-      {
-        // Iterate through our matrix of incoming AVRCP commands looking for a
-        // match.
-        for (int i=0; i<empegCommandMatrixSize; i++)
-        {
-          // Make the string comparison to find out if there is a match. Match
-          // to the second column in the table ("[1]") to match the empeg
-          // single-key command rather than the AVRCP string.
-          if ((empegCommandMessageMatrix[i][1]).equalsIgnoreCase((String)userChar)) 
-          {
-            // Because this stunt happens before the CR or CRLF or whatever is
-            // processed at the end of the command, also send the necessary
-            // line terminator to the screen so it doesn't print on the same
-            // line as the next thing logged to the serial port.
-            LogChar('\n');
-
-            // Directly trigger the empeg command-sending code with the AVRCP
-            // message (column "[0]") already in the variable, to force the
-            // action to trigger right away.
-            HandleString(empegCommandMessageMatrix[i][0]);
-          }
-        }      
-      }
+      // Finish blinking the LED.
+      BlinkBlue(false);
     }
+  }
+
+  // Check to see if we have received a completed string from the user
+  // and therefore need to start processing the contents of that string.
+  if (userStringComplete)
+  {
+    userStringComplete = false;
+
+    // Call the function to process the string and do the needful.
+    HandleUserString(userInputString);
+    
+    // Reset the string after processing it, ready for the next line.
+    userInputString = "";
   }
 
   // Monkey Reconnect is a failed attempt to work around issue #60, problems
@@ -2091,6 +2048,75 @@ void DisplayAndProcessCommands(unsigned long idleTimeMs, bool waitForLineEnding)
 
 
 // ---------------------------------------------------------------------------
+// HandleUserString
+// 
+// Function to process the string data received from the Arduino debug cable
+// which has been typed by the user in a debugging session. When a complete
+// string is received, call this function to perform processing and actions on
+// the string.
+// ---------------------------------------------------------------------------
+void HandleUserString(String &theString)
+{
+  // Check to see if the string was one of our supported Empeg single-
+  // character command strings. If so, send it to the empeg or do other needed
+  // processing on it. If not, send it to the Bluetooth chip, because
+  // everything typed on the console which isn't an empeg command must by
+  // elimination be a Bluetooth command. Do this by checking for each of the
+  // possible supported empeg command matrix characters first, processing
+  // them, and doing a  "return" statement, if one of them is hit. If none of
+  // the "return" statements are hit, then whatever is left over must be a
+  // Bluetooth command.
+
+  // User can type Z by itself on the debug console to start pairing. If the
+  // string is a Z and only a Z, then call the pairing routine, the same as if
+  // the user had pressed the RESET/PAIR button on the BlueGigaEmpeg casing.
+  if (String("z").equalsIgnoreCase(theString))
+  {
+    // Initiate pairing sub-mode.
+    PairBluetooth();
+
+    // Done handling string, return from this routine so we don't double-
+    // process commands.
+    return;
+  }
+
+  // Iterate through our empeg command matrix. This is a matrix of the single-
+  // character empeg serial port commands, and also their corresponding AVRCP
+  // Bluetooth chip commands. If we get a match just throw the AVRCP command
+  // into our regular AVRCP processing loop which will handle everything for
+  // us, including sending the corresponding correct command to the empeg
+  // serial port.
+  for (int i=0; i<empegCommandMatrixSize; i++)
+  {
+    // Make the string comparison to find out if there is a match. Match to
+    // the second column in the table ("[1]") to match the empeg single-key
+    // command rather than the AVRCP string. If the user typed a single
+    // character (and only a single character) which matches the corresponding
+    // empeg serial port command, then process it.
+    if ((empegCommandMessageMatrix[i][1]).equalsIgnoreCase(theString))
+    {
+      // Directly trigger the empeg command-sending code with the AVRCP
+      // message (column "[0]") already in the variable, to force the action
+      // to trigger right away. This should also do the necessary part of
+      // sending the empeg single-character key command to the empeg serial
+      // port.
+      HandleString(empegCommandMessageMatrix[i][0]);
+
+      // Done handling string, return from this routine so we don't double-
+      // process commands.
+      return;
+    }
+  } 
+
+  // If we haven't had a match yet (if none of the "return" statements above
+  // have been hit), then the string must be a completely different non-empeg
+  // command which was intended for the Bluetooth serial port. Send it along
+  // to the Bluetooth serial port now.
+  SendBlueGigaCommand(theString);
+}
+
+
+// ---------------------------------------------------------------------------
 // HandleString
 // 
 // Function to process the string data received from the Bluetooth chip.
@@ -2194,7 +2220,6 @@ void HandleString(String &theString)
     }
   }
 
- 
   // Handle "get Bluetooth address" strings - these are strings that are
   // intended to tell me who my current pairing buddy is. This must come early
   // in the process so that if the GBA strings are found in the list, they
