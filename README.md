@@ -1058,17 +1058,17 @@ Bluetooth chip automatically, and see all of the chip's responses to them.
 You may also type certain specific commands to the empeg serial port to control
 the empeg. Type a single character followed by pressing the Enter key.
 The following commands are supported:
-- N - Next track.
-- P - Previous track.
-- C - Play (think "continue").
-- W - Pause (think "wait").
-- F - Begin fast forwarding.
-- B - Begin rewinding (think "backwards").
-- A - Stop fast forwarding or rewinding (think "abort").
-- % - Toggle Shuffle on or off.
-- + - Increase the volume of the empeg by one notch.
-- - - Decrease the volume of the empeg by one notch.
-- Z - Place the BlueGigaEmpeg module into pairing mode for approx. 30 seconds.
+- N   - Next track.
+- P   - Previous track.
+- C   - Play (think "continue").
+- W   - Pause (think "wait").
+- F   - Begin fast forwarding.
+- B   - Begin rewinding (think "backwards").
+- A   - Stop fast forwarding or rewinding (think "abort").
+- %   - Toggle Shuffle on or off.
+- +   - Increase the volume of the empeg by one notch.
+- -   - Decrease the volume of the empeg by one notch.
+- Z   - Place the BlueGigaEmpeg module into pairing mode for approx. 30 seconds.
 
 
 ####  Power up sequence (startup order) for Arduino debugging:
