@@ -631,9 +631,9 @@ for this purpose.
   
   - If you can't reach the RESET/PAIR button, then it is also possible to
     initiate pairing from the USB debug connection, via a connected laptop, by
-    enabling the "typeZtoPair" flag variable in the Arduino sketch. See
-    ["Debug Bluetooth connection if needed"](#debug)
-    for more information.
+    typing a Z followed by pressing the Enter key in the Arduino Serial
+    Monitor. See ["Debug Bluetooth connection if needed"](#debug) for more
+    information.
 
 - On the car stereo, initiate its pairing mode while the blue LED on the
   BlueGigaEmpeg module is lit. If the stereo offers you a list of devices to
