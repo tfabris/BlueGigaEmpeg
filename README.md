@@ -1066,6 +1066,8 @@ The following commands are supported:
 - B - Begin rewinding (think "backwards").
 - A - Stop fast forwarding or rewinding (think "abort").
 - % - Toggle Shuffle on or off.
+- + - Increase the volume of the empeg by one notch.
+- - - Decrease the volume of the empeg by one notch.
 - Z - Place the BlueGigaEmpeg module into pairing mode for approx. 30 seconds.
 
 
