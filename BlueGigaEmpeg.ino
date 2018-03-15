@@ -212,18 +212,30 @@ const int autoReconnectMode = 1;
 const String codecString="SET CONTROL CODEC SBC JOINT_STEREO 44100 0\r\n            SET CONTROL CODEC APT-X_LL\r\n            SET CONTROL CODEC APT-X\r\n            SET CONTROL CODEC AAC";
 //
 // Uncomment this string to use Apple AAC codec and fall back to the default
-// SBC codec if the AAC codec is not available. This  didn't work correctly on
-// my Honda stereo despite the AAC codec being supported. It put my stereo
-// into a mode where no sound came out and the track titles kept getting re-
-// queried once per second, causing odd behavior on the host stereo. You might
-// be able to use this successfully, but I wasn't able to use it.
+// SBC codec if the AAC codec is not available. I believe this requires the
+// purchase and installation of a special license. This is probably not worth
+// it because the chip's command documentation says that it is unsupported on
+// most devices, and you'll only see it functioning on Apple-made devices.
+// In particular, it doesn't work on my target system, my Honda car stereo,
+// so I won't be attempting to support this.
 //   const String codecString="SET CONTROL CODEC AAC JOINT_STEREO 44100 0\r\n            SET CONTROL CODEC SBC JOINT_STEREO 44100 1\r\n            SET CONTROL CODEC APT-X_LL\r\n            SET CONTROL CODEC APT-X";
 //
-// Uncomment this string to use APT-X Low Latency codec. Requires special firmware
-// download and the purchase of a special license for APT-X codec from Silicon
-// Labs.
+// Uncomment this string to use APT-X Low Latency codec. Requires purchase of
+// and installation of a special license for APT-X codec from Silicon Labs.
+// The license installation process in onerous and requires the purchase of
+// a special chip programming tool called a CSR USB-SPI programmer. Even if
+// you have the tool, the steps to accomplish the job are very tricky and the
+// Silicon Labs tech support does not give you all the important details that
+// you need to know to accomplish the job. I was able to do it once, with a
+// lot of trial and error, but honestly I don't think it's worth it to do it.
 //   const String codecString="SET CONTROL CODEC APT-X_LL JOINT_STEREO 44100 0\r\n            SET CONTROL CODEC APT-X JOINT_STEREO 44100 1\r\n            SET CONTROL CODEC SBC JOINT_STEREO 44100 2\r\n            SET CONTROL CODEC AAC";
-
+//
+// How to tell which codec is being used: When initial connection to your host
+// stereo occurs, a message will appear on the serial port like one of the
+// ones below, which tells you the details of what codec is used:
+//     A2DP CODEC SBC JOINT_STEREO 44100 BITPOOL 2-53
+//     A2DP CODEC SBC JOINT_STEREO 48000 BITPOOL 2-53
+//     A2DP CODEC APT-X_LL STEREO 44100
 
 // Auto Reconnect - This next section is a big deal, it was the largest source
 // of bugs and issues on the WT32i chip over the long run, due to unclear
@@ -570,20 +582,16 @@ String scFixMessageMatrix[12][2] =
   { "RING 2",                              "A2DP STREAMING START"},
   { "RING 3",                              "A2DP STREAMING START"},
 
-  // Note that these are NOT needed. You only need to issue streaming start
-  // from a RING coming in from the headunit. It does not help to do it when
-  // seeing a CONNECT message.
-  //
-  // UPDATE: Attempting to fix issue #71 (No Onkyo AVRCP), while also trying
-  // to prevent re-inducing issue #60 (Host sends bad PDU registrations forcing)
+  // While attempting to fix issue #71 (No Onkyo AVRCP), while also trying to
+  // prevent re-inducing issue #60 (Host sends bad PDU registrations forcing)
   // me to reboot), I re-encountered issue #67 (silence after cold boot) and
   // I think it's because I needed to speed up the reconnect interval to make
-  // it work. So I'm trying to put these STREAMING START commands back in here
-  // to fix issue #67 for good. This is an experiment. I'm also getting a problem
-  // where sometimes the WT32i reboots when I issue STREAMING START commands but
-  // I'm not entirely sure where the problem lies. Perhaps it is the quantity of
-  // streaming starts or the speed of reconnection in the reconnect command.
-  // Not sure yet.
+  // it work. I attempted to put STREAMING START commands back in here at
+  // connect time. This did not fully fix issue #67 but significantly reduced
+  // its frequency. I later got another repeat of issue #67 which seems to
+  // indicate that there might be some other spot later on, even later than
+  // these, where I might be able to issue another STREAMING START which might
+  // fix issue #67 for good, not sure.
   { "CONNECT 1 A2DP 19",                   "A2DP STREAMING START"},
   { "CONNECT 2 A2DP 19",                   "A2DP STREAMING START"},
   { "CONNECT 3 A2DP 19",                   "A2DP STREAMING START"},
@@ -704,28 +712,6 @@ String gbaMessageMatrix[2] =
   "SET BT PAIR ",
   "SSP CONFIRM ",
 };
-
-// Length of time to be in pairing mode before giving up. Make sure to change
-// both variables below. The first variable is in milliseconds and the second
-// variable is in seconds. Note: Can't be bigger than 32768 milliseconds (32
-// seconds).
-int pairTimeMilliseconds = 30000;
-
-// String to send to the Bluetooth chip when we begin pairing mode by pressing
-// the RESET/PAIR button on this electronic assembly. This is just a command
-// to scan the air for other Bluetooth devices for xx seconds (number should
-// match milliseconds above). Then the program code below will listen for
-// responses to this device inquiry and will respond appropriately in the
-// appropriate pairing section of the code. The RESET/PAIR LED will be lit up
-// blue during this time. NOTE: This pairing feature has only been useful to
-// me for pairing up with devices which do NOT have a user interface. For
-// example, I have to use this pairing feature with a Bluetooth headset. But
-// on my car stereo, (which has a detailed touchscreen user interface for
-// pairing) I can't actually pair with the device when I'm in this pairing
-// mode. I have to wait until this is done (or don't trigger it at all to
-// begin with) and THEN I will be able to pair with the device from my car
-// stereo's front panel.
-const String pairBeginString = "INQUIRY 30";
 
 // String that I am using to detect that the pairing process has completed and
 // to stop responding to pairing-related messages coming on the serial port
@@ -1104,6 +1090,60 @@ void setup()
   // pairing information, that is left untouched.
   SetGlobalChipDefaults();
 
+  // Experimental fix for issue #37 and #28 at the same time. Decide whether
+  // the chip should be in general discovery mode (GIAC), or in limited
+  // discovery mode (LIAC) at boot up. If we already have a current pairing
+  // buddy, then put it into Limited mode. If we don't have a pairing buddy,
+  // then put it into General mode. The idea here is that if I want to pair
+  // with my empeg when it's in the trunk of my Honda, I don't want to be
+  // forced to walk back there and press the pair button if I don't have to.
+  // To allow pairing from the Honda front panel without a buttonpress, the
+  // device has to be in GIAC mode. But I also don't want the device to be too
+  // promiscuous at other times. So to resolve the balance in this catch-22,
+  // I'm saying that I only go into GIAC mode at bootup when we don't already
+  // have a pairing buddy lined up, or, when we're actively trying to pair.
+  //
+  // First step is to query the Bluetooth module to find out if we have a
+  // pairing buddy at this time. Issue the command to list existing pairings.
+  SendBlueGigaCommand(F("SET BT PAIR"));
+
+  // After listing the existing pairings, idle for a moment to allow the main
+  // string processing loop to receive the response from the pair list. The
+  // response can take as much as 500ms or more to come back, so idle for it
+  // for up to <some arbitrarily long time period> and then be done idling as
+  // soon as you get any response at all (the "true" in this statement stops
+  // idling once you get a line ending character, and the pair query response
+  // is a single line which should be the first line you receive after the
+  // query).
+  DisplayAndProcessCommands(3000, true);
+
+  // At this point the main string processor routine will, if it found a
+  // pairing buddy in the response to the SET BT PAIR command, have filled out
+  // our variable of our current pairing buddy, and we can now check it to see
+  // if it has a value in it. A blank value means no pairing buddy, a nonblank
+  // value means that we found a previously programmed pairing buddy.
+  if (pairAddressString == "")
+  {
+    // No previous pairing buddy was found, so place the Bluetooth chip into a
+    // mode where it is more easily discoverable. This is the "General Inquiry
+    // Access Code (GIAC)" value. We will put the device in this mode only
+    // when we haven't got a pairing buddy yet, or when we are are actively in
+    // pairing mode.
+    Log(F("There is no existing pairing buddy. Placing chip into general discovery mode."));
+    SendBlueGigaCommand(F("SET BT LAP 9e8b33"));
+  }
+  else
+  {
+    // A previous pairing buddy was found in the Bluetooth chip's memory, so
+    // place the Bluetooth chip into a mode where it is not easily
+    // discoverable. This is the "Limited Dedicated Inquiry Access Code
+    // (LIAC)" value. We will leave the device in this mode most of the time
+    // so that it is not shown in the pairing screens of most devices unless
+    // you are in pairing mode.
+    Log(F("There is an existing pairing buddy. Placing chip into limited discovery mode."));
+    SendBlueGigaCommand(F("SET BT LAP 9e8b00"));    
+  }
+
   // Reset the Bluetooth chip every time the Arduino chip is started up and
   // after we have set all of its defaults (which will still be saved after
   // the reset; this is a soft reset). Resetting it here prevents bugs where
@@ -1310,7 +1350,7 @@ void SetGlobalChipDefaults()
   
   // Configure the system to not accidentally go into data mode in certain
   // situations. Parameters are:
-    // "-"  = Disable ASCII character escape sequence that would put it into command mode.
+  // "-"  = Disable ASCII character escape sequence that would put it into command mode.
   // "00" = Bitmask for which digital I/O pins are used for DTR signal (00=none)
   // "0"  = DTR disabled.
   SendBlueGigaCommand(F("SET CONTROL ESCAPE - 00 0"));
@@ -1326,7 +1366,7 @@ void SetGlobalChipDefaults()
   // this device will only be running when the car ignition is on, and will be
   // getting the voltage (indirectly) from the car power.
   SendBlueGigaCommand(F("SET CONTROL BATTERY 0 0 0 0"));
-
+  
   // Change some configuration bits on the player. See section 6.75 of the
   // iWrap command reference documentation for details on this topic. The
   // format of the command is:  
@@ -1588,66 +1628,65 @@ void PairBluetooth()
   Log (F("--------------------------------------"));
   Log (F(" "));  
 
-  // Notify users watching the debug console about the pairing quirk.
-  Log (F(" "));
-  Log (F("--------------------------------------"));
-  Log (F("  Note: For some devices, attempting  "));
-  Log (F("  to pair right now will not work.    "));
-  Log (F("  Sometimes, for example, with some   "));
-  Log (F("  touchscreen devices, you must wait  "));
-  Log (F("  until the LED is off and the pair   "));
-  Log (F("  routine here is done, and then      "));
-  Log (F("  initiate the pairing process solely "));
-  Log (F("  from the touchscreen.               "));
-  Log (F("                                      "));
-  Log (F("  Other devices may need to be put in "));
-  Log (F("  pairing mode right now. Depends on  "));
-  Log (F("  the device.                         "));
-  Log (F("--------------------------------------"));
-  Log (F(" "));  
-
   // Clear out our input string before starting the pairing process just in
   // case we pressed the pair button in the middle of a string input
   btInputString = "";
   
-  // Initiate the process of pairing, which is merely a command to query for
-  // available Bluetooth devices in the air nearby. Then we will respond to
-  // any responses that we see on the serial port for a number of seconds,
-  // handled in the loop below.
-  SendBlueGigaCommand(pairBeginString);
+  // Place the Bluetooth chip into a mode where it is discoverable. This is
+  // the "General/Unlimited Inquiry Access Code (GIAC)" value. This allows
+  // other devices to see us more easily while we are in pairing mode.
+  Log(F("Placing chip into general discovery mode for the pairing process."));
+  SendBlueGigaCommand(F("SET BT LAP 9e8b33"));
 
-  // Process pairing commands for x milliseconds before quitting. The main
-  // loop for processing serial input/output will automatically detect the
-  // necessary responses from Bluetooth devices in the air nearby and answer
+  // Attempt pairing x number of seconds before quitting. The main loop for
+  // processing serial input/output will automatically detect the necessary
+  // responses from Bluetooth devices in the air nearby and answer
   // appropriately at the appropriate times. At regular intervals, check to
-  // see if the pairing process was completed and bail out of the loop if it
-  // was. Note, the hard coded "30" here is arbitrary, it's the number of
-  // times during this loop that we check for loop completion. For instance,
-  // if pairTimeMilliseconds is 30, then this will check for loop completion
-  // once per second. If pairTimeMilliseconds is 15, then this will check for
-  // loop completion once every half second, etc.
+  // see if the pairing process was completed and bail out of the loop.
   for (int i=0; i<=30; i++)
   {
-    // Process commands for a portion of the time as we wait for pairing to
-    // complete. Pairing response codes, and pairing completion detection, is
-    // a piece of special case code elsewhere in this program code, in the
-    // string handling/processing code which is executed automatically. So
-    // pairing completion will occur automatically if the host device is put
-    // into pairing mode during this loop and the device is found.
-    DisplayAndProcessCommands(pairTimeMilliseconds / 30, false);
-
-    // Check if the pairing process is detected as having been completed by
-    // special case code elsewhere in the code flow. The flag to detect
-    // whether it has been completed is the pairingMode variable, which the
-    // special case code will set to "false" when it detects it has completed
-    // the pairing process and has done all the pairing steps.
-    if (pairingMode == false)
+    // At even intervals throughout the loop, begin an inquiry. Do this
+    // at evenly spaced intervals instead of continuously, so that a
+    // another device that is trying to initiate pairing can see it. 
+    // This is an experiment to fix GitHub issue #37.
+    if ( (i==0) || (i==10) || (i==20) )
     {
-      // if the pairing process got completed for us, break out of the waiting
-      // loop to continue with this routine early.
-      break;
+      Log(F("Starting inquiry."));
+      SendBlueGigaCommand(F("INQUIRY 5"));
     }
+
+    // GitHub issue #37 experiment. At even intervals through the loop,
+    // cancel the inquiry. It should theoretically already have been
+    // self-canceled, the inquiry command should self-stop after the
+    // correct number of seconds already. This is experimental and
+    // "just in case".
+    if ( (i==5) || (i==15) || (i==25) )
+    {
+      Log(F("Stopping inquiry."));
+      SendBlueGigaCommand(F("IC"));
+    }
+
+    // Process commands in our main loop for 1 second. If a device is
+    // discovered then it will be automatically paired by the main
+    // string processing handler.
+    DisplayAndProcessCommands(1000, false);
+
+    // Check if the pairing process has been completed by the main string
+    // processing handler. If so, the main string processing handler will
+    // have set this to "false", so break out if we detect this.
+    if (pairingMode == false) { break; }
   }
+  
+  // GitHub issue #75. When pairing has finished, cancel the inquiry mode.
+  // This is particularly useful in cases where pairing succeeded while it
+  // was still inside an inquiry. If the "break" statement above is hit
+  // because the pairing was successful, then the inquiry mode can be
+  // terminated early at this point. If it hits this line after all inquiries
+  // are finished making attempts and no pairing was done during that period,
+  // then this is "insurance" to make sure to turn off inquiry mode when we
+  // have decided to give up the search.
+  Log(F("Stopping inquiry."));
+  SendBlueGigaCommand(F("IC"));
   
   // We are done with pairing mode if either we have run out of loop time or
   // if the code above detects that pairing mode got completed. Set the global
@@ -1656,6 +1695,32 @@ void PairBluetooth()
   // process is done.
   pairingMode = false;
   digitalWrite(pairLedPin, LOW);
+
+  // Attempting to fix issue #28 and issue #37 at the same time. Check to see
+  // if pairing was successful and if we got a pairing buddy. A blank value
+  // means no pairing buddy was found during the pairing procedure above, a
+  // nonblank value means that we found a pairing buddy during pairing above.
+  if (pairAddressString == "")
+  {
+    // No previous pairing buddy was found, so place the Bluetooth chip into a
+    // mode where it is more easily discoverable. This is the "General Inquiry
+    // Access Code (GIAC)" value. We will put the device in this mode only
+    // when we haven't got a pairing buddy yet, or when we are are actively in
+    // pairing mode.
+    Log(F("No pairing buddy was found. Placing chip into general discovery mode."));
+    SendBlueGigaCommand(F("SET BT LAP 9e8b33"));
+  }
+  else
+  {
+    // A previous pairing buddy was found in the Bluetooth chip's memory, so
+    // place the Bluetooth chip into a mode where it is not easily
+    // discoverable. This is the "Limited Dedicated Inquiry Access Code
+    // (LIAC)" value. We will leave the device in this mode most of the time
+    // so that it is not shown in the pairing screens of most devices unless
+    // you are in pairing mode.
+    Log(F("A pairing buddy was found. Placing chip into limited discovery mode."));
+    SendBlueGigaCommand(F("SET BT LAP 9e8b00"));    
+  }  
 
   // Log that we are done.
   Log (F(" "));
@@ -1942,6 +2007,17 @@ char MainInputOutput()
           Log(F("Trying to connect now to our current pairing buddy."));
           SendBlueGigaCommand("CALL " + pairAddressString + " 19 A2DP");
 
+          // Attempt to fix issue #28 and issue #37 at the same time. If we are
+          // setting ourselves to auto reconnect to someone, then we must have
+          // successfully paired and connected with someone. So now place the
+          // Bluetooth chip into a mode where it is not easily discoverable. This
+          // is the "Limited Dedicated Inquiry Access Code (LIAC)" value. We will
+          // leave the device in this mode most of the time so that it is not
+          // shown in the pairing screens of most devices unless you are in
+          // pairing mode.
+          Log(F("Since there is an existing pairing buddy, placing chip into limited discovery mode."));
+          SendBlueGigaCommand(F("SET BT LAP 9e8b00"));  
+
           // Prevent this code from firing twice in the same millisecond if
           // the loop happens to execute extra fast. Same caveats as above.
           delay(1);
@@ -2099,8 +2175,12 @@ void HandleString(String &theString)
     // this, but not all pieces of the string might match exactly, so look
     // for some of the sections but not all of them:
     //      A2DP CODEC SBC JOINT_STEREO 48000 BITPOOL 2-53
-    //
-    if ( (theString.indexOf(F("A2DP CODEC ")) > (-1)) && (theString.indexOf(F(" 48000 ")) > (-1)) && (theString.indexOf(F(" BITPOOL ")) > (-1)))
+    // Example of another string that might appear if a different codec is
+    // being used:
+    //      A2DP CODEC APT-X_LL STEREO 44100
+    // So your check below needs to accomodate all possible combinations while
+    // still triggering on the bad state (48khz sampling rate).
+    if ( (theString.indexOf(F("A2DP CODEC ")) > (-1)) && (theString.indexOf(F(" 48000 ")) > (-1)) )
     {
       // If the problem is detected, then restart the Bluetooth.
       Log(F("Stereo connected with bad audio sampling rate of 48000. Restarting Bluetooth module."));
@@ -2283,6 +2363,17 @@ void HandleString(String &theString)
     {
       // Use the autoReconnectString defined at the top of this program.
       SendBlueGigaCommand(autoReconnectString);
+
+      // Attempt to fix issue #28 and issue #37 at the same time. If we are
+      // setting ourselves to auto reconnect to someone, then we must have
+      // successfully paired and connected with someone. So now place the
+      // Bluetooth chip into a mode where it is not easily discoverable. This
+      // is the "Limited Dedicated Inquiry Access Code (LIAC)" value. We will
+      // leave the device in this mode most of the time so that it is not
+      // shown in the pairing screens of most devices unless you are in
+      // pairing mode.
+      Log(F("Since there is an existing pairing buddy, placing chip into limited discovery mode."));
+      SendBlueGigaCommand(F("SET BT LAP 9e8b00"));        
     }
   }
     
@@ -3250,6 +3341,17 @@ void ForceQuickReconnect()
   if (!monkeyReconnectEnabled)
   {
     SendBlueGigaCommand(autoReconnectString);
+
+    // Attempt to fix issue #28 and issue #37 at the same time. If we are
+    // setting ourselves to auto reconnect to someone, then we must have
+    // successfully paired and connected with someone. So now place the
+    // Bluetooth chip into a mode where it is not easily discoverable. This
+    // is the "Limited Dedicated Inquiry Access Code (LIAC)" value. We will
+    // leave the device in this mode most of the time so that it is not
+    // shown in the pairing screens of most devices unless you are in
+    // pairing mode.
+    Log(F("ForceQuickReconnect mode. Assuming that there is a pairing buddy since we are connected. Placing chip into limited discovery mode."));
+    SendBlueGigaCommand(F("SET BT LAP 9e8b00"));  
   }
   
   // UPDATE: After a lot of work for doing a truly quick reconnect version,
