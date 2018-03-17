@@ -795,7 +795,7 @@ the following:
  - Looks for Bluetooth devices to pair with for about 30 seconds, and pairs
    automatically with the first one that it sees. Starting with version 1.1.5
    of the BlueGigaEmpeg sketch, it will alternate between searching for
-   devices and listening for devices during that 30 seconds.
+   devices and listening for devices during those 30 seconds.
 
  - The blue RESET/PAIR LED is lit during this pairing mode, and will turn
    off once pairing is complete, or once the 30 seconds has run out.
@@ -984,10 +984,10 @@ track titles don't show up on the car stereo's screen, then try the following.
   
   - You can tell if you have this problem by using [debug mode](#debug) and
     typing the LIST command while the module is paired. The output of the LIST
-    command should have three entries: Two A2DP channels for left and right
-    audio, and one AVRCP channel for commands and data. If your LIST command
-    shows only two A2DP channels but no AVRCP channel, then you have this
-    problem. Try the following:
+    command should show three entries: Two A2DP channels (one for data and one
+    for audio) and one AVRCP channel for play/pause/track commands and track
+    titles. If your LIST command shows only two A2DP channels but no AVRCP
+    channel, then you have this problem. Try the following:
 
     - Get the latest version of the BlueGigaEmpeg.ino source code as described
       in the ["Updating firmware"](#updating-firmware) section. Edit the
@@ -1047,7 +1047,8 @@ console. To run it, do the following:
   that represents the connected Arduino (this will be different on each
   system).
 
-- Select "Tools" then "Serial Monitor". The serial monitor will appear.
+- Select "Tools" then "Serial Monitor", or press the magnifying glass icon
+  in the upper right corner of the window. The serial monitor will appear.
   Set it to 115200 BPS and set line endings to "both NL & CR".
 
 When connected to this serial terminal interface, everything you type is sent
@@ -1396,30 +1397,36 @@ Once the device drivers are installed and working, do the following:
   that represents the connected Arduino (this will be different on each
   system).
 
-- Select "Tools" then "Serial Monitor". The serial monitor will appear.
+- Select "Tools" then "Serial Monitor", or press the magnifying glass icon
+  in the upper right corner of the window. The serial monitor will appear.
   Set it to 115200 BPS and set line endings to "both NL & CR".
 
 You should see some serial port output from the Arduino. If you don't already
 see this, try closing and re-opening the Serial Monitor.
 
-If the Serial Monitor is working, select the "File" menu in the Arduino IDE,
-select "Open" and locate the BlueGigaEmpeg.ino project file in the folder that
-you obtained and unzipped earlier. Compile and upload it to the Arduino Mega
-board by pressing the "Upload" button on the main window. The Upload button is
-the green circle with the arrow inside it.
+If the Serial Monitor is working, then you are read to compile and upload the
+sketch to the Arduino Mega board. Do the following:
 
-It will take several seconds to upload. Look at the Arduino IDE and make sure
-that there is no red text or other error messages near the bottom of the
-window which would indicate a problem compiling or uploading the sketch. If
-it is good, there will be a very small piece of text on the IDE, on the green
-bar between the code pane (top) and the console pane (bottom), saying "done
-uploading".
+- Select "File", "Open" and open the BlueGigaEmpeg.ino project file in the
+  folder that you obtained and unzipped earlier.
 
-After the latest version of the BlueGigaEmpeg.ino sketch is successfully
-uploaded to the Arduino, look at the output in the Serial Monitor again. The
-top section of the output should list the RX and TX buffer sizes near the
-beginning, and indicate that they are good. An error message will appear
-if the serial port buffer sizes are not good.
+- Compile and upload it by selecting "Sketch", "Upload", or by pressing the
+  Upload button in the main window. the Upload button is the green circle
+  with the arrow inside it.
+
+- It will take several seconds to upload.
+
+- Look at the Arduino IDE and make sure that there is no red text or other
+  error messages near the bottom of the window which would indicate a problem
+  compiling or uploading the sketch. If it is good, there will be a very small
+  piece of text on the IDE, on the green bar between the code pane (top) and
+  the console pane (bottom), saying "done uploading".
+
+- After the latest version of the BlueGigaEmpeg.ino sketch is successfully
+  uploaded to the Arduino, look at the output in the Serial Monitor again.
+  The top section of the output should list the RX and TX buffer sizes near
+  the beginning, and indicate that they are good. An error message will
+  appear if the serial port buffer sizes are not good.
 
 Close the Arduino IDE and disconnect the USB cable from the computer. The USB
 cable should be left disconnected from the computer during normal operation of
