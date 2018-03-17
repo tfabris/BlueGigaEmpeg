@@ -1404,7 +1404,7 @@ Once the device drivers are installed and working, do the following:
 You should see some serial port output from the Arduino. If you don't already
 see this, try closing and re-opening the Serial Monitor.
 
-If the Serial Monitor is working, then you are read to compile and upload the
+If the Serial Monitor is working, then you are ready to compile and upload the
 sketch to the Arduino Mega board. Do the following:
 
 - Select "File", "Open" and open the BlueGigaEmpeg.ino project file in the
