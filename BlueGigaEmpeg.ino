@@ -411,8 +411,6 @@ const String codecString="SET CONTROL CODEC SBC JOINT_STEREO 44100 0\r\n        
 //     A2DP CODEC SBC JOINT_STEREO 48000 BITPOOL 2-53
 //     A2DP CODEC APT-X_LL STEREO 44100
 
-
-
 // Control whether or not the module uses digital I2S audio, or analog line-
 // level audio inputs (for example the line level inputs on the BlueGiga dev
 // board).
@@ -532,12 +530,42 @@ String scFixMessageMatrix[12][2] =
   // themselves) but it doesn't work to remove these. If you don't do this
   // then in some cases your empeg plays silently to a headunit that makes
   // no sound. So these are required.
+  //
+  // Experiment - trying to fix issue #67 by not doing a streaming start on
+  // either the "0" or "1" channel, instead wait for for channels "2" or "3"
+  // before doing a streaming start. This is because the issue #67 repros all
+  // had in their logs what looked like a "premature" streaming start command
+  // while it was still trying to set up the first A2DP channel. Try delaying
+  // it to later so that it doesn't mess up the stream establishment on Honda.
+  // Update: Nope, removing the "RING 1" streaming start is what *induces*
+  // issue #70 so frequently.
+  //
+  // Next: Try doing no streaming starts on RINGs at all and only on CONNECT.
+  // Update: Nope, no audio happens at all unless we answer the ring with a
+  // streaming start. And in fact, if we answer too late then we get the
+  // 48k problem. Hm. Let's try doing a streaming start on 0 for RING but
+  // not for CONNECT?
+  // Update: NOPE, holy cow, issuing the streaming start too early, on the
+  // RING 0 is definitely the thing that induces issue #67.
+  // So we can't do it too early (issue 67 happens if we do it at 0) and
+  // we can't do it too late (issue 70 happens if we do it only at 2 or later)
+  //   { "RING 0",                              "A2DP STREAMING START"},
   { "RING 1",                              "A2DP STREAMING START"},
   { "RING 2",                              "A2DP STREAMING START"},
   { "RING 3",                              "A2DP STREAMING START"},
+  // IDEA: Handle the streaming starts for the RINGs in special code.
+  // Only do a streaming start on the *second* ring on A2DP. Reason it
+  // has to be in special code instead of here is because it infixes
+  // the address like this in the message and I don't know what order
+  // or channel they will happen in, like this:
+    // 0002391 RING 0 48:f0:7b:57:15:20 19 A2DP
+    // 0000104 RING 1 48:f0:7b:57:15:20 17 AVRCP
+    // 0000003 --^ A2DP STREAMING START
+    // 0000200 RING 2 48:f0:7b:57:15:20 19 A2DP
+
 
   // While attempting to fix issue #71 (No Onkyo AVRCP), while also trying to
-  // prevent re-inducing issue #60 (Host sends bad PDU registrations forcing)
+  // prevent re-inducing issue #60 (Host sends bad PDU registrations forcing
   // me to reboot), I re-encountered issue #67 (silence after cold boot) and
   // I think it's because I needed to speed up the reconnect interval to make
   // it work. I attempted to put STREAMING START commands back in here at
@@ -546,6 +574,17 @@ String scFixMessageMatrix[12][2] =
   // indicate that there might be some other spot later on, even later than
   // these, where I might be able to issue another STREAMING START which might
   // fix issue #67 for good, not sure.
+  //
+  // Experiment - trying to fix issue #67 by not doing a streaming start on
+  // either the "0" or "1" channel, instead wait for for channels "2" or "3"
+  // before doing a streaming start. This is because the issue #67 repros all
+  // had in their logs what looked like a "premature" streaming start command
+  // while it was still trying to set up the first A2DP channel. Try delaying
+  // it to later so that it doesn't mess up the stream establishment on Honda.
+  //
+  // Update: Nope, removing the "RING 1" streaming start is what *induces*
+  // issue #70 so frequently, so don't remove the "1". Besides, issue #67 was
+  // on RINGs not on CONNECTs so you can't fix issue #67 here in the CONNECTs.
   { "CONNECT 1 A2DP 19",                   "A2DP STREAMING START"},
   { "CONNECT 2 A2DP 19",                   "A2DP STREAMING START"},
   { "CONNECT 3 A2DP 19",                   "A2DP STREAMING START"},
@@ -778,7 +817,10 @@ const String analogAudioRoutingControlString = "SET CONTROL AUDIO INTERNAL INTER
 // Bluetooth device (this is a special digital connection which requires
 // modifying inside of empeg Car player) aka "digitalAudio = true".
 // The "16" means "16 bits in master mode". It might not be needed (docs
-// are not clear on this point).
+// are not clear on this point). "EVENT" means to receive audio routing
+// events, and it is required because without it we would not get the
+// message telling us what codec we are using (and thus be able to detect)
+// issue #70 when it occurs.
 const String digitalAudioRoutingControlString = "SET CONTROL AUDIO INTERNAL I2S_SLAVE EVENT KEEPALIVE 16";
 
 // Strings to set the gain level of the empeg, but only when BlueGigaEmpeg is
@@ -2201,19 +2243,30 @@ void HandleString(String &theString)
     // Example of another string that might appear if a different codec is
     // being used:
     //      A2DP CODEC APT-X_LL STEREO 44100
-    // So your check below needs to accomodate all possible combinations while
+    // So your check below needs to accommodate all possible combinations while
     // still triggering on the bad state (48khz sampling rate).
     if ( (theString.indexOf(F("A2DP CODEC ")) > (-1)) && (theString.indexOf(F(" 48000 ")) > (-1)) )
     {
       // If the problem is detected, then restart the Bluetooth.
       Log(F("Stereo connected with bad audio sampling rate of 48000. Restarting Bluetooth module."));
+
+      // Fix a problem with multiple reboots occurring during initial pairing
+      // because the automatic reconnect was not yet enabled at pairing time.
+      // Always send the auto reconnect command prior to forcing a reboot.
+      SendBlueGigaCommand(autoReconnectString);
+
+      // Now reboot the module once and let it reconnect with the auto reconnect
+      // string. Hopefully after this reboot we will do the CALLing and not get
+      // any RINGs from the host system (RINGs are the root of this problem).
       QuickResetBluetooth(0);
 
-      // This workaround for issue #70 caused a whole other problem, which
-      // was that some AVRCP stuff didn't work correctly either after the
-      // reboot. Experimentally trying a double reboot here to see if it
-      // fixes both problems.
-      QuickResetBluetooth(0);
+      // Original fix for issue #70 had a double reboot to try to fix certain
+      // problems with the AVRCP data not looking correct on the Honda track
+      // data screen. This turned out to be not helpful (the issue was more
+      // random than that), and two reboots vs. one reboot didn't matter. so
+      // bring it back down to 1 reboot to make the reconnection quicker and
+      // to prevent the chance that the iPhone will get its foot in the door
+      //        QuickResetBluetooth(0);
     }
   }
 
