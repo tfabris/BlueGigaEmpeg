@@ -681,7 +681,6 @@ String empegCommandMessageMatrix[16][2] =
   { "AVRCP PAUSE PRESS",          "W"},
   { "AVRCP STOP PRESS",           "W"},
   { "WRAP THOR AI",               "W"},  // Part of bugfix for issue #26 - Pause automatically any time the chip resets itself unexpectedly.
-  { "A2DP STREAMING START",       "C"},  // Tried removing this to fix issue #26 but it made things worse instead of better. BT headset AVRCP stopped working.
   { "NO CARRIER 0",               "W"},  // Bugfix: Only trigger a pause on carrier loss of A2DP first channel (0). Fixes issue #22.
   { "A2DP STREAMING STOP",        "W"},
   { "AVRCP FORWARD PRESS",        "N"},
@@ -692,6 +691,40 @@ String empegCommandMessageMatrix[16][2] =
   { "AVRCP REWIND RELEASE",       "A"},
   { "Debug Value Vol Up",         "+"},  // In this list only for console debugging of Vol up
   { "Debug Value Vol Dn",         "-"},  // In this list only for console debugging of Vol dn
+
+  // Special case here for the Streaming Start message. The idea is that we
+  // send a play/continue ("C") command to the empeg when we get a Streaming
+  // Start message from the connected stereo. But in theory I should not
+  // actually need to begin playing the empeg when this message appears.
+  // Streaming Start simply indicates a connection has been made, not that
+  // playback is expected to occur. Some stereos issue an AVRCP PLAY PRESS
+  // command after connecting, but some do not. For instance, maybe the stereo
+  // intends to start up its connection in pause mode, or maybe the stereo
+  // doesn't want to make a presumption about the playstate of the device it's
+  // connected to. So there's an argument to be made for not doing the "C"
+  // command here.
+  //
+  // In fact, having the "C" here causes a "blip" of unwanted playback audio
+  // during the reboot workaround to issue #70. So that's another argument for
+  // not doing the "C" command here.
+  //
+  // Unfortunately, I also have the necessary feature which pauses playback
+  // when the connection is lost or when there is no Bluetooth connection yet.
+  // This is important to prevent the player from "spooling out" a bunch of
+  // music silently to a disconnected Bluetooth interface. That means that I
+  // must pause the player at certain points, and therefore must start it up
+  // again later when it's ready to play again, otherwise there is a bad UX if
+  // the empeg doesn't start making any sound after connecting.
+  //
+  // There is also another issue which I still don't fully understand, but
+  // which I have reproduced more than once: If I don't issue this "C" command
+  // here and now, then the Plantronics headset has a problem where its AVRCP
+  // pause/play feature literally does not work at all after pairing or power
+  // cycle, despite the AVRCP connection messages looking correct on the
+  // serial console. I have no idea why. So the "C" here is required no matter
+  // what, partly for reasons that I understand, and partly for reasons I
+  // don't understand yet.
+  { "A2DP STREAMING START",       "C"},  
 
   // Special case here for "Shuffle". Shuffle is is considered a "setting" in
   // the Bluetooth specification, meaning that the head unit queries for what
@@ -1053,18 +1086,18 @@ void setup()
   // pairing information, that is left untouched.
   SetGlobalChipDefaults();
 
-  // Experimental fix for issue #37 and #28 at the same time. Decide whether
-  // the chip should be in general discovery mode (GIAC), or in limited
-  // discovery mode (LIAC) at boot up. If we already have a current pairing
-  // buddy, then put it into Limited mode. If we don't have a pairing buddy,
-  // then put it into General mode. The idea here is that if I want to pair
-  // with my empeg when it's in the trunk of my Honda, I don't want to be
-  // forced to walk back there and press the pair button if I don't have to.
-  // To allow pairing from the Honda front panel without a buttonpress, the
-  // device has to be in GIAC mode. But I also don't want the device to be too
-  // promiscuous at other times. So to resolve the balance in this catch-22,
-  // I'm saying that I only go into GIAC mode at bootup when we don't already
-  // have a pairing buddy lined up, or, when we're actively trying to pair.
+  // Fix for issue #37 and #28 at the same time. Decide whether the chip
+  // should be in general discovery mode (GIAC), or in limited discovery mode
+  // (LIAC) at boot up. If we already have a current pairing buddy, then put
+  // it into Limited mode. If we don't have a pairing buddy, then put it into
+  // General mode. The idea here is that if I want to pair with my empeg when
+  // it's in the trunk of my Honda, I don't want to be forced to walk back
+  // there and press the pair button if I don't have to. To allow pairing from
+  // the Honda front panel without a buttonpress, the device has to be in GIAC
+  // mode. But I also don't want the device to be too promiscuous at other
+  // times. So to resolve the balance in this catch-22, I'm saying that I only
+  // go into GIAC mode at bootup when we don't already have a pairing buddy
+  // lined up, or, when we're actively trying to pair.
   //
   // First step is to query the Bluetooth module to find out if we have a
   // pairing buddy at this time. Issue the command to list existing pairings.
@@ -1552,21 +1585,20 @@ void PairBluetooth()
   // Set up the device for use with the empeg car.
   SetGlobalChipDefaults();
 
-  // Experimental attempt to fix issue #63. If you have more than one device
-  // paired, then the auto reconnect feature is funky and does not always
-  // successfully beat the iPhone to the punch when you start the car. We want
-  // the empeg to win that race every time. My suspicion is that if you pair
-  // with something like a Bluetooth headset (reset/pair buttonpress needed)
-  // and then subsequently pair with the Honda (no press of reset/pair button
-  // needed) then you now have two paired items in the pairing buddy table.
-  // Then when it comes time to do auto reconnect, it has to round robin
-  // through the list of pairing buddies, meaning sometimes it loses the
-  // reconnection race to the iPhone. Attempt to fix the issue by limiting the
-  // number of paired devices to 1 so that the automatic reconnect, when it
-  // gets enabled, is always only ever trying to reconnect to a single stereo
-  // instead of potentially multiple stereos, and thus always does it
-  // quicker. Note: Must do this after the factory reset or else it will go
-  // away immediately.
+  // Fix issue #63. If you have more than one device paired, then the auto
+  // reconnect feature is funky and does not always successfully beat the
+  // iPhone to the punch when you start the car. We want the empeg to win that
+  // race every time. My suspicion is that if you pair with something like a
+  // Bluetooth headset (reset/pair buttonpress needed) and then subsequently
+  // pair with the Honda (no press of reset/pair button needed) then you now
+  // have two paired items in the pairing buddy table. Then when it comes time
+  // to do auto reconnect, it has to round robin through the list of pairing
+  // buddies, meaning sometimes it loses the reconnection race to the iPhone.
+  // Attempt to fix the issue by limiting the number of paired devices to 1 so
+  // that the automatic reconnect, when it gets enabled, is always only ever
+  // trying to reconnect to a single stereo instead of potentially multiple
+  // stereos, and thus always does it quicker. Note: Must do this after the
+  // factory reset or else it will go away immediately.
   SendBlueGigaCommand(F("SET BT PAIRCOUNT 1")); 
   DisplayAndSwallowResponses(1, 100);
 
@@ -1608,21 +1640,20 @@ void PairBluetooth()
   // see if the pairing process was completed and bail out of the loop.
   for (int i=0; i<=30; i++)
   {
-    // At even intervals throughout the loop, begin an inquiry. Do this
-    // at evenly spaced intervals instead of continuously, so that a
-    // another device that is trying to initiate pairing can see it. 
-    // This is an experiment to fix GitHub issue #37.
+    // At even intervals throughout the loop, begin an inquiry. Do this at
+    // evenly spaced intervals instead of continuously, so that a another
+    // device that is trying to initiate pairing can see it. This fixes
+    // GitHub issue #37.
     if ( (i==0) || (i==10) || (i==20) )
     {
       Log(F("Starting inquiry."));
       SendBlueGigaCommand(F("INQUIRY 5"));
     }
 
-    // GitHub issue #37 experiment. At even intervals through the loop,
-    // cancel the inquiry. It should theoretically already have been
-    // self-canceled, the inquiry command should self-stop after the
-    // correct number of seconds already. This is experimental and
-    // "just in case".
+    // GitHub issue #37 fix. At even intervals through the loop, cancel the
+    // inquiry. It should theoretically already have been self-canceled, the
+    // inquiry command should self-stop after the correct number of seconds
+    // already.
     if ( (i==5) || (i==15) || (i==25) )
     {
       Log(F("Stopping inquiry."));
@@ -2188,8 +2219,23 @@ void HandleString(String &theString)
   // from the Bluetooth.
   if (theString.indexOf(F("A2DP STREAMING STOP"))  > (-1)) {connected = false;}
   if (theString.indexOf(F("WRAP THOR AI"))         > (-1)) {connected = false;}
-  if (theString.indexOf(F("NO CARRIER 0 ERROR"))   > (-1)) {connected = false;}
-  if (theString.indexOf(F("NO CARRIER 1 ERROR"))   > (-1)) {connected = false;}
+
+  // If we get a "No Carrier" message, we don't necessarily want to clear out
+  // everything (i.e., we don't want to do a ClearGlobalVariables()), but we
+  // do want to clean out the variable for the pairs of A2DP connection
+  // messages. This will help from getting a "false positive" where the code
+  // thinks that two connection messages from two different separate connection
+  // attempts are actually a pair from the same connection attempt.
+  if (theString.indexOf(F("NO CARRIER 0 ERROR")) > (-1))
+  {
+    connected = false;
+    priorA2dpConnectionMessageMs = 0L;
+  }
+  if (theString.indexOf(F("NO CARRIER 1 ERROR")) > (-1))
+  {
+    connected = false;
+    priorA2dpConnectionMessageMs = 0L;
+  }
 
   // Handle pairing mode strings - these are the strings that are only active
   // when we are in Reset/Pairing mode and will not be processed at any other
@@ -2243,9 +2289,9 @@ void HandleString(String &theString)
     }
   }
 
-  // Attempt to hopefully actually fix issue #70 (48khz chipmunk playback) and
-  // issue #67 (silent playback) by carefully calculating when the exact
-  // correct time is best to send a "streaming start" command. Look for either
+  // Fix issue #67 (silent playback) and reduce instances of issue #70
+  // (crackling 48khz chipmunk playback) by carefully calculating when the
+  // correct time is to best send a "streaming start" command. Look for either
   // the correct RING message (if I'm being rung up by the host device) or the
   // correct "connect" message (if I'm the one doing the ringing up). The
   // messages I'm looking for will look something like this:
@@ -2295,29 +2341,68 @@ void HandleString(String &theString)
   // messages, and if it was within the last few seconds, issue our streaming
   // start command.
   //
-  // Test to see if we get a match for either of the possible string starts.
+  // Oh wow, there's one more issue I just discovered. On the Plantronics
+  // headset, there is the following odd behavior:
+  // - If you first pair, or you restart the Bluetooth module, it works fine
+  //   and it connects two A2DP channels and plays music fine.
+  // - If you restart JUST the headset and leave the Bluetooth module running,
+  //   then the Plantronics only rings up a single A2DP channel and we never
+  //   get a second A2DP channel and the streaming start command never issues,
+  //   so there is silence until I hand-issue another streaming start command.
+  //   The second A2DP channel fires up only after I issue the command.
+  // - But I can't issue the command on the first channel, that's what induces
+  //   issue #67 on the Honda. So this is a catch-22.
+  // - One idea is to have a flag that issues the command on the first
+  //   connection too, but I tried that, and that causes an infinite
+  //   reconnection loop on the Plantronics.
+  // - Wow. Messed up. For now, I'm going to assume that the user starts the
+  //   empeg at the same time as the car stereo, (car ignition turn on time),
+  //   so that this kind of behavior is automatically fixed, since the bug
+  //   doesn't occur when we turn them both on at the same time.
+  // - If we get a customer complaint then we'll re-address it at that time.
+  //
+  // With all that said, here is the code to issue Streaming Start. First,
+  // test to see if we get a match for either of the possible string starts.
   if ( (theString.indexOf(F("RING ")) > (-1)) || (theString.indexOf(F("CONNECT ")) > (-1)) )
   {
     // Test to see if we get a match for either of the possible string ends.
     if ( (theString.indexOf(F(" 19 A2DP")) > (-1)) || (theString.indexOf(F(" A2DP 19")) > (-1)) )
     {
       // We have a match, so test to see if it's the second one of a pair by
-      // looking to see if another similar message was seen recently.
-      if ((millis() - priorA2dpConnectionMessageMs) < 2300)
+      // looking to see if another similar message was seen recently. The
+      // longest time frame between the first and second RING A2DP message
+      // that I've seen in all my test devices was 5.2 seconds, on the
+      // Etekcity standalone BT receiver. So this timer must be big enough to
+      // handle that, but small enough so as not to "false" on two
+      // consecutive connection attempts by a disconnecting/reconnecting
+      // device. Also, the prior message timestamp must be nonzero to indicate
+      // that we actually received a prior message (a timestamp of zero
+      // indicates start of program or a reset connection state)
+      if ( (priorA2dpConnectionMessageMs > 0) && ((millis() - priorA2dpConnectionMessageMs) < 5500))
       {
-        // We have a match and it came hot on the heels of another recent
+        // We have a match, and it came hot on the heels of another recent
         // similar message, too. Send the streaming start command to the
         // Bluetooth module.
-        // 
         Log(F("Detected second A2DP channel connection. Starting audio stream now."));
         SendBlueGigaCommand(F("A2DP STREAMING START"));
-      }
 
-      // Regardless of whether we sent a streaming start command or not, make
-      // sure to update the timestamp of the time when we saw one of these
-      // messages, regardless of whether it was the first or second of the
-      // pair.
-      priorA2dpConnectionMessageMs = millis();
+        // Since we have just processed the second A2DP message out of a pair
+        // of A2DP messages, we want to reset our detector variable so that
+        // it helps prevent false positives if another connection is attempted
+        // very quickly after we processed this connection.
+        priorA2dpConnectionMessageMs = 0L;
+      }
+      else
+      {
+        // If we didn't process this message and send a streaming start, then
+        // it must have been the first message out of a pair of messages.
+        // Update the timestamp of the time when we saw the first of these
+        // messages. When the next message comes through, this will be the
+        // basis for deciding if the next message comes quickly enough after
+        // this one.
+        Log(F("Detected first A2DP channel connection. Waiting for second one."));
+        priorA2dpConnectionMessageMs = millis();        
+      }
     }
   }
 
@@ -2325,7 +2410,7 @@ void HandleString(String &theString)
   // by detecting the case where the problem occurs, and rebooting the WT32i
   // if it happens. I am hoping that the code above which tries to be smart
   // about when to issue "streaming start" command will actually fix the root
-  // cause of this issue. If that's the case then this workaround will never
+  // cause of this issue. If that's the case, then this workaround will never
   // get triggered and everyone will be happy. This workaround is controlled
   // by a global flag at the top of the code, "workAroundChipmunkProblem",
   // just in case we want to turn it off, for instance if it causes an
@@ -2339,7 +2424,7 @@ void HandleString(String &theString)
     //      A2DP CODEC SBC JOINT_STEREO 48000 BITPOOL 2-53
     // Example of another string that might appear if a different codec is
     // being used:
-    //      A2DP CODEC APT-X_LL STEREO 44100
+    //      A2DP CODEC APT-X_LL STEREO 48000
     // So your check below needs to accommodate all possible combinations while
     // still triggering on the bad state (48khz sampling rate).
     if ( (theString.indexOf(F("A2DP CODEC ")) > (-1)) && (theString.indexOf(F(" 48000 ")) > (-1)) )
@@ -2362,12 +2447,10 @@ void HandleString(String &theString)
       // data screen. This turned out to be not helpful (the issue was more
       // random than that), and two reboots vs. one reboot didn't matter. so
       // bring it back down to 1 reboot to make the reconnection quicker and
-      // to prevent the chance that the iPhone will get its foot in the door
-      // 
-      // Update: Putting it back to see if it fixes additional infinite reboot
-      // loop problems after pairing. (It didn't fix infinite reboot loops.
-      // taking it out again.)
-      // QuickResetBluetooth(0);
+      // to prevent the chance that the iPhone will get its foot in the door.
+      // Note that this also did not fix any infinite reboot loop problems
+      // either, that was a different issue (Honda stereo needed a reboot).
+      //    QuickResetBluetooth(0);
     }
   }
 
