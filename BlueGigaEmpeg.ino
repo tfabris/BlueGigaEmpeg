@@ -1862,7 +1862,7 @@ char MainInputOutput()
       // Begin blinking the LED to indicate activity.
       BlinkBlue(true);
 
-      // Read one character (byte) from the Bluetooth serial port.
+      // Read one character (byte) from the Arduino debug serial port.
       userChar = Serial.read();
       
       // Add the character that we read to our input line string for use
@@ -1914,7 +1914,7 @@ char MainInputOutput()
   // something completely different. It was actually caused by bad parameters
   // to one of the built-in auto reconnect command which was not clearly
   // documented. I am keeping the code here for posterity, since I might want
-  // to leverage this same set of functionaly for other features at a later
+  // to leverage this same set of functionality for other features at a later
   // date. But I am leaving it disabled for now, with the variable
   // monkeyReconnectEnabled set to false at the top of the code.
   if (monkeyReconnectEnabled)
