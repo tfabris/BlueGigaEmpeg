@@ -335,8 +335,7 @@ const int autoReconnectMode = 1;
 //      "19 A2DP CUSTOM", but this command has been super weird in other ways,
 //      so work with this for a while and see if it fixes other problems.
 //    - Works perfectly on Honda, still need to test on other devices.
-//    - To Do: Test to see if it magically fixes Issue #71 on Onkyo. I am not
-//      optimistic, but it's worth a try.
+//
 const String autoReconnectString = "SET CONTROL RECONNECT 2888 0 0 17 0 NONE A2DP";
 
 // Version 1.5: Alternate version of autoReconnectString to fix issue #71.
@@ -411,6 +410,16 @@ const String codecString="SET CONTROL CODEC SBC JOINT_STEREO 44100 0\r\n        
 //     A2DP CODEC SBC JOINT_STEREO 48000 BITPOOL 2-53
 //     A2DP CODEC APT-X_LL STEREO 44100
 
+// Configure the discovery strings, the "SET BT LAP" strings, which control
+// whether the module is generally discoverable or not. 
+//
+// Ending in 33 is the "General Inquiry Access Code (GIAC)" value. 
+static String discoveryGeneralString = "SET BT LAP 9e8b33";
+
+// Ending in 00 is the "Limited Dedicated Inquiry Access Code (LIAC)" value. 
+static String discoveryLimitedString = "SET BT LAP 9e8b00";
+
+
 // Control whether or not the module uses digital I2S audio, or analog line-
 // level audio inputs (for example the line level inputs on the BlueGiga dev
 // board).
@@ -433,8 +442,8 @@ boolean digitalAudio = true;
 // that requires more detailed handling and parsing.
 // NOTE: Update the matrix size and the array size both, if you are changing
 // these.
-int scFixMatrixSize = 12;
-String scFixMessageMatrix[12][2] =
+int scFixMatrixSize = 6;
+String scFixMessageMatrix[6][2] =
 {
   // Bluetooth in                       // Bluetooth out        
 
@@ -519,75 +528,6 @@ String scFixMessageMatrix[12][2] =
   // Note: Cannot add "Repeat" in here because the empeg car serial command set
   // does not contain a command for "Repeat".
   { "GET_APPLICATION_SETTING_VALUE",      "AVRCP RSP 1"},
-
-  // Fix issue #45/60 "Initial boot and connect problem on Honda" by carefully
-  // selecting in which situations we issue a "streaming start" command. Note:
-  // do not issue it on the "RING 0" message, only do it for higher numbers.
-  // Otherwise you're trying to start streaming when its still in the process
-  // of setting up the second A2DP channel and/or the AVRCP channel, and that
-  // sometimes confuses the head unit. Also note: You might think you don't
-  // need these at all (the host and client should negotiate this by
-  // themselves) but it doesn't work to remove these. If you don't do this
-  // then in some cases your empeg plays silently to a headunit that makes
-  // no sound. So these are required.
-  //
-  // Experiment - trying to fix issue #67 by not doing a streaming start on
-  // either the "0" or "1" channel, instead wait for for channels "2" or "3"
-  // before doing a streaming start. This is because the issue #67 repros all
-  // had in their logs what looked like a "premature" streaming start command
-  // while it was still trying to set up the first A2DP channel. Try delaying
-  // it to later so that it doesn't mess up the stream establishment on Honda.
-  // Update: Nope, removing the "RING 1" streaming start is what *induces*
-  // issue #70 so frequently.
-  //
-  // Next: Try doing no streaming starts on RINGs at all and only on CONNECT.
-  // Update: Nope, no audio happens at all unless we answer the ring with a
-  // streaming start. And in fact, if we answer too late then we get the
-  // 48k problem. Hm. Let's try doing a streaming start on 0 for RING but
-  // not for CONNECT?
-  // Update: NOPE, holy cow, issuing the streaming start too early, on the
-  // RING 0 is definitely the thing that induces issue #67.
-  // So we can't do it too early (issue 67 happens if we do it at 0) and
-  // we can't do it too late (issue 70 happens if we do it only at 2 or later)
-  //   { "RING 0",                              "A2DP STREAMING START"},
-  { "RING 1",                              "A2DP STREAMING START"},
-  { "RING 2",                              "A2DP STREAMING START"},
-  { "RING 3",                              "A2DP STREAMING START"},
-  // IDEA: Handle the streaming starts for the RINGs in special code.
-  // Only do a streaming start on the *second* ring on A2DP. Reason it
-  // has to be in special code instead of here is because it infixes
-  // the address like this in the message and I don't know what order
-  // or channel they will happen in, like this:
-    // 0002391 RING 0 48:f0:7b:57:15:20 19 A2DP
-    // 0000104 RING 1 48:f0:7b:57:15:20 17 AVRCP
-    // 0000003 --^ A2DP STREAMING START
-    // 0000200 RING 2 48:f0:7b:57:15:20 19 A2DP
-
-
-  // While attempting to fix issue #71 (No Onkyo AVRCP), while also trying to
-  // prevent re-inducing issue #60 (Host sends bad PDU registrations forcing
-  // me to reboot), I re-encountered issue #67 (silence after cold boot) and
-  // I think it's because I needed to speed up the reconnect interval to make
-  // it work. I attempted to put STREAMING START commands back in here at
-  // connect time. This did not fully fix issue #67 but significantly reduced
-  // its frequency. I later got another repeat of issue #67 which seems to
-  // indicate that there might be some other spot later on, even later than
-  // these, where I might be able to issue another STREAMING START which might
-  // fix issue #67 for good, not sure.
-  //
-  // Experiment - trying to fix issue #67 by not doing a streaming start on
-  // either the "0" or "1" channel, instead wait for for channels "2" or "3"
-  // before doing a streaming start. This is because the issue #67 repros all
-  // had in their logs what looked like a "premature" streaming start command
-  // while it was still trying to set up the first A2DP channel. Try delaying
-  // it to later so that it doesn't mess up the stream establishment on Honda.
-  //
-  // Update: Nope, removing the "RING 1" streaming start is what *induces*
-  // issue #70 so frequently, so don't remove the "1". Besides, issue #67 was
-  // on RINGs not on CONNECTs so you can't fix issue #67 here in the CONNECTs.
-  { "CONNECT 1 A2DP 19",                   "A2DP STREAMING START"},
-  { "CONNECT 2 A2DP 19",                   "A2DP STREAMING START"},
-  { "CONNECT 3 A2DP 19",                   "A2DP STREAMING START"},
 };
 
 // Variable to control whether or not we reconnect the Bluetooth module
@@ -679,6 +619,13 @@ String pmMessageMatrix[5][2] =
   //       { "CONNECT 0 A2DP 19",        "CALL {0} 17 AVRCP"},
   // But subsequent ones are OK to do, and in fact are required for AVRCP to
   // work on the paired system.
+  // 
+  // NOTE: You must be able to be the one initiating the AVRCP connection
+  // when the CONNECT is made because if the stereo head unit initiates the
+  // connection (ie if we get a RING x xxxxx 17 AVRCP) then if it's the
+  // Honda it will do the bad thing where it tries to retrieve track data
+  // infinitely in a continuous loop. We need to initiate this part
+  // ourselves. TO DO: Investigate this deeper when you have a chance.
   { "CONNECT 1 A2DP 19",        "CALL {0} 17 AVRCP"},
   { "CONNECT 2 A2DP 19",        "CALL {0} 17 AVRCP"},
   { "CONNECT 3 A2DP 19",        "CALL {0} 17 AVRCP"},
@@ -938,7 +885,20 @@ bool blueToothFastForward = false;
 
 // Variable to keep track of the timestamp of the prior output line. Used to
 // calculate deltas between output lines for profiling.
-unsigned long priorOutputLineMillis = 0;
+unsigned long priorOutputLineMillis = 0L;
+
+// Variable to keep track of the timestamp of the prior most recent occurrence
+// of a particular important set of messages indicating an A2DP connection has
+// been made. We must only trigger the "streaming start" command on the second
+// receipt of those two messages. There will be two A2DP connections (one for
+// audio and one for data) and we must only trigger the "streaming start"
+// command at the moment when both have been received, or we will trigger
+// either issue #67 (silent playback) if we issue the command too soon, or
+// issue #70 (48khz crackling playback) if we issue the command too late. This
+// timestamp lets keep track of how recently one of these messages was
+// received. Special case code in the HandleString routine will make use of
+// this.
+unsigned long priorA2dpConnectionMessageMs = 0L;
 
 // Include the version number file.
 #include "Version.h"
@@ -965,6 +925,9 @@ void setup()
   // elapsed between each piece of output. Start it at the timestamp when the
   // program starts.
   priorOutputLineMillis = millis();
+
+  // Another time delta to initialize, though this time setting it to zero.
+  priorA2dpConnectionMessageMs = 0L;
 
   // Set up the Reset/pair blue LED indicator to "output" state.
   pinMode(pairLedPin, OUTPUT);
@@ -1130,7 +1093,7 @@ void setup()
     // when we haven't got a pairing buddy yet, or when we are are actively in
     // pairing mode.
     Log(F("There is no existing pairing buddy. Placing chip into general discovery mode."));
-    SendBlueGigaCommand(F("SET BT LAP 9e8b33"));
+    SendBlueGigaCommand(discoveryGeneralString);
   }
   else
   {
@@ -1141,7 +1104,7 @@ void setup()
     // so that it is not shown in the pairing screens of most devices unless
     // you are in pairing mode.
     Log(F("There is an existing pairing buddy. Placing chip into limited discovery mode."));
-    SendBlueGigaCommand(F("SET BT LAP 9e8b00"));    
+    SendBlueGigaCommand(discoveryLimitedString);    
   }
 
   // Reset the Bluetooth chip every time the Arduino chip is started up and
@@ -1636,7 +1599,7 @@ void PairBluetooth()
   // the "General/Unlimited Inquiry Access Code (GIAC)" value. This allows
   // other devices to see us more easily while we are in pairing mode.
   Log(F("Placing chip into general discovery mode for the pairing process."));
-  SendBlueGigaCommand(F("SET BT LAP 9e8b33"));
+  SendBlueGigaCommand(discoveryGeneralString);
 
   // Attempt pairing x number of seconds before quitting. The main loop for
   // processing serial input/output will automatically detect the necessary
@@ -1708,7 +1671,7 @@ void PairBluetooth()
     // when we haven't got a pairing buddy yet, or when we are are actively in
     // pairing mode.
     Log(F("No pairing buddy was found. Placing chip into general discovery mode."));
-    SendBlueGigaCommand(F("SET BT LAP 9e8b33"));
+    SendBlueGigaCommand(discoveryGeneralString);
   }
   else
   {
@@ -1719,7 +1682,7 @@ void PairBluetooth()
     // so that it is not shown in the pairing screens of most devices unless
     // you are in pairing mode.
     Log(F("A pairing buddy was found. Placing chip into limited discovery mode."));
-    SendBlueGigaCommand(F("SET BT LAP 9e8b00"));    
+    SendBlueGigaCommand(discoveryLimitedString);    
   }  
 
   // Log that we are done.
@@ -2012,7 +1975,7 @@ char MainInputOutput()
           // shown in the pairing screens of most devices unless you are in
           // pairing mode.
           Log(F("Since there is an existing pairing buddy, placing chip into limited discovery mode."));
-          SendBlueGigaCommand(F("SET BT LAP 9e8b00"));  
+          SendBlueGigaCommand(discoveryLimitedString);  
 
           // Prevent this code from firing twice in the same millisecond if
           // the loop happens to execute extra fast. Same caveats as above.
@@ -2228,11 +2191,145 @@ void HandleString(String &theString)
   if (theString.indexOf(F("NO CARRIER 0 ERROR"))   > (-1)) {connected = false;}
   if (theString.indexOf(F("NO CARRIER 1 ERROR"))   > (-1)) {connected = false;}
 
+  // Handle pairing mode strings - these are the strings that are only active
+  // when we are in Reset/Pairing mode and will not be processed at any other
+  // time.
+  //
+  // Also, to help work around issue #70, make sure pairing mode  responses
+  // are set early in the process so that we don't get a reset of the module
+  // before we've had a chance to tell the host stereo about ourselves. This
+  // is hoping to fix the "infinite loop" problems including the infinite re-
+  // query of track information and maybe even the infinite reboot loop. (It
+  // didn't fix it, but I'm leaving this routine early in the HandleString
+  // function so that I can be sure to respond to pair mode strings early in
+  // the process.)
+  if (pairingMode)
+  {
+    // First iterate through our matrix of pairing commands looking for a
+    // match.
+    for (int i=0; i<pmMatrixSize; i++)
+    {
+      // Make the string comparison to find out if there is a match. Look for
+      // the special command (column "[0]" in the table).
+      if (theString.indexOf(pmMessageMatrix[i][0]) > (-1))
+      {
+        // A match has been found, process the pairing command. Process the
+        // pullout of the address of our pairing buddy. This is a super
+        // special case for one particular string. It retrieves the Bluetooth
+        // device address of the host stereo that we are pairing to, and
+        // places it into a global variable for later use in the response
+        // string.
+        GrabPairAddressString(theString, F("INQUIRY_PARTIAL "));
+        
+        // Prepare command we are going to send.
+        commandToSend = "";
+        commandToSend += pmMessageMatrix[i][1];
+
+        // Substitute the Bluetooth pairing buddy string in the response
+        // command, if we have it and if the command contains the token for
+        // the replacement.
+        if (pairAddressString != "")
+        {
+          if (commandToSend.indexOf(tokenSubstitutionString) > (-1))
+          {
+            commandToSend.replace(tokenSubstitutionString, pairAddressString);
+          }
+        }
+
+        // Send the final assembled pairing response string to the Bluetooth
+        // chip.
+        SendBlueGigaCommand(commandToSend);
+      }
+    }
+  }
+
+  // Attempt to hopefully actually fix issue #70 (48khz chipmunk playback) and
+  // issue #67 (silent playback) by carefully calculating when the exact
+  // correct time is best to send a "streaming start" command. Look for either
+  // the correct RING message (if I'm being rung up by the host device) or the
+  // correct "connect" message (if I'm the one doing the ringing up). The
+  // messages I'm looking for will look something like this:
+  //  
+  //  RING 0 48:f0:7b:57:15:20 19 A2DP
+  //  RING 1 48:f0:7b:57:15:20 17 AVRCP
+  //  RING 2 48:f0:7b:57:15:20 19 A2DP
+  // 
+  // Or perhaps something like this:
+  //
+  //  CONNECT 0 A2DP 19
+  //  CONNECT 1 A2DP 19
+  //  CONNECT 2 AVRCP 17
+  //
+  // The RING messages occur when the host stereo is ringing up my Bluetooth
+  // module, and the CONNECT messages occur when my Bluetooth module is auto-
+  // reconnecting to the host stereo.
+  // 
+  // We have to issue a streaming start command somewhere in here, because we
+  // don't get any audio if we don't issue that command. Doesn't matter if
+  // we're doing the ringing or not, there are cases when this is flat out
+  // needed, regardless of if we're ringing or being rung.
+  //
+  // The trick is that:
+  //
+  // - I must only do this for A2DP messages not AVRCP messages.
+  // - The messages may come in any order.
+  // - The messages may be a mixture of both types of messages.
+  // - The messages may be for any channel number (0, 1, 2, 3, etc.)
+  // - The messages can be for any Bluetooth address.
+  // - The messages might not be adjacent to each other.
+  // - The messages will usually be within a few seconds of each other.
+  // - There may be multiple connection attempts (groups) during runtime.
+  //
+  // My task is to issue a "streaming start" command only when the SECOND of
+  // the two A2DP connection messages occurs. This is because there are two
+  // A2DP channels, one for data and one for audio; if I issue the streaming
+  // start command before they are both connected, then I will induce bug #67
+  // (silent playback) since I have told it to stream before a channel was
+  // available with audio capability; if I issue the streaming start command
+  // too late, I will induce bug #70 (48khz crackling playback), for reasons
+  // still unknown to me (though that one only happens on RINGs).
+  //
+  // Wow, Silicon Labs, you didn't make it easy for me, did you?
+  //
+  // Solution is to keep track of how recently we saw an A2DP one of those
+  // messages, and if it was within the last few seconds, issue our streaming
+  // start command.
+  //
+  // Test to see if we get a match for either of the possible string starts.
+  if ( (theString.indexOf(F("RING ")) > (-1)) || (theString.indexOf(F("CONNECT ")) > (-1)) )
+  {
+    // Test to see if we get a match for either of the possible string ends.
+    if ( (theString.indexOf(F(" 19 A2DP")) > (-1)) || (theString.indexOf(F(" A2DP 19")) > (-1)) )
+    {
+      // We have a match, so test to see if it's the second one of a pair by
+      // looking to see if another similar message was seen recently.
+      if ((millis() - priorA2dpConnectionMessageMs) < 2300)
+      {
+        // We have a match and it came hot on the heels of another recent
+        // similar message, too. Send the streaming start command to the
+        // Bluetooth module.
+        // 
+        Log(F("Detected second A2DP channel connection. Starting audio stream now."));
+        SendBlueGigaCommand(F("A2DP STREAMING START"));
+      }
+
+      // Regardless of whether we sent a streaming start command or not, make
+      // sure to update the timestamp of the time when we saw one of these
+      // messages, regardless of whether it was the first or second of the
+      // pair.
+      priorA2dpConnectionMessageMs = millis();
+    }
+  }
+
   // Attempt to work around GitHub issue #70, crackling high pitched playback,
   // by detecting the case where the problem occurs, and rebooting the WT32i
-  // if it happens. I can't figure out how to prevent it altogether so we
-  // will work around it. This is controlled by a global flag at the top
-  // of the code, "workAroundChipmunkProblem".
+  // if it happens. I am hoping that the code above which tries to be smart
+  // about when to issue "streaming start" command will actually fix the root
+  // cause of this issue. If that's the case then this workaround will never
+  // get triggered and everyone will be happy. This workaround is controlled
+  // by a global flag at the top of the code, "workAroundChipmunkProblem",
+  // just in case we want to turn it off, for instance if it causes an
+  // infinite reboot loop.
   if (workAroundChipmunkProblem)
   {
     // Detect the problem, which is a string saying that its codec is working
@@ -2266,7 +2363,11 @@ void HandleString(String &theString)
       // random than that), and two reboots vs. one reboot didn't matter. so
       // bring it back down to 1 reboot to make the reconnection quicker and
       // to prevent the chance that the iPhone will get its foot in the door
-      //        QuickResetBluetooth(0);
+      // 
+      // Update: Putting it back to see if it fixes additional infinite reboot
+      // loop problems after pairing. (It didn't fix infinite reboot loops.
+      // taking it out again.)
+      // QuickResetBluetooth(0);
     }
   }
 
@@ -2411,7 +2512,7 @@ void HandleString(String &theString)
 
   // Respond to a particular AVRCP connection success message (in this case 
   // triggering off of the AUDIO ROUTE success message) with a command which
-  // will tell the Bluetooth to repeatedly retry reconnections if it ever
+  // will tell the Bluetooth to repeatedly retry reconections if it ever
   // becomes disconnected. This allows the empeg to reconnect to the car stereo
   // when you start the car, instead of your stereo always connecting to your
   // phone in your pocket and playing music from the phone instead. On my Honda
@@ -2434,6 +2535,12 @@ void HandleString(String &theString)
     // trigger the reconnect enabler. Original check was for the full string
     // "AUDIO ROUTE 0 A2DP LEFT RIGHT" but now checking for the two halves of
     // it on either side of the zero independently.
+    //
+    // UPDATE: Attempt to fix infinite reboot loop problem caused while
+    // attempting to fix issue #70 and issue #67, by triggering the reconnect
+    // and the SET BT LAP on a later string. Instead of triggering on AUDIO
+    // ROUTE, trigger on A2DP CODEC instead. (Nope, didn't fix it. Putting it back.)
+    //    if (theString.indexOf(F("A2DP CODEC ")) > (-1))
     if ( (theString.indexOf(F("AUDIO ROUTE ")) > (-1)) && (theString.indexOf(F(" A2DP LEFT RIGHT")) > (-1)) )
     {
       // Use the autoReconnectString defined at the top of this program.
@@ -2448,50 +2555,7 @@ void HandleString(String &theString)
       // shown in the pairing screens of most devices unless you are in
       // pairing mode.
       Log(F("Since there is an existing pairing buddy, placing chip into limited discovery mode."));
-      SendBlueGigaCommand(F("SET BT LAP 9e8b00"));        
-    }
-  }
-    
-  // Handle pairing mode strings - these are the strings that are only active
-  // when we are in Reset/Pairing mode and will not be processed at any other
-  // time.
-  if (pairingMode)
-  {
-    // First iterate through our matrix of pairing commands looking for a
-    // match.
-    for (int i=0; i<pmMatrixSize; i++)
-    {
-      // Make the string comparison to find out if there is a match. Look for
-      // the special command (column "[0]" in the table).
-      if (theString.indexOf(pmMessageMatrix[i][0]) > (-1))
-      {
-        // A match has been found, process the pairing command. Process the
-        // pullout of the address of our pairing buddy. This is a super
-        // special case for one particular string. It retrieves the Bluetooth
-        // device address of the host stereo that we are pairing to, and
-        // places it into a global variable for later use in the response
-        // string.
-        GrabPairAddressString(theString, F("INQUIRY_PARTIAL "));
-        
-        // Prepare command we are going to send.
-        commandToSend = "";
-        commandToSend += pmMessageMatrix[i][1];
-
-        // Substitute the Bluetooth pairing buddy string in the response
-        // command, if we have it and if the command contains the token for
-        // the replacement.
-        if (pairAddressString != "")
-        {
-          if (commandToSend.indexOf(tokenSubstitutionString) > (-1))
-          {
-            commandToSend.replace(tokenSubstitutionString, pairAddressString);
-          }
-        }
-
-        // Send the final assembled pairing response string to the Bluetooth
-        // chip.
-        SendBlueGigaCommand(commandToSend);
-      }
+      SendBlueGigaCommand(discoveryLimitedString);        
     }
   }  
 }
@@ -3426,7 +3490,7 @@ void ForceQuickReconnect()
     // shown in the pairing screens of most devices unless you are in
     // pairing mode.
     Log(F("ForceQuickReconnect mode. Assuming that there is a pairing buddy since we are connected. Placing chip into limited discovery mode."));
-    SendBlueGigaCommand(F("SET BT LAP 9e8b00"));  
+    SendBlueGigaCommand(discoveryLimitedString);  
   }
   
   // UPDATE: After a lot of work for doing a truly quick reconnect version,
@@ -4803,6 +4867,11 @@ void QuickResetBluetooth(int resetType)
   // while we're waiting. Just blow everything off while we're waiting.
   DisplayAndSwallowResponses(4,500);
 
+  // Attempt other possible fix to issue #70 - Gracefully close the 
+  // connection if one exists, before attempting a reboot. (Didn't fix it
+  // so I am removing it again.)
+  //    SendBlueGigaCommand("CLOSE 0");
+
   // Perform different types of resets depending on the parameter passed in.
   switch (resetType)
   {
@@ -4862,5 +4931,6 @@ void ClearGlobalVariables()
   priorGenreString06            =  "" ;
   priorPlaybackPositionString07 =  "" ; 
   priorIsPlaying                =  "0";
+  priorA2dpConnectionMessageMs  = 0L; 
 }
 
