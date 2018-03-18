@@ -442,8 +442,8 @@ boolean digitalAudio = true;
 // that requires more detailed handling and parsing.
 // NOTE: Update the matrix size and the array size both, if you are changing
 // these.
-int scFixMatrixSize = 6;
-String scFixMessageMatrix[6][2] =
+int scFixMatrixSize = 12;
+String scFixMessageMatrix[12][2] =
 {
   // Bluetooth in                       // Bluetooth out        
 
@@ -488,46 +488,93 @@ String scFixMessageMatrix[6][2] =
   // those codes were obtained from the BlueGiga documentation).
   { "GET_CAPABILITIES 3",                 "AVRCP RSP 1 2"},
 
-  // "LIST_APPLICATION_SETTING_ATTRIBUTES" is how the host stereo queries the
-  // Bluetooth module to find out if your device supports things like turning
-  // on the EQ, turning shuffle on and off, and turning repeat on and off. This
-  // is the generalized query to find out what attributes are supported by your
-  // playback device at all, it is not asking for individual setting values.
+  // The "LIST_APPLICATION_SETTING_ATTRIBUTES" is how the host stereo queries
+  // the Bluetooth module to find out if your device supports things like
+  // turning on the EQ, turning shuffle on and off, and turning repeat on and
+  // off. This is the generalized query to find out what attributes are
+  // supported by your playback device at all, it is not asking for individual
+  // setting values.
   //
   // Responding with "3" meaning "Shuffle" so that my empeg player can respond
   // to commands from the car stereo head unit to turn shuffle on and off.
   { "LIST_APPLICATION_SETTING_ATTRIBUTES",  "AVRCP RSP 3"},
 
-  // "LIST_APPLICATION_SETTING_VALUES" is the way that the host stereo queries
-  // your Bluetooth module for the range of supported individual setting values
-  // for a given settings group. Not generally whether a particular settings
-  // group is supported at all, but rather, looking for the list of possible
-  // setting values of of this particular thing it's querying. In this case,
-  // the host stereo is not expected to ask for anything but the shuffle value,
-  // since in the original query above, we have responded only with saying that
-  // shuffle ("3") is available. So we respond with "1 2" indicating that the
-  // setting for "shuffle" can have two possible values: 1 for "off" and 2 for
-  // "all tracks". Note: Cannot add "Repeat" in here because the empeg car serial
-  // command set does not contain a command for "Repeat".
+  // The "LIST_APPLICATION_SETTING_VALUES" is the way that the host stereo
+  // queries your Bluetooth module for the range of supported individual
+  // setting values for a given settings group. Not generally whether a
+  // particular settings group is supported at all, but rather, looking for
+  // the list of possible setting values of of this particular thing it's
+  // querying. In this case, the host stereo is not expected to ask for
+  // anything but the shuffle value, since in the original query above, we
+  // have responded only with saying that shuffle ("3") is available. So we
+  // respond with "1 2" indicating that the setting for "shuffle" can have two
+  // possible values: 1 for "off" and 2 for "all tracks". Note: Cannot add
+  // "Repeat" in here because the empeg car serial command set does not
+  // contain a command for "Repeat".
   { "LIST_APPLICATION_SETTING_VALUES",      "AVRCP RSP 1 2"},
 
-  // "GET_APPLICATION_SETTING_VALUE" is the way that the host stereo queries your
-  // Bluetooth module for the current state of the setting. For instance, it is
-  // asking whether Shuffle is currently on or off. The host stereo is not expected
-  // to ask for anything but the shuffle value, since in the original query above,
-  // we have responded only with saying that shuffle ("3") is available. So we
-  // blindly respond with "1" indicating that shuffle is off. This is tricky, since
-  // the empeg does not tell us the shuffle state on its serial port (it merely
-  // toggles its shuffle state when it receives a "%" command but says nothing in
-  // response) then we have no way of responding back to the head unit accurately
-  // as to whether or not shuffle is on or off. We merely can listen for the query
-  // and try to respond with "something" to prevent the host headunit from hanging
-  // at this point. It turns out that this blind response works well on the one
-  // host headunit that I've got to test it against (Vixy and Fishy's Kenwood).
-  // Pressing the  shuffle button on their stereo works fine and toggles shuffle.
-  // Note: Cannot add "Repeat" in here because the empeg car serial command set
-  // does not contain a command for "Repeat".
+  // The "GET_APPLICATION_SETTING_VALUE" is the way that the host stereo
+  // queries your Bluetooth module for the current state of the setting. For
+  // instance, it is asking whether Shuffle is currently on or off. The host
+  // stereo is not expected to ask for anything but the shuffle value, since
+  // in the original query above, we have responded only with saying that
+  // shuffle ("3") is available. So we blindly respond with "1" indicating
+  // that shuffle is off. This is tricky, since the empeg does not tell us the
+  // shuffle state on its serial port (it merely toggles its shuffle state
+  // when it receives a "%" command but says nothing in response) then we have
+  // no way of responding back to the head unit accurately as to whether or
+  // not shuffle is on or off. We merely can listen for the query and try to
+  // respond with "something" to prevent the host headunit from hanging at
+  // this point. It turns out that this blind response works well on the one
+  // host headunit that I've got to test it against (Vixy and Fishy's
+  // Kenwood). Pressing the  shuffle button on their stereo works fine and
+  // toggles shuffle. Note: Cannot add "Repeat" in here because the empeg car
+  // serial command set does not contain a command for "Repeat".
+
   { "GET_APPLICATION_SETTING_VALUE",      "AVRCP RSP 1"},
+
+  // Required: Send "streaming start" commands when an A2DP connection is
+  // made. If I don't send a "streaming start" at least once during the
+  // initial session connection then no sound will come out of the Bluetooth.
+  //
+  // Three connection channels are required for A2DP to work correctly: Two
+  // A2DP channels (one audio and one data) and one AVRCP channel (for
+  // play/pause/next and track titles). Various host stereo Bluetooth chips
+  // have different weird behaviors related to these and will connect them in
+  // different orders and different timings. This causes no end of trouble for
+  // me because if you don't get this just right, you get problems such as:
+  //
+  // Issue #67: Silent playback after cold boot
+  // Issue #70: Broken up high pitched playback after cold boot 
+  // Issue #45: Initial boot and connect problems
+  // Issue #60: Initial connection intermittently causes bad issues and reboot
+  // Issue #71: No Onkyo AVRCP
+  // (no issue#): Silent playback from the Plantronics headset
+  // Other problems, but mostly you get silent playback if it's not right.
+  //
+  // These send the streaming start commands when the SECOND AND LATER message
+  // in a group appears on the Bluetooth serial port. It's the second message
+  // because the table below starts at "1" because the first one always
+  // carries an index number (channel number) of "0". You can't send a
+  // streaming start message on "0" because all sorts of other bad problems
+  // occur if you do that, not all of them I fully understand.
+  // 
+  // Send streaming start messages when the host stereo connects to us
+  // (the host stereo sends a "RING" command). Note that these do not attempt
+  // to differentiate whether it is an A2DP or an AVRCP message on the RINGs.
+  // This seems to (strangely) work better on the Honda than it would if we tried
+  // to perform the differentiation. If we try to only send the streaming start
+  // command on the second A2DP message only, then we induce issue #70 much more
+  // frequently than if we just blindly wait for the second message.
+  { "RING 1",                              "A2DP STREAMING START"},
+  { "RING 2",                              "A2DP STREAMING START"},
+  { "RING 3",                              "A2DP STREAMING START"},
+
+  // Send streaming start messages when we auto-reconnect to the host stereo.
+  // These do specify only for A2DP situations, not for AVRCP situations.
+  { "CONNECT 1 A2DP 19",                   "A2DP STREAMING START"},
+  { "CONNECT 2 A2DP 19",                   "A2DP STREAMING START"},
+  { "CONNECT 3 A2DP 19",                   "A2DP STREAMING START"},  
 };
 
 // Variable to control whether or not we reconnect the Bluetooth module
@@ -2289,8 +2336,13 @@ void HandleString(String &theString)
     }
   }
 
-  // Fix issue #67 (silent playback) and reduce instances of issue #70
-  // (crackling 48khz chipmunk playback) by carefully calculating when the
+  // UPDATE: The fix below induced more instances of issue #70 instead of
+  // decreasing them. The code is left in place for its diagnostic output but
+  // it is no longer being used. This re-induces the rare issue #67 but
+  // mostly fixes issue #70.
+  //
+  // Attempt to fix issue #67 (silent playback) and reduce instances of issue
+  // #70 (crackling 48khz chipmunk playback) by carefully calculating when the
   // correct time is to best send a "streaming start" command. Look for either
   // the correct RING message (if I'm being rung up by the host device) or the
   // correct "connect" message (if I'm the one doing the ringing up). The
@@ -2325,6 +2377,7 @@ void HandleString(String &theString)
   // - The messages might not be adjacent to each other.
   // - The messages will usually be within a few seconds of each other.
   // - There may be multiple connection attempts (groups) during runtime.
+  // - UPDATE: On the Honda there is more magic here I don't fully understand.
   //
   // My task is to issue a "streaming start" command only when the SECOND of
   // the two A2DP connection messages occurs. This is because there are two
@@ -2383,8 +2436,18 @@ void HandleString(String &theString)
         // We have a match, and it came hot on the heels of another recent
         // similar message, too. Send the streaming start command to the
         // Bluetooth module.
-        Log(F("Detected second A2DP channel connection. Starting audio stream now."));
-        SendBlueGigaCommand(F("A2DP STREAMING START"));
+        Log(F("Detected second A2DP channel connection."));
+
+        // UPDATE to issue #70 - I am reverting the change which tried to send
+        // intelligent streaming start messages. It turned out to induce issue
+        // #70 much more frequently than before. Going back to the old way of
+        // issuing "dumb" streaming start messages in scFixMessageMatrix has
+        // reduced the number of instances of issue #70 dramatically. More
+        // research is needed to understand why this is the case.
+        //    SendBlueGigaCommand("A2DP STREAMING START");
+        // In the meantime I am leaving the logging messages here as a
+        // diagnostic feature to allow me to help decide instances where
+        // things like issue #67 or issue #70 occur.
 
         // Since we have just processed the second A2DP message out of a pair
         // of A2DP messages, we want to reset our detector variable so that
@@ -2398,9 +2461,8 @@ void HandleString(String &theString)
         // it must have been the first message out of a pair of messages.
         // Update the timestamp of the time when we saw the first of these
         // messages. When the next message comes through, this will be the
-        // basis for deciding if the next message comes quickly enough after
-        // this one.
-        Log(F("Detected first A2DP channel connection. Waiting for second one."));
+        // basis for deciding the timing of the second message.
+        Log(F("Detected first A2DP channel connection."));
         priorA2dpConnectionMessageMs = millis();        
       }
     }
