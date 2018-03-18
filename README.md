@@ -1045,7 +1045,7 @@ console. To run it, do the following:
 
 - Select the "Tools" menu, select "Port" and select the correct serial port
   that represents the connected Arduino (this will be different on each
-  system).
+  system and each USB port on the computer).
 
 - Select "Tools" then "Serial Monitor", or press the magnifying glass icon
   in the upper right corner of the window. The serial monitor will appear.
@@ -1395,7 +1395,7 @@ Once the device drivers are installed and working, do the following:
 
 - Select the "Tools" menu, select "Port" and select the correct serial port
   that represents the connected Arduino (this will be different on each
-  system).
+  system and each USB port on the computer).
 
 - Select "Tools" then "Serial Monitor", or press the magnifying glass icon
   in the upper right corner of the window. The serial monitor will appear.
