@@ -410,16 +410,6 @@ const String codecString="SET CONTROL CODEC SBC JOINT_STEREO 44100 0\r\n        
 //     A2DP CODEC SBC JOINT_STEREO 48000 BITPOOL 2-53
 //     A2DP CODEC APT-X_LL STEREO 44100
 
-// Configure the discovery strings, the "SET BT LAP" strings, which control
-// whether the module is generally discoverable or not. 
-//
-// Ending in 33 is the "General Inquiry Access Code (GIAC)" value. 
-static String discoveryGeneralString = "SET BT LAP 9e8b33";
-
-// Ending in 00 is the "Limited Dedicated Inquiry Access Code (LIAC)" value. 
-static String discoveryLimitedString = "SET BT LAP 9e8b00";
-
-
 // Control whether or not the module uses digital I2S audio, or analog line-
 // level audio inputs (for example the line level inputs on the BlueGiga dev
 // board).
@@ -1133,21 +1123,11 @@ void setup()
   // pairing information, that is left untouched.
   SetGlobalChipDefaults();
 
-  // Fix for issue #37 and #28 at the same time. Decide whether the chip
-  // should be in general discovery mode (GIAC), or in limited discovery mode
-  // (LIAC) at boot up. If we already have a current pairing buddy, then put
-  // it into Limited mode. If we don't have a pairing buddy, then put it into
-  // General mode. The idea here is that if I want to pair with my empeg when
-  // it's in the trunk of my Honda, I don't want to be forced to walk back
-  // there and press the pair button if I don't have to. To allow pairing from
-  // the Honda front panel without a buttonpress, the device has to be in GIAC
-  // mode. But I also don't want the device to be too promiscuous at other
-  // times. So to resolve the balance in this catch-22, I'm saying that I only
-  // go into GIAC mode at bootup when we don't already have a pairing buddy
-  // lined up, or, when we're actively trying to pair.
-  //
-  // First step is to query the Bluetooth module to find out if we have a
-  // pairing buddy at this time. Issue the command to list existing pairings.
+  // Determine at bootup whether the Bluetooth chip has an existing pairing
+  // buddy in memory or not. This will allow other pieces of code later to
+  // change behavior based on whether or not the device is expected to be
+  // paired with someone or not. First step is to issue the command to list
+  // existing pairings.
   SendBlueGigaCommand(F("SET BT PAIR"));
 
   // After listing the existing pairings, idle for a moment to allow the main
@@ -1160,32 +1140,29 @@ void setup()
   // query).
   DisplayAndProcessCommands(3000, true);
 
-  // At this point the main string processor routine will, if it found a
-  // pairing buddy in the response to the SET BT PAIR command, have filled out
-  // our variable of our current pairing buddy, and we can now check it to see
-  // if it has a value in it. A blank value means no pairing buddy, a nonblank
-  // value means that we found a previously programmed pairing buddy.
-  if (pairAddressString == "")
-  {
-    // No previous pairing buddy was found, so place the Bluetooth chip into a
-    // mode where it is more easily discoverable. This is the "General Inquiry
-    // Access Code (GIAC)" value. We will put the device in this mode only
-    // when we haven't got a pairing buddy yet, or when we are are actively in
-    // pairing mode.
-    Log(F("There is no existing pairing buddy. Placing chip into general discovery mode."));
-    SendBlueGigaCommand(discoveryGeneralString);
-  }
-  else
-  {
-    // A previous pairing buddy was found in the Bluetooth chip's memory, so
-    // place the Bluetooth chip into a mode where it is not easily
-    // discoverable. This is the "Limited Dedicated Inquiry Access Code
-    // (LIAC)" value. We will leave the device in this mode most of the time
-    // so that it is not shown in the pairing screens of most devices unless
-    // you are in pairing mode.
-    Log(F("There is an existing pairing buddy. Placing chip into limited discovery mode."));
-    SendBlueGigaCommand(discoveryLimitedString);    
-  }
+  // At this point the HandleString routine will, if it found a pairing buddy
+  // in the response to the SET BT PAIR command, have filled out our
+  // pairAddressString variable. A blank value means no pairing buddy, a
+  // nonblank value means that we found a previously programmed pairing buddy.
+
+  // Abandoned attempt to fix several bugs including issue #28, #37, and #70.
+  // unfortunately it did not work. It prevented the Honda from reconnecting
+  // correctly. Commenting out and keeping in place for now, in case I want to
+  // do other behaviors in place of them here.
+  // if (pairAddressString == "")
+  // {
+  //   // No previous pairing buddy was found, so place the Bluetooth chip into a
+  //   // mode where it is visible and pairable.
+  //   Log(F("There is no existing pairing buddy. Placing chip into visible mode."));
+  //   SendBlueGigaCommand(F("SET BT PAGEMODE 4 2000 1"));
+  // }
+  // else
+  // {
+  //   // A previous pairing buddy was found in the Bluetooth chip's memory, so
+  //   // place the Bluetooth chip into non-ring-responding mode.
+  //   Log(F("There is an existing pairing buddy. Placing chip into non-ring-responding mode."));
+  //   SendBlueGigaCommand(F("SET BT PAGEMODE 1 2000 1"));
+  // }
 
   // Reset the Bluetooth chip every time the Arduino chip is started up and
   // after we have set all of its defaults (which will still be saved after
@@ -1404,6 +1381,25 @@ void SetGlobalChipDefaults()
   // functions in this program.
   SendBlueGigaCommand(F("SET CONTROL ECHO 5"));
 
+  // Our project identifies itself nicely on car stereo's LCD screen when
+  // pairing, with a nice happy friendly name that we like very much.
+  // Apologies if I don't accurately capitalize "empeg" (little e) in every
+  // place in my code. It's  correct here to have the lower case e, and this
+  // is the customer-facing string, so this is the place it has to be correct
+  // the most.
+  SendBlueGigaCommand(F("SET BT NAME empeg Car"));
+
+  // Set the type of discovery mode that the device is in.The value of 9e8b33
+  // is the "General inquiry access code", meaning when it is visible, pretty
+  // much everyone will see it. There is a separate command, SET BT PAGEMODE,
+  // which determines the device's complete visibility from moment to moment.
+  SendBlueGigaCommand(F("SET BT LAP 9e8b33"));
+
+  // Set the device's page mode, which is its visibility and pairability.
+  // Set it to mode 4, which means always visible and pairable until it is
+  // connected to someone, then hide it.
+  SendBlueGigaCommand(F("SET BT PAGEMODE 4 2000 1"));
+
   // Configure the system so that it does not send battery warnings nor
   // attempt to shut down when encountering low voltage situations, since
   // this device will only be running when the car ignition is on, and will be
@@ -1505,14 +1501,6 @@ void SetGlobalChipDefaults()
   // - Bit Value 0008 - Category 4: Menu - must support MSELECT, MUP, MDN, MLEFT, MRIGHT (menu select and directions)
   // Example: value of "3" would be Player/recorder plus Monitor/Amplifier.
   SendBlueGigaCommand(F("SET PROFILE AVRCP TARGET 1"));
-
-  // Our project identifies itself nicely on car stereo's LCD screen when
-  // pairing, with a nice happy friendly name that we like very much.
-  // Apologies if I don't accurately capitalize "empeg" (little e) in every
-  // place in my code. It's  correct here to have the lower case e, and this
-  // is the customer-facing string, so this is the place it has to be correct
-  // the most.
-  SendBlueGigaCommand(F("SET BT NAME empeg Car"));
 
   // Set Bluetooth pairing security authorization types (defined at top of
   // program).
@@ -1674,34 +1662,37 @@ void PairBluetooth()
   // case we pressed the pair button in the middle of a string input
   btInputString = "";
   
-  // Place the Bluetooth chip into a mode where it is discoverable. This is
-  // the "General/Unlimited Inquiry Access Code (GIAC)" value. This allows
-  // other devices to see us more easily while we are in pairing mode.
-  Log(F("Placing chip into general discovery mode for the pairing process."));
-  SendBlueGigaCommand(discoveryGeneralString);
+  // Place the Bluetooth chip into a mode where it is visible and pairable.
+  // This is in place mostly because I had been doing other experiments which
+  // changed the pagemode and it's important for it to be in Mode 4 for
+  // pairing. Technically we shouldn't need this here but I'm leaving it so
+  // that if I ever do more pagemode experiments in the future that pairing
+  // will still work.
+  Log(F("Placing chip into visible mode for the pairing process."));
+  SendBlueGigaCommand(F("SET BT PAGEMODE 4 2000 1"));
 
   // Attempt pairing x number of seconds before quitting. The main loop for
   // processing serial input/output will automatically detect the necessary
   // responses from Bluetooth devices in the air nearby and answer
   // appropriately at the appropriate times. At regular intervals, check to
   // see if the pairing process was completed and bail out of the loop.
-  for (int i=0; i<=30; i++)
+  for (int i=0; i<=60; i++)
   {
     // At even intervals throughout the loop, begin an inquiry. Do this at
     // evenly spaced intervals instead of continuously, so that a another
     // device that is trying to initiate pairing can see it. This fixes
     // GitHub issue #37.
-    if ( (i==0) || (i==10) || (i==20) )
+    if ( (i==0) || (i==20) || (i==40) )
     {
       Log(F("Starting inquiry."));
-      SendBlueGigaCommand(F("INQUIRY 5"));
+      SendBlueGigaCommand(F("INQUIRY 10"));
     }
 
     // GitHub issue #37 fix. At even intervals through the loop, cancel the
     // inquiry. It should theoretically already have been self-canceled, the
     // inquiry command should self-stop after the correct number of seconds
     // already.
-    if ( (i==5) || (i==15) || (i==25) )
+    if ( (i==10) || (i==30) || (i==50) )
     {
       Log(F("Stopping inquiry."));
       SendBlueGigaCommand(F("IC"));
@@ -1737,31 +1728,26 @@ void PairBluetooth()
   pairingMode = false;
   digitalWrite(pairLedPin, LOW);
 
-  // Attempting to fix issue #28 and issue #37 at the same time. Check to see
-  // if pairing was successful and if we got a pairing buddy. A blank value
-  // means no pairing buddy was found during the pairing procedure above, a
-  // nonblank value means that we found a pairing buddy during pairing above.
-  if (pairAddressString == "")
-  {
-    // No previous pairing buddy was found, so place the Bluetooth chip into a
-    // mode where it is more easily discoverable. This is the "General Inquiry
-    // Access Code (GIAC)" value. We will put the device in this mode only
-    // when we haven't got a pairing buddy yet, or when we are are actively in
-    // pairing mode.
-    Log(F("No pairing buddy was found. Placing chip into general discovery mode."));
-    SendBlueGigaCommand(discoveryGeneralString);
-  }
-  else
-  {
-    // A previous pairing buddy was found in the Bluetooth chip's memory, so
-    // place the Bluetooth chip into a mode where it is not easily
-    // discoverable. This is the "Limited Dedicated Inquiry Access Code
-    // (LIAC)" value. We will leave the device in this mode most of the time
-    // so that it is not shown in the pairing screens of most devices unless
-    // you are in pairing mode.
-    Log(F("A pairing buddy was found. Placing chip into limited discovery mode."));
-    SendBlueGigaCommand(discoveryLimitedString);    
-  }  
+  // Abandoned attempt to fix issues #28, #37, and #70 by making device refuse
+  // rings. Did not work, caused Honda to not reconnect correctly. Leaving
+  // code here, commented out, in case I want to put other behaviors in this
+  // place.
+  // if (pairAddressString == "")
+  // {
+  //   // No previous pairing buddy was found, so place the Bluetooth chip into a
+  //   // mode where it visible and pairable. We will put the device in this mode
+  //   // only when we haven't got a pairing buddy yet, or when we are are
+  //   // actively in pairing mode.
+  //   Log(F("No pairing buddy was found. Placing chip into visible mode."));
+  //   SendBlueGigaCommand(F("SET BT PAGEMODE 4 2000 1"));
+  // }
+  // else
+  // {
+  //   // A previous pairing buddy was found in the Bluetooth chip's memory, so
+  //   // place the Bluetooth chip into non-ring-responding mode.
+  //   Log(F("A pairing buddy was found. Placing chip into non-ring-responding mode."));
+  //   SendBlueGigaCommand(F("SET BT PAGEMODE 1 2000 1"));    
+  // }  
 
   // Log that we are done.
   Log (F(" "));
@@ -2044,16 +2030,12 @@ char MainInputOutput()
           Log(F("Trying to connect now to our current pairing buddy."));
           SendBlueGigaCommand("CALL " + pairAddressString + " 19 A2DP");
 
-          // Attempt to fix issue #28 and issue #37 at the same time. If we are
-          // setting ourselves to auto reconnect to someone, then we must have
-          // successfully paired and connected with someone. So now place the
-          // Bluetooth chip into a mode where it is not easily discoverable. This
-          // is the "Limited Dedicated Inquiry Access Code (LIAC)" value. We will
-          // leave the device in this mode most of the time so that it is not
-          // shown in the pairing screens of most devices unless you are in
-          // pairing mode.
-          Log(F("Since there is an existing pairing buddy, placing chip into limited discovery mode."));
-          SendBlueGigaCommand(discoveryLimitedString);  
+          // Abandoned attempt to fix issues #28, #37, and #70 by making
+          // device refuse rings. Did not work, caused Honda to not reconnect
+          // correctly. Leaving code here, commented out, in case I want to
+          // put other behaviors in this place.          
+          // Log(F("Since there is an existing pairing buddy, placing chip into non-ring-responding mode."));
+          // SendBlueGigaCommand(F("SET BT PAGEMODE 1 2000 1")); 
 
           // Prevent this code from firing twice in the same millisecond if
           // the loop happens to execute extra fast. Same caveats as above.
@@ -2691,16 +2673,12 @@ void HandleString(String &theString)
       // Use the autoReconnectString defined at the top of this program.
       SendBlueGigaCommand(autoReconnectString);
 
-      // Attempt to fix issue #28 and issue #37 at the same time. If we are
-      // setting ourselves to auto reconnect to someone, then we must have
-      // successfully paired and connected with someone. So now place the
-      // Bluetooth chip into a mode where it is not easily discoverable. This
-      // is the "Limited Dedicated Inquiry Access Code (LIAC)" value. We will
-      // leave the device in this mode most of the time so that it is not
-      // shown in the pairing screens of most devices unless you are in
-      // pairing mode.
-      Log(F("Since there is an existing pairing buddy, placing chip into limited discovery mode."));
-      SendBlueGigaCommand(discoveryLimitedString);        
+      // Abandoned attempt to fix issues #28, #37, and #70 by making device
+      // refuse rings. Did not work, caused Honda to not reconnect correctly.
+      // Leaving code here, commented out, in case I want to put other
+      // behaviors in this place.
+      // Log(F("Since there is an existing pairing buddy, placing chip into non-ring-responding mode."));
+      // SendBlueGigaCommand(F("SET BT PAGEMODE 1 2000 1"));        
     }
   }  
 }
@@ -3626,16 +3604,12 @@ void ForceQuickReconnect()
   {
     SendBlueGigaCommand(autoReconnectString);
 
-    // Attempt to fix issue #28 and issue #37 at the same time. If we are
-    // setting ourselves to auto reconnect to someone, then we must have
-    // successfully paired and connected with someone. So now place the
-    // Bluetooth chip into a mode where it is not easily discoverable. This
-    // is the "Limited Dedicated Inquiry Access Code (LIAC)" value. We will
-    // leave the device in this mode most of the time so that it is not
-    // shown in the pairing screens of most devices unless you are in
-    // pairing mode.
-    Log(F("ForceQuickReconnect mode. Assuming that there is a pairing buddy since we are connected. Placing chip into limited discovery mode."));
-    SendBlueGigaCommand(discoveryLimitedString);  
+    // Abandoned attempt to fix issues #28, #37, and #70 by making device
+    // refuse rings. Did not work, caused Honda to not reconnect correctly.
+    // Leaving code here, commented out, in case I want to put other behaviors
+    // in this place.
+    // Log(F("ForceQuickReconnect mode. Assuming that there is a pairing buddy since we are connected. Placing chip into non-ring-responding mode."));
+    // SendBlueGigaCommand(F("SET BT PAGEMODE 1 2000 1")); 
   }
   
   // UPDATE: After a lot of work for doing a truly quick reconnect version,

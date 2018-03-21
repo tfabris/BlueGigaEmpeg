@@ -627,7 +627,7 @@ for this purpose.
 
 - Press the recessed RESET/PAIR button on the BlueGigaEmpeg module. You do
   *not* need to hold down the button, a single click is all it needs. The
-  adjacent LED should light up blue for about 30 seconds or so.
+  adjacent LED should light up blue for about 60 seconds or so.
   
   - If you can't reach the RESET/PAIR button, then it is also possible to
     initiate pairing from the USB debug connection, via a connected laptop, by
@@ -792,13 +792,13 @@ the following:
  
  - Resets the Bluetooth chip to default settings.
 
- - Looks for Bluetooth devices to pair with for about 30 seconds, and pairs
+ - Looks for Bluetooth devices to pair with for about 60 seconds, and pairs
    automatically with the first one that it sees. Starting with version 1.1.5
    of the BlueGigaEmpeg sketch, it will alternate between searching for
-   devices and listening for devices during those 30 seconds.
+   devices and listening for devices during pairing mode.
 
  - The blue RESET/PAIR LED is lit during this pairing mode, and will turn
-   off once pairing is complete, or once the 30 seconds has run out.
+   off once pairing is complete, or once the 60 seconds has run out.
 
 Paired devices share a set of security keys with each other. Pressing the
 recessed RESET/PAIR button on the BlueGigaEmpeg module erases previous
@@ -1069,7 +1069,7 @@ The following commands are supported:
 - "%"   - Toggle Shuffle on or off.
 - "+"   - Increase the volume of the empeg by one notch.
 - "-"   - Decrease the volume of the empeg by one notch.
-- "Z"   - Place the BlueGigaEmpeg module into pairing mode for approx. 30 seconds.
+- "Z"   - Place the BlueGigaEmpeg module into pairing mode for approx. 60 seconds.
 
 
 ####  Power up sequence (startup order) for Arduino debugging:
