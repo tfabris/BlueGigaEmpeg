@@ -1773,9 +1773,10 @@ Resources
 ####  Bluetooth information, schematics, and command references:
 | Item                        | Url                                                                                         |
 |:----------------------------|:--------------------------------------------------------------------------------------------|
+| Bluetooth A2DP specs        | https://www.bluetooth.org/docman/handlers/downloaddoc.ashx?doc_id=8236                      |
 | Bluetooth AVRCP specs       | https://www.bluetooth.org/docman/handlers/DownloadDoc.ashx?doc_id=292286                    |
-| Command reference           | https://www.silabs.com/documents/login/reference-manuals/iWRAP6-API-RM.pdf                  |
-| AVRCP command reference     | https://www.silabs.com/documents/login/application-notes/AN986.pdf                          |
+| iWrap Command reference     | https://www.silabs.com/documents/login/reference-manuals/iWRAP6-API-RM.pdf                  |
+| iWrap AVRCP Command ref     | https://www.silabs.com/documents/login/application-notes/AN986.pdf                          |
 | Dev Board User Guide        | https://www.silabs.com/documents/login/user-guides/UG215.pdf                                |
 | Dev Board Data Sheet        | https://www.silabs.com/documents/login/data-sheets/WT32i-DataSheet.pdf                      |
 | Dev Board Reference Design  | https://www.silabs.com/documents/login/reference-designs/Reference-Design-DKWT32i.pdf       |
