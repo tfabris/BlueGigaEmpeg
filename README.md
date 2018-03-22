@@ -976,33 +976,6 @@ track titles don't show up on the car stereo's screen, then try the following.
   enabled, then you've still got a serial port problem. Put the crossover
   jumpers back to their original setting, and re-diagnose from the top.
 
-- If you are getting good serial port messages from the empeg, but you are
-  still unable to get AVRCP commands working, there is one particular special
-  case bug with some devices that you might be encountering. Most devices,
-  when you pair with them as A2DP, will automatically enable an AVRCP channel
-  as well. I have found some which do not, though.
-  
-  - You can tell if you have this problem by using [debug mode](#debug) and
-    typing the LIST command while the module is paired. The output of the LIST
-    command should show three entries: Two A2DP channels (one for data and one
-    for audio) and one AVRCP channel for play/pause/track commands and track
-    titles. If your LIST command shows only two A2DP channels but no AVRCP
-    channel, then you have this problem. Try the following:
-
-    - Get the latest version of the BlueGigaEmpeg.ino source code as described
-      in the ["Updating firmware"](#updating-firmware) section. Edit the
-      BlueGigaEmpeg.ino sketch file. Locate the variable "autoReconnectMode",
-      change it from 1 to 2, and save the file.
-      
-    - Re-upload the sketch to the Arduino as described in the ["Updating
-      firmware"](#updating-firmware) section, then press the RESET/PAIR button
-      and re-pair with your stereo after doing it.
-      
-    - Double check that it solves the problem both immediately after pairing,
-      and also solves the problem if you turn off your stereo and back on
-      again (i.e., after the BlueGigaEmpeg automatically reconnects). See
-      GitHub issue #71 for more details on this problem and this work-around.
-
 
 <a name="debug"></a>
 
@@ -1184,7 +1157,6 @@ accompanying these flags in the file to understand what they do.
       displayEmpegSerial
       displayTracksOnSerial
       logLineByLine
-      autoReconnectMode
       PerformUtf8Conversion
 
 ####  Useful debugging commands in the BlueGiga WT32i iWrap command language:
