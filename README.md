@@ -483,7 +483,7 @@ you shut off the ignition, all combine to cause some interesting problems with
 power state transitions.
 
 I found that if I connected the empeg to my car's power via the regular method
-(i.e. car accessory power to the orange ignition wire on the sled, and car
+(i.e., car accessory power to the orange ignition wire on the sled, and car
 constant 12v power to the yellow memory wire on the sled), then there were
 certain unusual states that it could get into. Sometimes I would shut off my
 car, but the empeg would come back up out of sleep mode and play tracks
@@ -1049,13 +1049,14 @@ The following commands are supported:
 
 The BlueGigaEmpeg module can connect to any of these power sources:
 
-- Obtain power from the tuner module connector on the empeg's docking sled
-  wiring harness. This is the default way for it to get its power during
+- It can obtain power from the tuner module connector on the empeg's docking
+  sled wiring harness. This is the default way for it to get its power during
   normal operation.
 
-- Obtain power from the USB plug, the Arduino USB "type B" port accessible on
-  the BlueGigaEmpeg casing. Allows you to upload new Arduino firmware to the
-  BlueGigaEmpeg module while it is disconnected from the empeg's docking sled.
+- It can obtain power from the USB plug, the Arduino USB "type B" port
+  accessible on the BlueGigaEmpeg casing. Allows you to upload new Arduino
+  firmware to the BlueGigaEmpeg module while it is disconnected from the
+  empeg's docking sled.
 
 - Both of the above can be connected at the same time, and the BlueGigaEmpeg
   will get its power from whichever one supplied power to it first.
