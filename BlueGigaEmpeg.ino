@@ -153,6 +153,8 @@ boolean PerformUtf8Conversion = true;
 //             times when it is not connected, if there is any previous
 //             pairing buddy in its memory.
 //      Setting 2:
+//                  NOTE: EXPERIMENTALLY REMOVING SETTING 2.
+//                  Trying to fix issue #71 in other ways.
 //           - Alternate setting. Similar to Setting 1 above, but uses a
 //             slightly different syntax for the reconnect command. This is an
 //             attempt to work around a bug where AVRCP commands didn't always
@@ -165,7 +167,6 @@ boolean PerformUtf8Conversion = true;
 //             BlueGigaEmpeg, then with the BlueGigaEmpeg running, you must
 //             reset and re-pair the BlueGigaEmpeg unit by pressing the
 //             RESET/PAIR button.
-//
 // This setting should be left at the default value of "1" in most cases.
 const int autoReconnectMode = 1;
 
@@ -335,24 +336,25 @@ const int autoReconnectMode = 1;
 //      "19 A2DP CUSTOM", but this command has been super weird in other ways,
 //      so work with this for a while and see if it fixes other problems.
 //    - Works perfectly on Honda, still need to test on other devices.
-//
 const String autoReconnectString = "SET CONTROL RECONNECT 2888 0 0 17 0 NONE A2DP";
 
-// Version 1.5: Alternate version of autoReconnectString to fix issue #71.
-//
-// This is an attempted work around to issue #71 "No AVRCP on Onkyo". This is
-// not a solution since this cannot work universally to all devices, it causes
-// problems on other devices (induces issue #60 "Bad PDU Registrations" on my
-// Honda). However a user can enable this with the flag variable
-// "autoReconnectMode" at the top of the code if they encounter a problem.
-//    - Parameters are syntactically correct.
-//    - 17 instead of 1f means no weird IWRAP reboots.
-//    - No custom profile used.
-//    - A2DP and AVRCP are tried in that order.
-//    - Fixes issue #71 on Onkyo.
-//    - Re-induces issue #60 all over again just like the earlier
-//      syntactically-incorrect one.
-const String alternateAutoReconnectString = "SET CONTROL RECONNECT 2888 0 0 17 0 NONE A2DP AVRCP";
+// EXPERIMENT - Removing alternate auto reconnect string as a method to work
+// around issue #71. Attempting to fix issue #71 in other ways.
+// // Version 1.5: Alternate version of autoReconnectString to fix issue #71.
+// //
+// // This is an attempted work around to issue #71 "No AVRCP on Onkyo". This is
+// // not a solution since this cannot work universally to all devices, it causes
+// // problems on other devices (induces issue #60 "Bad PDU Registrations" on my
+// // Honda). However a user can enable this with the flag variable
+// // "autoReconnectMode" at the top of the code if they encounter a problem.
+// //    - Parameters are syntactically correct.
+// //    - 17 instead of 1f means no weird IWRAP reboots.
+// //    - No custom profile used.
+// //    - A2DP and AVRCP are tried in that order.
+// //    - Fixes issue #71 on Onkyo.
+// //    - Re-induces issue #60 all over again just like the earlier
+// //      syntactically-incorrect one.
+// const String alternateAutoReconnectString = "SET CONTROL RECONNECT 2888 0 0 17 0 NONE A2DP AVRCP";
 
 // Version 2: "SET CONTROL AUTOCALL".
 //
@@ -432,8 +434,8 @@ boolean digitalAudio = true;
 // that requires more detailed handling and parsing.
 // NOTE: Update the matrix size and the array size both, if you are changing
 // these.
-int scFixMatrixSize = 12;
-String scFixMessageMatrix[12][2] =
+int scFixMatrixSize = 13;
+String scFixMessageMatrix[13][2] =
 {
   // Bluetooth in                       // Bluetooth out        
 
@@ -520,7 +522,6 @@ String scFixMessageMatrix[12][2] =
   // Kenwood). Pressing the  shuffle button on their stereo works fine and
   // toggles shuffle. Note: Cannot add "Repeat" in here because the empeg car
   // serial command set does not contain a command for "Repeat".
-
   { "GET_APPLICATION_SETTING_VALUE",      "AVRCP RSP 1"},
 
   // Required: Send "streaming start" commands when an A2DP connection is
@@ -559,6 +560,31 @@ String scFixMessageMatrix[12][2] =
   { "RING 1",                              "A2DP STREAMING START"},
   { "RING 2",                              "A2DP STREAMING START"},
   { "RING 3",                              "A2DP STREAMING START"},
+
+  // Experiment - Try to fix issue #71, no AVRCP on Onkyo when reconnecting.
+  // This issues an AVRCP connection as soon as a dual-channel A2DP connection
+  // is registered by our automatic reconnection process. To fix issue #71, I
+  // have moved this here into this matrix from where it previously existed,
+  // which was in the matrix for pairing mode responses. This should hopefully
+  // fix it so that we get an AVRCP connection both in regular mode and pairing
+  // mode. 
+  //
+  // Notes:
+  //   - Only one AVRCP call and only on the "second" a2dp channel connection.
+  //     If you make two AVRCP calls then the second one disconnects it.
+  //   - By triggering on the "1" here I'm hopefully nailing the situations in
+  //     which A2DP is connecting two channels (either 0 and 1, or 1 and 2). 
+  //   - This is not being done on the RING receipts, on on our connect
+  //     attempts. This is because, in my experimentation, I have found that
+  //     RINGs always come with their own A2DP connections coming in on their
+  //     own A2DP RING receipts. So I only need this for CONNECTs not for
+  //     RINGs.
+  //   - "17" is the hard-to-find secret code, the "L2CAP PSM" code, for
+  //     AVRCP.
+  //   - This uses a substitution string, {0}, which will be the address of
+  //     the current pairing buddy. This code assumes that we will know the
+  //     address of our current pairing buddy by the time we reach this code.
+  { "CONNECT 1 A2DP 19",                   "CALL {0} 17 AVRCP"},
 
   // Send streaming start messages when we auto-reconnect to the host stereo.
   // These do specify only for A2DP situations, not for AVRCP situations.
@@ -628,8 +654,8 @@ static String avrcpChannel = "";
 // the response string. The "{0}" is also defined in another variable below.
 // NOTE: Update the matrix size and the array size both, if you are changing
 // these.
-int pmMatrixSize=5;
-String pmMessageMatrix[5][2] =
+int pmMatrixSize=2;
+String pmMessageMatrix[2][2] =
 {
   // Respond to messages such as INQUIRY_PARTIAL 0a:ea:ea:6a:7a:6a 240404
   { "INQUIRY_PARTIAL ",          "PAIR {0}"},
@@ -663,9 +689,14 @@ String pmMessageMatrix[5][2] =
   // Honda it will do the bad thing where it tries to retrieve track data
   // infinitely in a continuous loop. We need to initiate this part
   // ourselves. TO DO: Investigate this deeper when you have a chance.
-  { "CONNECT 1 A2DP 19",        "CALL {0} 17 AVRCP"},
-  { "CONNECT 2 A2DP 19",        "CALL {0} 17 AVRCP"},
-  { "CONNECT 3 A2DP 19",        "CALL {0} 17 AVRCP"},
+  //
+  // EXPERIMENT - Attempt to fix bug #71 - No AVRCP on Onkyo, by moving
+  // the AVRCP connection out of the pairing mode and into the regular
+  // mode. This way we don't get two AVRCP connection attempts at once
+  // if we are in pairing mode thus killing the AVRCP connection.
+  //   { "CONNECT 1 A2DP 19",        "CALL {0} 17 AVRCP"},
+  //   { "CONNECT 2 A2DP 19",        "CALL {0} 17 AVRCP"},
+  //   { "CONNECT 3 A2DP 19",        "CALL {0} 17 AVRCP"},
 };
 
 // String to be used in token substitutions above (change both the matrix
@@ -1063,14 +1094,16 @@ void setup()
       // contents of the string autoReconnectString.
       break;
 
-    case 2:
-      // If the user has configured autoReconnectMode to 2, then it is because
-      // they want to use an alternate version of the reconnect string to fix
-      // a specific issue on their specific stereo. Change autoReconnectString
-      // to the alternate string so that the alternate string is used in all
-      // cases instead of the default string.
-      autoReconnectString = alternateAutoReconnectString;
-      break;
+    // EXPERIMENT - Removing alternate auto reconnect string which attempted to
+    // work around issue #71. Instead, trying to fix issue #71 in other ways.
+    // case 2:
+    //   // If the user has configured autoReconnectMode to 2, then it is because
+    //   // they want to use an alternate version of the reconnect string to fix
+    //   // a specific issue on their specific stereo. Change autoReconnectString
+    //   // to the alternate string so that the alternate string is used in all
+    //   // cases instead of the default string.
+    //   autoReconnectString = alternateAutoReconnectString;
+    //   break;
 
     default:
       // If the user has mis-configured the autoReconnectMode variable, then
@@ -1139,6 +1172,18 @@ void setup()
   // is a single line which should be the first line you receive after the
   // query).
   DisplayAndProcessCommands(3000, true);
+
+  // We need a second line to be ganked because the word SET comes quickly
+  // after the address of the current pairing buddy.
+  DisplayAndProcessCommands(100, true);
+
+  // Additional work on issue #71. I found that in some situations the Onkyo
+  // would connect to the BGE so fast that it would actually interfere with
+  // this command working at all. It would come while this command was trying
+  // to execute. So run it twice just to be sure.
+  SendBlueGigaCommand(F("SET BT PAIR"));
+  DisplayAndProcessCommands(3000, true);
+  DisplayAndProcessCommands(100, true);
 
   // At this point the HandleString routine will, if it found a pairing buddy
   // in the response to the SET BT PAIR command, have filled out our
@@ -4998,14 +5043,14 @@ void QuickResetBluetooth(int resetType)
       Log(F("Performing soft reset of Bluetooth module."));
       SendBlueGigaCommand(F("RESET"));
       ClearGlobalVariables();
-      DisplayAndSwallowResponses(4, 500);
+      DisplayAndSwallowResponses(3, 500);
       connected = false;
       break;
 
     case 1:
       SendBlueGigaCommand(F("BOOT 0"));
       ClearGlobalVariables();
-      DisplayAndSwallowResponses(4, 500);
+      DisplayAndSwallowResponses(3, 500);
       connected = false;
       break;
 
