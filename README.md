@@ -1105,7 +1105,7 @@ still needs the tuner connector on the harness in order to function.
   monitor's output while the issue is occurring.
 
 - After the issue is reproduced, pause the empeg player so that additional
-  timestamp reports no longer show up (screen stops scrolling constantly).
+  timestamp reports no longer show up.
 
 - Type the "set" and "list" commands into the serial monitor, pressing the
   Enter key after each one. Their output results should show up on the screen.
