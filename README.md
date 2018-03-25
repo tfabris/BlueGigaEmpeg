@@ -1256,6 +1256,9 @@ the following menus in the Arduino IDE program:
 
 - When it is done installing, exit the Arduino IDE.
 
+- After this point, if the Arduino IDE prompts you to update the "Boards",
+  cancel or refuse the update.
+
 #### Edit compiler file to increase serial port buffer size:
 
 Once it is installed and the "Boards" files are set to the correct version,
