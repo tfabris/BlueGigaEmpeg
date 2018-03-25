@@ -152,21 +152,6 @@ boolean PerformUtf8Conversion = true;
 //             will continuously attempt reconnection in all cases at all
 //             times when it is not connected, if there is any previous
 //             pairing buddy in its memory.
-//      Setting 2:
-//                  NOTE: EXPERIMENTALLY REMOVING SETTING 2.
-//                  Trying to fix issue #71 in other ways.
-//           - Alternate setting. Similar to Setting 1 above, but uses a
-//             slightly different syntax for the reconnect command. This is an
-//             attempt to work around a bug where AVRCP commands didn't always
-//             work on certain devices. See GitHub issue #71 "Onkyo AVRCP
-//             commands do not work." for more details. Enable this alternate
-//             mode only if it fixes that specific bug with your stereo, since
-//             it may cause adverse affects when used with other stereos.
-//             Note: If you want to use this non-default setting, you must do
-//             the following: You must upload the modified code to the
-//             BlueGigaEmpeg, then with the BlueGigaEmpeg running, you must
-//             reset and re-pair the BlueGigaEmpeg unit by pressing the
-//             RESET/PAIR button.
 // This setting should be left at the default value of "1" in most cases.
 const int autoReconnectMode = 1;
 
@@ -338,24 +323,6 @@ const int autoReconnectMode = 1;
 //    - Works perfectly on Honda, still need to test on other devices.
 const String autoReconnectString = "SET CONTROL RECONNECT 2888 0 0 17 0 NONE A2DP";
 
-// EXPERIMENT - Removing alternate auto reconnect string as a method to work
-// around issue #71. Attempting to fix issue #71 in other ways.
-// // Version 1.5: Alternate version of autoReconnectString to fix issue #71.
-// //
-// // This is an attempted work around to issue #71 "No AVRCP on Onkyo". This is
-// // not a solution since this cannot work universally to all devices, it causes
-// // problems on other devices (induces issue #60 "Bad PDU Registrations" on my
-// // Honda). However a user can enable this with the flag variable
-// // "autoReconnectMode" at the top of the code if they encounter a problem.
-// //    - Parameters are syntactically correct.
-// //    - 17 instead of 1f means no weird IWRAP reboots.
-// //    - No custom profile used.
-// //    - A2DP and AVRCP are tried in that order.
-// //    - Fixes issue #71 on Onkyo.
-// //    - Re-induces issue #60 all over again just like the earlier
-// //      syntactically-incorrect one.
-// const String alternateAutoReconnectString = "SET CONTROL RECONNECT 2888 0 0 17 0 NONE A2DP AVRCP";
-
 // Version 2: "SET CONTROL AUTOCALL".
 //
 // Abandoned version of reconnect feature. This seems to work well, when it
@@ -434,8 +401,8 @@ boolean digitalAudio = true;
 // that requires more detailed handling and parsing.
 // NOTE: Update the matrix size and the array size both, if you are changing
 // these.
-int scFixMatrixSize = 13;
-String scFixMessageMatrix[13][2] =
+int scFixMatrixSize = 7;
+String scFixMessageMatrix[7][2] =
 {
   // Bluetooth in                       // Bluetooth out        
 
@@ -524,50 +491,12 @@ String scFixMessageMatrix[13][2] =
   // serial command set does not contain a command for "Repeat".
   { "GET_APPLICATION_SETTING_VALUE",      "AVRCP RSP 1"},
 
-  // Required: Send "streaming start" commands when an A2DP connection is
-  // made. If I don't send a "streaming start" at least once during the
-  // initial session connection then no sound will come out of the Bluetooth.
-  //
-  // Three connection channels are required for A2DP to work correctly: Two
-  // A2DP channels (one audio and one data) and one AVRCP channel (for
-  // play/pause/next and track titles). Various host stereo Bluetooth chips
-  // have different weird behaviors related to these and will connect them in
-  // different orders and different timings. This causes no end of trouble for
-  // me because if you don't get this just right, you get problems such as:
-  //
-  // Issue #67: Silent playback after cold boot
-  // Issue #70: Broken up high pitched playback after cold boot 
-  // Issue #45: Initial boot and connect problems
-  // Issue #60: Initial connection intermittently causes bad issues and reboot
-  // Issue #71: No Onkyo AVRCP
-  // (no issue#): Silent playback from the Plantronics headset
-  // Other problems, but mostly you get silent playback if it's not right.
-  //
-  // These send the streaming start commands when the SECOND AND LATER message
-  // in a group appears on the Bluetooth serial port. It's the second message
-  // because the table below starts at "1" because the first one always
-  // carries an index number (channel number) of "0". You can't send a
-  // streaming start message on "0" because all sorts of other bad problems
-  // occur if you do that, not all of them I fully understand.
-  // 
-  // Send streaming start messages when the host stereo connects to us
-  // (the host stereo sends a "RING" command). Note that these do not attempt
-  // to differentiate whether it is an A2DP or an AVRCP message on the RINGs.
-  // This seems to (strangely) work better on the Honda than it would if we tried
-  // to perform the differentiation. If we try to only send the streaming start
-  // command on the second A2DP message only, then we induce issue #70 much more
-  // frequently than if we just blindly wait for the second message.
-  { "RING 1",                              "A2DP STREAMING START"},
-  { "RING 2",                              "A2DP STREAMING START"},
-  { "RING 3",                              "A2DP STREAMING START"},
-
-  // Experiment - Try to fix issue #71, no AVRCP on Onkyo when reconnecting.
-  // This issues an AVRCP connection as soon as a dual-channel A2DP connection
-  // is registered by our automatic reconnection process. To fix issue #71, I
-  // have moved this here into this matrix from where it previously existed,
-  // which was in the matrix for pairing mode responses. This should hopefully
-  // fix it so that we get an AVRCP connection both in regular mode and pairing
-  // mode. 
+  // Fix issue #71, no AVRCP on Onkyo when reconnecting. This issues an AVRCP
+  // connection as soon as a dual-channel A2DP connection is registered by our
+  // automatic reconnection process. To fix issue #71, I have moved this here
+  // into this matrix from where it previously existed, which was in the
+  // matrix for pairing mode responses. This should hopefully fix it so that
+  // we get an AVRCP connection both in regular mode and pairing mode.
   //
   // Notes:
   //   - Only one AVRCP call and only on the "second" a2dp channel connection.
@@ -584,13 +513,26 @@ String scFixMessageMatrix[13][2] =
   //   - This uses a substitution string, {0}, which will be the address of
   //     the current pairing buddy. This code assumes that we will know the
   //     address of our current pairing buddy by the time we reach this code.
+  //
   { "CONNECT 1 A2DP 19",                   "CALL {0} 17 AVRCP"},
 
-  // Send streaming start messages when we auto-reconnect to the host stereo.
-  // These do specify only for A2DP situations, not for AVRCP situations.
-  { "CONNECT 1 A2DP 19",                   "A2DP STREAMING START"},
-  { "CONNECT 2 A2DP 19",                   "A2DP STREAMING START"},
-  { "CONNECT 3 A2DP 19",                   "A2DP STREAMING START"},  
+  // The commands below have been removed from this table, and instead moved
+  // to a more detailed programmatic check of when to issue "streaming start"
+  // commands. The timing and conditions of when to issue a "streaming start"
+  // is tied directly to the following bugs:  
+  // Issue #67: Silent playback after cold boot
+  // Issue #70: Broken up high pitched playback after cold boot 
+  // Issue #45: Initial boot and connect problems
+  // Issue #60: Initial connection intermittently causes bad issues and reboot
+  // Issue #71: No Onkyo AVRCP
+  // (no issue#): Silent playback from the Plantronics headset
+  // Other problems, but mostly you get silent playback if it's not right.
+  // { "RING 1",                              "A2DP STREAMING START"},
+  // { "RING 2",                              "A2DP STREAMING START"},
+  // { "RING 3",                              "A2DP STREAMING START"},
+  // { "CONNECT 1 A2DP 19",                   "A2DP STREAMING START"},
+  // { "CONNECT 2 A2DP 19",                   "A2DP STREAMING START"},
+  // { "CONNECT 3 A2DP 19",                   "A2DP STREAMING START"},  
 };
 
 // Variable to control whether or not we reconnect the Bluetooth module
@@ -667,36 +609,6 @@ String pmMessageMatrix[2][2] =
   // which is a particular secret-code hard-to find value called an "L2CAP
   // psm" and the special secret L2CAP psm for A2DP is "19".
   { " OK",                       "CALL {0} 19 A2DP"},  
-  
-  // Respond to messages such as "CONNECT 0 A2DP 19" Respond during the pair
-  // process with a connection attempt. Response should be "CALL", the address
-  // to connect to, then a special code indicating the target type and profile
-  // type. "17" is a special code for a certain kind of target which is a
-  // particular secret-code hard-to find value called an "L2CAP psm" and the
-  // special secret L2CAP psm for AVRCP is "17".
-  //
-  // NOTE BUGFIX: Don't do an AVRCP call while the host is in the middle of
-  // pairing its second A2DP channel. In other words, don't do an AVRCP call
-  // on the first ("0") connect from the host stereo, only do it on the second
-  // ("1") one and later. So comment out this line:
-  //       { "CONNECT 0 A2DP 19",        "CALL {0} 17 AVRCP"},
-  // But subsequent ones are OK to do, and in fact are required for AVRCP to
-  // work on the paired system.
-  // 
-  // NOTE: You must be able to be the one initiating the AVRCP connection
-  // when the CONNECT is made because if the stereo head unit initiates the
-  // connection (ie if we get a RING x xxxxx 17 AVRCP) then if it's the
-  // Honda it will do the bad thing where it tries to retrieve track data
-  // infinitely in a continuous loop. We need to initiate this part
-  // ourselves. TO DO: Investigate this deeper when you have a chance.
-  //
-  // EXPERIMENT - Attempt to fix bug #71 - No AVRCP on Onkyo, by moving
-  // the AVRCP connection out of the pairing mode and into the regular
-  // mode. This way we don't get two AVRCP connection attempts at once
-  // if we are in pairing mode thus killing the AVRCP connection.
-  //   { "CONNECT 1 A2DP 19",        "CALL {0} 17 AVRCP"},
-  //   { "CONNECT 2 A2DP 19",        "CALL {0} 17 AVRCP"},
-  //   { "CONNECT 3 A2DP 19",        "CALL {0} 17 AVRCP"},
 };
 
 // String to be used in token substitutions above (change both the matrix
@@ -988,18 +900,50 @@ bool blueToothFastForward = false;
 // calculate deltas between output lines for profiling.
 unsigned long priorOutputLineMillis = 0L;
 
+// Flag to determine whether we use the method of sending Streaming Starts
+// that Silicon Labs Tech Support suggested.
+//     Setting true:  Send a streaming start command only when we receive the
+//                    the second of two A2DP connection messages. This is the
+//                    suggested method by Si Labs tech support but it tends to
+//                    induce issue #70 (48khz crackling chipmunk playback).
+//     Setting false: Send a streaming start command on the second and third
+//                    receipt of any connection message of either A2DP or
+//                    AVRCP type. This setting is intended to reduce the
+//                    incidence of issue #70 and hopefully completely fix
+//                    issue #67 in all cases.
+// This should be left set to the default of "false" unless deliberately
+// trying to reproduce issue #70.
+boolean streamingStartSiliconLabsMethod = false;
+
 // Variable to keep track of the timestamp of the prior most recent occurrence
 // of a particular important set of messages indicating an A2DP connection has
-// been made. We must only trigger the "streaming start" command on the second
-// receipt of those two messages. There will be two A2DP connections (one for
-// audio and one for data) and we must only trigger the "streaming start"
-// command at the moment when both have been received, or we will trigger
-// either issue #67 (silent playback) if we issue the command too soon, or
-// issue #70 (48khz crackling playback) if we issue the command too late. This
-// timestamp lets keep track of how recently one of these messages was
-// received. Special case code in the HandleString routine will make use of
-// this.
+// been made. When following the proscription from Silicon Labs Tech Support,
+// we must only trigger the "streaming start" command on the second receipt of
+// an A2DP message. There will be two A2DP connections (one for audio and one
+// for data) and we must only trigger the "streaming start" command at the
+// moment when both have been received, or we will trigger either issue #67
+// (silent playback) if we issue the command too soon, or issue #70 (48khz
+// crackling playback) if we issue the command too late. This timestamp lets
+// keep track of how recently one of these messages was received. Special case
+// code in the HandleString routine will make use of this.
 unsigned long priorA2dpConnectionMessageMs = 0L;
+
+// Issue #70 yet another fix attempt - Variables to keep track of two layers
+// of connection messages, of either type, regardless of whether they are A2DP
+// or AVRCP. This will be used to send "streaming start" command on the second
+// and third receipt of connection messages of either type.
+unsigned long priorConnectionMessageMs = 0L;
+unsigned long priorConnectionMessageMs2 = 0L;
+
+// The number of milliseconds between connection messages that we will allow
+// before we consider that it must have come from a different set of
+// connection attempts. In other words, how quickly in sequence do some A2DP
+// or AVRCP connection messages have to come together in order to be
+// considered part of the same group. This needs to be short enough to prevent
+// false positives but long enough to cover slow Bluetooth chipsets. The
+// longest I have seen it on my test gear is 5.2 seconds on the Etekcity
+// receiver.
+unsigned long priorConnectionTimingThresholdMs = 5500L;
 
 // Include the version number file.
 #include "Version.h"
@@ -1027,8 +971,13 @@ void setup()
   // program starts.
   priorOutputLineMillis = millis();
 
-  // Another time delta to initialize, though this time setting it to zero.
+  // Initialize our time delta between receipts of A2DP connection messages.
   priorA2dpConnectionMessageMs = 0L;
+
+  // Initialize the time delta between receipts of two prior connection
+  // messages, of both A2DP and AVRCP types.
+  priorConnectionMessageMs = 0L;
+  priorConnectionMessageMs2 = 0L;
 
   // Set up the Reset/pair blue LED indicator to "output" state.
   pinMode(pairLedPin, OUTPUT);
@@ -1052,7 +1001,7 @@ void setup()
   avrcpChannel.reserve(transactionLabelSize);
   priorIsPlaying.reserve(2);
 
-  // Reserve bytes for all the track metadata strings to save memeory.
+  // Reserve bytes for all the track metadata strings to save memory.
   trackTitleString01.reserve(metadataMaxLength);
   trackArtistString02.reserve(metadataMaxLength);
   trackAlbumString03.reserve(metadataMaxLength);
@@ -1093,17 +1042,6 @@ void setup()
       // situation. Exit out of the switch statement without changing the
       // contents of the string autoReconnectString.
       break;
-
-    // EXPERIMENT - Removing alternate auto reconnect string which attempted to
-    // work around issue #71. Instead, trying to fix issue #71 in other ways.
-    // case 2:
-    //   // If the user has configured autoReconnectMode to 2, then it is because
-    //   // they want to use an alternate version of the reconnect string to fix
-    //   // a specific issue on their specific stereo. Change autoReconnectString
-    //   // to the alternate string so that the alternate string is used in all
-    //   // cases instead of the default string.
-    //   autoReconnectString = alternateAutoReconnectString;
-    //   break;
 
     default:
       // If the user has mis-configured the autoReconnectMode variable, then
@@ -2296,7 +2234,7 @@ void HandleString(String &theString)
 
   // If we get a "No Carrier" message, we don't necessarily want to clear out
   // everything (i.e., we don't want to do a ClearGlobalVariables()), but we
-  // do want to clean out the variable for the pairs of A2DP connection
+  // do want to clean out the variables for the sets of A2DP/AVRCP connection
   // messages. This will help from getting a "false positive" where the code
   // thinks that two connection messages from two different separate connection
   // attempts are actually a pair from the same connection attempt.
@@ -2304,25 +2242,262 @@ void HandleString(String &theString)
   {
     connected = false;
     priorA2dpConnectionMessageMs = 0L;
+    priorConnectionMessageMs = 0L;
+    priorConnectionMessageMs2 = 0L;
   }
   if (theString.indexOf(F("NO CARRIER 1 ERROR")) > (-1))
   {
     connected = false;
     priorA2dpConnectionMessageMs = 0L;
+    priorConnectionMessageMs = 0L;
+    priorConnectionMessageMs2 = 0L;
+  }
+
+  // Another attempt to fix issue #70 (crackling 48khz playback) and issue #67
+  // (silent playback). Programmatically detect when to send the "streaming
+  // start" command, and send it on the second and third connection message
+  // receipt, regardless of type. This is in direct contradiction to the
+  // Silicon Labs Tech Support recommended procedure which is to send the
+  // streaming message only on the second receipt of an A2DP connection only.
+  // However Silicon Labs' method seems to induce issue #70 (crackling 48khz
+  // playback) very often, whereas this method is expected to fix issue #67
+  // (silent playback) completely as well as significantly reducing incidents
+  // of issue #70.
+  //
+  // Examples:
+  //  RING 0 a8:a0:ab:57:15:a0 19 A2DP
+  //  RING 1 a8:a0:ab:57:15:a0 17 AVRCP   <- Send a streaming start here
+  //  RING 2 a8:a0:ab:57:15:a0 19 A2DP    <- Send a streaming start here
+  // 
+  // Or perhaps something like this:
+  //
+  //  CONNECT 0 A2DP 19
+  //  CONNECT 1 A2DP 19        <- Send a streaming start here
+  //  CONNECT 2 AVRCP 17       <- Send a streaming start here
+  //
+
+  // First step: Check to see if we got a RING or a CONNECT message.
+  if ( (theString.indexOf(F("RING ")) > (-1)) || (theString.indexOf(F("CONNECT ")) > (-1)) )
+  {
+    // Check to make sure that the RING or CONNECT message was for either A2DP
+    // or AVRCP. Must check prefix or postfix L2CAP PSM numbers because those
+    // are different between RING and CONNECT messages.
+    if ( (theString.indexOf(F(" 19 A2DP")) > (-1)) || (theString.indexOf(F(" A2DP 19")) > (-1)) || (theString.indexOf(F(" 17 AVRCP")) > (-1)) || (theString.indexOf(F(" AVRCP 17")) > (-1)))
+    {
+      // At this point in the code we know we just got either a RING or a
+      // CONNECT for either A2DP or AVRCP. Now we need to decide how many
+      // levels deep we are into these messages and how quickly they recently
+      // came. Only do our behavior if they came recently, and only on the
+      // second and third receipt in quick succession.
+
+      // Check to see if we are in our "starting" state, which is where we
+      // have received our first of three messages of either type. This state
+      // is where the timers are at zero already, and we merely need to record
+      // the timing of the first of the three messages.
+      if ( (priorConnectionMessageMs2 == 0) && (priorConnectionMessageMs == 0) )
+      {
+        Log(F("Detected first channel connection of either type."));
+        priorConnectionMessageMs = millis();        
+      } 
+      else
+      {
+        // One or both of the timers were nonzero, meaning we are now in a
+        // state where we are receiving the second or third connection message
+        // in a group of connection messages.
+
+        // Note: These next two sections must be encased within the "else"
+        // above in order to prevent the act of recording the starting-state-
+        // timing (above) from accidentally false-triggering the below states
+        // on first message receipt.
+
+        // Check to see if we are in our "final" state, which is where we have
+        // received the third of three messages of either type. Send our
+        // streaming start and reset everything back to 0 to begin waiting for
+        // a new set of messages.
+        if ( (priorConnectionMessageMs2 > 0) && (priorConnectionMessageMs > 0) )
+        {
+          // Make sure we got the messages in quick enough succession to count
+          // as part of the same group of connection messages. Too far apart,
+          // and it isn't part of the same connection group.
+          if ((millis() - priorConnectionMessageMs2) < priorConnectionTimingThresholdMs)
+          {
+            // Attempt to mitigate issues caused by micro-timing by sending
+            // the command to the Bluetooth chip a hair sooner (before the
+            // logging message instead of after it).
+            if (!streamingStartSiliconLabsMethod)
+            {
+              SendBlueGigaCommand("A2DP STREAMING START");
+            }
+            Log(F("Detected third channel connection of either type."));
+            priorConnectionMessageMs = 0L;
+            priorConnectionMessageMs2 = 0L;
+          }
+          else
+          {
+            // Protect against hanging on to the message timers for too long.
+            Log(F("Third channel connection message didn't come quickly enough after the second one. Clearing variables and starting over."));
+            priorConnectionMessageMs = 0L;
+            priorConnectionMessageMs2 = 0L;
+          }
+        }
+
+        // If the state above was triggered, then no matter what, both timing
+        // values will be zero when we reach this line, and so the section
+        // below will not be triggered. So this section doesn't need a
+        // special secondary level of "else" statement to protect it.
+
+        // Check to see if we are in our "middle" state, which is where we
+        // have received the second of two messages of either type. Send our
+        // streaming start command, and record our second position timer and
+        // await the third and final state.
+        if ( (priorConnectionMessageMs2 == 0) && (priorConnectionMessageMs > 0) )
+        {
+          // Make sure we got the messages in quick enough succession to count
+          // as part of the same group of connection messages. Too far apart,
+          // and it isn't part of the same connection group.
+          if ((millis() - priorConnectionMessageMs) < priorConnectionTimingThresholdMs)
+          {
+            // Attempt to mitigate issues caused by micro-timing by sending
+            // the command to the Bluetooth chip a hair sooner (before the
+            // logging message instead of after it).
+            if (!streamingStartSiliconLabsMethod)
+            {
+              SendBlueGigaCommand("A2DP STREAMING START");
+            }
+            Log(F("Detected second channel connection of either type."));
+            priorConnectionMessageMs2 = millis();
+          }
+          else
+          {
+            // Protect against hanging on to the message timers for too long.
+            Log(F("Second channel connection message didn't come quickly enough after the first one. Clearing variables and starting over."));
+            priorConnectionMessageMs = 0L;
+            priorConnectionMessageMs2 = 0L;
+          }        
+        }
+      }
+    }
+  }
+
+  // NOTE: This section is normally not used except for logging and
+  // diagnostics: Issue streaming start commands based on Silicon Labs Tech
+  // Support's suggestion of sending it upon receipt of second A2DP channel
+  // connection message. For example:
+  //  
+  //  RING 0 a8:a0:ab:57:15:a0 19 A2DP
+  //  RING 1 a8:a0:ab:57:15:a0 17 AVRCP
+  //  RING 2 a8:a0:ab:57:15:a0 19 A2DP    <- send streaming start here.
+  // 
+  // Or perhaps something like this:
+  //
+  //  CONNECT 0 A2DP 19
+  //  CONNECT 1 A2DP 19     <- send streaming start here.
+  //  CONNECT 2 AVRCP 17
+  //
+  // Check to see if we get a match for either of the possible string
+  // beginnings sections (not including channel number or device address).
+  if ( (theString.indexOf(F("RING ")) > (-1)) || (theString.indexOf(F("CONNECT ")) > (-1)) )
+  {
+    // Test to see if we get a match for either of the possible string ends.
+    // Have to check both the prefix and postfix versions of the L2CAP PSM
+    // code number, since it is different between RING and CONNECT statements.
+    if ( (theString.indexOf(F(" 19 A2DP")) > (-1)) || (theString.indexOf(F(" A2DP 19")) > (-1)) )
+    {
+      // We have a match, so test to see if it's the second one of a pair by
+      // looking to see if another similar message was seen recently. Also,
+      // the prior message timestamp must be nonzero to indicate that we
+      // actually received a prior message (a timestamp of zero indicates
+      // start of program or a reset connection state)
+      if ( (priorA2dpConnectionMessageMs > 0) && ((millis() - priorA2dpConnectionMessageMs) < priorConnectionTimingThresholdMs))
+      {
+        // We have a match, and it came hot on the heels of another recent
+        // similar message, too. Send the streaming start command to the
+        // Bluetooth module.
+        
+        // Note: Since this induces issue #70, only do it if our debug flag is
+        // set for doing the Si Labs method.
+        if (streamingStartSiliconLabsMethod)
+        {
+          SendBlueGigaCommand("A2DP STREAMING START");
+
+          // Log the message after sending the command, to help mitigate micro
+          // timing problems.
+          Log(F("Detected second A2DP channel connection."));
+        }
+
+        // Since we have just processed the second A2DP message out of a pair
+        // of A2DP messages, we want to reset our detector variable so that
+        // it helps prevent false positives if another connection is attempted
+        // very quickly after we processed this connection.
+        priorA2dpConnectionMessageMs = 0L;
+      }
+      else
+      {
+        // If we didn't process this message and send a streaming start, then
+        // it must have been the first message out of a pair of messages.
+        // Update the timestamp of the time when we saw the first of these
+        // messages. When the next message comes through, this will be the
+        // basis for deciding the timing of the second message.
+        if (streamingStartSiliconLabsMethod)
+        {
+          Log(F("Detected first A2DP channel connection."));
+        }
+        priorA2dpConnectionMessageMs = millis();        
+      }
+    }
+  }
+
+  // Force a last ditch work around GitHub issue #70, crackling high pitched
+  // playback, by detecting the case where the problem occurs, and rebooting
+  // the WT32i if it happens. I am hoping that the code above which tries to
+  // be smart about when to issue "streaming start" commands will actually fix
+  // the root cause of this issue. If that's the case, then this workaround
+  // will never get triggered and everyone will be happy. This workaround is
+  // controlled by a global flag at the top of the code,
+  // workAroundChipmunkProblem, just in case we want to turn it off, for
+  // instance if it causes an infinite reboot loop.
+  if (workAroundChipmunkProblem)
+  {
+    // Detect the problem, which is a string saying that its codec is working
+    // at 48khz instead of the required 44.1khz. The bad string looks like
+    // this, but not all pieces of the string might match exactly, so look
+    // for some of the sections but not all of them:
+    //      A2DP CODEC SBC JOINT_STEREO 48000 BITPOOL 2-53
+    // Example of another string that might appear if a different codec is
+    // being used:
+    //      A2DP CODEC APT-X_LL STEREO 48000
+    // So your check below needs to accommodate all possible combinations while
+    // still triggering on the bad state (48khz sampling rate).
+    if ( (theString.indexOf(F("A2DP CODEC ")) > (-1)) && (theString.indexOf(F(" 48000 ")) > (-1)) )
+    {
+      // If the problem is detected, then restart the Bluetooth.
+      Log(F("Stereo connected with bad audio sampling rate of 48000. Restarting Bluetooth module."));
+
+      // Fix a problem with multiple reboots occurring during initial pairing
+      // because the automatic reconnect was not yet enabled at pairing time.
+      // Always send the auto reconnect command prior to forcing a reboot.
+      SendBlueGigaCommand(autoReconnectString);
+
+      // Now reboot the module once and let it reconnect with the auto reconnect
+      // string. Hopefully after this reboot we will do the CALLing and not get
+      // any RINGs from the host system (RINGs are the root of this problem).
+      QuickResetBluetooth(0);
+
+      // Original fix for issue #70 had a double reboot to try to fix certain
+      // problems with the AVRCP data not looking correct on the Honda track
+      // data screen. This turned out to be not helpful (the issue was more
+      // random than that), and two reboots vs. one reboot didn't matter. so
+      // bring it back down to 1 reboot to make the reconnection quicker and
+      // to prevent the chance that the iPhone will get its foot in the door.
+      // Note that this also did not fix any infinite reboot loop problems
+      // either, that was a different issue (Honda stereo needed a reboot).
+      //    QuickResetBluetooth(0);
+    }
   }
 
   // Handle pairing mode strings - these are the strings that are only active
   // when we are in Reset/Pairing mode and will not be processed at any other
   // time.
-  //
-  // Also, to help work around issue #70, make sure pairing mode  responses
-  // are set early in the process so that we don't get a reset of the module
-  // before we've had a chance to tell the host stereo about ourselves. This
-  // is hoping to fix the "infinite loop" problems including the infinite re-
-  // query of track information and maybe even the infinite reboot loop. (It
-  // didn't fix it, but I'm leaving this routine early in the HandleString
-  // function so that I can be sure to respond to pair mode strings early in
-  // the process.)
   if (pairingMode)
   {
     // First iterate through our matrix of pairing commands looking for a
@@ -2360,186 +2535,6 @@ void HandleString(String &theString)
         // chip.
         SendBlueGigaCommand(commandToSend);
       }
-    }
-  }
-
-  // UPDATE: The fix below induced more instances of issue #70 instead of
-  // decreasing them. The code is left in place for its diagnostic output but
-  // it is no longer being used. This re-induces the rare issue #67 but
-  // mostly fixes issue #70.
-  //
-  // Attempt to fix issue #67 (silent playback) and reduce instances of issue
-  // #70 (crackling 48khz chipmunk playback) by carefully calculating when the
-  // correct time is to best send a "streaming start" command. Look for either
-  // the correct RING message (if I'm being rung up by the host device) or the
-  // correct "connect" message (if I'm the one doing the ringing up). The
-  // messages I'm looking for will look something like this:
-  //  
-  //  RING 0 48:f0:7b:57:15:20 19 A2DP
-  //  RING 1 48:f0:7b:57:15:20 17 AVRCP
-  //  RING 2 48:f0:7b:57:15:20 19 A2DP
-  // 
-  // Or perhaps something like this:
-  //
-  //  CONNECT 0 A2DP 19
-  //  CONNECT 1 A2DP 19
-  //  CONNECT 2 AVRCP 17
-  //
-  // The RING messages occur when the host stereo is ringing up my Bluetooth
-  // module, and the CONNECT messages occur when my Bluetooth module is auto-
-  // reconnecting to the host stereo.
-  // 
-  // We have to issue a streaming start command somewhere in here, because we
-  // don't get any audio if we don't issue that command. Doesn't matter if
-  // we're doing the ringing or not, there are cases when this is flat out
-  // needed, regardless of if we're ringing or being rung.
-  //
-  // The trick is that:
-  //
-  // - I must only do this for A2DP messages not AVRCP messages.
-  // - The messages may come in any order.
-  // - The messages may be a mixture of both types of messages.
-  // - The messages may be for any channel number (0, 1, 2, 3, etc.)
-  // - The messages can be for any Bluetooth address.
-  // - The messages might not be adjacent to each other.
-  // - The messages will usually be within a few seconds of each other.
-  // - There may be multiple connection attempts (groups) during runtime.
-  // - UPDATE: On the Honda there is more magic here I don't fully understand.
-  //
-  // My task is to issue a "streaming start" command only when the SECOND of
-  // the two A2DP connection messages occurs. This is because there are two
-  // A2DP channels, one for data and one for audio; if I issue the streaming
-  // start command before they are both connected, then I will induce bug #67
-  // (silent playback) since I have told it to stream before a channel was
-  // available with audio capability; if I issue the streaming start command
-  // too late, I will induce bug #70 (48khz crackling playback), for reasons
-  // still unknown to me (though that one only happens on RINGs).
-  //
-  // Wow, Silicon Labs, you didn't make it easy for me, did you?
-  //
-  // Solution is to keep track of how recently we saw an A2DP one of those
-  // messages, and if it was within the last few seconds, issue our streaming
-  // start command.
-  //
-  // Oh wow, there's one more issue I just discovered. On the Plantronics
-  // headset, there is the following odd behavior:
-  // - If you first pair, or you restart the Bluetooth module, it works fine
-  //   and it connects two A2DP channels and plays music fine.
-  // - If you restart JUST the headset and leave the Bluetooth module running,
-  //   then the Plantronics only rings up a single A2DP channel and we never
-  //   get a second A2DP channel and the streaming start command never issues,
-  //   so there is silence until I hand-issue another streaming start command.
-  //   The second A2DP channel fires up only after I issue the command.
-  // - But I can't issue the command on the first channel, that's what induces
-  //   issue #67 on the Honda. So this is a catch-22.
-  // - One idea is to have a flag that issues the command on the first
-  //   connection too, but I tried that, and that causes an infinite
-  //   reconnection loop on the Plantronics.
-  // - Wow. Messed up. For now, I'm going to assume that the user starts the
-  //   empeg at the same time as the car stereo, (car ignition turn on time),
-  //   so that this kind of behavior is automatically fixed, since the bug
-  //   doesn't occur when we turn them both on at the same time.
-  // - If we get a customer complaint then we'll re-address it at that time.
-  //
-  // With all that said, here is the code to issue Streaming Start. First,
-  // test to see if we get a match for either of the possible string starts.
-  if ( (theString.indexOf(F("RING ")) > (-1)) || (theString.indexOf(F("CONNECT ")) > (-1)) )
-  {
-    // Test to see if we get a match for either of the possible string ends.
-    if ( (theString.indexOf(F(" 19 A2DP")) > (-1)) || (theString.indexOf(F(" A2DP 19")) > (-1)) )
-    {
-      // We have a match, so test to see if it's the second one of a pair by
-      // looking to see if another similar message was seen recently. The
-      // longest time frame between the first and second RING A2DP message
-      // that I've seen in all my test devices was 5.2 seconds, on the
-      // Etekcity standalone BT receiver. So this timer must be big enough to
-      // handle that, but small enough so as not to "false" on two
-      // consecutive connection attempts by a disconnecting/reconnecting
-      // device. Also, the prior message timestamp must be nonzero to indicate
-      // that we actually received a prior message (a timestamp of zero
-      // indicates start of program or a reset connection state)
-      if ( (priorA2dpConnectionMessageMs > 0) && ((millis() - priorA2dpConnectionMessageMs) < 5500))
-      {
-        // We have a match, and it came hot on the heels of another recent
-        // similar message, too. Send the streaming start command to the
-        // Bluetooth module.
-        Log(F("Detected second A2DP channel connection."));
-
-        // UPDATE to issue #70 - I am reverting the change which tried to send
-        // intelligent streaming start messages. It turned out to induce issue
-        // #70 much more frequently than before. Going back to the old way of
-        // issuing "dumb" streaming start messages in scFixMessageMatrix has
-        // reduced the number of instances of issue #70 dramatically. More
-        // research is needed to understand why this is the case.
-        //    SendBlueGigaCommand("A2DP STREAMING START");
-        // In the meantime I am leaving the logging messages here as a
-        // diagnostic feature to allow me to help decide instances where
-        // things like issue #67 or issue #70 occur.
-
-        // Since we have just processed the second A2DP message out of a pair
-        // of A2DP messages, we want to reset our detector variable so that
-        // it helps prevent false positives if another connection is attempted
-        // very quickly after we processed this connection.
-        priorA2dpConnectionMessageMs = 0L;
-      }
-      else
-      {
-        // If we didn't process this message and send a streaming start, then
-        // it must have been the first message out of a pair of messages.
-        // Update the timestamp of the time when we saw the first of these
-        // messages. When the next message comes through, this will be the
-        // basis for deciding the timing of the second message.
-        Log(F("Detected first A2DP channel connection."));
-        priorA2dpConnectionMessageMs = millis();        
-      }
-    }
-  }
-
-  // Attempt to work around GitHub issue #70, crackling high pitched playback,
-  // by detecting the case where the problem occurs, and rebooting the WT32i
-  // if it happens. I am hoping that the code above which tries to be smart
-  // about when to issue "streaming start" command will actually fix the root
-  // cause of this issue. If that's the case, then this workaround will never
-  // get triggered and everyone will be happy. This workaround is controlled
-  // by a global flag at the top of the code, "workAroundChipmunkProblem",
-  // just in case we want to turn it off, for instance if it causes an
-  // infinite reboot loop.
-  if (workAroundChipmunkProblem)
-  {
-    // Detect the problem, which is a string saying that its codec is working
-    // at 48khz instead of the required 44.1khz. The bad string looks like
-    // this, but not all pieces of the string might match exactly, so look
-    // for some of the sections but not all of them:
-    //      A2DP CODEC SBC JOINT_STEREO 48000 BITPOOL 2-53
-    // Example of another string that might appear if a different codec is
-    // being used:
-    //      A2DP CODEC APT-X_LL STEREO 48000
-    // So your check below needs to accommodate all possible combinations while
-    // still triggering on the bad state (48khz sampling rate).
-    if ( (theString.indexOf(F("A2DP CODEC ")) > (-1)) && (theString.indexOf(F(" 48000 ")) > (-1)) )
-    {
-      // If the problem is detected, then restart the Bluetooth.
-      Log(F("Stereo connected with bad audio sampling rate of 48000. Restarting Bluetooth module."));
-
-      // Fix a problem with multiple reboots occurring during initial pairing
-      // because the automatic reconnect was not yet enabled at pairing time.
-      // Always send the auto reconnect command prior to forcing a reboot.
-      SendBlueGigaCommand(autoReconnectString);
-
-      // Now reboot the module once and let it reconnect with the auto reconnect
-      // string. Hopefully after this reboot we will do the CALLing and not get
-      // any RINGs from the host system (RINGs are the root of this problem).
-      QuickResetBluetooth(0);
-
-      // Original fix for issue #70 had a double reboot to try to fix certain
-      // problems with the AVRCP data not looking correct on the Honda track
-      // data screen. This turned out to be not helpful (the issue was more
-      // random than that), and two reboots vs. one reboot didn't matter. so
-      // bring it back down to 1 reboot to make the reconnection quicker and
-      // to prevent the chance that the iPhone will get its foot in the door.
-      // Note that this also did not fix any infinite reboot loop problems
-      // either, that was a different issue (Honda stereo needed a reboot).
-      //    QuickResetBluetooth(0);
     }
   }
 
@@ -5096,5 +5091,7 @@ void ClearGlobalVariables()
   priorPlaybackPositionString07 =  "" ; 
   priorIsPlaying                =  "0";
   priorA2dpConnectionMessageMs  = 0L; 
+  priorConnectionMessageMs = 0L;
+  priorConnectionMessageMs2 = 0L;
 }
 
