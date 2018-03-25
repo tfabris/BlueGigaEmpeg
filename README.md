@@ -1226,18 +1226,44 @@ upload new firmware to the Arduino, there will be intermittent errors in the
 BlueGigaEmpeg operation, such as commands sometimes being missed and track
 titles sometimes not working or being incomplete.
 
-Download and install the Arduino IDE, linked from the
-[Prerequisites](#prerequisites) section of this document. Make sure to
-download and install the standalone version of the Arduino IDE; do not try to
-use the Arduino web editor. Though the web editor is convenient, it won't work
-for this project because it doesn't have the capability of changing the header
-files to increase the size of the serial port buffers.
+Download the Arduino IDE, linked from the [Prerequisites](#prerequisites)
+section of this document. Make sure to download and install the standalone
+version of the Arduino IDE; do not try to use the Arduino web editor. Though
+the web editor is convenient, it won't work for this project because it
+doesn't have the capability of changing the header files to increase the size
+of the serial port buffers.
 
-Once it is installed, you'll need to edit a file to increase the size of the
-Arduino's serial port buffers. The file that you need to edit will be the same
-on all operating systems, but the location of the file will be different
-depending on which OS you're using. The approximate location will be something
-like this, but the exact location will vary:
+Install the Arduino IDE. It will be a different installation procedure for
+different operating systems.
+
+#### Temporary workaround to a problem with board header files in Arduino:
+
+Something changed with a recent compiler update in Arduino, and in this new
+system, now I can't find the correct file to edit in the new version of the
+boards files. Let me know if you can help with this. In the meantime, roll
+back to an earlier version of the boards files (which I do know how to edit)
+by launching the Arduino IDE program that you just installed, and selecting
+the following menus in the Arduino IDE program:
+
+- Select the "Tools" menu, select "Board" and select "Boards Manager".
+
+- In the section titled "Arduino AVR Boards", make sure that it says version
+  "1.6.20 INSTALLED".
+
+- If it doesn't say that, click on the "Arduino AVR Boards" section of the
+  screen. A drop-down list should appear which says "Select version". Select
+  "1.6.20" and press the "Install" button.
+
+- When it is done installing, exit the Arduino IDE.
+
+#### Edit compiler file to increase serial port buffer size:
+
+Once it is installed and the "Boards" files are set to the correct version,
+you'll need to edit a file to increase the size of the Arduino's serial port
+buffers. The file that you need to edit will be the same on all operating
+systems, but the location of the file will be different depending on which OS
+you're using. The approximate location will be something like this, but the
+exact location will vary:
 
     (install location)/hardware/arduino/avr/cores/arduino/HardwareSerial.h
 
