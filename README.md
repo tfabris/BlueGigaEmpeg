@@ -738,7 +738,7 @@ don't work on my Honda.
      indicated on your stereo's screen. The empeg car does not report its
      shuffle state to the serial port, so the BlueGigaEmpeg cannot report the
      correct state of shuffle to the car stereo. Pressing the shuffle button
-     on the car stereo should still toggle shuffle on the empeg on and off,
+     on the car stereo should still toggle the empeg's shuffle on and off,
      regardless of the indicated state. Since the empeg has different types
      of shuffle, toggling shuffle from the car stereo will send the "%" 
      command to the serial port on the empeg, which I believe will toggle
