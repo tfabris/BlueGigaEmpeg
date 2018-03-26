@@ -639,6 +639,13 @@ for this purpose.
   BlueGigaEmpeg module is lit. If the stereo offers you a list of devices to
   pair with, then look for the device "empeg Car" and pair it.
 
+  - Some car stereos will allow you to pair without needing to press the 
+    recessed RESET/PAIR button on the BlueGigaEmpeg. For stereos with this
+    capability, you will be able to see and select the "empeg Car" from the
+    list of nearby devices, even when the blue LED on the BlueGigaEmpeg is not
+    lit. If this is the case, it is still OK to press the button, the pairing
+    should succeed whether you press the button or not.
+
 - Your car stereo might put up a random number on the screen and prompt you to 
   confirm that number on the device. If it does, the BlueGigaEmpeg will
   automatically confirm that number for you.
@@ -1007,6 +1014,10 @@ Once the device drivers are working for the Arduino's USB-serial UART, then the
 "Serial Monitor" feature built into the Arduino IDE program will work as the debug
 console. To run it, do the following:
 
+- Make sure the USB cable is connected between the computer and the Arduino
+  port (the USB "type B" connection which is accessible on the outside of the
+  BlueGigaEmpeg casing).
+
 - Launch the Arduino IDE that you installed as part of ["Updating
   firmware"](#updating-firmware).
 
@@ -1019,10 +1030,25 @@ console. To run it, do the following:
 - Select the "Tools" menu, select "Port" and select the correct serial port
   that represents the connected Arduino (this will be different on each
   system and each USB port on the computer).
+  
+  - If the correct serial port for the Arduino is not in the list, check to
+    make sure you have connected the cables in the correct order in relation
+    to powering on the devices. See the note about startup order
+    [here](#startuporder).
 
 - Select "Tools" then "Serial Monitor", or press the magnifying glass icon
   in the upper right corner of the window. The serial monitor will appear.
   Set it to 115200 BPS and set line endings to "both NL & CR".
+
+- Keep in mind that the BlueGigaEmpeg interface module will reboot (the
+  Arduino code will restart) each time you open the serial monitor, and the
+  WT32i Bluetooth module will be automatically rebooted at that time.
+  
+- If you disconnect and reconnect the USB cable from the Arduino, you will
+  need to close and reopen the Serial Monitor again. If you connect to a
+  different USB port on the computer, you will also need to select a
+  different port from the "Tools" menu in the Arduino IDE. Also keep in mind
+  the required startup order, as described [here](#startuporder).
 
 When connected to this serial terminal interface, everything you type is sent
 to the Bluetooth chip as a command, and all of the chip's responses are shown
@@ -1044,6 +1070,8 @@ The following commands are supported:
 - "-"   - Decrease the volume of the empeg by one notch.
 - "Z"   - Place the BlueGigaEmpeg module into pairing mode for approx. 60 seconds.
 
+
+<a name="startuporder"></a>
 
 ####  Power up sequence (startup order) for Arduino debugging:
 
