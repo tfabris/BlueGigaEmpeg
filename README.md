@@ -1398,8 +1398,7 @@ to do, however, special connection instructions are needed if you do this:
 - The computer will not "see" the USB connection to the Arduino if it receives
   power from the empeg first. So before connecting the USB cable between the
   computer and the Arduino, make sure that the empeg is not powered up, or that
-  it is in sleep mode. See [here](#power-up-sequence-startup-order-for-arduino-debugging)
-  for more details about this.
+  it is in sleep mode. See [here](#startuporder) for more details about this.
 
 ####  Upload the sketch:
 
