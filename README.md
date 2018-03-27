@@ -1661,6 +1661,7 @@ MAX232 are as follows:
                             one to Arduino +5v and then also to the smoothing
                             capacitor which bridges across 5v and GND. Place
                             this cap as close to pin 16 as possible.)
+![MAX232 Circuit](https://github.com/tfabris/BlueGigaEmpeg/blob/master/MAX232%20Circuit.png)
 
 The empeg tuner connector is used to supply power to the Pololu step-down
 transformer power supply, and from there, on to the rest of the assembly. Blue
@@ -1790,39 +1791,37 @@ Resources
 | BlueGigaEmpeg Enclosure (Shapeways)   | https://github.com/tfabris/BlueGigaEmpeg/blob/master/BlueGigaEmpeg%20Enclosure%20-%20Version%2002.stl        |
 
 ####  Download software:
-| Item                        | Url                                                                                 |
-|:----------------------------|:------------------------------------------------------------------------------------|
-| Arduino IDE                 | https://www.arduino.cc/en/Main/Software                                             |
-| BlueGigaEmpeg sketch        | https://github.com/tfabris/BlueGigaEmpeg                                            |
-| Hijack Kernel for empeg     | http://empeg-hijack.sourceforge.net/                                                |
-| Tony's Empeg Logo Editor    | http://empegbbs.com/ubbthreads.php/ubb/download/Number/7067/filename/logoedit17.zip |
-| WT32i Firmware Upgrade      | https://www.silabs.com/documents/login/software/iWRAP-Firmware-Releases.zip         |
-| FTDI USB driver             | http://www.ftdichip.com/FTDrivers.htm                                               |
+| Item                         | Url                                                                                 |
+|:-----------------------------|:------------------------------------------------------------------------------------|
+| Arduino IDE                  | https://www.arduino.cc/en/Main/Software                                             |
+| BlueGigaEmpeg sketch         | https://github.com/tfabris/BlueGigaEmpeg                                            |
+| Hijack Kernel for empeg      | http://empeg-hijack.sourceforge.net/                                                |
+| Tony's Empeg Logo Editor     | http://empegbbs.com/ubbthreads.php/ubb/download/Number/7067/filename/logoedit17.zip |
+| WT32i iWrap Firmware Upgrade | https://www.silabs.com/documents/login/software/iWRAP-Firmware-Releases.zip         |
+| FTDI USB driver              | http://www.ftdichip.com/FTDrivers.htm                                               |
 
 ####  Bluetooth information, schematics, and command references:
-| Item                        | Url                                                                                         |
-|:----------------------------|:--------------------------------------------------------------------------------------------|
-| Bluetooth A2DP specs        | https://www.bluetooth.org/docman/handlers/downloaddoc.ashx?doc_id=8236                      |
-| Bluetooth AVRCP specs       | https://www.bluetooth.org/docman/handlers/DownloadDoc.ashx?doc_id=292286                    |
-| iWrap Commands              | https://www.silabs.com/documents/login/reference-manuals/iWRAP6-API-RM.pdf                  |
-| iWrap AVRCP Commands        | https://www.silabs.com/documents/login/application-notes/AN986.pdf                          |
-| Dev Board User Guide        | https://www.silabs.com/documents/login/user-guides/UG215.pdf                                |
-| Dev Board Data Sheet        | https://www.silabs.com/documents/login/data-sheets/WT32i-DataSheet.pdf                      |
-| Dev Board Reference Design  | https://www.silabs.com/documents/login/reference-designs/Reference-Design-DKWT32i.pdf       |
-| Dev Board Full Schematic    | https://www.silabs.com/documents/login/reference-designs/DKWT32i-v2.2.zip                   |
-| BetzTechnik Schematic       | http://www.betztechnik.ca/uploads/2/5/6/7/25674051/wt32i.pdf                                |
-| Pololu V.Reg #2853 Pinout   | https://a.pololu-files.com/picture/0J5779.1200.jpg                                          |
-| Arduino Mega Pin Map        | https://www.arduino.cc/en/uploads/Hacking/Atmega168PinMap2.png                              |
-| Arduino Mega Standalone     | https://www.arduino.cc/en/Main/Standalone                                                   |
-| ClassOfDevice generators    | http://bluetooth-pentest.narod.ru/software/bluetooth_class_of_device-service_generator.html |
-|                             | http://www.ampedrftech.com/cod.htm                                                          |
-| MAX232 circuit for Arduino  | https://www.avrprogrammers.com/articles/max232-arduino                                      |
-| TI MAX232E datasheet        | http://www.ti.com/lit/ds/symlink/max232e.pdf                                                |
-| BlueGiga Forum              | https://www.silabs.com/community/wireless/bluetooth                                         |
-| Empeg BBS thread            | http://empegbbs.com/ubbthreads.php/topics/370217                                            |
-| Designing low noise PCBs    | http://www.ti.com/lit/an/szza009/szza009.pdf                                                |
-| GitHub Markdown             | https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet                            |
-|                             | https://guides.github.com/features/mastering-markdown/                                      |
+| Item                        | Url                                                                                          |
+|:----------------------------|:---------------------------------------------------------------------------------------------|
+| iWrap Commands              | https://www.silabs.com/documents/login/reference-manuals/iWRAP6-API-RM.pdf                   |
+| iWrap AVRCP Commands        | https://www.silabs.com/documents/login/application-notes/AN986.pdf                           |
+| Dev Board User Guide        | https://www.silabs.com/documents/login/user-guides/UG215.pdf                                 |
+| Dev Board Data Sheet        | https://www.silabs.com/documents/login/data-sheets/WT32i-DataSheet.pdf                       |
+| Dev Board Reference Design  | https://www.silabs.com/documents/login/reference-designs/Reference-Design-DKWT32i.pdf        |
+| Dev Board Full Schematic    | https://www.silabs.com/documents/login/reference-designs/DKWT32i-v2.2.zip                    |
+| Bluetooth A2DP specs        | https://www.bluetooth.org/docman/handlers/downloaddoc.ashx?doc_id=8236                       |
+| Bluetooth AVRCP specs       | https://www.bluetooth.org/docman/handlers/DownloadDoc.ashx?doc_id=292286                     |
+| BetzTechnik Schematic       | http://www.betztechnik.ca/uploads/2/5/6/7/25674051/wt32i.pdf                                 |
+| Pololu V.Reg #2853 Pinout   | https://a.pololu-files.com/picture/0J5779.1200.jpg                                           |
+| Arduino Mega Pin Map        | https://www.arduino.cc/en/uploads/Hacking/Atmega168PinMap2.png                               |
+| Arduino Mega Standalone     | https://www.arduino.cc/en/Main/Standalone                                                    |
+| ClassOfDevice generators    | http://bluetooth-pentest.narod.ru/software/bluetooth_class_of_device-service_generator.html  |
+|                             | http://www.ampedrftech.com/cod.htm                                                           |
+| MAX232 circuit for Arduino  | https://github.com/tfabris/BlueGigaEmpeg/blob/master/MAX232%20Circuit.png                    |
+| TI MAX232E datasheet        | http://www.ti.com/lit/ds/symlink/max232e.pdf                                                 |
+| BlueGiga Forum              | https://www.silabs.com/community/wireless/bluetooth                                          |
+| Empeg BBS thread            | http://empegbbs.com/ubbthreads.php/topics/370217/1                                           |
+| Designing low noise PCBs    | http://www.ti.com/lit/an/szza009/szza009.pdf                                                 |
 
 ####  Upgrade firmware on the WT32i:
 | Item                        | Url                                                                         |
