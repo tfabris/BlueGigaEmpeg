@@ -1632,9 +1632,7 @@ Arduino serial port 1 (Tx1/Rx1) connects to the empeg's RS-232 port, but it
 must go through an RS-232 converter circuit based on a MAX232 chip. This is
 necessary because you can't connect an actual RS-232 cable directly to an
 Arduino, the voltage and signaling are different. So it must go through the
-MAX232. The full schematic for this circuit is linked in the
-[Resources](#resources) section of this document, and the pinouts are also
-listed below.
+MAX232.
 
 The RX/TX crossover configurations for the MAX232 and the RS-232 plug on the
 BlueGigaEmpeg can be confusing. The empeg Car sled serial port may or may not
@@ -1661,6 +1659,12 @@ MAX232 are as follows:
                             one to Arduino +5v and then also to the smoothing
                             capacitor which bridges across 5v and GND. Place
                             this cap as close to pin 16 as possible.)
+    Note:
+    
+    The illustration below has some jumpers between pins on the RS232 plug.
+    For example, it shows pin 6 jumpered to pin 4, and pin 7 jumpered to pin
+    8. Do not implement those particular jumpers, leave those pins
+    disconnected.
 ![MAX232 Circuit](https://github.com/tfabris/BlueGigaEmpeg/blob/master/MAX232%20Circuit.png)
 
 The empeg tuner connector is used to supply power to the Pololu step-down
