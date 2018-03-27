@@ -1486,7 +1486,7 @@ maintenance.
 
 - [Bluetooth Chip Firmware Upgrade                                                 ](#bluetooth-chip-firmware-upgrade)
 - [Set jumpers and switches, and modify Bluetooth board                            ](#set-jumpers-and-switches-and-modify-bluetooth-board)
-- [Low Latency Codec (APT-X LL) information                                        ](#low-latency-codec--apt-x-ll--information)
+- [Low Latency Codec (APT-X LL) information                                        ](#low-latency-codec-apt-x-ll-information)
 - [Hardware interface information and notes (internal board connections)           ](#hardware-interface-information-and-notes-internal-board-connections)
 - [Resources                                                                       ](#resources)
 - [Test, packing, and shipment checklist                                           ](#test-packing-and-shipment-checklist)
