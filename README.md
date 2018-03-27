@@ -73,45 +73,51 @@ section of this document.
 
 Caveats
 ------------------------------------------------------------------------------
-This project only works with the empeg Car Mk2 or the Rio Car player. It will
-not work with the empeg Car Mk1 player.
+- This project only works with the empeg Car Mk2 or the Rio Car player. It
+  will not work with the empeg Car Mk1 player.
 
-At the time of this writing, I have tested this project on a very limited set
-of Bluetooth gear. So far, I have only tested it on:
-- My Honda Accord 2017 factory stereo.
-- Kenwood KDC-BT318U car stereo.
-- Plantronics Voyager Edge Bluetooth headset.
-- Onkyo TX-SR33 home stereo with Bluetooth input.
-- Etekcity EA-TR1 standalone Bluetooth receiver.
-- iHome Li-B33E7 toy Stardestroyer with a Bluetooth speaker.
+- At the time of this writing, I have tested this project on a very limited set
+  of Bluetooth gear. So far, I have only tested it on:
+  - My Honda Accord 2017 factory stereo.
+  - Kenwood KDC-BT318U car stereo.
+  - Plantronics Voyager Edge Bluetooth headset.
+  - Onkyo TX-SR33 home stereo with Bluetooth input.
+  - Etekcity EA-TR1 standalone Bluetooth receiver.
+  - iHome Li-B33E7 toy Stardestroyer with a Bluetooth speaker.
 
-Some Bluetooth stereo playback devices do not have full functionality. For
-example, The Onkyo listed above does not display AVRCP track titles, and my
-2017 Honda does not have controls for Shuffle, Fast Forward, or Rewind. As far
-as I can tell, these are limitations of the devices themselves, not problems
-with the BlueGigaEmpeg: These same limitations exist when those devices are
-paired with smartphones, too.
+- Some Bluetooth stereo playback devices do not have full functionality. For
+  example, The Onkyo listed above does not display AVRCP track titles, and my
+  2017 Honda does not have controls for Shuffle, Fast Forward, or Rewind. As
+  far as I can tell, these are limitations of the devices themselves, not
+  problems with the BlueGigaEmpeg: These same limitations exist when those
+  devices are paired with smartphones, too.
 
-There are differences in Bluetooth implementation on various audio gear, and
-so there still might be bugs when using the BlueGigaEmpeg on your particular
-car stereo. This project is open source on GitHub, so that I can accept bug
-reports and code fixes from people with other brands of Bluetooth gear.
+- This implementation uses the default codec for A2DP audio, SBC (Sub Band
+  Codec). This introduces a slight delay in the audio, meaning that the music
+  coming out of your car stereo speakers will be slightly delayed from the
+  visuals on the empeg screen.
 
-This is not intended to replace the empeg front panel user interface. This
-only allows you to do things like press Next Track, Pause, and Play on your
-car stereo. The full menu and user interface of the empeg is still needed for
-all other features of the empeg, such as selecting playlists. So this module
-won't let you mount the empeg in your trunk, unless you also have a display
-extender kit from Eutronix.com as well, which would allow you to reach the
-empeg front panel from the driver's seat. Unfortunately, Eutronix.com isn't
-selling display extenders any more. I was lucky to get a display extender
-several years ago when they were still being sold, so I'm able to mount my
-empeg in my trunk with this. But if you don't have a display extender kit,
-you will still have to mount your empeg someplace where you can reach it from
-the driver's seat. (By the way, don't try rolling your own display extender by
-simply extending the wires. Special buffer circuitry is required in order to
-safely extend the empeg display, or you run the risk of damaging the empeg
-or its display.)
+- There are differences in Bluetooth implementation on various audio gear, and
+  so there still might be bugs when using the BlueGigaEmpeg on your particular
+  car stereo. This project is open source on GitHub, so that I can accept bug
+  reports and code fixes from people with other brands of Bluetooth gear.
+
+- This is not intended to replace the empeg front panel user interface. This
+  only allows you to do things like press Next Track, Pause, and Play on your
+  car stereo. The full menu and user interface of the empeg is still needed
+  for all other features of the empeg, such as selecting playlists. So this
+  module won't let you mount the empeg in your trunk, unless you also have a
+  display extender kit from Eutronix.com as well, which would allow you to
+  reach the empeg front panel from the driver's seat. Unfortunately,
+  Eutronix.com isn't selling display extenders any more. I was lucky to get a
+  display extender several years ago when they were still being sold, so I'm
+  able to mount my empeg in my trunk with this. But if you don't have a
+  display extender kit, you will still have to mount your empeg someplace
+  where you can reach it from the driver's seat.
+  - By the way, don't try rolling your own display extender by simply
+    extending the wires. Special buffer circuitry is required in order to
+    safely extend the empeg display, or you run the risk of damaging the empeg
+    or its display.
 
 
 Acknowledgments
@@ -867,6 +873,11 @@ If you have trouble with the empeg waking up after you shut off the car
 ignition, see the section here: ["Modify empeg's power connection to
 car"](#power).
 
+If you notice that there is a slight delay between the visuals on the empeg
+screen compared to the sound coming out of the car stereo speakers, this is
+normal. The Bluetooth chip uses the Sub Band Codec (SBC) which is the default
+codec for A2DP audio, and that codec has a slight latency.
+
 Check to see if the issue you're encountering is a known bug or a
 previously-closed bug:
 
@@ -1475,6 +1486,7 @@ maintenance.
 
 - [Bluetooth Chip Firmware Upgrade                                                 ](#bluetooth-chip-firmware-upgrade)
 - [Set jumpers and switches, and modify Bluetooth board                            ](#set-jumpers-and-switches-and-modify-bluetooth-board)
+- [Low Latency Codec (APT-X LL) information                                        ](#low-latency-codec--apt-x-ll--information)
 - [Hardware interface information and notes (internal board connections)           ](#hardware-interface-information-and-notes-internal-board-connections)
 - [Resources                                                                       ](#resources)
 - [Test, packing, and shipment checklist                                           ](#test-packing-and-shipment-checklist)
@@ -1612,6 +1624,36 @@ On the BlueGigaEmpeg PCB:
 
 Set the jumpers to "Crossover" position as shown on the silkscreen printing
 on the board.
+
+
+Low Latency Codec (APT-X LL) information
+------------------------------------------------------------------------------
+I have abandoned attempts to get the WT32i chip working with a low-latency
+codec (APT-X LL) because:
+
+- The APT-X LL codec is not supported by my Honda, so I don't have a good
+  testbed for it.
+
+- I wasn't able to get a clear answer from Silicon Labs as to exactly how
+  to purchase the extra licenses for the APT-X LL codec.
+
+- The process of installing the third party license for the APT-X LL codec
+  onto the Bluetooth chip is onerous, requires a specialized piece of chip
+  programming hardware, and some non-user-friendly software tools. I was
+  able to get a developer test license working on one of my chips (this is
+  how I know), but it took way too much work, and when it was done, there
+  was no benefit.
+
+- There is not widespread support for the APT-X LL codec on all car
+  stereos, so it would be of no benefit to most users. It's also not always
+  clear which stereos support APT-X LL and which ones do not, so you might
+  not even be able to tell if it will be worth going to all that trouble.
+  You might complete the work, only to discover that the codec isn't
+  supported by your stereo.
+
+I have made extensive notes notes on the specialized hardware and software,
+and the required programming steps, needed to install APT-X LL, and I can
+discuss this with anyone who needs this information.
 
 
 Hardware interface information and notes (internal board connections)
