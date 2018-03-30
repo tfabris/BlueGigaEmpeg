@@ -1313,9 +1313,9 @@ right subfolder. This procedure looks a little crazy, but it works.
      ```
      C:\Program Files\Arduino\hardware\arduino\avr\libraries\SPI\examples\BarometricPressureSensor
      or 
-     Macintosh HD/Users/(your username)/Library/Arduino15/packages/arduino/hardware/avr/1.6.21/libraries/SPI/examples/BarometricPressureSensor
-     or
      Macintosh HD/Applications/Arduino.app/Contents/Java/hardware/arduino/avr/libraries/SPI/examples/BarometricPressureSensor
+     or
+     Macintosh HD/Users/(your username)/Library/Arduino15/packages/arduino/hardware/avr/1.6.21/libraries/SPI/examples/BarometricPressureSensor
      etc.
      ```
 
@@ -1328,9 +1328,9 @@ right subfolder. This procedure looks a little crazy, but it works.
      ```
      C:\Program Files\Arduino\hardware\arduino\avr\boards.txt
      or
-     Macintosh HD/Users/(your username)/Library/Arduino15/packages/arduino/hardware/avr/1.6.21/boards.txt
-     or
      Macintosh HD/Applications/Arduino.app/Contents/Java/hardware/arduino/avr/boards.txt
+     or
+     Macintosh HD/Users/(your username)/Library/Arduino15/packages/arduino/hardware/avr/1.6.21/boards.txt
      etc.
      ```
 
@@ -1346,9 +1346,9 @@ right subfolder. This procedure looks a little crazy, but it works.
      ```
      C:\Program Files\Arduino\hardware\arduino\avr\cores\arduino\HardwareSerial.h
      or
-     Macintosh HD/Users/(your username)/Library/Arduino15/packages/arduino/hardware/avr/1.6.21/cores/arduino/HardwareSerial.h
-     or
      Macintosh HD/Applications/Arduino.app/Contents/Java/hardware/arduino/avr/cores/arduino/HardwareSerial.h
+     or
+     Macintosh HD/Users/(your username)/Library/Arduino15/packages/arduino/hardware/avr/1.6.21/cores/arduino/HardwareSerial.h
      etc.
      ```
 
