@@ -1275,59 +1275,80 @@ of the serial port buffers.
 Install the Arduino IDE. It will be a different installation procedure for
 different operating systems.
 
-#### Temporary workaround to a problem with board header files in Arduino:
-
-Something changed with a recent compiler update in Arduino, and in this new
-system, now I can't find the correct file to edit in the new version of the
-boards files. Let me know if you can help with this. In the meantime, roll
-back to an earlier version of the boards files (which I do know how to edit)
-by launching the Arduino IDE program that you just installed, and selecting
-the following menus in the Arduino IDE program:
-
-- Select the "Tools" menu, select "Board" and select "Boards Manager".
-
-- In the section titled "Arduino AVR Boards", make sure that it says version
-  "1.6.20 INSTALLED".
-
-- If it doesn't say that, click on the "Arduino AVR Boards" section of the
-  screen. A drop-down list should appear which says "Select version". Select
-  "1.6.20" and press the "Install" button.
-
-- When it is done installing, exit the Arduino IDE.
-
-- After this point, if the Arduino IDE prompts you to update the "Boards",
-  cancel or refuse the update.
 
 #### Edit compiler file to increase serial port buffer size:
 
-Once it is installed and the "Boards" files are set to the correct version,
-you'll need to edit a file to increase the size of the Arduino's serial port
-buffers. The file that you need to edit will be the same on all operating
-systems, but the location of the file will be different depending on which OS
-you're using. The approximate location will be something like this, but the
-exact location will vary:
+Once it is installed, you'll need to edit one of the compiler's file to
+increase the size of the Arduino's serial port buffers. The file that you need
+to edit will be the same on all operating systems, but the location of the
+file will be different depending on which OS you're using, and whether or not
+you're using an update to the "Boards" files, or if your Arduino IDE is a
+stock installation without any updates.
 
-    (install location)/hardware/arduino/avr/cores/arduino/HardwareSerial.h
+#### Locate the correct file to edit:
 
-On a Macintosh computer, the file is harder to find. It is located in the
-following place on a Macintosh:
+We're looking for a file called "HardwareSerial.h", but there may be more than
+one copy of the file on your hard disk, and it's hard to tell which one that
+the Arduino compiler is going to use. The quickest way to reliably find the
+right file is to get an example document opened, fish up the directory tree to
+find the right parent folder, and then fish down again to find the right sub
+folder. This procedure looks a little crazy, but it works.
 
-    /Applications/Arduino.app/Contents/Java/hardware/arduino/avr/cores/arduino/HardwareSerial.h
+- Run the Arduino IDE program that you just installed.
 
-Or, more specifically, in the Macintosh Finder, navigate to:
+- Select the "Tools" menu, select "Board" and select "Arduino/Genuino Mega or
+  Mega 2560".
 
-    Macintosh HD -> /Applications/Arduino
+- With the correct board selected, select the menus "File", "Examples", "SPI",
+  "BarometricPressureSensor". At this point an example document will open.
 
-Ctrl-click on the application file "Arduino" and select "Show Package
-Contents". Then navigate to:
+- With the "BarometricPressureSensor" example document window
+  selected/focused, select the menu items "Sketch", "Show Sketch Folder". This
+  folder will be slightly different on various systems and installation types.
+  Examples of places it might be (version numbers and parent folders may vary):
 
-    Contents/Java/hardware/arduino/avr/cores/arduino/HardwareSerial.h
+     C:\Program Files\Arduino\hardware\arduino\avr\libraries\SPI\examples\BarometricPressureSensor
+     or 
+     Macintosh HD/Users/(your username)/Library/Arduino15/packages/arduino/hardware/avr/1.6.21/libraries/SPI/examples/BarometricPressureSensor
+     or
+     Macintosh HD/Applications/Arduino.app/Contents/Java/hardware/arduino/avr/libraries/SPI/examples/BarometricPressureSensor
+     etc.
 
-Ctrl-click on the file "HardwareSerial.h" and select "Open With", and choose
-your favorite quick text editor program to edit the file with it.
+- Fish up the directory tree from that location until you find a file called
+  "boards.txt", most likely it will be in the either the "avr" folder a few
+  levels up from the "BarometricPressureSensor" example document, or perhaps
+  in a version-numbered folder if you have installed a "Boards" update for
+  the Arduino compiler. For instance, you might find it in:
 
-Regardless of which operating system you are doing this with, once you have
-HardwareSerial.h open, locate the following code lines:
+     C:\Program Files\Arduino\hardware\arduino\avr\boards.txt
+     or
+     Macintosh HD/Users/(your username)/Library/Arduino15/packages/arduino/hardware/avr/1.6.21/boards.txt
+     or
+     Macintosh HD/Applications/Arduino.app/Contents/Java/hardware/arduino/avr/boards.txt
+     etc.
+
+- The folder that contains "boards.txt" will also have a sub-folder beneath
+  it called "cores". Open that folder.
+
+- The "cores" folder will have an "arduino" sub-folder beneath it. Open that.
+
+- You will locate the desired HardwareSerial.h file there. The final location
+  of the desired file will be something like the following, but the parent
+  folder names and version numbers may differ:
+
+     C:\Program Files\Arduino\hardware\arduino\avr\cores\arduino\HardwareSerial.h
+     or
+     Macintosh HD/Users/(your username)/Library/Arduino15/packages/arduino/hardware/avr/1.6.21/cores/arduino/HardwareSerial.h
+     or
+     Macintosh HD/Applications/Arduino.app/Contents/Java/hardware/arduino/avr/cores/arduino/HardwareSerial.h
+     etc.
+
+- You have now located the correct "HardwareSerial.h" file to edit.
+
+#### Perform the edit:
+
+Open the "HardwareSerial.h" file in your favorite quick text editor program.
+Once you have it open, locate the following code lines:
 
              #if !defined(SERIAL_TX_BUFFER_SIZE)
              #if ((RAMEND - RAMSTART) < 1023)
@@ -1344,7 +1365,8 @@ HardwareSerial.h open, locate the following code lines:
              #endif
              #endif
 
-Now edit the lines indicated above, and change them to this instead:
+Now edit the "64" lines indicated above, and change the "64's" to these new
+numbers instead:
 
        #define SERIAL_TX_BUFFER_SIZE 128
        
@@ -1359,9 +1381,9 @@ were originally set to "64" and increase them as described above.
 
 Save the file.
 
-Note: If you reinstall or upgrade the Arduino IDE program, you will need to 
-perform this edit again before uploading a new version of the BlueGigaEmpeg
-sketch to the Arduino.
+Note: If you reinstall or upgrade the Arduino IDE program, or if the Arduino
+prompts you to update your "Boards", you will need to perform this edit again
+before uploading a new version of the BlueGigaEmpeg sketch to the Arduino.
 
 
 Compile and upload the latest version of BlueGigaEmpeg.ino to the Arduino
