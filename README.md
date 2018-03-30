@@ -1278,41 +1278,46 @@ different operating systems.
 
 #### Edit compiler file to increase serial port buffer size:
 
-Once it is installed, you'll need to edit one of the compiler's file to
+Once it is installed, you'll need to edit one of the compiler's filea to
 increase the size of the Arduino's serial port buffers. The file that you need
 to edit will be the same on all operating systems, but the location of the
-file will be different depending on which OS you're using, and whether or not
-you're using an update to the "Boards" files, or if your Arduino IDE is a
-stock installation without any updates.
+file will be different depending on which OS you're using. The location will
+also be affected by whether or not you're using an update to the Arduino's
+"Boards" files, or if your Arduino IDE is a stock installation without any
+Boards updates.
 
 #### Locate the correct file to edit:
 
 We're looking for a file called "HardwareSerial.h", but there may be more than
 one copy of the file on your hard disk, and it's hard to tell which one that
 the Arduino compiler is going to use. The quickest way to reliably find the
-right file is to get an example document opened, fish up the directory tree to
-find the right parent folder, and then fish down again to find the right sub
-folder. This procedure looks a little crazy, but it works.
+right file is to get a certain example document opened, fish up the directory
+tree to find the right parent folder, and then fish down again to find the
+right subfolder. This procedure looks a little crazy, but it works.
 
 - Run the Arduino IDE program that you just installed.
 
 - Select the "Tools" menu, select "Board" and select "Arduino/Genuino Mega or
   Mega 2560".
 
-- With the correct board selected, select the menus "File", "Examples", "SPI",
-  "BarometricPressureSensor". At this point an example document will open.
+- With the correct board configured, select the menus "File", "Examples",
+  "SPI", "BarometricPressureSensor". At this point an example document will
+  open.
 
 - With the "BarometricPressureSensor" example document window
-  selected/focused, select the menu items "Sketch", "Show Sketch Folder". This
-  folder will be slightly different on various systems and installation types.
-  Examples of places it might be (version numbers and parent folders may vary):
+  selected/focused, select the menu items "Sketch", "Show Sketch Folder". A
+  folder window will open. This folder will be slightly different on various
+  systems and installation types. Examples of places it might be (version
+  numbers and parent folders may vary):
 
+     ```
      C:\Program Files\Arduino\hardware\arduino\avr\libraries\SPI\examples\BarometricPressureSensor
      or 
      Macintosh HD/Users/(your username)/Library/Arduino15/packages/arduino/hardware/avr/1.6.21/libraries/SPI/examples/BarometricPressureSensor
      or
      Macintosh HD/Applications/Arduino.app/Contents/Java/hardware/arduino/avr/libraries/SPI/examples/BarometricPressureSensor
      etc.
+     ```
 
 - Fish up the directory tree from that location until you find a file called
   "boards.txt", most likely it will be in the either the "avr" folder a few
@@ -1320,30 +1325,37 @@ folder. This procedure looks a little crazy, but it works.
   in a version-numbered folder if you have installed a "Boards" update for
   the Arduino compiler. For instance, you might find it in:
 
+     ```
      C:\Program Files\Arduino\hardware\arduino\avr\boards.txt
      or
      Macintosh HD/Users/(your username)/Library/Arduino15/packages/arduino/hardware/avr/1.6.21/boards.txt
      or
      Macintosh HD/Applications/Arduino.app/Contents/Java/hardware/arduino/avr/boards.txt
      etc.
+     ```
 
-- The folder that contains "boards.txt" will also have a sub-folder beneath
+- The folder that contains "boards.txt" will also have a subfolder beneath
   it called "cores". Open that folder.
 
-- The "cores" folder will have an "arduino" sub-folder beneath it. Open that.
+- The "cores" folder will have an "arduino" subfolder beneath it. Open that.
 
 - You will locate the desired HardwareSerial.h file there. The final location
   of the desired file will be something like the following, but the parent
   folder names and version numbers may differ:
 
+     ```
      C:\Program Files\Arduino\hardware\arduino\avr\cores\arduino\HardwareSerial.h
      or
      Macintosh HD/Users/(your username)/Library/Arduino15/packages/arduino/hardware/avr/1.6.21/cores/arduino/HardwareSerial.h
      or
      Macintosh HD/Applications/Arduino.app/Contents/Java/hardware/arduino/avr/cores/arduino/HardwareSerial.h
      etc.
+     ```
 
 - You have now located the correct "HardwareSerial.h" file to edit.
+
+- Close the "BarometricPressureSensor" example document window, but leave
+  the folder window open with the correct "HardwareSerial.h" file in it.
 
 #### Perform the edit:
 
