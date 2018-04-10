@@ -17,6 +17,19 @@
 // Global variables and definitions
 // ------------------------------------
 
+// Flag to control whether or not the BlueGigaEmpeg module logs any output to
+// its USB debug port. Should be enabled for any debugging session.
+//   Setting true:
+//   - Connecting a USB cable between the computer and the USB "Type B"
+//     connector on the BlueGigaEmpeg module, then running the Arduino Serial
+//     Monitor utility, will display useful logging information and allow
+//     interaction. It will also slightly slow down the module and affect the
+//     micro-timing of command messages which control the Bluetooth chip.
+//   Setting false:
+//   - No output will appear on the Arduino Serial Monitor and no interaction
+//     can occur. This is the fastest operating state of the module.
+boolean usbLogging=true;
+
 // String to control the type of Bluetooth authentication that you want to
 // use.
 //
@@ -1902,7 +1915,9 @@ char MainInputOutput()
   // are available from the user on the Arduino serial port from the Arduino
   // debug cable, and process them into individual lines for later parsing and
   // command/response.
-  if(Serial)
+  //
+  // Also make sure that the user has configured the code for logging.
+  if (Serial && usbLogging)
   {
     if (Serial.available())
     {
@@ -2919,7 +2934,8 @@ void BaseLog(const String &logMessage)
   int x;
 
   // Make sure the main serial port is available before outputting.
-  if (Serial)
+  // Also make sure that the user has configured the code for logging.
+  if (Serial && usbLogging)
   {
     // Calculate the delta between the last time that we logged an output line
     // and now, so that we can profile our output.
@@ -2960,7 +2976,8 @@ void BaseLog(const String &logMessage)
 void LogChar(char logChar)
 {
   // Make sure the main serial port is available before outputting.
-  if (Serial)
+  // Also make sure that the user has configured the code for logging.
+  if (Serial && usbLogging)
   {
     // Write the actual character
     Serial.write(logChar);
