@@ -911,9 +911,10 @@ Arduino. It can accept PIN codes up to 16 digits long.
 Test AVRCP behavior and set serial port crossover jumpers if needed
 ------------------------------------------------------------------------------
 If you are lucky, the empeg will respond to commands from your car stereo's
-controls for play, pause, next track, etc., and will display track titles on
-its screen. This is done via the Bluetooth Audio Video Remote Control Profile
-("AVRCP"), and the serial port connection to the empeg Car.
+controls for play, pause, next track, etc., and the car stereo will display
+track titles on its touchscreen. This is done via the Bluetooth Audio Video
+Remote Control Profile ("AVRCP"), and the serial port connection to the empeg
+Car.
 
 However, if the Bluetooth pairs successfully and streams music, but you are
 unable to play/pause/next the empeg via the car stereo's controls, and the
