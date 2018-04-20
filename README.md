@@ -1398,8 +1398,9 @@ were originally set to "64" and increase them as described above.
 Save the file.
 
 Note: If you reinstall or upgrade the Arduino IDE program, or if the Arduino
-prompts you to update your "Boards", you will need to perform this edit again
-before uploading a new version of the BlueGigaEmpeg sketch to the Arduino.
+prompts you to update your "Boards", you will need to re-locate the correct
+file again, and perform this edit again, before uploading a new version of the
+BlueGigaEmpeg sketch to the Arduino.
 
 
 Compile and upload the latest version of BlueGigaEmpeg.ino to the Arduino
