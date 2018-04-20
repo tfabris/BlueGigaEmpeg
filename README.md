@@ -1102,18 +1102,18 @@ The BlueGigaEmpeg module can connect to any of these power sources:
   empeg's docking sled.
 
 - Both of the above can be connected at the same time, and the BlueGigaEmpeg
-  will get its power from whichever one supplied power to it first.
+  will get its power from either one.
 
 Because both power sources can be connected at the same time during debugging,
 if you are using the USB cable for debugging mode, the sequence order of
 connecting the cables and applying power is important.
 
 If you connect the BlueGigaEmpeg to the empeg docking sled and power it up,
-and then attach the Arduino USB cable to the computer, then the Arduino USB is
-not getting power from the USB port (the tuner connector was first) and so the
-USB connection will not identify itself to the computer. This causes a
-problem: The computer cannot find the Arduino's USB UART and is unable to
-connect to the debug port.
+and then attach the Arduino USB cable to the computer afterward, then the
+Arduino USB port communications with the PC are not initialized (power from
+the tuner connector came first) and so the USB connection will not identify
+itself to the computer. This causes a problem: The computer cannot find the
+Arduino's USB UART and is unable to connect to the debug port.
 
 So, to successfully debug via the Arduino USB debug cable, you must connect
 the USB cable to your computer *first*, with the computer on, before applying
@@ -1126,7 +1126,8 @@ If you are doing debugging/troubleshooting indoors, it's possible to use the
 empeg's 12v AC adapter, connected to the player's AC adapter input. The
 BlueGigaEmpeg module works in both AC/Home mode and DC/Car mode. However, a
 sled wiring harness is still needed in AC/Home mode, because the BlueGigaEmpeg
-still needs the tuner connector on the harness in order to function.
+still needs the tuner and serial connectors on the harness in order to
+function.
 
 
 ####  Sending a bug report:
