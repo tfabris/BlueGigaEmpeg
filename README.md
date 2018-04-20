@@ -1097,12 +1097,12 @@ The BlueGigaEmpeg module can connect to any of these power sources:
   normal operation.
 
 - It can obtain power from the USB plug, the Arduino USB "type B" port
-  accessible on the BlueGigaEmpeg casing. Allows you to upload new Arduino
-  firmware to the BlueGigaEmpeg module while it is disconnected from the
-  empeg's docking sled.
+  accessible on the BlueGigaEmpeg casing. This allows you to upload new
+  Arduino firmware to the BlueGigaEmpeg module while it is disconnected from
+  the empeg's docking sled.
 
-- Both of the above can be connected at the same time, and the BlueGigaEmpeg
-  will get its power from either one.
+- Both of the above can be connected at the same time during a debugging
+  session, and the BlueGigaEmpeg will get its power from either one.
 
 Because both power sources can be connected at the same time during debugging,
 if you are using the USB cable for debugging mode, the sequence order of
