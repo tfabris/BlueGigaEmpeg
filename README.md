@@ -1213,26 +1213,30 @@ respond with "SYNTAX ERROR" if there is a problem with any command.
       SET
       Displays Bluetooth module's current settings.
 
+      LIST
+      Displays a list of current actively connected devices, including all
+      AVRCP and A2DP channel details.
+
       SET BT PAIR
       Displays Bluetooth module's current list of paired devices.
 
       SET BT PAIR *
-      Deletes all saved Bluetooth pairings on the Bluetooth module. The asterisk
-      is important, it's the part that does the deleting.
+      Deletes all saved Bluetooth pairings on the Bluetooth module. The
+      asterisk is important, it's the part that does the deleting.
 
       SET CONTROL RECONNECT *
-      Turns off automatic reconnection attempts on the Bluetooth module until the
-      next time it pairs up with something.
+      Turns off automatic reconnection attempts on the Bluetooth module until
+      the next time it pairs up with something.
 
       RESET
-      Reboots the Bluetooth module, saving current settings. Does not erase any
-      existing saved Bluetooth pairings nor change any settings.
+      Reboots the Bluetooth module, saving current settings. Does not erase
+      any existing saved Bluetooth pairings nor change any settings.
 
       SET RESET
-      Resets the Bluetooth chip itself to its factory defaults. Does not remove
-      existing pairings, those are still kept. Note: you should restart the
-      Arduino after using "SET RESET" in order to have it apply its customized
-      default settings to the Bluetooth chip again.
+      Resets the Bluetooth chip itself to its factory defaults. Does not
+      remove existing pairings, those are still kept. Note: you should restart
+      the Arduino after using "SET RESET" in order to have it apply its
+      customized default settings to the Bluetooth chip again.
 
 See the iWrap 6.x command reference and the AVRCP command reference documents,
 linked in the ["Resources"](#resources) section, for more details on the
