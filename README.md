@@ -616,8 +616,7 @@ connector. Make sure the empeg is not in "sleep" mode, since power to the
 tuner module connector is turned off in sleep mode.
 
 The first time you use the BlueGigaEmpeg, you will need to pair it with your
-Bluetooth car stereo. You might also wish to re-pair again after editing the
-BlueGigaEmpeg firmware. The BlueGigaEmpeg has a recessed RESET/PAIR button
+Bluetooth car stereo. The BlueGigaEmpeg has a recessed RESET/PAIR button
 for this purpose.
 
 ####  Pairing Procedure:
