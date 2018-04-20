@@ -1145,11 +1145,11 @@ function.
   serial monitor program's console which says "empeg player boot process has
   started".
 
-- Reproduce the issue, so that the commands and responses show up on the
-  monitor's output while the issue is occurring.
+- Reproduce the problem, so that the commands and responses show up on the
+  monitor's output while the problem is occurring.
 
-- After the issue is reproduced, pause the empeg player so that additional
-  timestamp reports no longer show up.
+- After the problem is reproduced, pause the empeg player from its front
+  panel.
 
 - Type the "set" and "list" commands into the serial monitor, pressing the
   Enter key after each one. Their output results should show up on the screen.
