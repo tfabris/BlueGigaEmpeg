@@ -774,12 +774,21 @@ module, which then automatically connects to the car stereo head unit.
 
 Troubleshooting
 ------------------------------------------------------------------------------
+- [Reboot the Bluetooth module                                                     ](#reboot-the-bluetooth-module)
 - [Always use the latest firmware                                                  ](#always-use-the-latest-firmware)
 - [Pairing issues                                                                  ](#pairing-issues)
 - [Other issues                                                                    ](#other-issues)
 - [Set Bluetooth PIN code if needed (most likely not needed)                       ](#set-bluetooth-pin-code-if-needed-most-likely-not-needed)
 - [Test AVRCP behavior and set serial port crossover jumpers if needed             ](#test-avrcp-behavior-and-set-serial-port-crossover-jumpers-if-needed)
 - [Debug Bluetooth connection if needed                                            ](#debug-bluetooth-connection-if-needed)
+
+
+Reboot the Bluetooth module
+------------------------------------------------------------------------------
+Some problems can be solved by rebooting the Bluetooth module. Simply sleep
+the empeg by pressing and holding the top button, then wake it up again with
+another button press. This bounces power to the tuner module connector where
+the BlueGigaEmpeg gets its power.
 
 
 Always use the latest firmware
@@ -847,11 +856,6 @@ if it has line of sight to your car stereo and/or is physically close to it.
 
 Other issues
 ------------------------------------------------------------------------------
-Some problems can be solved by rebooting the Bluetooth module. Simply sleep
-the empeg by pressing and holding the top button, then wake it up again with
-another button press. This bounces power to the tuner module connector where
-the BlueGigaEmpeg gets its power.
-
 If there is good audio, but commands such as next/previous track and
 play/pause don't work, and if track titles do not display on your car stereo,
 See the section titled ["Test AVRCP behavior and set serial port crossover
