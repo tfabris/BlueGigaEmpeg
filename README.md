@@ -216,8 +216,8 @@ BlueGigaEmpeg electronic assembly, which contains the Bluetooth chip and the
 Arduino.
 
 The empeg tuner module will no longer work after this modification, and damage
-may occur if you connect one your player. If you have a tuner module, now is a
-good time to disconnect it from the sled and put it away.
+may occur if you connect one to your player. If you have a tuner module, now is
+a good time to disconnect it from the sled and put it away.
 
 ####  Disassembly of empeg Car:
 
