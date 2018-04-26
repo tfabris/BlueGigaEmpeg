@@ -412,7 +412,7 @@ follows.
 
 If you are using Emplode on Windows, you must first edit the Microsoft Windows
 registry before it will allow you to alter the config.ini. First, run
-REGEDIT.EXE in Windows and locate the following key:
+REGEDIT.EXE in Windows and modify the following key:
 
      HKEY_CURRENT_USER
        Software
