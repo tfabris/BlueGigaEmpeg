@@ -594,8 +594,8 @@ When mounting:
   hard-to-reach location, then my best recommendation is to find a long USB
   type-A-to-type-B cable (It's a standard USB printer cable, you probably
   have a few extras of these lying around already), attach it to the
-  BlueGigaEmpeg's USB debug port, and route it somewhere in your car that you
-  can reach it with a laptop when you need to.
+  BlueGigaEmpeg's USB debug port, and route it somewhere in your car that can
+  be reached with a laptop.
 
 - Make sure the empeg itself is mounted so that its front panel is still
   visible and accessible from the driver's seat. The BlueGigaEmpeg isn't a
@@ -751,8 +751,8 @@ don't work on my Honda.
      type that you previously selected".
 
 ####  Not implemented:
-The items below are not implemented for Bluetooth, but you can still do them on
-the empeg front panel.
+The items below are not implemented on the BlueGigaEmpeg, but you can still do
+them on the empeg's front panel.
  - Music search or playlist/track browsing
  - Menu selection and navigation
  - Repeat mode (repeat all tracks, repeat one track, etc.)
@@ -1274,6 +1274,9 @@ upload new firmware to the Arduino, there will be intermittent errors in the
 BlueGigaEmpeg operation, such as commands sometimes being missed and track
 titles sometimes not working or being incomplete.
 
+
+#### Download and install the compiler:
+
 Download the Arduino IDE, linked from the [Prerequisites](#prerequisites)
 section of this document. Make sure to download and install the standalone
 version of the Arduino IDE; do not try to use the Arduino web editor. Though
@@ -1287,7 +1290,7 @@ different operating systems.
 
 #### Edit compiler file to increase serial port buffer size:
 
-Once it is installed, you'll need to edit one of the compiler's filea to
+Once it is installed, you'll need to edit one of the compiler's files to
 increase the size of the Arduino's serial port buffers. The file that you need
 to edit will be the same on all operating systems, but the location of the
 file will be different depending on which OS you're using. The location will
