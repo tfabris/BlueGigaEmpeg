@@ -1025,13 +1025,15 @@ the Arduino IDE by following the instructions in the section ["Updating
 firmware"](#updating-firmware). This will also ensure that you are updated to
 the latest BlueGigaEmpeg firmware before trying to debug any problems.
 
-Once the device drivers are working for the Arduino's USB-serial UART, then the
-"Serial Monitor" feature built into the Arduino IDE program will work as the debug
-console. To run it, do the following:
+Once the device drivers are working for the Arduino's USB-serial UART, then
+the "Serial Monitor" feature built into the Arduino IDE program will work as
+the debug console. To run it, do the following:
 
-- Make sure the USB cable is connected between the computer and the Arduino
-  port (the USB "type B" connection which is accessible on the outside of the
-  BlueGigaEmpeg casing).
+- Make sure the empeg is powered off or is in sleep mode.
+
+- Connect the USB cable between the computer and the Arduino port (the USB
+  "type B" connection which is accessible on the outside of the BlueGigaEmpeg
+  casing).
 
 - Launch the Arduino IDE that you installed as part of ["Updating
   firmware"](#updating-firmware).
@@ -1058,6 +1060,9 @@ console. To run it, do the following:
 - Keep in mind that the BlueGigaEmpeg interface module will reboot (the
   Arduino code will restart) each time you open the serial monitor, and the
   WT32i Bluetooth module will be automatically rebooted at that time.
+  
+- Apply power to the empeg. You should see the message "empeg player boot
+  process has started" appear in the Serial Monitor.
   
 - If you disconnect and reconnect the USB cable from the Arduino, you will
   need to close and reopen the Serial Monitor again. If you connect to a
