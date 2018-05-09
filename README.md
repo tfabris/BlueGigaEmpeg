@@ -1174,8 +1174,8 @@ function.
     - Steps to reproduce the issue. Please give as much detail as possible.
     - Expected behavior, versus actual behavior.
     - Things you've already tried doing to diagnose or narrow down the
-      problem. For example, does it have the same issue when you pair it with
-      your smartphone?
+      problem. For example, do you encounter the same issue when you pair your
+      smartphone to your car stereo?
   - Attach your serial monitor output file to the bug report.
 
 - When you are done with the debug session, disconnect the USB cable from the
