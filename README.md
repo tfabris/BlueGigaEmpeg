@@ -1704,9 +1704,9 @@ codec (APT-X LL) because:
   You might complete the work, only to discover that the codec isn't
   supported by your stereo.
 
-I have made extensive notes notes on the specialized hardware and software,
-and the required programming steps, needed to install APT-X LL, and I can
-discuss this with anyone who needs this information.
+I have made extensive notes on the specialized hardware and software, and the
+required programming steps, needed to install APT-X LL, and I can discuss
+this with anyone who needs this information.
 
 
 Hardware interface information and notes (internal board connections)
