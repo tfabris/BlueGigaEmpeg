@@ -455,15 +455,17 @@ not already installed. Link to the Hijack kernel is found in the
 Hijack version 524 or later.
 
 In order to install the latest Hijack Kernel onto the empeg, you must connect
-the empeg directly to your Windows computer's RS-232 serial port, or to a
-USB-to-RS-232 adapter cable if your computer does not have an RS-232 serial
-port. Make sure the serial port drivers are installed and that you can see the
-empeg bootup messages correctly through a serial terminal program.
+the empeg directly to your computer's RS-232 serial port, or to a USB-to-
+RS-232 adapter cable if your computer does not have an RS-232 serial port.
+Make sure the serial port drivers are installed and that you can see the empeg
+bootup messages correctly through a serial terminal program.
 
 To install the Hijack kernel, run Tony's Empeg Logo Editor. Link to the Logo
 Editor program is found in the [Prerequisites](#prerequisites) section of this
-document. On the File menu of the logo editor program, select "Kernel Flash
-Utility" and follow the instructions.
+document. This program is a Windows program, but it should also work correctly
+on a virtualized version of Windows. For example, I have used it successfully
+running under Parallels on a Mac. On the File menu of the logo editor program,
+select "Kernel Flash Utility" and follow the instructions.
 
 Once Hijack is installed, open up the Hijack kernel settings on the player via
 a long-press on the player's rotary encoder dial. Change "Serial port
@@ -1075,9 +1077,9 @@ to the Bluetooth chip as a command, and all of the chip's responses are shown
 on your screen. You will also see all commands that the Arduino sends to the
 Bluetooth chip automatically, and see all of the chip's responses to them.
 
-You may also type certain specific commands to the empeg serial port to control
-the empeg. Type a single character followed by pressing the Enter key.
-The following commands are supported:
+You may also type certain specific commands to the serial port to control the
+empeg. Type a single character followed by pressing the Enter key. The
+following commands are supported:
 - "N"   - Next track.
 - "P"   - Previous track.
 - "C"   - Play (think "continue").
