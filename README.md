@@ -1618,7 +1618,8 @@ Steps:
    process to work. 
 
  - Make sure the "Get Device Type" button works, and shows your device
-   information for your WT32i chip.
+   information for your WT32i chip. It will say it is a "WT32i-A" chip and
+   give its Bluetooth address.
 
  - Select the options to upgrade your chip with the most recent WT32i file
    among the unzipped files. Do this by pressing the "Browse" button on the
