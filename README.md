@@ -1724,6 +1724,17 @@ tried it with an "Uno" model using software serial ports, and it had problems
 where characters sometimes got dropped, and it could not keep up with the data
 rates that I wanted.
 
+
+####  Links to Schematics and CAD files:
+
+- [BlueGigaEmpeg PCB Schematic                                                  ](https://github.com/tfabris/BlueGigaEmpeg/blob/master/BlueGigaEmpeg%20Schematic.pdf)
+- [BlueGigaEmpeg PCB CAD file (Pad2Pad)                                         ](https://github.com/tfabris/BlueGigaEmpeg/blob/master/BlueGigaEmpeg%20-%20Rev%207%20-%20PII%20Cleaned.pcb)
+- [BlueGigaEmpeg Enclosure CAD file (Blender)                                   ](https://github.com/tfabris/BlueGigaEmpeg/blob/master/BlueGigaEmpeg%20Enclosure%2030%20-%20Version%2002%20exportable.blend)
+- [BlueGigaEmpeg Enclosure CAD file (STL for Shapeways)                         ](https://github.com/tfabris/BlueGigaEmpeg/blob/master/BlueGigaEmpeg%20Enclosure%20-%20Version%2002.stl)
+- [Arduino Mega 2650 Breakout Board Schematic                                   ](https://github.com/tfabris/BlueGigaEmpeg/blob/master/Arduino%20Mega%202560%20Breakout%20Board%20Schematic.pdf)
+- [BetzTechnik WT32i Breakout Board Schematic                                   ](https://github.com/tfabris/BlueGigaEmpeg/blob/master/BetzTechnik%20WT32i%20Breakout%20Board%20Schematic.pdf)
+
+
 ####  Arduino and RS-232 port, critical connections:
 
 Arduino serial port 1 (Tx1/Rx1) connects to the empeg's RS-232 port, but it
