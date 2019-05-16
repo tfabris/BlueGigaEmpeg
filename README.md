@@ -1540,7 +1540,7 @@ end-users of the BlueGigaEmpeg module unless performing repairs or other
 maintenance.
 
 - [Bluetooth Chip Firmware Upgrade                                                 ](#bluetooth-chip-firmware-upgrade)
-- [Set jumpers and switches, and modify Bluetooth board                            ](#set-jumpers-and-switches-and-modify-bluetooth-board)
+- [Set jumpers and switches                                                        ](#set-jumpers-and-switches)
 - [Low Latency Codec (APT-X LL) information                                        ](#low-latency-codec-apt-x-ll-information)
 - [Hardware interface information and notes (internal board connections)           ](#hardware-interface-information-and-notes-internal-board-connections)
 - [Resources                                                                       ](#resources)
@@ -1560,8 +1560,9 @@ Steps:
    from the BlueGigaEmpeg board.
 
  - Make sure that jumper JP4 on the BetzTechnik WT32i Bluetooth board is
-   connected. It comes connected by default, and then we cut it after
-   upgrading the firmware. It needs to be connected any time you do firmware
+   connected. It comes connected by default, but it may have been cut after
+   upgrading the firmware. All units built up until May 2019 had the jumper
+   cut. In any case, the jumper needs to be connected any time you do firmware
    updates to the WT32i chip.
 
  - The firmware upgrade must be performed from a Windows computer, since the
@@ -1642,44 +1643,26 @@ Steps:
  - After the upgrade is successful, unplug the USB cable from the board and
    computer, and close the Serial DFU Tool software.
 
- - Make sure to cut JP4, and set the power switch to the down/off position, as
-   described in the next step.
+ - Make sure to set the power switch on the BetzTechnik board to the down/off
+   position, as described in the next step.
 
 
-Set jumpers and switches, and modify Bluetooth board
+Set jumpers and switches
 ------------------------------------------------------------------------------
 Note: This is only for developer reference. This is only needed if you have
 received a replacement board from BetzTechnik or you are doing other
 maintenance work.
 
-On the BetzTechnik WT32i Breakout board:
-
-Cut the jumper at "JP4 FTDI_+5v" on the BetzTechnik board, but only do this
-*after* successfully updating the chip's firmware to the latest version.
-Cutting the jumper shuts off power to the the BetzTechnik onboard UART, which
-prevents the UART and the Arduino pin-to-pin serial connection from arguing
-with each other. This prevents errors on the serial port which would cause the
-chip to reboot randomly.
-
-JP4 is made of two exposed solder pads, plus a very tiny bridge trace between
-them. Cut this tiny bridge trace with a sharp X-Acto knife. Magnification will
-be required to see this properly.
-
-IMPORTANT: Use extreme care when cutting JP4. Make sure not to peel up the
-pads. There are two traces running to the USB side of the JP4 pad and if you
-peel up the pad or the traces, your board will no longer work correctly.
-
-Use a continuity tester to make sure that the two halves of JP4 do not have
-continuity.
-
-On the BetzTechnik board, set the power switch "U5" to the "down" position
-(looking at the board so that the board's large silkscreen name is readable)
-which is the "off" position for this switch. 
-
 On the BlueGigaEmpeg PCB:
 
 Set the jumpers to "Crossover" position as shown on the silkscreen printing
 on the board.
+
+On the BetzTechnik WT32i Breakout board:
+
+Set the power switch "U5" on the BetzTechnik board to the "down" position
+(looking at the board so that the board's large silkscreen name is readable)
+which is the "off" position for this switch. 
 
 
 Low Latency Codec (APT-X LL) information
@@ -1824,9 +1807,6 @@ the PCB silkscreen is this:
 
 
 ####  BlueGiga Bluetooth WT32i chip+board, critical connections:
-
-BetzTechnik Bluetooth chip+board "JP4 FTDI UART Enable" jumper is cut after
-applying firmware update.
 
 BetzTechnik Bluetooth chip+board "Smd_2_pole_switch" or "U5" switch is set to 
 the "off" position.
@@ -1978,7 +1958,6 @@ Test, packing, and shipment checklist
 The following things are verified before packing and shipping a BlueGigaEmpeg:
 
 - BetzTechnik board upgraded to version 6.2.0 build 1122.
-- BetzTechnik board JP4 is cut after upgrade.
 - BetzTechnik board power switch is in the down/off position.
 - Jumpers on BlueGigaEmpeg board are set to the "crossover" configuration.
 - Arduino contains current version of Github code, check version at bootup.
